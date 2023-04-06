@@ -10,7 +10,7 @@
 
 ## Interconexión
 
-El sistema va a estar conectado de la siguiente manera:
+El sistema va a estar conectado de la siguiente manera: (Perdon pruebo a ver si me anda bien GitHUb en VsCode)
 
 La(s) consola(s) se va(n) a conectar al kernel. (Estas van a ir ocupando los puertos a medida que se vayan conectando hasta tener una cantidad máxima de consolas abiertas, y ademáś se va a poder diferenciar si una consola entra en modo Kernel o modo Usuario segúń la clave que se le de al kernel).
 
