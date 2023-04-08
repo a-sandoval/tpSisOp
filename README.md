@@ -51,13 +51,13 @@ Se van a utilizar 7 claves distintas para comunicar a los distintos módulos dur
 ## Tareas para este checkpoint
 
 - Cada módulo debe tener su archivo de configuración respectivo (ver consigna para formato).
-    - [ ] Consola
+    - [X] Consola
     - [ ] CPU
     - [ ] File System
     - [ ] Kernel
     - [ ] Memoria
 - Cada módulo debe tener su conjunto de funciones de cliente y/ó servidor para conectarse con otros módulos.
-    - [ ] Consola
+    - [X] Consola
     - [ ] CPU
     - [ ] File System
     - [ ] Kernel
