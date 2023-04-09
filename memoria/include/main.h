@@ -10,7 +10,7 @@
 #include <string.h>
 #include "utils.h"
 
-
+void iterator(char* value);
 
 #endif 
 
