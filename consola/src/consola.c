@@ -1,4 +1,4 @@
-#include "consola.h"
+#include "consola/include/consola.h"
 
 int main(void) {
     int conexion;
