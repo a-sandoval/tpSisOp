@@ -28,6 +28,15 @@ int main(void) {
     puerto = config_get_string_value(config, "PUERTO_FILESYSTEM");
     
     //Continuación de kernel cliente
+    conexion = crear_conexion(ip, puerto);
+    if (conexion == -1) { 
+        char *mensaje_error = string_from_format("No se pudo realizar la conexion a la ip %s y puerto %s", ip, puerto);
+        log_error(logger, mensaje_error);
+        log_destroy(logger);
+        config_destroy(config);
+        return 1;
+    }
+
     char *comando = readline("Usuario@TUKI $ ");
     log_info(logger, comando);
     string_trim(&comando);
@@ -52,33 +61,31 @@ int main(void) {
     //CONSOLA - cliente | KERNELL - servidor
     logger = log_create("kernel.log", "kernel", 1, LOG_LEVEL_DEBUG);
 
-	int kernel_fd = iniciar_servidor(puerto);
-	log_info(logger, "Kernel listo para recibir peticiones");
-	int modoKernelCliente_fd = esperar_ModoKernelClient(kernel_fd);
+	int server_fd = iniciar_servidor(puerto);
+	log_info(logger, "Kernel listo para recibir al cliente");
+	int cliente_fd = esperar_cliente(server_fd);
 
 	t_list* lista;
-
 	while (1) {
-		int cod_op = recibir_operacion(modoKernelCliente_fd);
+		int cod_op = recibir_operacion(cliente_fd);
 		switch (cod_op) {
 		case MENSAJE:
-			recibir_mensaje(modoKernelCliente_fd);
+			recibir_mensaje(cliente_fd);
 			break;
 		case PAQUETE:
-			lista = recibir_paquete(modoKernelCliente_fd);
+			lista = recibir_paquete(cliente_fd);
 			log_info(logger, "Me llegaron los siguientes valores:\n");
 			list_iterate(lista, (void*) iterator);
 			break;
 		case -1:
-			log_error(logger, "El cliente se desconecto. Terminando Kernel modo servidor");
+			log_error(logger, "el cliente se desconecto. Terminando servidor");
 			return EXIT_FAILURE;
 		default:
 			log_warning(logger,"Operacion desconocida. No quieras meter la pata");
 			break;
 		}
 	}
-
-    return 0;
+	return EXIT_SUCCESS;
 }
 
 void iterator(char* value) {
