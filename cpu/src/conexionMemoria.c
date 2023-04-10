@@ -6,7 +6,7 @@
 #include <commons/config.h>
 #include <readline/readline.h>
 #include "../include/conexionMemoria.h"
-#include "../../shared/include/utils.h"
+#include "../../shared/include/utilsServidor.h"
 
 int conexionMemoria(){
 
