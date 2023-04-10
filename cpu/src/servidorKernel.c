@@ -1,4 +1,4 @@
-#include "servidorKernel.h"
+#include "../include/servidorKernel.h"
 
 int alistarServidor(){
 	char*puerto_escucha;

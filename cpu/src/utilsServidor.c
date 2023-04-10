@@ -1,7 +1,6 @@
-#include "utilsServidor.h"
-#define PUERTO "4444"
+#include "../include/utilsServidor.h"
+//#define PUERTO "4444"
 t_log* logger;
-
 
 int iniciar_servidor(char*puerto)
 {
@@ -96,10 +95,10 @@ t_list* recibir_paquete(int socket_cliente)
 
 t_config* iniciar_config_server(void){
 
-	t_config* nuevo_config = config_create("../cpu.config");
+	t_config* nuevo_config = config_create("cpu.config");
 
 	if(nuevo_config == NULL){
-		printf("No se pudo crear el config");
+		printf("No se pudo crear el config del server");
 		exit(2);
 	}
 

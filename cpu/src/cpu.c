@@ -4,9 +4,9 @@
 #include <unistd.h>
 #include <commons/config.h>
 #include <readline/readline.h>
-#include "conexionMemoria.h"
-#include "cpu.h"
-#include "servidorKernel.h"
+#include "../include/conexionMemoria.h"
+#include "../include/cpu.h"
+#include "../include/servidorKernel.h"
 
 int main(int argc, char *argv[]) {
 

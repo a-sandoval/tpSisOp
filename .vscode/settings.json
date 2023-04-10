@@ -3,6 +3,8 @@
     "C_Cpp.errorSquiggles": "enabled",
     "files.associations": {
         "cspec.h": "c",
-        "utils.h": "c"
+        "utils.h": "c",
+        "conexionmemoria.h": "c",
+        "utilscliente.h": "c"
     },
 }

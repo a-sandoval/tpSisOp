@@ -5,8 +5,8 @@
 #include <commons/log.h>
 #include <commons/config.h>
 #include <readline/readline.h>
-#include "conexionMemoria.h"
-#include "utilsCliente.h"
+#include "../include/conexionMemoria.h"
+#include "../include/utilsCliente.h"
 
 int conexionMemoria(){
 
@@ -70,7 +70,7 @@ void handshake(char*valor,int conexion){
 
 t_config* iniciar_config(void){
 
-	t_config* nuevo_config = config_create("../cpu.config");
+	t_config* nuevo_config = config_create("cpu.config");
 
 	if(nuevo_config == NULL){
 		printf("No se pudo crear el config");
