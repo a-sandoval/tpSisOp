@@ -1,6 +1,6 @@
 #Por ser cliente
 install:
-	gcc -lcommons -lreadline src/utils.c src/kernel.c -o kernel.out
+	gcc -lcommons -lreadline -I "../" ../shared/src/utilsCliente.c src/kernel.c -o kernel.out
 
 #Por ser servidor
 UNAME:=$(shell uname)
@@ -13,7 +13,7 @@ endif
 
 SRC := src
 
-FILES := ./$(SRC)/kernel.c ./$(SRC)/utils.c
+FILES := ./$(SRC)/kernel.c ./$(SRC)/utilsServidor.c
 OUTPUT_FILE := kernel
 
 CC := gcc

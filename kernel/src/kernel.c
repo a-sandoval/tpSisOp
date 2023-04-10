@@ -24,8 +24,8 @@ int main(void) {
     ip = config_get_string_value(config, "IP_CPU");
     puerto = config_get_string_value(config, "PUERTO_CPU");
     //FileSystem - servidor
-    ip = config_get_string_value(config, "IP_FILE-SYSTEM");
-    puerto = config_get_string_value(config, "PUERTO_FILE-SYSTEM");
+    ip = config_get_string_value(config, "IP_FILESYSTEM");
+    puerto = config_get_string_value(config, "PUERTO_FILESYSTEM");
     
     //Continuación de kernel cliente
     char *comando = readline("Usuario@TUKI $ ");
