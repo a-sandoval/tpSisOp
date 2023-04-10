@@ -54,7 +54,7 @@ int crear_conexion(char* ip, char* puerto);
 void enviar_mensaje(char* mensaje, int socket_cliente);
 /**
  * @brief Se inicializa un paquete con código de operación PAQUETE.
- * @return Retorna el paquete antes inicializado.
+ * @return Retorna el paquete antes inicializado, o -1 en caso de error.
  */
 t_paquete* crear_paquete(void);
 /**

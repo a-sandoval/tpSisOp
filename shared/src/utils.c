@@ -1,4 +1,4 @@
-#include "../include/utils.h"
+#include "shared/include/utils.h"
 
 /**
  * @brief Dado un paquete y la cantidad de bytes que contiene, se empaqueta la cantidad de bytes en un void, 
@@ -39,9 +39,11 @@ int crear_conexion(char *ip, char* puerto) {
                 			    server_info->ai_socktype,
                 			    server_info->ai_protocol);
 
-	connect(socket_cliente, server_info->ai_addr, server_info->ai_addrlen);
-	freeaddrinfo(server_info);
-	return socket_cliente;
+	if(!connect(socket_cliente, server_info->ai_addr, server_info->ai_addrlen)) {
+		freeaddrinfo(server_info);
+		return socket_cliente;
+	}
+	else return -1;
 }
 
 void enviar_mensaje(char* mensaje, int socket_cliente) {
