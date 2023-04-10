@@ -1,5 +1,5 @@
-#ifndef UTILS_H_
-#define UTILS_H_
+#ifndef UTILS_CLIENTE_H
+#define UTILS_CLIENTE_H
 
 #include<stdio.h>
 #include<stdlib.h>

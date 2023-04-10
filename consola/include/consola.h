@@ -8,7 +8,7 @@
 #include<commons/config.h>
 #include<readline/readline.h>
 
-#include "shared/include/utils.h"
+#include "shared/include/utilsCliente.h"
 
 /**
  * @brief Lee la entrada de la consola y la registra en el logger.

@@ -38,13 +38,13 @@ int main(void) {
         string_trim(&comando);
     }
     
-    /* nose pq no anda
+    /*
     void terminar_programa(char* comando, t_log* logger, t_config* config){
         free(comando);
         log_destroy(logger);
         config_destroy(config);
-    }
-    */
+    }*/
+    
     free(comando);
     log_destroy(logger);
     config_destroy(config);
@@ -81,8 +81,6 @@ int main(void) {
     return 0;
 }
 
-/* descomentar con utils
 void iterator(char* value) {
 	log_info(logger,"%s", value);
 }
-*/
