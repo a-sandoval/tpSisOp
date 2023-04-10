@@ -13,7 +13,7 @@ endif
 
 SRC := src
 
-FILES := ./$(SRC)/main.c ./$(SRC)/utils.c
+FILES := ./$(SRC)/kernel.c ./$(SRC)/utils.c
 OUTPUT_FILE := kernel
 
 CC := gcc

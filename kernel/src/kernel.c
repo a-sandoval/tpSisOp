@@ -80,3 +80,9 @@ int main(void) {
 
     return 0;
 }
+
+/* descomentar con utils
+void iterator(char* value) {
+	log_info(logger,"%s", value);
+}
+*/
