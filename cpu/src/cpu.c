@@ -24,7 +24,7 @@ int main(int argc, char *argv[]) {
 
 
 	/*Preparacion de la cpu para servir al kernel*/
-	conexion_servir_kernel=alistarServidor();
+	//conexion_servir_kernel=alistarServidor();
 
 	//ejecutarServidor(conexion_servir_kernel);
 
