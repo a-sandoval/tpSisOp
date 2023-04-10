@@ -5,12 +5,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <commons/log.h>
-#include "utilsServidor.h"
-#include "utilsCliente.h"
+#include "../../shared/include/utilsServidor.h"
+#include "../../shared/include/utils.h"
 
 int alistarServidor();
 int ejecutarServidor(int cliente_fd);
 void iterator(char* value);
 void element_destroyer(char*palabra);
+void obtenerPuertoEscucha(char**puerto_escucha);
 
 #endif /* SERVER_H_ */

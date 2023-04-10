@@ -12,7 +12,7 @@
 #include<string.h>
 #include<assert.h>
 
-/* Se definio en utilsCliente.h
+/* Se definio en utils.h
 typedef enum
 {
 	MENSAJE,
@@ -28,6 +28,5 @@ int esperar_cliente(int);
 t_list* recibir_paquete(int);
 void recibir_mensaje(int);
 int recibir_operacion(int);
-void obtenerPuertoEscucha(char**puerto_escucha);
 
 #endif /* UTILS_SERVIDOR_H */

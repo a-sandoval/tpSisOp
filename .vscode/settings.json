@@ -5,6 +5,8 @@
         "cspec.h": "c",
         "utils.h": "c",
         "conexionmemoria.h": "c",
-        "utilscliente.h": "c"
+        "utilscliente.h": "c",
+        "log.h": "c",
+        "utilsservidor.h": "c"
     },
 }

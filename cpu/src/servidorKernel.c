@@ -54,3 +54,33 @@ void iterator(char* value) {
 void element_destroyer(char*palabra){
 	free(palabra);
 }
+
+t_config* iniciar_config_server(void){
+
+	t_config* nuevo_config = config_create("cpu.config");
+
+	if(nuevo_config == NULL){
+		printf("No se pudo crear el config del server");
+		exit(2);
+	}
+
+	return nuevo_config;
+}
+
+
+void obtenerPuertoEscucha(char**puerto_escucha){
+
+	char* puerto;
+
+	t_config* config;
+
+	config = iniciar_config_server();
+
+	puerto = config_get_string_value(config,"PUERTO_ESCUCHA");
+
+	*puerto_escucha=malloc(sizeof(char)*(strlen(puerto) + 1));
+
+	strcpy(*puerto_escucha,puerto);
+
+	config_destroy(config);
+}

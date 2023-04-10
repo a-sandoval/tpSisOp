@@ -3,7 +3,7 @@
 
 #include <commons/log.h>
 #include <commons/config.h>
-#include "utilsCliente.h"
+#include "../../shared/include/utils.h"
 
 t_log* iniciar_logger(void);
 
