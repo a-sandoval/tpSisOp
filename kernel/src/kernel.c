@@ -52,7 +52,7 @@ int main(void) {
     //CONSOLA - cliente | KERNELL - servidor
     logger = log_create("kernel.log", "kernel", 1, LOG_LEVEL_DEBUG);
 
-	int kernel_fd = iniciar_servidorKernel();
+	int kernel_fd = iniciar_servidor(puerto);
 	log_info(logger, "Kernel listo para recibir peticiones");
 	int modoKernelCliente_fd = esperar_ModoKernelClient(kernel_fd);
 
