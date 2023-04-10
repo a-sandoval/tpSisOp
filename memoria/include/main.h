@@ -8,7 +8,7 @@
 #include<commons/config.h>
 #include<readline/readline.h>
 #include <string.h>
-#include "utils.h"
+#include "../include/utils.h"
 
 void iterator(char* value);
 
