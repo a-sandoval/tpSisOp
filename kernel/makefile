@@ -1,8 +1,3 @@
-#Por ser cliente
-install:
-	gcc -lcommons -lreadline -I "../" ../shared/src/utilsCliente.c src/kernel.c -o kernel.out
-
-#Por ser servidor
 UNAME:=$(shell uname)
 
 ifeq ($(UNAME),Linux)
@@ -12,13 +7,14 @@ FILE_EXT:=exe
 endif
 
 SRC := src
+SHARED := ../shared/src
 
-FILES := ./$(SRC)/kernel.c ./$(SRC)/utilsServidor.c
+FILES := $(SRC)/kernel.c $(SHARED)/utilsServidor.c $(SHARED)/utilsCliente.c
 OUTPUT_FILE := kernel
 
 CC := gcc
-CFLAGS := -I $(SRC) -lcommons -lreadline -Wall -Wextra -O
+CFLAGS := -I ../ -lcommons -lreadline -Wall -Wextra -O
 
 compile: 
 	@echo "Compilando... "
-	@$(CC) $(FILES) -o $(OUTPUT_FILE).$(FILE_EXT) $(CFLAGS)
+	$(CC) $(FILES) -o $(OUTPUT_FILE).$(FILE_EXT) $(CFLAGS)

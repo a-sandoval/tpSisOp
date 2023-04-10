@@ -7,8 +7,17 @@
 #include<commons/string.h>
 #include<commons/config.h>
 #include<readline/readline.h>
+#include<readline/history.h>
 
 #include "shared/include/utilsCliente.h"
+
+char *listaComandos[] = {
+    "CREATE_SEGMENT", "DELETE_SEGMENT", "I/O", 
+    "EXIT", 
+    "F_CLOSE", "F_OPEN", "F_READ", "F_SEEK", "F_TRUNCATE", "F_WRITE", 
+    "MOV_IN", "MOV_OUT", 
+    "SET", "SIGNAL", "WAIT", "YIELD"
+};
 
 /**
  * @brief Lee la entrada de la consola y la registra en el logger.
@@ -23,5 +32,9 @@ void leer_consola(t_log*);
  * @param config Un puntero a la estructura de configuración utilizada por el programa para liberarla.
  */
 void terminar_programa(int , t_log*, t_config*);
+
+char **autoCompletar(const char*, int, int);
+
+char *comandoPosible(const char*, int);
 
 #endif /* CLIENT_H_ */

@@ -7,6 +7,10 @@
         "conexionmemoria.h": "c",
         "utilscliente.h": "c",
         "log.h": "c",
-        "utilsservidor.h": "c"
+        "utilsservidor.h": "c",
+        "string.h": "c",
+        "readline.h": "c",
+        "history.h": "c",
+        "config.h": "c"
     },
 }

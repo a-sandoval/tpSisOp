@@ -1,8 +1,6 @@
-#include "../include/utilsServidor.h"
-//#define PUERTO "4444"
-t_log* logger;
+#include "shared/include/utilsServidor.h"
 
-int iniciar_servidor(char*puerto){
+int iniciar_servidor(char *puerto){
 
 	int socket_servidor;
 
