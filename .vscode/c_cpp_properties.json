@@ -4,7 +4,11 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "/usr/include"
+                "/usr/include",
+                "/shared/include",
+                "${workspaceFolder}",
+                "${workspaceFolder}/file-system/include",
+                "${workspaceFolder}/file-system/include"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",

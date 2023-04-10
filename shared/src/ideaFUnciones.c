@@ -1,6 +1,6 @@
 /*
 
-t_log* iniciar_logger(char* nombreLog)
+t_log* iniciar_logger(char* nombreArchivo)
 {
 	t_log* nuevo_logger = log_create(nombreLog, "Log",1,LOG_LEVEL_INFO);
 
@@ -10,6 +10,14 @@ t_log* iniciar_logger(char* nombreLog)
 	}
 
 	return nuevo_logger;
+}
+
+
+t_log* iniciarLogger(char* ruta) {
+
+    t_log* logger = log_create(ruta,"loggeandoAndo",0,LOG_LEVEL_INFO); 
+
+    return logger; 
 }
 
 int alistarServidor(char* logServidor, char* servidor, char* serverConfig){
