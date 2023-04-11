@@ -1,4 +1,14 @@
 #include "../include/servidorKernel.h"
+#include <commons/log.h>
+#include "../../shared/include/configuraciones.h"
+
+char* nombreArchivo = "CPUservidor.log";
+char* nombreLog = "CPUservidor";
+
+t_log* preparacionDeLoggerServidor(){
+	t_log* loggerCPUServer = log_create(nombreArchivo, nombreLog, 1, LOG_LEVEL_DEBUG);
+	return loggerCPUServer;
+}
 
 int alistarServidor(){
 	char*puerto_escucha;

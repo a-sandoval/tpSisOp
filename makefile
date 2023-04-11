@@ -15,8 +15,8 @@ ARCHIVOS_CPU := /cpu/src/cpu.c /cpu/src/conexionMemoria.c /cpu/src/servidorKerne
 ARCHIVOS_FILESYS := /file-system/src/fileSystem.c 
 ARCHIVOS_KERNEL := /kernel/src/kernel.c 
 ARCHIVOS_MEMORIA := /memoria/src/memoria.c /memoria/src/utils.c 
-UTILS := $(SHARED)/utilsServidor.c $(SHARED)/utilsCliente.c
-OUTPUT_FILE := kernel
+
+UTILS := $(SHARED)/utilsServidor.c $(SHARED)/utilsCliente.c $(shared)/configuraciones.c
 
 CC := gcc
 CFLAGS := -I ./ -lcommons -Wall -Wextra -O

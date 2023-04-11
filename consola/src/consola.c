@@ -1,6 +1,6 @@
 #include "consola/include/consola.h"
 
-int main(void) {
+int main(int num_args, char *argumentos[]) {
     int conexion;
     char *ip, *puerto;
     rl_attempted_completion_function = autoCompletar;
@@ -30,23 +30,26 @@ int main(void) {
         return 1;
     }
 
-    char *comando;
-    while (1) {
-        comando = readline("Usuario@TUKI $ ");
-        string_trim(&comando);
-        if (!strcmp(comando, "EXIT")) {free(comando); break;}
-        if (*comando) {
-            enviar_mensaje(comando, conexion);
-            add_history(comando); 
-        }
-        log_info(logger, comando);
-        free(comando);
+    while (0) {
+        leer_consola(logger, conexion);
     }
     
     log_destroy(logger);
     config_destroy(config);
 
     return 0;
+}
+
+void leer_consola(t_log *logger, int conexion) {
+    char *comando = readline("Usuario@TUKI $ ");
+    string_trim(&comando);
+    if (!strcmp(comando, "EXIT")) {free(comando); break;}
+    if (*comando) {
+        enviar_mensaje(comando, conexion);
+        add_history(comando); 
+    }
+    log_info(logger, comando);
+    free(comando);
 }
 
 char **autoCompletar(const char *texto, int inicio, int final) {

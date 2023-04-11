@@ -11,6 +11,8 @@
         "string.h": "c",
         "readline.h": "c",
         "history.h": "c",
-        "config.h": "c"
+        "config.h": "c",
+        "consola.h": "c",
+        "list.h": "c"
     },
 }

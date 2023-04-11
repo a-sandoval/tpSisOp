@@ -91,3 +91,14 @@ int main(void) {
 void iterator(char* value) {
 	log_info(logger,"%s", value);
 }
+
+/* a desarrollar
+	t_log* logger_cliente = iniciar_logger("kernel.log", "logger_cliente");
+	t_log* logger_servidor = iniciar_logger("kernel.log", "logger_servidor");
+
+
+    para crear dos sockets distintos
+    int socket_cpu = crear_conexion(yada, ay), socket_memoria = crea,,, socket-_file =crear aaa
+
+chequear que se conecte correctamente
+*/

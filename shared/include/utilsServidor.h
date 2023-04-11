@@ -12,12 +12,12 @@
 #include<string.h>
 #include<assert.h>
 
-/* Se definio en utils.h
+
 typedef enum
 {
 	MENSAJE,
 	PAQUETE
-}op_code;*/
+}op_code;
 
 extern t_log* logger;
 

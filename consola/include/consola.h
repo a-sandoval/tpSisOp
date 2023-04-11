@@ -12,18 +12,19 @@
 #include "shared/include/utilsCliente.h"
 
 char *listaComandos[] = {
+    "F_CLOSE", "F_WRITE", // 3 parámetros
     "CREATE_SEGMENT", "DELETE_SEGMENT", "I/O", 
-    "EXIT", 
-    "F_CLOSE", "F_OPEN", "F_READ", "F_SEEK", "F_TRUNCATE", "F_WRITE", 
+    "F_OPEN", "F_READ", "F_SEEK", "F_TRUNCATE", 
     "MOV_IN", "MOV_OUT", 
-    "SET", "SIGNAL", "WAIT", "YIELD"
+    "SET", "SIGNAL", "WAIT", 
+    "EXIT", "YIELD"// 0 parámetros
 };
 
 /**
  * @brief Lee la entrada de la consola y la registra en el logger.
  * @param logger Un puntero al logger utilizado por el programa.
  */
-void leer_consola(t_log*);
+void leer_consola(t_log* logger, int conexion);
 
 /**
  * @brief Termina la ejecución del programa y libera la memoria utilizada.

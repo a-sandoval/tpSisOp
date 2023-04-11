@@ -28,16 +28,14 @@ int iniciar_servidor(char *puerto){
 	return socket_servidor;
 }
 
-int esperar_cliente(int socket_servidor)
-{
+int esperar_cliente(int socket_servidor){
 	int socket_cliente = accept(socket_servidor, NULL, NULL);
 	log_info(logger, "Se conecto un cliente!");
 
 	return socket_cliente;
 }
 
-int recibir_operacion(int socket_cliente)
-{
+int recibir_operacion(int socket_cliente){
 	int cod_op;
 	if(recv(socket_cliente, &cod_op, sizeof(int), MSG_WAITALL) > 0)
 		return cod_op;
@@ -48,8 +46,7 @@ int recibir_operacion(int socket_cliente)
 	}
 }
 
-void* recibir_buffer(int* size, int socket_cliente)
-{
+void* recibir_buffer(int* size, int socket_cliente){
 	void * buffer;
 
 	recv(socket_cliente, size, sizeof(int), MSG_WAITALL);
@@ -67,8 +64,7 @@ void recibir_mensaje(int socket_cliente)
 	free(buffer);
 }
 
-t_list* recibir_paquete(int socket_cliente)
-{
+t_list* recibir_paquete(int socket_cliente){
 	int size;
 	int desplazamiento = 0;
 	void * buffer;
@@ -76,8 +72,7 @@ t_list* recibir_paquete(int socket_cliente)
 	int tamanio;
 
 	buffer = recibir_buffer(&size, socket_cliente);
-	while(desplazamiento < size)
-	{
+	while(desplazamiento < size){
 		memcpy(&tamanio, buffer + desplazamiento, sizeof(int));
 		desplazamiento+=sizeof(int);
 		char* valor = malloc(tamanio);
@@ -89,58 +84,27 @@ t_list* recibir_paquete(int socket_cliente)
 	return valores;
 }
 
+int alistarServidor(t_log *logger, char *puerto){
 
-
-int alistarServidor(char* logServidor, char* nombreServidor, char* archivoServerConfig){
-
-	char*puerto_escucha;
-
-	logger=inicia
-	//logger = log_create(logServidor, nombreServidor, 1, LOG_LEVEL_DEBUG);
-
-	obtenerPuertoEscucha(&puerto_escucha, archivoServerConfig, logger);
-	printf("Puerto Escucha: %s",puerto_escucha);
-
-	int server_fd = iniciar_servidor(puerto_escucha);
+	int server_fd = iniciar_servidor(puerto);
 
 	log_info(logger, "Servidor listo para recibir al cliente");
 
 	int cliente_fd = esperar_cliente(server_fd);
 
-	free(puerto_escucha);
-
 	return cliente_fd;
 }
 
-/*
-void obtenerPuertoEscucha(char**puerto_escucha, char* serverConfig, t_log* logger){
-
-	char* puerto;
-
-	t_config* config;
-
-	config = iniciarConfiguracion(serverConfig, logger);
-
-	puerto = obtenerStringDe(config,"PUERTO_ESCUCHA");
-
-	*puerto_escucha=malloc(sizeof(char)*(strlen(puerto) + 1));
-
-	strcpy(*puerto_escucha,puerto);
-
-	config_destroy(config);
-}
+/* Llamado a la funcion alistarServidor
+alistarServidor(logger, config_get_string_value(config,"PUERTO_ESCUCHA"));
 */
 
 
-int ejecutarServidor(int cliente_fd, loggerCorrespondienteAlModulo){
+int ejecutarServidor(int cliente_fd, t_log* logger){
 	t_list* lista;
-
 	while (1) {
-
 		int cod_op = recibir_operacion(cliente_fd);
-
 		switch (cod_op) {
-
 		case MENSAJE:
 			recibir_mensaje(cliente_fd);
 			break;
@@ -158,4 +122,12 @@ int ejecutarServidor(int cliente_fd, loggerCorrespondienteAlModulo){
 			break;
 		}
 	}
+}
+
+void iterator(char* value) {
+	log_info(logger,"%s", value);
+}
+
+void element_destroyer(char*palabra){
+	free(palabra);
 }

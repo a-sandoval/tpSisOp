@@ -15,17 +15,13 @@ t_config* iniciarConfiguracion(char* ruta, t_log* logger) {
     return nuevo_config; 
 }
 
-char* obtenerStringDe(t_config* configuracion, char* key) {
-    return config_get_string_value(configuracion,key); 
-}
-
 
 // LOGS 
 
 
 t_log* iniciar_logger(char* nombreArchivo, char* nombreModulo)
 {
-	t_log* nuevo_logger = log_create(nombreArchivo, nombreModulo,1,LOG_LEVEL_INFO);
+	t_log* nuevo_logger = log_create(nombreArchivo, nombreModulo,1,LOG_LEVEL_DEBUG);
 
 	if(nuevo_logger == NULL){
 		printf("No se pudo crear el logger");
