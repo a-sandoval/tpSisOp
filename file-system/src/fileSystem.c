@@ -1,9 +1,13 @@
-#include "../include/fileSystem.h"
+#include "../include/fileSystem.h"'
+
+t_log* loggerFileSys; 
+t_config* configFileSys; 
+
 
 int main() {
 
-    t_log* loggerFileSys = iniciarLog("fileSys.log");
-    t_config* configFileSys = iniciarConfiguracion("file-sys.log"); 
+    loggerFileSys = iniciarLog("fileSys.log");
+    configFileSys = iniciarConfiguracion("file-sys.log"); 
 
     char* ip = config_get_string_value(configFileSys,"IP_MEMORIA"); 
 
@@ -19,8 +23,48 @@ int main() {
 
     escucharAlKernel(puertoEscuchaAKernel); 
 
+    log_info(loggerFileSys,"Se han creado conexiones pertinentes"); 
+
     finalizarModulo(conexion,loggerFileSys,configFileSys); 
 }
+
+void iterator(char* value) {
+	log_info(logger,"%s", value);
+}
+
+void escucharAlKernel(char* puertoDeEscucha) {
+
+    int fsAsServerFD = iniciar_servidor(puertoDeEscucha); 
+
+    log_info(loggerFileSys, "Servidor listo para recibir al cliente");
+
+    int kernelAsClientFD = esperar_cliente(fsAsServerFD);
+
+    t_list* lista;
+
+	while (1) {
+		int cod_op = recibir_operacion(kernelAsClientFD);
+		switch (cod_op) {
+		case MENSAJE:
+			recibir_mensaje(kernelAsClientFD);
+			break;
+		case PAQUETE:
+			lista = recibir_paquete(kernelAsClientFD);
+			log_info(logger, "Me llegaron los siguientes valores:\n");
+			list_iterate(lista, (void*) iterator);
+			break;
+		case -1:
+			log_error(logger, "El Modulo cliente se desconecto. Terminando servidor Memoria");
+			return EXIT_FAILURE;
+		default:
+			log_warning(logger,"Operacion desconocida. No quieras meter la pata");
+			break;
+		}
+	}
+    
+
+}
+
 
 
 t_config* iniciarConfiguracion(char* ruta) {
@@ -101,3 +145,4 @@ int crear_conexion(char *ip, char* puerto) {
 void liberar_conexion(int socket_cliente) {
 	close(socket_cliente);
 }
+
