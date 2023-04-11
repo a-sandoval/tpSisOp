@@ -9,6 +9,7 @@
 #include<netdb.h>
 #include<string.h>
 #include<commons/log.h>
+#include <commons/config.h>
 
 /**
  * @brief Código de operación utilizado para enviar al servidor para informarle que tipo de paquete se utiliza.

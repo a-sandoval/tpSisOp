@@ -67,18 +67,6 @@ void escucharAlKernel(char* puertoDeEscucha) {
 
 
 
-t_config* iniciarConfiguracion(char* ruta) {
-
-    t_config* nuevo_config=config_create(ruta); 
-
-    if(nuevo_config==NULL) {
-		log_info(logger,"Error al generar archivo de config"); 
-		log_destroy(logger); 
-		return EXIT_FAILURE; 
-	}
-
-    return nuevo_config; 
-}
 
 t_log* iniciarLog(char* ruta) {
 
@@ -109,18 +97,7 @@ int conectarseAMemoria(char* ip, char* puerto, char* clave) {
 void handshake(char*valor,int conexion){
 	enviar_mensaje(valor, conexion);
 }
-char* obtenerValorDe(t_config* configuracion, char* key) {
 
-    return config_get_string_value(configuracion,key); 
-}
-
-void finalizarModulo(int conexion, t_log* logger, t_config* config)
-{
-	
-	log_destroy(logger); 
-	config_destroy(config); 
-	liberar_conexion(conexion); 
-}
 
 int crear_conexion(char *ip, char* puerto) {
 	struct addrinfo hints;
@@ -144,5 +121,13 @@ int crear_conexion(char *ip, char* puerto) {
 
 void liberar_conexion(int socket_cliente) {
 	close(socket_cliente);
+}
+
+// FINALIZAR MODULO
+void finalizarModulo(int conexion, t_log* logger, t_config* config)
+{
+	log_destroy(logger); 
+	config_destroy(config); 
+	liberar_conexion(conexion); 
 }
 
