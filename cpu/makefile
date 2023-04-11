@@ -1,8 +1,8 @@
-cpu: cpu.o conexionMemoria.o utils.o utilsServidor.o servidorKernel.o
-	gcc cpu.o conexionMemoria.o utils.o utilsServidor.o servidorKernel.o -o cpu -lfl -lm -lcommons -lreadline
+cpu: cpu.o conexionMemoria.o utilsCliente.o utilsServidor.o servidorKernel.o
+	gcc cpu.o conexionMemoria.o utilsCliente.o utilsServidor.o servidorKernel.o -o cpu -lfl -lm -lcommons -lreadline
 
-utils.o: ../shared/src/utils.c ../shared/include/utils.h
-	gcc -c ../shared/src/utils.c
+utilsCliente.o: ../shared/src/utilsCliente.c ../shared/include/utilsCliente.h
+	gcc -c ../shared/src/utilsCliente.c
 
 utilsServidor.o: ../shared/src/utilsServidor.c ../shared/include/utilsServidor.h
 	gcc -c ../shared/src/utilsServidor.c

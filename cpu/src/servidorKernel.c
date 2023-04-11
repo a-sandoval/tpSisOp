@@ -2,6 +2,7 @@
 #include <commons/log.h>
 #include "../../shared/include/configuraciones.h"
 
+/*
 char* nombreArchivo = "CPUservidor.log";
 char* nombreLog = "CPUservidor";
 
@@ -93,4 +94,4 @@ void obtenerPuertoEscucha(char**puerto_escucha){
 	strcpy(*puerto_escucha,puerto);
 
 	config_destroy(config);
-}
+}*/

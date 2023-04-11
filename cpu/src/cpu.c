@@ -7,26 +7,35 @@
 #include "../include/conexionMemoria.h"
 #include "../include/cpu.h"
 #include "../include/servidorKernel.h"
+#include "../../shared/include/configuraciones.h"
+#include "../../shared/include/utilsServidor.h"
+#include "../../shared/include/utilsCliente.h"
 
 int main(int argc, char *argv[]) {
 
 	int conexion_memoria;
 	int conexion_servir_kernel;
 
-	t_log* logger;
+	t_log* logger_clienteMemoria;
+	t_log* logger_servidorKernel;
+
+	t_config* config;
 
 	/*Inicializando Loggers*/
-	//logger = iniciar_logger();
+	logger_clienteMemoria = iniciar_logger("CPUcliente.log","CPU-Memoria");
+	logger_servidorKernel= iniciar_logger("CPUservidor.log","Kernel-CPU");
 
+	/*Inicializando los config*/
+	config=iniciarConfiguracion("../cpu.config",logger_clienteMemoria);
 
 	/*Conexion a memoria*/
 	//conexion_memoria=conexionMemoria();
 
 
 	/*Preparacion de la cpu para servir al kernel*/
-	conexion_servir_kernel=alistarServidor();
+	conexion_servir_kernel=alistarServidor(logger_servidorKernel,config_get_string_value(config,"PUERTO_ESCUCHA"));
 
-	//ejecutarServidor(conexion_servir_kernel);
+	//ejecutarServidor(conexion_servir_kernel,logger_servidorKernel);
 
 
 
@@ -34,19 +43,6 @@ int main(int argc, char *argv[]) {
 
     return 0;
 }
-
-t_log* iniciar_logger(void)
-{
-	t_log* nuevo_logger = log_create("cpu.log", "Log",1,LOG_LEVEL_INFO);
-
-	if(nuevo_logger == NULL){
-		printf("No se pudo crear el logger");
-		exit(1);
-	}
-
-	return nuevo_logger;
-}
-
 
 void terminar_programa(int conexion, t_log* logger)
 {
