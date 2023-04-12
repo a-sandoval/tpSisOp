@@ -1,9 +1,5 @@
+#include <include/cpu.h>
 
-#include <commons/config.h>
-#include <commons/log.h>
-#include "../../shared/include/configuraciones.h"
-#include "../../shared/include/utilsCliente.h"
-#include "../../shared/include/utilsServidor.h"
 
 void terminar_programa(int conexion, t_log* loggerCliente,t_log* loggerServidor,t_config* config);
 int conexionMemoria(t_config* config);

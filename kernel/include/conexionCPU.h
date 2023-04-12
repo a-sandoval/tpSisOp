@@ -5,7 +5,7 @@
 #include "kernel/include/kernel.h"
 
 int conexionCPU();
-
 void obtenerDeConfiguracionComoCliente(t_config* config_clienteCPU,char** puerto, char** ip, char** claveHandshake); 
+void terminar_programa(int conexion, t_log* logger);
 
 #endif /* CONEXION_CPU_H */

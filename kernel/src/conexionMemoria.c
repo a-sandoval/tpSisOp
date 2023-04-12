@@ -17,3 +17,8 @@ void obtenerDeConfiguracionComoCliente(t_config* config_clienteMemoria, char** p
     *claveHandshake = config_get_string_value(config_clienteMemoria,"CLAVE_KERNEL_MEMORIA"); 
     config_destroy(config_clienteMemoria); 
 }
+
+void terminar_programa(int conexion, t_log* logger){
+	log_destroy(logger);
+	liberar_conexion(conexion);
+}

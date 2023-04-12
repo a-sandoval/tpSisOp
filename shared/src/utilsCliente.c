@@ -121,7 +121,7 @@ void handshake(char* claveConfigCliente, int conexion_cliente){
 	enviar_mensaje(claveConfigCliente, conexion_cliente); 
 }
 
-int realizarConexion(char*ip,char* puerto,char* claveHandshake){
+int realizarConexion(char*ip, char* puerto, char* claveHandshake){
 	int conexion;
 
 	/*Conexion con el servidor*/
@@ -130,7 +130,7 @@ int realizarConexion(char*ip,char* puerto,char* claveHandshake){
 		return -1;
 	}
 
-	/*Si la memoria no esta activa, no puede realizarlo*/
+	/*Si el servidor no esta activa, no puede realizarlo*/
 	handshake(claveHandshake,conexion);
 
 	return conexion;

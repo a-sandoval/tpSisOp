@@ -8,7 +8,6 @@
 #include<commons/config.h>
 #include<readline/readline.h>
 #include<string.h>
-#include "../include/utils.h"
 #include<sys/socket.h>
 #include<unistd.h>
 #include<netdb.h>

@@ -23,7 +23,6 @@ t_list* recibir_paquete(int);
 void recibir_mensaje(int);
 int recibir_operacion(int);
 int alistarServidor(t_log *logger, char *puerto);
-int ejecutarServidorTrucho(int cliente_fd, t_log* logger); //BORRAR DSP, ES PARA PROBAR ALGO
 int ejecutarServidor(int cliente_fd, t_log* logger, char* clavesValidas[], int claves_size);
 
 #endif /* UTILS_SERVIDOR_H */

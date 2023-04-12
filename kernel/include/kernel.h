@@ -15,10 +15,7 @@
 #include "../../shared/include/utilsServidor.h"
 #include "../../shared/include/utilsCliente.h"
 
-/* Creo que no hace falta esto, si funca lo borro
-Por ser servidor
-void iterator(char* value);
-
+/* 
 Por ser cliente
 //void leer_consola(t_log*); ?
 void terminar_programa(char* , t_log*, t_config*); //Useless ahora mismo

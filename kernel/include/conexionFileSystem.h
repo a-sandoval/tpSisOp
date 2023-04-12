@@ -5,7 +5,7 @@
 #include "kernel/include/kernel.h"
 
 int conexionFileSystem();
-
 void obtenerDeConfiguracionComoCliente(t_config* config_clienteFileSystem,char** puerto, char** ip, char** claveHandshake); 
+void terminar_programa(int conexion, t_log* logger);
 
 #endif /* CONEXION_FILESYSTEM_H */

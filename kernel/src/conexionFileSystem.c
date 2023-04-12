@@ -17,3 +17,8 @@ void obtenerDeConfiguracionComoCliente(t_config* config_clienteFileSystem, char*
     *claveHandshake = config_get_string_value(config_clienteFileSystem,"CLAVE_KERNEL_FILESYSTEM"); 
     config_destroy(config_clienteFileSystem); 
 }
+
+void terminar_programa(int conexion, t_log* logger){
+	log_destroy(logger);
+	liberar_conexion(conexion);
+}

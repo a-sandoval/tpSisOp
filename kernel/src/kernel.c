@@ -27,12 +27,6 @@ void terminar_programa(t_config* config_servidorConsola, t_log* logger_ServidorC
 	config_destroy(config_servidorConsola);
 }
 /* 
-void terminar_programa(int conexion, t_log* logger){
-	log_destroy(logger);
-	liberar_conexion(conexion);
-}
-
-
-AÑADIR ITERATOR AL SERVIDOR
 VER SI COMPILA TODO
-ARREGLAR EJECUTARSERVIDORTRUCHO*/
+VER SI PUEDO REUTILIZAR EL TERMINAR_PROGRAMA
+*/
