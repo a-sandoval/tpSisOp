@@ -1,6 +1,9 @@
+#include "../../shared/include/configuraciones.h"
+#include "../../shared/include/utilsCliente.h"
+#include "../../shared/include/utilsServidor.h"
 #include "../include/conexionMemoria.h"
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[]){
 
 	int conexion_memoria;
 	int conexion_servir_kernel;
@@ -18,7 +21,11 @@ int main(int argc, char *argv[]) {
 	config=iniciarConfiguracion("../cpu.config",logger_clienteMemoria);
 
 	/*Conexion a memoria*/
-	//conexion_memoria=conexionMemoria();
+	conexion_memoria=conexionMemoria(config);
+	if(conexion_memoria == -1){
+		log_error(logger_clienteMemoria,"No se pudo crear la conexion con la memoria");
+		abort();
+	}
 
 
 	/*Preparacion de la cpu para servir al kernel*/

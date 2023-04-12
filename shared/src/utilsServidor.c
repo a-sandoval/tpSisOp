@@ -1,22 +1,6 @@
 #include "../include/utilsServidor.h"
 
 
-int alistarServidor(t_log *logger, char *puerto){
-
-	int server_fd = iniciar_servidor(puerto);
-
-	log_info(logger, "Servidor listo para recibir al cliente");
-
-	int cliente_fd = esperar_cliente(server_fd);
-
-	return cliente_fd;
-}
-
-/* Llamado a la funcion alistarServidor
-alistarServidor(logger, config_get_string_value(config,"PUERTO_ESCUCHA"));
-*/
-
-
 int iniciar_servidor(char *puerto){
 
 	int socket_servidor;
@@ -102,9 +86,6 @@ t_list* recibir_paquete(int socket_cliente){
 	return valores;
 }
 
-/* Llamado a la funcion alistarServidor
-alistarServidor(logger, config_get_string_value(config,"PUERTO_ESCUCHA"));
-*/
 
 void iterator(char* value) {
 	log_info(logger,"%s", value);
@@ -113,6 +94,23 @@ void iterator(char* value) {
 void element_destroyer(char*palabra){
 	free(palabra);
 }
+
+//FUNCIONES DE USO COLECTIVO PARA EL SERVIDOR:
+int alistarServidor(t_log *logger, char *puerto){
+
+	int server_fd = iniciar_servidor(puerto);
+
+	log_info(logger, "Servidor listo para recibir al cliente");
+
+	int cliente_fd = esperar_cliente(server_fd);
+
+	return cliente_fd;
+}
+
+/* Llamado a la funcion alistarServidor
+alistarServidor(logger, config_get_string_value(config,"PUERTO_ESCUCHA"));
+*/
+
 
 int ejecutarServidor(int cliente_fd, t_log* logger){
 	t_list* lista;
@@ -144,8 +142,9 @@ char* recibir_clave(int socket_cliente)
 {
 	int size;
 	char* buffer = recibir_buffer(&size, socket_cliente);
+	log_info(logger, "Me llego el mensaje %s", buffer);//opcional:para ver que llego
+
 	return buffer;
-	free(buffer);
 }
 
 bool esClaveValida(char* claveRecibida, char* clavesValidas[], int claves_size){
@@ -173,7 +172,8 @@ int ejecutarServidor2(int cliente_fd, t_log* logger, char* clavesValidas[], int 
 				log_error(logger, "Cliente no reconocido"); // quien sos flaco?
 				return EXIT_FAILURE;
 			}
-			log_info(logger, "Clave valida, autorizo informacion"); 
+			log_info(logger, "Clave valida, autorizo informacion");
+			free(claveRecibida); 
 			break;
 		case PAQUETE:
 			lista = recibir_paquete(cliente_fd);
