@@ -9,9 +9,10 @@ int conectarseAMemoria() {
 
     char* ip = config_get_string_value(configFileSys,"IP_MEMORIA"); 
 
+
     //int conexion = crear_conexion(ip, puerto); 
 
-    //handshake(clave,conexion); 
-    config_destroy(configFileSys); 
+    handshake(clave,conexion); 
+
     return conexion; 
 }
