@@ -13,7 +13,6 @@
 #include<assert.h>
 #include "configuraciones.h"
 
-
 extern t_log* logger;
 
 void* recibir_buffer(int*, int);
@@ -23,5 +22,7 @@ int esperar_cliente(int);
 t_list* recibir_paquete(int);
 void recibir_mensaje(int);
 int recibir_operacion(int);
+int alistarServidor(t_log *logger, char *puerto);
+int ejecutarServidor(int cliente_fd, t_log* logger);
 
 #endif /* UTILS_SERVIDOR_H */

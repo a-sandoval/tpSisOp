@@ -15,14 +15,12 @@
  * @brief Código de operación utilizado para enviar al servidor para informarle que tipo de paquete se utiliza.
  *        Actualmente los únicos dos códigos que se utilizan son MENSAJE, para realizar Handshakes, y PAQUETE, para enviar información.
  */
-
 typedef enum
 {	
 	MENSAJE,
 	PAQUETE, 
 
 }op_code;
-
 
 /**
  * @brief Abre un archivo de configuración o retorna nulo.
@@ -33,11 +31,14 @@ typedef enum
 t_config* iniciarConfiguracion(char* ruta, t_log* logger);
 
 /**
- * @brief Abre un logger.
- * @param nombreArchivo Nombre del archivo en el directorio de ejecucion o subdirectorios.
- * @param nombreModulo Nombre que aparecera en el log.
- * @return Retorna el logger inicializado.
+ * @brief Crea un logger con los parametros indicados.
+ * @param nombreArchivo Archivo donde se guardan los logs.
+ * @param nombreLogger Nombre del logger.
+ * @return Retorna el logger creado.
  */
-t_log* iniciarLogger(char* nombreArchivo, char* nombreModulo);
+t_log* iniciar_logger(char* nombreArchivo, char* nombreLogger);
+
+
+//char* obtenerStringDe(t_config* configuracion, char* key); Aylu: decidimos usar el config_get_String_value
 
 #endif /* CONFIGURACIONES_H_ */

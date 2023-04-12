@@ -1,4 +1,4 @@
-#include "shared/include/utilsServidor.h"
+#include "../include/utilsServidor.h"
 
 
 int alistarServidor(t_log *logger, char *puerto){
@@ -102,10 +102,17 @@ t_list* recibir_paquete(int socket_cliente){
 	return valores;
 }
 
+/* Llamado a la funcion alistarServidor
+alistarServidor(logger, config_get_string_value(config,"PUERTO_ESCUCHA"));
+*/
+
 void iterator(char* value) {
 	log_info(logger,"%s", value);
 }
 
+void element_destroyer(char*palabra){
+	free(palabra);
+}
 
 int ejecutarServidor(int cliente_fd, t_log* logger){
 	t_list* lista;
@@ -129,13 +136,9 @@ int ejecutarServidor(int cliente_fd, t_log* logger){
 			break;
 		}
 	}
+
 }
 
-
-
-void element_destroyer(char*palabra){
-	free(palabra);
-}
 
 char* recibir_clave(int socket_cliente)
 {
