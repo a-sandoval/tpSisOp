@@ -46,7 +46,7 @@ int iniciar_servidor(char *puerto){
 }
 
 int esperar_cliente(int socket_servidor){
-	
+
 	int socket_cliente = accept(socket_servidor, NULL, NULL);
 	log_info(logger, "Se conecto un cliente!");
 
@@ -134,4 +134,55 @@ void iterator(char* value) {
 
 void element_destroyer(char*palabra){
 	free(palabra);
+}
+
+char* recibir_clave(int socket_cliente)
+{
+	int size;
+	char* buffer = recibir_buffer(&size, socket_cliente);
+	return buffer;
+	free(buffer);
+}
+
+bool esClaveValida(char* claveRecibida, char* clavesValidas[], int claves_size){
+
+	int i;
+	for(i =0; i<claves_size;i++){
+		if(!strcmp(claveRecibida, clavesValidas[i])){
+			return true;
+		}
+	}
+
+	return false;
+}
+
+int ejecutarServidor2(int cliente_fd, t_log* logger, char* clavesValidas[], int claves_size){
+	t_list* lista;
+	while (1) {
+		int cod_op = recibir_operacion(cliente_fd);
+		switch (cod_op) {
+		case MENSAJE:
+			char* claveRecibida = recibir_clave(cliente_fd);
+			bool claveValida = esClaveValida(claveRecibida, clavesValidas, claves_size); 
+			
+			if(!claveValida){
+				log_error(logger, "Cliente no reconocido"); // quien sos flaco?
+				return EXIT_FAILURE;
+			}
+			log_info(logger, "Clave valida, autorizo informacion"); 
+			break;
+		case PAQUETE:
+			lista = recibir_paquete(cliente_fd);
+			log_info(logger, "Me llegaron los siguientes valores:\n"); 
+			list_iterate(lista, (void*) iterator);
+			list_destroy_and_destroy_elements(lista, (void*)element_destroyer);
+			break;
+		case -1:
+			log_error(logger, "El cliente se desconecto");
+			return EXIT_FAILURE;
+		default:
+			log_warning(logger,"Operacion desconocida. No quieras meter la pata");
+			break;
+		}
+	}
 }

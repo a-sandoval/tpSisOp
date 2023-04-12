@@ -13,4 +13,6 @@
 #include "shared/include/configuraciones.h"
 #include "conexionMemoria.h"
 
+t_log* loggerFileSys; 
+
 #endif

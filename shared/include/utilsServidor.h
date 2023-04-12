@@ -11,13 +11,8 @@
 #include <commons/config.h>
 #include<string.h>
 #include<assert.h>
+#include "configuraciones.h"
 
-
-typedef enum
-{
-	MENSAJE,
-	PAQUETE
-}op_code;
 
 extern t_log* logger;
 

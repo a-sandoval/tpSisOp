@@ -1,6 +1,5 @@
-#include "../include/fileSystem.h"'
+#include "fileSystem.h"
 
-t_log* loggerFileSys; 
 
 
 
@@ -18,10 +17,6 @@ int main() {
 
 }
 
-
-void handshake(char*valor,int conexion){
-	enviar_mensaje(valor, conexion);
-}
 
 
 

@@ -10,16 +10,10 @@
 #include<string.h>
 #include<commons/log.h>
 #include <commons/config.h>
+#include "configuraciones.h"
 
-/**
- * @brief Código de operación utilizado para enviar al servidor para informarle que tipo de paquete se utiliza.
- *        Actualmente los únicos dos códigos que se utilizan son MENSAJE, para realizar Handshakes, y PAQUETE, para enviar información.
- */
-typedef enum
-{
-	MENSAJE,
-	PAQUETE
-}op_code;
+
+
 
 /**
  * @brief Información dentro de un paquete utilizado para enviar información a un servidor.

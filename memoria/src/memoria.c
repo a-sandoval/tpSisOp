@@ -20,7 +20,6 @@ int main(){
 	
 
 	terminar_Programa(memoriaconfig,logger);
-
 	return 0;
     
 }

@@ -12,6 +12,19 @@
 #include <commons/config.h>
 
 /**
+ * @brief Código de operación utilizado para enviar al servidor para informarle que tipo de paquete se utiliza.
+ *        Actualmente los únicos dos códigos que se utilizan son MENSAJE, para realizar Handshakes, y PAQUETE, para enviar información.
+ */
+
+typedef enum
+{	
+	MENSAJE,
+	PAQUETE, 
+
+}op_code;
+
+
+/**
  * @brief Abre un archivo de configuración o retorna nulo.
  * @param ruta Ruta/nombre del archivo de configuración.
  * @param logger Logger para preparar en caso de que se falle la apertura del programa.

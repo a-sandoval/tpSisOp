@@ -17,12 +17,6 @@
 
 void iterator(char* value);
 
-typedef enum
-{
-	MENSAJE,
-	PAQUETE
-}op_code;
-
 extern t_log* logger;
 
 #endif 

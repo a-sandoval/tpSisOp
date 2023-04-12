@@ -5,6 +5,7 @@
 #include<stdlib.h>
 #include<commons/log.h>
 #include<commons/config.h>
+#include <stdbool.h>
 
 #include "utilsCliente.h" 
 #include "utilsServidor.h" 
@@ -15,5 +16,5 @@
 t_log* logger; 
 
 void escucharAlKernel(); 
-char* obtenerDeConfiguracionComoServidor(char**) {
+char* obtenerDeConfiguracionComoServidor(char**);
 

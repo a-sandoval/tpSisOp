@@ -6,12 +6,9 @@ void escucharAlKernel() {
 
     obtenerDeConfiguracionComoServidor(&puertoEscucha); 
 
-    int kernel_fd = alistarServidor(logger, puertoEscucha); 
+    int kernel_fd = alistarServidor(logger, puertoEscucha);
 
-    //int fsAsServerFD = iniciar_servidor(puertoDeEscucha); 
-
-
-   // int kernelAsClientFD = esperar_cliente(fsAsServerFD);
+    int resultadoEjecucion = ejecutarServidor(kernel_fd, logger);  
 
 }
 
