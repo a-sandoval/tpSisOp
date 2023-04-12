@@ -12,6 +12,6 @@ int conectarseAMemoria() {
     //int conexion = crear_conexion(ip, puerto); 
 
     //handshake(clave,conexion); 
-
+    config_destroy(configFileSys); 
     return conexion; 
 }
