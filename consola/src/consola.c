@@ -58,8 +58,13 @@ int main(int, char *archivos[]) {
             
             t_comando_total comComp = prepararComando(comando, listaParametros);
 
+            printf("%s ", comComp.nombre);
+            while(!queue_is_empty(comComp.filaParametros)) printf("%s ", (char *)queue_pop(comComp.filaParametros));
+            printf("%d %d %d %d %d", comComp.longNombre, comComp.cantParametros, comComp.longParametros[0], comComp.longParametros[1], comComp.longParametros[2]);
+            printf("\n");
+
             free(comComp.nombre);
-            queue_destroy_and_destroy_elements(comComp.filaParametros, (void *)free);
+            queue_destroy(comComp.filaParametros);
         }
         string_array_destroy(listaParametros);
     }
@@ -88,11 +93,8 @@ t_comando_total prepararComando(t_comando comando, char **parametros) {
     t_comando_total comandoCompleto;
     comandoCompleto.cantParametros = comando.cantParametros;
     comandoCompleto.filaParametros = queue_create();
-    for (int i = 1; i < comando.cantParametros; i++) {
-        comandoCompleto.longParametros[i - 1] = (i < comando.cantParametros) ? strlen(parametros[i]) : 0;
-        queue_push(comandoCompleto.filaParametros, (void *)comando.nombre);
-        //string_array_push(&(comandoCompleto.parametros), parametros[i]);
-    }
+    for (int i = 1; i < 4; i++) comandoCompleto.longParametros[i - 1] = (i <= comando.cantParametros) ? strlen(parametros[i]) : 0;
+    for (int i = 1; i <= comando.cantParametros; i++) queue_push(comandoCompleto.filaParametros, (void *)parametros[i]);
     comandoCompleto.longNombre = strlen(comando.nombre);
     comandoCompleto.nombre = strdup(comando.nombre);
 
