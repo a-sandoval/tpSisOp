@@ -10,7 +10,7 @@ utilsServidor.o: ../shared/src/utilsServidor.c ../shared/include/utilsServidor.h
 servidorKernel.o: src/servidorKernel.c include/servidorKernel.h
 	gcc -c src/servidorKernel.c
 
-cpu.o: src/cpu.c include/cpu.h
+cpu.o: src/cpu.c
 	gcc -c src/cpu.c
 
 conexionMemoria.o: src/conexionMemoria.c include/conexionMemoria.h

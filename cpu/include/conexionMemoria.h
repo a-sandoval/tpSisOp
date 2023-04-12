@@ -13,6 +13,4 @@
 
 int conexionMemoria(t_config* config);
 
-void handshake(char*valor,int conexion);
-
 #endif /* CONEXION_MEMORIA_H */

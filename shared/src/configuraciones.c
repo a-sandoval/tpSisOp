@@ -23,7 +23,7 @@ t_log* iniciar_logger(char* nombreArchivo, char* nombreLogger)
 
 	if(nuevo_logger == NULL){
 		printf("No se pudo crear el logger");
-		exit(1);
+		exit(2);
 	}
 
 	return nuevo_logger;

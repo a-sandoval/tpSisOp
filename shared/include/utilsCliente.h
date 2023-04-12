@@ -73,4 +73,6 @@ void liberar_conexion(int socket_cliente);
  */
 void eliminar_paquete(t_paquete* paquete);
 
+int realizarConexion(char*ip,char* puerto,char* claveHandshake);
+
 #endif /* UTILS_H_ */

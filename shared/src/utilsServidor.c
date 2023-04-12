@@ -1,7 +1,7 @@
 #include "../include/utilsServidor.h"
 
-
-int iniciar_servidor(char *puerto){
+//Se le agrego el parametro logger, para que funciones
+int iniciar_servidor(char *puerto,t_log* logger){
 
 	int socket_servidor;
 
@@ -29,7 +29,8 @@ int iniciar_servidor(char *puerto){
 	return socket_servidor;
 }
 
-int esperar_cliente(int socket_servidor){
+//Se agrego Logger como parametro
+int esperar_cliente(int socket_servidor,t_log* logger){
 
 	int socket_cliente = accept(socket_servidor, NULL, NULL);
 	log_info(logger, "Se conecto un cliente!");
@@ -62,7 +63,6 @@ void recibir_mensaje(int socket_cliente)
 {
 	int size;
 	char* buffer = recibir_buffer(&size, socket_cliente);
-	log_info(logger, "Me llego el mensaje %s", buffer);
 	free(buffer);
 }
 
@@ -86,10 +86,10 @@ t_list* recibir_paquete(int socket_cliente){
 	return valores;
 }
 
-
+/*Funcione con printf ?? es para no tener una variable externa todos.
 void iterator(char* value) {
 	log_info(logger,"%s", value);
-}
+}*/
 
 void element_destroyer(char*palabra){
 	free(palabra);
@@ -98,11 +98,11 @@ void element_destroyer(char*palabra){
 //FUNCIONES DE USO COLECTIVO PARA EL SERVIDOR:
 int alistarServidor(t_log *logger, char *puerto){
 
-	int server_fd = iniciar_servidor(puerto);
+	int server_fd = iniciar_servidor(puerto,logger);
 
 	log_info(logger, "Servidor listo para recibir al cliente");
 
-	int cliente_fd = esperar_cliente(server_fd);
+	int cliente_fd = esperar_cliente(server_fd,logger);
 
 	return cliente_fd;
 }
@@ -112,7 +112,7 @@ alistarServidor(logger, config_get_string_value(config,"PUERTO_ESCUCHA"));
 */
 
 
-int ejecutarServidor(int cliente_fd, t_log* logger){
+int ejecutarServidorOriginal(int cliente_fd, t_log* logger){
 	t_list* lista;
 	while (1) {
 		int cod_op = recibir_operacion(cliente_fd);
@@ -123,7 +123,7 @@ int ejecutarServidor(int cliente_fd, t_log* logger){
 		case PAQUETE:
 			lista = recibir_paquete(cliente_fd);
 			log_info(logger, "Me llegaron los siguientes valores:\n"); 
-			list_iterate(lista, (void*) iterator);
+			//list_iterate(lista, (void*) iterator); No permite pasarle el logger como patametro
 			list_destroy_and_destroy_elements(lista, (void*)element_destroyer);
 			break;
 		case -1:
@@ -142,7 +142,6 @@ char* recibir_clave(int socket_cliente)
 {
 	int size;
 	char* buffer = recibir_buffer(&size, socket_cliente);
-	log_info(logger, "Me llego el mensaje %s", buffer);//opcional:para ver que llego
 
 	return buffer;
 }
@@ -159,7 +158,7 @@ bool esClaveValida(char* claveRecibida, char* clavesValidas[], int claves_size){
 	return false;
 }
 
-int ejecutarServidor2(int cliente_fd, t_log* logger, char* clavesValidas[], int claves_size){
+int ejecutarServidor(int cliente_fd, t_log* logger, char* clavesValidas[], int claves_size){
 	t_list* lista;
 	while (1) {
 		int cod_op = recibir_operacion(cliente_fd);
@@ -178,7 +177,7 @@ int ejecutarServidor2(int cliente_fd, t_log* logger, char* clavesValidas[], int 
 		case PAQUETE:
 			lista = recibir_paquete(cliente_fd);
 			log_info(logger, "Me llegaron los siguientes valores:\n"); 
-			list_iterate(lista, (void*) iterator);
+			//list_iterate(lista, (void*) iterator); NO ANDA EL ITERATOR SIN EL LOGGER VARIABLE GLOBAL
 			list_destroy_and_destroy_elements(lista, (void*)element_destroyer);
 			break;
 		case -1:

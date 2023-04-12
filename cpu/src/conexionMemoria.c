@@ -15,15 +15,7 @@ int conexionMemoria(t_config* config){
 	printf("VALOR: %s, IP: %s, PUERTO:%s",valor,ip,puerto);
 	putchar('\n');
 
-	/*Conexion con el servidor*/
-
-	conexion = crear_conexion(ip, puerto);
-	if(conexion == -1){
-		return -1;
-	}
-
-	/*Si la memoria no esta activa, no puede realizarlo*/
-	handshake(valor,conexion);
+	conexion = realizarConexion(ip,puerto,valor);
 
 	/*Liberar memoria*/
 	free(valor);
@@ -32,9 +24,4 @@ int conexionMemoria(t_config* config){
 
 	return conexion;
 
-}
-
-
-void handshake(char*valor,int conexion){
-	enviar_mensaje(valor, conexion);
 }

@@ -1,6 +1,14 @@
 /* CONSOLA - cliente | KERNEL - sevidor*/
 
-// AVISO QUE ESTO ESTÁ PATEADÍSIMO ME FALTA TOQUETEARLO DE ARRIBA A ABAJO
-// SI ALGUIEN LO VE NO SE ASUSTE!!!
-
 #include "kernel/include/servidorConsola.h"
+
+
+
+void iterator(char* value) {
+	log_info(logger,"%s", value);
+}
+
+void terminar_programa(t_config* config_servidorConsola, t_log* logger_ServidorConsola){
+	log_destroy(logger_ServidorConsola);
+	config_destroy(config_servidorConsola);
+}
