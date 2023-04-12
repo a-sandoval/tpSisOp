@@ -102,6 +102,9 @@ t_list* recibir_paquete(int socket_cliente){
 	return valores;
 }
 
+void iterator(char* value) {
+	log_info(logger,"%s", value);
+}
 
 
 int ejecutarServidor(int cliente_fd, t_log* logger){
@@ -128,9 +131,7 @@ int ejecutarServidor(int cliente_fd, t_log* logger){
 	}
 }
 
-void iterator(char* value) {
-	log_info(logger,"%s", value);
-}
+
 
 void element_destroyer(char*palabra){
 	free(palabra);

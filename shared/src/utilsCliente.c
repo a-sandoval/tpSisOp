@@ -116,7 +116,7 @@ void liberar_conexion(int socket_cliente) {
 }
 
 
-int handshake(char* claveConfigCliente, int conexion_cliente){
+void handshake(char* claveConfigCliente, int conexion_cliente){
 	
 	enviar_mensaje(claveConfigCliente, conexion_cliente); 
 }

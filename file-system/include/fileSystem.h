@@ -15,4 +15,6 @@
 
 t_log* loggerFileSys; 
 
+void conectarseAMemoria(); 
+void escucharAlKernel(); 
 #endif
