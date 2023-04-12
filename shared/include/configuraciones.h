@@ -20,11 +20,11 @@
 t_config* iniciarConfiguracion(char* ruta, t_log* logger);
 
 /**
- * @brief Busca valor de una configuración específica.
- * @param configuracion Archivo de configuración que buscar.
- * @param key Llave para buscar el valor.
- * @return Retorna el valor grabado en la configuración.
+ * @brief Abre un logger.
+ * @param nombreArchivo Nombre del archivo en el directorio de ejecucion o subdirectorios.
+ * @param nombreModulo Nombre que aparecera en el log.
+ * @return Retorna el logger inicializado.
  */
-char* obtenerStringDe(t_config* configuracion, char* key);
+t_log* iniciarLogger(char* nombreArchivo, char* nombreModulo);
 
 #endif /* CONFIGURACIONES_H_ */

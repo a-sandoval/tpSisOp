@@ -1,4 +1,4 @@
-#include "configuraciones.h"
+#include "shared/include/configuraciones.h"
 
 //ARCHIVO DE CONFIGURACION cliente
 
@@ -9,7 +9,7 @@ t_config* iniciarConfiguracion(char* ruta, t_log* logger) {
     if(nuevo_config==NULL) {
 		log_error(logger,"Error al generar archivo de config"); 
 		log_destroy(logger); 
-		return NULL; 
+		exit(1); 
 	}
 
     return nuevo_config; 
@@ -19,7 +19,7 @@ t_config* iniciarConfiguracion(char* ruta, t_log* logger) {
 // LOGS 
 
 
-t_log* iniciar_logger(char* nombreArchivo, char* nombreModulo)
+t_log* iniciarLogger(char* nombreArchivo, char* nombreModulo)
 {
 	t_log* nuevo_logger = log_create(nombreArchivo, nombreModulo,1,LOG_LEVEL_DEBUG);
 

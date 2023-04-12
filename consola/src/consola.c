@@ -1,76 +1,100 @@
 #include "consola/include/consola.h"
 
-int main(int num_args, char *argumentos[]) {
+int main(int, char *archivos[]) {
+
+    // inicializacion de las variables
+
     int conexion;
     char *ip, *puerto;
-    rl_attempted_completion_function = autoCompletar;
-    t_log* logger = log_create("consola.log", "consola", 0, LOG_LEVEL_INFO);
-    if (logger == NULL) {
-        printf("Error al generar logger consola.log \n");
-        return 1;
-    }
+    t_log* logger = iniciarLogger("consola.log", "consola");
 
-    t_config* config = config_create("consola.config");
-    if (config == NULL) {
-        log_error(logger, "Error al abrir consola.config");
-        log_destroy(logger);
-        return 1;
-    }
-
+    t_config* config = iniciarConfiguracion(archivos[2], logger);
     ip = config_get_string_value(config, "IP_KERNEL");
     puerto = config_get_string_value(config, "PUERTO_KERNEL");
+
+    // conexion al kernel
+
     conexion = crear_conexion(ip, puerto);
 
     if (conexion == -1) { 
         char *mensaje_error = string_from_format("No se pudo conectar a la Kernel por la ip %s y puerto %s", ip, puerto);
         log_error(logger, mensaje_error);
+        free(mensaje_error);
         log_destroy(logger);
         config_destroy(config);
-        free(mensaje_error);
         return 1;
     }
-
-    while (0) {
-        leer_consola(logger, conexion);
-    }
     
+    // apertura del archivo de pseudocodigo
+
+    FILE *codigo = fopen(archivos[1], "r");
+
+    if (codigo == NULL) {
+        char *mensaje_error = string_from_format("No se pudo abrir el archivo %s", archivos[1]);
+        log_error(logger, mensaje_error);
+        free(mensaje_error);
+        log_destroy(logger);
+        config_destroy(config);
+        close(conexion);
+        return 1;
+    }
+    //rl_attempted_completion_function = autoCompletar;
+    //leer_consola(logger, conexion);
+
+    //string_array_new y string_replace dan leaks
+
+    // leer el archivo y enviar paquetes del codigo
+
+    char lineaCodigo[1024];
+    while(!feof(codigo)) {
+        fgets(lineaCodigo, sizeof(lineaCodigo), codigo);
+        char **listaParametros = string_n_split(lineaCodigo, 4, " ");
+        t_comando comando = buscarComando(listaParametros[0]);
+
+        if (comando.nombre != NULL) {
+            char *temp = string_array_pop(listaParametros);
+            string_array_push(&listaParametros, string_substring_until(temp, strlen(temp) - 1));
+            free(temp);
+            
+            t_comando_total comComp = prepararComando(comando, listaParametros);
+
+            free(comComp.nombre);
+            queue_destroy_and_destroy_elements(comComp.filaParametros, (void *)free);
+        }
+        string_array_destroy(listaParametros);
+    }
+
+    // cerrar archivos
+
+    fclose(codigo);
     log_destroy(logger);
     config_destroy(config);
 
     return 0;
 }
 
-void leer_consola(t_log *logger, int conexion) {
-    char *comando = readline("Usuario@TUKI $ ");
-    string_trim(&comando);
-    if (!strcmp(comando, "EXIT")) {free(comando); break;}
-    if (*comando) {
-        enviar_mensaje(comando, conexion);
-        add_history(comando); 
-    }
-    log_info(logger, comando);
-    free(comando);
+t_comando buscarComando(char *comando) {
+    int i = 0;
+    while(listaComandos->cantParametros != -1 && !string_contains(comando, listaComandos[i].nombre)) i++;
+    return listaComandos[i];
 }
 
-char **autoCompletar(const char *texto, int inicio, int final) {
-    char **lista = NULL;
-    if (!inicio) {
-        lista = rl_completion_matches(texto, comandoPosible);
-    }
-    return lista;
-}
+t_comando_total prepararComando(t_comando comando, char **parametros) {
+    printf("%s ", comando.nombre);
+    for (int i = 1; i <= comando.cantParametros; i++) 
+        printf("\"%s\" ", parametros[i]);
+    printf("\n");   
 
-char *comandoPosible(const char *texto, int estado) {
-    int i, len;
-    char *nombre;
-    if (!estado) {
-        i = 0;
-        len = strlen(texto);
+    t_comando_total comandoCompleto;
+    comandoCompleto.cantParametros = comando.cantParametros;
+    comandoCompleto.filaParametros = queue_create();
+    for (int i = 1; i < comando.cantParametros; i++) {
+        comandoCompleto.longParametros[i - 1] = (i < comando.cantParametros) ? strlen(parametros[i]) : 0;
+        queue_push(comandoCompleto.filaParametros, (void *)comando.nombre);
+        //string_array_push(&(comandoCompleto.parametros), parametros[i]);
     }
-    while (nombre = listaComandos[i]) {
-        i++;
-        if (!strncmp(nombre, texto, len)) return string_duplicate(nombre);
-    }
-    return NULL;
-}
+    comandoCompleto.longNombre = strlen(comando.nombre);
+    comandoCompleto.nombre = strdup(comando.nombre);
 
+    return comandoCompleto;
+}
