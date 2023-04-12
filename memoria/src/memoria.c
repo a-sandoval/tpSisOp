@@ -10,12 +10,19 @@ int main(){
 	//inicio servidor y queda a la espera de clientes
 	int cliente_fd = alistarServidor(logger, config_get_string_value(memoriaconfig,"PUERTO_ESCUCHA"));
 
-	int  = ejecutarServidor(cliente_fd,logger);
+	int rdoEjecucion = ejecutarServidor(cliente_fd,logger);
+
+	if(rdoEjecucion == EXIT_FAILURE){
+		printf("Terminando servidor");
+		terminar_Programa(memoriaconfig,logger);
+		return 0; 
+	}
 	
+
 	terminar_Programa(memoriaconfig,logger);
+
+	return 0;
     
-
-
 }
 
 void iterator(char* value) {

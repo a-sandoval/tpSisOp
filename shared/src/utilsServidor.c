@@ -46,6 +46,7 @@ int iniciar_servidor(char *puerto){
 }
 
 int esperar_cliente(int socket_servidor){
+	
 	int socket_cliente = accept(socket_servidor, NULL, NULL);
 	log_info(logger, "Se conecto un cliente!");
 
@@ -118,7 +119,7 @@ int ejecutarServidor(int cliente_fd, t_log* logger){
 			list_destroy_and_destroy_elements(lista, (void*)element_destroyer);
 			break;
 		case -1:
-			log_error(logger, "el cliente se desconecto. Terminando servidor");
+			log_error(logger, "El cliente se desconecto");
 			return EXIT_FAILURE;
 		default:
 			log_warning(logger,"Operacion desconocida. No quieras meter la pata");

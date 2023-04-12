@@ -4,9 +4,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<commons/log.h>
-#include<commons/string.h>
 #include<commons/config.h>
-#include<readline/readline.h>
 
 #include "shared/include/utilsCliente.h" 
 #include "shared/include/utilsServidor.h" 
@@ -14,6 +12,8 @@
 t_log* logger; 
 
 int conectarseAMemoria(); 
+
+void obtenerDeConfiguracionComoCliente(char** puerto, char** ip, char** claveHandshake); 
 
 
 #endif
