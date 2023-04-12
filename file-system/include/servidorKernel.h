@@ -6,8 +6,8 @@
 #include<commons/log.h>
 #include<commons/config.h>
 
-#include "shared/include/utilsCliente.h" 
-#include "shared/include/utilsServidor.h" 
+#include "utilsCliente.h" 
+#include "utilsServidor.h" 
 
 
 #endif
