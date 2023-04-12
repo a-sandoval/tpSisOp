@@ -1,6 +1,5 @@
 #include "../include/servidorKernel.h"
-#include <commons/log.h>
-#include "../../shared/include/configuraciones.h"
+
 
 /*
 char* nombreArchivo = "CPUservidor.log";

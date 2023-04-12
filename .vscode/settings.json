@@ -13,6 +13,10 @@
         "history.h": "c",
         "config.h": "c",
         "consola.h": "c",
-        "list.h": "c"
+        "list.h": "c",
+        "configuraciones.h": "c",
+        "unistd.h": "c",
+        "cpu.h": "c",
+        "servidorkernel.h": "c"
     },
 }

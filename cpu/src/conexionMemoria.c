@@ -1,14 +1,6 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <commons/collections/list.h>
-#include <unistd.h>
-#include <commons/log.h>
-#include <commons/config.h>
-#include <readline/readline.h>
+
 #include "../include/conexionMemoria.h"
-#include "../../shared/include/utilsServidor.h"
-#include "../../shared/include/utilsCliente.h"
-#include "../../shared/include/configuraciones.h"
+
 
 int conexionMemoria(){
 

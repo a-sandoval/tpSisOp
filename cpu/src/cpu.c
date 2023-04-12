@@ -1,15 +1,4 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <commons/collections/list.h>
-#include <unistd.h>
-#include <commons/config.h>
-#include <readline/readline.h>
 #include "../include/conexionMemoria.h"
-#include "../include/cpu.h"
-#include "../include/servidorKernel.h"
-#include "../../shared/include/configuraciones.h"
-#include "../../shared/include/utilsServidor.h"
-#include "../../shared/include/utilsCliente.h"
 
 int main(int argc, char *argv[]) {
 

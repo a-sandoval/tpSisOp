@@ -3,14 +3,7 @@
 #define KERNEL_H_
 
 // Generales
-#include<stdio.h>
-#include<stdlib.h>
-#include<string.h>
-#include<unistd.h>
-#include<commons/log.h>
 #include<commons/string.h>
-#include<commons/config.h>
-#include <commons/collections/list.h>
 #include<readline/readline.h>
 // Conexiones propias del kernel
 #include "../include/conexionMemoria.h"
@@ -31,4 +24,4 @@ Por ser cliente
 void terminar_programa(char* , t_log*, t_config*); //Useless ahora mismo
 */
 
-#endif /* CLIENT_H_ */
+#endif

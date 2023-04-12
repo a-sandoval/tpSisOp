@@ -1,5 +1,5 @@
 /* KERNEL- cliente | FYLESYSTEM - sevidor*/
-#include "kernel/include/kernel.h"
+#include "kernel/include/conexionFileSystem.h"
 
 int conexionFileSystem(){
 
@@ -56,14 +56,4 @@ void obtenerValoresConfig(char**handshake_uso,char**ip_uso,char**puerto_uso){
 
 void handshake(char*valor,int conexion){
 	enviar_mensaje(valor, conexion);
-}
-
-t_config* iniciar_config(void){
-	t_config* nuevo_config = config_create("kernel.config");
-	if(nuevo_config == NULL){
-		printf("No se pudo crear el config");
-		exit(2);
-	}
-
-	return nuevo_config;
 }

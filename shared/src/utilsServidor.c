@@ -1,5 +1,22 @@
 #include "shared/include/utilsServidor.h"
 
+
+int alistarServidor(t_log *logger, char *puerto){
+
+	int server_fd = iniciar_servidor(puerto);
+
+	log_info(logger, "Servidor listo para recibir al cliente");
+
+	int cliente_fd = esperar_cliente(server_fd);
+
+	return cliente_fd;
+}
+
+/* Llamado a la funcion alistarServidor
+alistarServidor(logger, config_get_string_value(config,"PUERTO_ESCUCHA"));
+*/
+
+
 int iniciar_servidor(char *puerto){
 
 	int socket_servidor;
@@ -84,20 +101,6 @@ t_list* recibir_paquete(int socket_cliente){
 	return valores;
 }
 
-int alistarServidor(t_log *logger, char *puerto){
-
-	int server_fd = iniciar_servidor(puerto);
-
-	log_info(logger, "Servidor listo para recibir al cliente");
-
-	int cliente_fd = esperar_cliente(server_fd);
-
-	return cliente_fd;
-}
-
-/* Llamado a la funcion alistarServidor
-alistarServidor(logger, config_get_string_value(config,"PUERTO_ESCUCHA"));
-*/
 
 
 int ejecutarServidor(int cliente_fd, t_log* logger){
@@ -110,7 +113,7 @@ int ejecutarServidor(int cliente_fd, t_log* logger){
 			break;
 		case PAQUETE:
 			lista = recibir_paquete(cliente_fd);
-			log_info(logger, "Me llegaron los siguientes valores:\n");
+			log_info(logger, "Me llegaron los siguientes valores:\n"); 
 			list_iterate(lista, (void*) iterator);
 			list_destroy_and_destroy_elements(lista, (void*)element_destroyer);
 			break;

@@ -2,6 +2,7 @@
 #define CONEXION_CPU_H
 
 #include <commons/config.h>
+#include "kernel/include/kernel.h"
 
 int conexionCPU();
 

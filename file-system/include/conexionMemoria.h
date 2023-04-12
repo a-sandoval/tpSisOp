@@ -1,5 +1,5 @@
-#ifndef FILE_SYS_H
-#define FILE_SYS_H
+#ifndef FILE_SYS_MEMH
+#define FILE_SYS_MEM_H
 
 #include<stdio.h>
 #include<stdlib.h>
@@ -10,7 +10,10 @@
 
 #include "shared/include/utilsCliente.h" 
 #include "shared/include/utilsServidor.h" 
-#include "shared/include/configuraciones.h"
-#include "conexionMemoria.h"
+
+t_log* logger; 
+
+int conectarseAMemoria(); 
+
 
 #endif
