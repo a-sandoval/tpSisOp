@@ -1,20 +1,17 @@
-cpu: cpu.o conexionMemoria.o utilsCliente.o utilsServidor.o servidorKernel.o
-	gcc cpu.o conexionMemoria.o utilsCliente.o utilsServidor.o servidorKernel.o -o cpu -lfl -lm -lcommons -lreadline
+cpu: cpu.o utilsCliente.o utilsServidor.o configuraciones.o
+	gcc cpu.o utilsCliente.o utilsServidor.o configuraciones.o -o cpu -lfl -lm -lcommons -lreadline
+
+configuraciones.o: ../shared/src/configuraciones.c ../shared/include/configuraciones.h
+	gcc -c ../shared/src/configuraciones.c
 
 utilsCliente.o: ../shared/src/utilsCliente.c ../shared/include/utilsCliente.h
 	gcc -c ../shared/src/utilsCliente.c
 
 utilsServidor.o: ../shared/src/utilsServidor.c ../shared/include/utilsServidor.h
 	gcc -c ../shared/src/utilsServidor.c
-	
-servidorKernel.o: src/servidorKernel.c include/servidorKernel.h
-	gcc -c src/servidorKernel.c
 
 cpu.o: src/cpu.c
 	gcc -c src/cpu.c
 
-conexionMemoria.o: src/conexionMemoria.c include/conexionMemoria.h
-	gcc -c src/conexionMemoria.c
-
 clean:
-	rm cpu.o conexionMemoria.o utils.o utilsServidor.o servidorKernel.o cpu
+	rm cpu.o utilsCliente.o utilsServidor.o configuraciones.o cpu

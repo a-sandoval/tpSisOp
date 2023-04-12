@@ -2,7 +2,6 @@
 #include "kernel/include/kernel.h"
 
 int main(int argc, char *argv[]) {
-
     /*
 	int conexion_memoria;
     int conexion_CPU;
@@ -21,21 +20,17 @@ int main(int argc, char *argv[]) {
     t_config* config_clienteFileSystem = iniciarConfiguracion("../kernel.config",logger_clienteFileSystem);
     t_config* config_servidorConsola = iniciarConfiguracion("../kernel.config",logger_servidorConsola);
 
-	/*Preparacion del kernel para servir a la consola*/
-	int conexion_servir_consola = alistarServidor(logger_servidorConsola,config_get_string_value(config_servidorConsola,"PUERTO_ESCUCHA"));
-
-	//Todo esto debería estar en una función
-	int algo = ejecutarServidor(conexion_servir_consola,logger_servidorConsola);
-    if(algo == EXIT_FAILURE){
-		printf("Terminando servidor");
-		terminar_Programa(config_servidorConsola,logger);
-		return 0; 
-	}
-
-    terminar_Programa(config_servidorConsola,logger);
-	return 0;
+	int servirAConsola(logger_servidorConsola, config_servidorConsola);
+	
+	/* void iterator(char* value){
+		log_info(logger_servidorConsola,"%s", value);
+	} */
 }
 
+void terminar_programa(t_config* config_servidorConsola, t_log* logger_ServidorConsola){
+	log_destroy(logger_ServidorConsola);
+	config_destroy(config_servidorConsola);
+}
 /* 
 void terminar_programa(int conexion, t_log* logger){
 	log_destroy(logger);
