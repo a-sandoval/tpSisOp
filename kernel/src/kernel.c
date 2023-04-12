@@ -2,10 +2,6 @@
 #include "kernel/include/kernel.h"
 
 int main(int argc, char *argv[]) {
-    /*
-	int conexion_memoria;
-    int conexion_CPU;
-    int conexion_FileSystem;*/
 
     /*Inicializando Loggers*/
 	t_log* logger_clienteMemoria = iniciar_logger("KERNELcliente.log","Kernel-Memoria");
@@ -20,11 +16,10 @@ int main(int argc, char *argv[]) {
     t_config* config_clienteFileSystem = iniciarConfiguracion("../kernel.config",logger_clienteFileSystem);
     t_config* config_servidorConsola = iniciarConfiguracion("../kernel.config",logger_servidorConsola);
 
-	int servirAConsola(logger_servidorConsola, config_servidorConsola);
-	
-	/* void iterator(char* value){
-		log_info(logger_servidorConsola,"%s", value);
-	} */
+    int conexionMemoria(t_config* config_clienteMemoria);
+    int conexionCPU(t_config* config_clienteCPU);
+    int conexionFileSystem(t_config* config_clienteFileSystem);
+	int servirAConsola(t_log** logger_servidorConsola,t_config* config_servidorConsola);
 }
 
 void terminar_programa(t_config* config_servidorConsola, t_log* logger_ServidorConsola){
@@ -35,12 +30,4 @@ void terminar_programa(t_config* config_servidorConsola, t_log* logger_ServidorC
 void terminar_programa(int conexion, t_log* logger){
 	log_destroy(logger);
 	liberar_conexion(conexion);
-}
-
-a desarrollar
-
-    para crear dos sockets distintos
-    int socket_cpu = crear_conexion(yada, ay), socket_memoria = crea,,, socket-_file =crear aaa
-
-chequear que se conecte correctamente
-*/
+}*/

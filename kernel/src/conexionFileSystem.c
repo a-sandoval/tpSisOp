@@ -1,59 +1,19 @@
 /* KERNEL- cliente | FYLESYSTEM - sevidor*/
 #include "kernel/include/conexionFileSystem.h"
 
-int conexionFileSystem(){
-
-	/* Variables */
-	int conexion;
-	char* valor;
-	char* ip;
-	char* puerto;
-
-	/*Configuraciones*/
-	obtenerValoresConfig(&valor,&ip,&puerto);
-
-	printf("VALOR: %s, IP: %s, PUERTO:%s",valor,ip,puerto);
-	putchar('\n');
-
-	/*Conexion con el servidor*/
-	conexion = crear_conexion(ip, puerto);
-
-	/*Si el filesystem no esta activo, no puede realizarlo*/
-	handshake(valor,conexion);
-
-	/*Liberar filesystem*/
-	free(valor);
-	free(ip);
-	free(puerto);
-
-	return conexion;
+int conexionFileSystem(t_config* config_clienteFileSystem){
+   char* puertoConexionAFileSystem; 
+   char* ip; 
+   char* claveHandshake; 
+   obtenerDeConfiguracionComoCliente(config_clienteFileSystem, &puertoConexionAFileSystem,&ip,&claveHandshake);    
+   int conexionAFileSystem = crear_conexion(ip, puertoConexionAFileSystem); 
+   handshake(claveHandshake,conexionAFileSystem); 
+   return conexionAFileSystem; 
 }
 
-void obtenerValoresConfig(char**handshake_uso,char**ip_uso,char**puerto_uso){
-
-	char* valor_handshake;
-	char* ip;
-	char* puerto;
-
-	t_config* config;
-
-	config = iniciar_config();
-
-	valor_handshake = config_get_string_value(config,"CLAVE_KERNEL_FILESYSTEM");
-	ip = config_get_string_value(config,"IP_FILESYSTEM");
-	puerto = config_get_string_value(config,"PUERTO_FILESYSTEM");
-
-	*handshake_uso=malloc(sizeof(char)*(strlen(valor_handshake) + 1));
-	*ip_uso=malloc(sizeof(char)*(strlen(ip) + 1));
-	*puerto_uso=malloc(sizeof(char)*(strlen(puerto) + 1));
-
-	strcpy(*handshake_uso,valor_handshake);
-	strcpy(*ip_uso,ip);
-	strcpy(*puerto_uso,puerto);
-
-	config_destroy(config);
-}
-
-void handshake(char*valor,int conexion){
-	enviar_mensaje(valor, conexion);
+void obtenerDeConfiguracionComoCliente(t_config* config_clienteFileSystem, char** puerto, char** ip, char** claveHandshake) {
+    *puerto = config_get_string_value(config_clienteFileSystem,"PUERTO_FILESYSTEM");
+    *ip = config_get_string_value(config_clienteFileSystem,"IP_FILESYSTEM"); 
+    *claveHandshake = config_get_string_value(config_clienteFileSystem,"CLAVE_KERNEL_FILESYSTEM"); 
+    config_destroy(config_clienteFileSystem); 
 }
