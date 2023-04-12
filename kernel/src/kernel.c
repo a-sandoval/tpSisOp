@@ -1,6 +1,49 @@
 /* - Interprete entre el hardware y el software - */
 #include "kernel/include/kernel.h"
 
+int main(int argc, char *argv[]) {
+
+	int conexion_memoria;
+    int conexion_CPU;
+    int conexion_FileSystem;
+	int conexion_servir_consola;
+
+	t_log* logger_clienteMemoria;
+    t_log* logger_clienteCPU;
+    t_log* logger_clienteFileSystem;
+    t_log* logger_servidorConsola;
+
+	t_config* config;
+
+	/*Inicializando Loggers*/
+	logger_clienteMemoria = iniciar_logger("KERNELcliente.log","Kernel-Memoria");
+    logger_clienteCPU = iniciar_logger("KERNELcliente.log","Kernel-CPU");
+    logger_clienteFileSystem = iniciar_logger("KERNELcliente.log","Kernel-FileSystem");
+	logger_servidorConsola= iniciar_logger("KERNELservidor.log","Consola-Kernel");
+
+	/*Inicializando los config*/
+	config=iniciarConfiguracion("../kernel.config",logger_clienteMemoria);
+    config=iniciarConfiguracion("../kernel.config",logger_clienteCPU);
+    config=iniciarConfiguracion("../kernel.config",logger_clienteFileSystem);
+
+	/*Conexion a memoria*/
+	//conexion_memoria=conexionMemoria();
+
+	/*Preparacion del kernel para servir a la consola*/
+	conexion_servir_consola=alistarServidor(logger_servidorConsola,config_get_string_value(config,"PUERTO_ESCUCHA"));
+
+	//ejecutarServidor(conexion_servir_kernel,logger_servidorKernel);
+	//terminar_programa(conexion_memoria,logger);
+
+    return 0;
+}
+
+void terminar_programa(int conexion, t_log* logger){
+	log_destroy(logger);
+	liberar_conexion(conexion);
+}
+
+/*
 int main(void) {
     // KERNEL - cliente
     int conexion;
@@ -47,12 +90,12 @@ int main(void) {
         string_trim(&comando);
     }
     
-    /*
+    
     void terminar_programa(char* comando, t_log* logger, t_config* config){
         free(comando);
         log_destroy(logger);
         config_destroy(config);
-    }*/
+    }
     
     free(comando);
     log_destroy(logger);
@@ -91,6 +134,7 @@ int main(void) {
 void iterator(char* value) {
 	log_info(logger,"%s", value);
 }
+*/
 
 /* a desarrollar
 	t_log* logger_cliente = iniciar_logger("kernel.log", "logger_cliente");

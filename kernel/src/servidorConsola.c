@@ -1,0 +1,1 @@
+/* CONSOLA - cliente | KERNEL - sevidor*/
