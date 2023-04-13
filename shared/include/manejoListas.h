@@ -15,6 +15,7 @@
 typedef struct NodoIdentificador{
     char* info;
     struct NodoIdentificador* siguiente;
+    
 } Nodo;
 
 typedef struct Lista {

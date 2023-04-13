@@ -7,6 +7,8 @@ int main() {
 
     loggerFileSys = iniciar_logger("fileSys.log","file-system");
 
+    
+
     conectarseAMemoria(); 
 
     escucharAlKernel(); 
