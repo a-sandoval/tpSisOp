@@ -10,8 +10,12 @@ int main(int argc, char *argv[]){
 
 	t_config* config;
 
-	Lista* clavesValidas=NULL;
+	Lista* clavesValidas=malloc(sizeof(Lista));
+	clavesValidas->cabeza=NULL;
 	insertar(clavesValidas,"kernel-cpu");
+
+	imprimirLista(clavesValidas);
+	putchar('\n');
 
 	/*Inicializando Loggers*/
 	logger_clienteMemoria = iniciar_logger("/home/utnso/tp-2023-1c-toTheEnd/cpu/CPUcliente.log","CPU-Memoria");
@@ -36,8 +40,7 @@ int main(int argc, char *argv[]){
 	//ejecutarServidor(conexion_servir_kernel, logger_servidorKernel,clavesValidas);
 
 
-
-	//terminar_programa(conexion_memoria,logger_clienteMemoria,logger_servidorKernel,config,clavesValidas);
+	terminar_programa(conexion_memoria,logger_clienteMemoria,logger_servidorKernel,config,clavesValidas);
 
     return EXIT_SUCCESS;
 }
@@ -70,11 +73,13 @@ int conexionMemoria(t_config* config){
 	putchar('\n');
 
 	conexion = realizarConexion(ip,puerto,valor);
+	printf("VALOR DE LA CONEXION: %d",conexion);
+	putchar('\n');
 
 	/*Liberar memoria*/
-	free(valor);
+	/*free(valor);
 	free(ip);
-	free(puerto);
+	free(puerto);*/
 
 	return conexion;
 

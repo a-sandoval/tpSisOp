@@ -110,3 +110,41 @@
 
 [INFO] 07:32:38:708 Memoria/(27430:27430): EXIT
 [ERROR] 07:32:38:708 Memoria/(27430:27430): El cliente se desconecto
+[INFO] 15:34:06:192 Memoria/(4017:4017): Servidor listo para recibir al cliente
+[INFO] 15:35:35:714 Memoria/(4149:4149): Servidor listo para recibir al cliente
+[INFO] 15:37:55:788 Memoria/(4149:4149): Se conecto un cliente!
+[INFO] 15:38:36:620 Memoria/(4318:4318): Servidor listo para recibir al cliente
+[INFO] 15:48:27:203 Memoria/(4658:4658): Servidor listo para recibir al cliente
+[INFO] 15:48:36:615 Memoria/(4658:4658): Se conecto un cliente!
+[INFO] 15:49:02:432 Memoria/(4663:4663): Servidor listo para recibir al cliente
+[INFO] 15:49:15:604 Memoria/(4663:4663): Se conecto un cliente!
+[INFO] 15:52:55:765 Memoria/(4712:4712): Servidor listo para recibir al cliente
+[INFO] 15:53:27:216 Memoria/(4712:4712): Se conecto un cliente!
+[INFO] 15:54:44:982 Memoria/(4757:4757): Servidor listo para recibir al cliente
+[INFO] 16:01:38:399 Memoria/(4806:4806): Servidor listo para recibir al cliente
+[INFO] 16:02:02:035 Memoria/(4806:4806): Se conecto un cliente!
+[INFO] 16:12:38:586 Memoria/(5005:5005): Servidor listo para recibir al cliente
+[INFO] 16:12:51:647 Memoria/(5005:5005): Se conecto un cliente!
+[INFO] 16:19:12:604 Memoria/(5261:5261): Servidor listo para recibir al cliente
+[INFO] 16:19:35:551 Memoria/(5261:5261): Se conecto un cliente!
+[INFO] 16:20:06:910 Memoria/(5317:5317): Servidor listo para recibir al cliente
+[INFO] 16:26:02:320 Memoria/(5640:5640): Servidor listo para recibir al cliente
+[INFO] 16:26:19:053 Memoria/(5640:5640): Se conecto un cliente!
+[INFO] 16:55:03:456 Memoria/(8173:8173): Servidor listo para recibir al cliente
+[INFO] 16:55:13:442 Memoria/(8175:8175): Servidor listo para recibir al cliente
+[INFO] 16:55:26:966 Memoria/(8175:8175): Se conecto un cliente!
+[INFO] 16:55:26:973 Memoria/(8175:8175): Clave valida, autorizo informacion
+[ERROR] 16:55:27:022 Memoria/(8175:8175): El cliente se desconecto
+[INFO] 17:07:22:485 Memoria/(8494:8494): Servidor listo para recibir al cliente
+[INFO] 17:07:44:699 Memoria/(8494:8494): Se conecto un cliente!
+[INFO] 17:07:44:709 Memoria/(8494:8494): Clave valida, autorizo informacion
+[ERROR] 17:07:44:759 Memoria/(8494:8494): El cliente se desconecto
+[INFO] 17:08:44:149 Memoria/(8521:8521): Servidor listo para recibir al cliente
+[INFO] 17:08:56:644 Memoria/(8521:8521): Se conecto un cliente!
+[INFO] 17:08:56:654 Memoria/(8521:8521): Clave valida, autorizo informacion
+[ERROR] 17:08:56:699 Memoria/(8521:8521): El cliente se desconecto
+[INFO] 17:13:03:134 Memoria/(8767:8767): Servidor listo para recibir al cliente
+[INFO] 17:13:25:061 Memoria/(8784:8784): Servidor listo para recibir al cliente
+[INFO] 17:13:36:192 Memoria/(8784:8784): Se conecto un cliente!
+[INFO] 17:13:36:199 Memoria/(8784:8784): Clave valida, autorizo informacion
+[ERROR] 17:13:36:215 Memoria/(8784:8784): El cliente se desconecto

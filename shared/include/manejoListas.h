@@ -24,6 +24,7 @@ typedef struct Lista {
 bool esClaveValida(Lista*, char*);
 void insertar(Lista*, char*); 
 void borrarLista(Lista*);
+void imprimirLista(Lista* lista);
 
 //int tamanio_lista(Lista* lista);
 

@@ -7,7 +7,11 @@ int main(){
     t_config* memoria_config;
     logger = iniciar_logger("memoria.log", "Memoria");
 	memoria_config = iniciarConfiguracion("memoria.config", logger);
-	Lista* clavesValidas = NULL;
+
+	Lista* clavesValidas = malloc(sizeof(Lista));
+	clavesValidas->cabeza=NULL;
+	//obtenerClavesValidas(memoria_config); ORIGINAL
+	obtenerClavesValidas(memoria_config,clavesValidas);
 
 	//inicio servidor y queda a la espera de clientes
 	int cliente_fd = alistarServidor(logger, config_get_string_value(memoria_config,"PUERTO_ESCUCHA"));
@@ -38,12 +42,9 @@ void terminar_programa(t_config* memoriaconfig, t_log* logger){
 }
 
 
-Lista* obtenerClavesValidas(t_config* memoria_config){
-	Lista* claves = NULL;
+void obtenerClavesValidas(t_config* memoria_config,Lista* claves){
 	
 	insertar(claves, config_get_string_value(memoria_config, "CLAVE_CPU_MEMORIA"));
 	insertar(claves, config_get_string_value(memoria_config, "CLAVE_KERNEL_MEMORIA"));
 	insertar(claves, config_get_string_value(memoria_config, "CLAVE_FS_MEMORIA"));
-	
-	return claves;
 }

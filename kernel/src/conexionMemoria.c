@@ -5,8 +5,11 @@ int conexionMemoria(t_config* config_clienteMemoria) {
    char* puertoConexionAMemoria; 
    char* ip; 
    char* claveHandshake; 
-   obtenerDeConfiguracionComoCliente(config_clienteMemoria, &puertoConexionAMemoria,&ip,&claveHandshake);    
+
+   obtenerDeConfiguracionComoCliente(config_clienteMemoria, &puertoConexionAMemoria,&ip,&claveHandshake);  
+
    int conexionAMemoria = crear_conexion(ip, puertoConexionAMemoria); 
+   
    handshake(claveHandshake,conexionAMemoria); 
    return conexionAMemoria; 
 }

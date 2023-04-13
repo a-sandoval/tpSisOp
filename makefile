@@ -56,3 +56,6 @@ Kernel:
 Memoria:
 	@echo "Compilando Memoria... "
 	@$(CC) $(ARCHIVOS_MEMORIA) -o memoria/memoria$(FILE_EXT)     $(CFLAGS)
+
+clean:
+	rm cpu/cpu.o

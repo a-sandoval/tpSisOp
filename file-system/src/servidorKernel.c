@@ -7,13 +7,21 @@ void escucharAlKernel() {
 
     obtenerDeConfiguracionComoServidor(&puertoEscucha, &claveValida); 
 
-
     Lista* lista = NULL; 
     insertar(lista,claveValida); 
 
     int kernel_fd = alistarServidor(logger, puertoEscucha);
 
     int resultadoEjecucion = ejecutarServidor(kernel_fd, logger, lista);  
+
+    if(resultadoEjecucion == EXIT_FAILURE){
+		printf("Doy por finalizado el servidor");
+    	borrarLista(lista);
+		return 0; 
+	}
+
+    borrarLista(lista); 
+
 
 }
 
