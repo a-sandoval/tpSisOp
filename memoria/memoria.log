@@ -148,3 +148,8 @@
 [INFO] 17:13:36:192 Memoria/(8784:8784): Se conecto un cliente!
 [INFO] 17:13:36:199 Memoria/(8784:8784): Clave valida, autorizo informacion
 [ERROR] 17:13:36:215 Memoria/(8784:8784): El cliente se desconecto
+[INFO] 19:43:13:610 Memoria/(2817:2817): Servidor listo para recibir al cliente
+[INFO] 19:43:35:916 Memoria/(2939:2939): Servidor listo para recibir al cliente
+[INFO] 19:43:44:354 Memoria/(2817:2817): Se conecto un cliente!
+[INFO] 19:43:44:354 Memoria/(2817:2817): Clave valida, autorizo informacion
+[ERROR] 19:43:44:749 Memoria/(2817:2817): El cliente se desconecto

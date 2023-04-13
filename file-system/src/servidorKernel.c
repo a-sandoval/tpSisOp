@@ -17,7 +17,7 @@ void escucharAlKernel() {
     if(resultadoEjecucion == EXIT_FAILURE){
 		printf("Doy por finalizado el servidor");
     	borrarLista(lista);
-		return 0; 
+	
 	}
 
     borrarLista(lista); 
