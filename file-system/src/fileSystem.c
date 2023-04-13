@@ -5,7 +5,7 @@
 
 int main() {
 
-    loggerFileSys = iniciarLogger("fileSys.log","file-system");
+    loggerFileSys = iniciar_logger("fileSys.log","file-system");
 
     conectarseAMemoria(); 
 

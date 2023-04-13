@@ -1,7 +1,8 @@
 /* - Interprete entre el hardware y el software - */
 #include "kernel/include/kernel.h"
 
-int main(int argc, char *argv[]) {
+// Parametros del main que me choree de Fede: int argc, char *argv[]
+int main() {
 
     /*Inicializando Loggers*/
 	t_log* logger_clienteMemoria = iniciar_logger("KERNELcliente.log","Kernel-Memoria");
@@ -19,13 +20,9 @@ int main(int argc, char *argv[]) {
     int conexionMemoria(t_config* config_clienteMemoria);
     int conexionCPU(t_config* config_clienteCPU);
     int conexionFileSystem(t_config* config_clienteFileSystem);
-	int servirAConsola(t_log** logger_servidorConsola,t_config* config_servidorConsola);
+	int servirAConsola(t_log* logger_servidorConsola,t_config* config_servidorConsola);
 }
 
-void terminar_programa(t_config* config_servidorConsola, t_log* logger_ServidorConsola){
-	log_destroy(logger_ServidorConsola);
-	config_destroy(config_servidorConsola);
-}
 /* 
 VER SI COMPILA TODO
 VER SI PUEDO REUTILIZAR EL TERMINAR_PROGRAMA

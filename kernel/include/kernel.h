@@ -5,6 +5,9 @@
 // Generales
 #include<commons/string.h>
 #include<readline/readline.h>
+#include<commons/log.h>
+#include<commons/collections/list.h>
+#include <commons/config.h>
 // Conexiones propias del kernel
 #include "../include/conexionMemoria.h"
 #include "../include/conexionCPU.h"

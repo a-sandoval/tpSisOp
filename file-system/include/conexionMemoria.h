@@ -11,7 +11,7 @@
 
 t_log* logger; 
 
-void conectarseAMemoria(); 
+int conectarseAMemoria(); 
 
 void obtenerDeConfiguracionComoCliente(char** puerto, char** ip, char** claveHandshake); 
 

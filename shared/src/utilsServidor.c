@@ -111,7 +111,6 @@ int alistarServidor(t_log *logger, char *puerto){
 alistarServidor(logger, config_get_string_value(config,"PUERTO_ESCUCHA"));
 */
 
-
 int ejecutarServidorOriginal(int cliente_fd, t_log* logger){
 	t_list* lista;
 	while (1) {
@@ -138,8 +137,7 @@ int ejecutarServidorOriginal(int cliente_fd, t_log* logger){
 }
 
 
-char* recibir_clave(int socket_cliente)
-{
+char* recibir_clave(int socket_cliente){
 	int size;
 	char* buffer = recibir_buffer(&size, socket_cliente);
 

@@ -1,7 +1,7 @@
 #include "../include/configuraciones.h"
 
 //ARCHIVO DE CONFIGURACION (CLIENTE)
-t_config* iniciarConfiguracion(char* ruta, t_log* logger) {
+t_config* iniciarConfiguracion(char* ruta, t_log* logger){
 
     t_config* nuevo_config=config_create(ruta); 
 
@@ -17,8 +17,7 @@ t_config* iniciarConfiguracion(char* ruta, t_log* logger) {
 
 // LOGS 
 
-t_log* iniciar_logger(char* nombreArchivo, char* nombreLogger)
-{
+t_log* iniciar_logger(char* nombreArchivo, char* nombreLogger){
 	t_log* nuevo_logger = log_create(nombreArchivo, nombreLogger,1,LOG_LEVEL_DEBUG);
 
 	if(nuevo_logger == NULL){

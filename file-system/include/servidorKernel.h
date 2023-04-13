@@ -10,7 +10,6 @@
 #include "utilsCliente.h" 
 #include "utilsServidor.h" 
 
-
 #endif
 
 t_log* logger; 
