@@ -2,7 +2,13 @@
 #include "kernel/include/servidorConsola.h"
 
 int servirAConsola(t_log* logger_servidorConsola, t_config* config_servidorConsola){
-	Lista* clavesValidas = NULL;
+	
+	Lista* clavesValidas = malloc(sizeof(Lista));
+	clavesValidas->cabeza = NULL;
+
+	//obtenerClavesValidas(config_servidorConsola); ORIGINAL
+	obtenerClavesValidas(config_servidorConsola,clavesValidas);
+	
 	//inicio servidor y queda a la espera de clientes
 	int cliente_fd = alistarServidor(logger_servidorConsola, config_get_string_value(config_servidorConsola,"PUERTO_ESCUCHA"));
 
@@ -27,11 +33,9 @@ void terminar_programa_sv(t_config* config_servidorConsola, t_log* logger_servid
 }
 
 void iterator(char* value) {
-	log_info(logger,"%s", value);
+	log_info(logger_sv,"%s", value);
 }
 
-Lista* obtenerClavesValidas(t_config* config_servidorConsola){
-	Lista* claves = NULL;
-	insertar(claves, config_get_string_value(config_servidorConsola, "CLAVE_CONSOLA_KERNEL"));
-	return claves;
+void obtenerClavesValidas(t_config* config_servidorConsola,Lista* claves){
+	insertar(claves, config_get_string_value(config_servidorConsola, "CLAVE_KERNEL_CONSOLA"));
 }

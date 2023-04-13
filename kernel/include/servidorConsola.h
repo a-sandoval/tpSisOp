@@ -6,13 +6,23 @@
 #include <string.h>
 #include <commons/log.h>
 #include "kernel/include/kernel.h"
-//#include"../../shared/include/manejoListas.h"
-#include "shared/include/utilsServidor.h"
+#include<commons/string.h>
+#include<commons/config.h>
+#include<readline/readline.h>
+#include<sys/socket.h>
+#include<unistd.h>
+#include<netdb.h>
+#include<commons/collections/list.h>
+#include<assert.h>
+#include<shared/include/manejoListas.h>
+#include<shared/include/utilsCliente.h>
+#include<shared/include/utilsServidor.h>
+#include<shared/include/configuraciones.h>
 
-extern t_log* logger;
+t_log* logger_sv;
 int servirAConsola(t_log*, t_config* );
-void iterator(char* );
+void iterator(char* value);
 void terminar_programa_sv(t_config* ,t_log*);
-//Lista* obtenerClavesValidas(t_config*);
+void obtenerClavesValidas(t_config*, Lista* );
 
 #endif /* SERVER_H_ */
