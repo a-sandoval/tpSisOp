@@ -11,9 +11,8 @@
 #include <commons/config.h>
 #include<string.h>
 #include<assert.h>
-#include "configuraciones.h"
-
-//extern t_log* logger; cada quien tiene sus loggers
+#include"configuraciones.h"
+#include "manejoListas.h" 
 
 void* recibir_buffer(int*, int);
 
@@ -25,7 +24,5 @@ int recibir_operacion(int);
 int alistarServidor(t_log *logger, char *puerto);
 int ejecutarServidor(int cliente_fd, t_log* logger, Lista* clavesValidas);
 char* recibir_clave(int socket_cliente);
-
-
 
 #endif /* UTILS_SERVIDOR_H */

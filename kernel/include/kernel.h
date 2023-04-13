@@ -17,6 +17,7 @@
 #include "../../shared/include/configuraciones.h"
 #include "../../shared/include/utilsServidor.h"
 #include "../../shared/include/utilsCliente.h"
+#include"../../shared/include/manejoListas.h"
 
 /* 
 Por ser cliente

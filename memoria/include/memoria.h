@@ -20,7 +20,7 @@
 
 void iterator(char* value);
 
-extern t_log* logger;
+t_log* logger;
 Lista* obtenerClavesValidas(t_config* memoria_config);
 void terminar_programa(t_config* memoriaconfig, t_log* logger);
 

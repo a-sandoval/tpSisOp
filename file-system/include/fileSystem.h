@@ -12,6 +12,7 @@
 #include "shared/include/utilsServidor.h" 
 #include "shared/include/configuraciones.h"
 #include "conexionMemoria.h"
+#include "servidorKernel.h"
 
 t_log* loggerFileSys; 
 

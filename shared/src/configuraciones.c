@@ -14,7 +14,6 @@ t_config* iniciarConfiguracion(char* ruta, t_log* logger){
     return nuevo_config; 
 }
 
-
 // LOGS 
 
 t_log* iniciar_logger(char* nombreArchivo, char* nombreLogger){

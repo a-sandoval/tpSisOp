@@ -9,7 +9,7 @@
 #include<netdb.h>
 #include<string.h>
 #include<commons/log.h>
-#include <commons/config.h>
+#include<commons/config.h>
 
 typedef struct NodoIdentificador{
     char* info;
@@ -21,9 +21,10 @@ typedef struct Lista {
     Nodo* cabeza;
 } Lista;
 
+bool esClaveValida(Lista*, char*);
 void insertar(Lista*, char*); 
-int tamanio_lista(Lista*); 
 void borrarLista(Lista*);
-bool esClaveValida(Lista* lista, char* claveRecibida);
+
+//int tamanio_lista(Lista* lista);
 
 #endif 

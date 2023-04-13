@@ -8,40 +8,41 @@ endif
 
 SHARED := shared/src
 CONFIG         := $(SHARED)/configuraciones.c
+MANEJO_LISTAS  := $(SHARED)/manejoListas.c
 UTILS_CLIENTE  := $(SHARED)/utilsCliente.c
 UTILS_SERVIDOR := $(SHARED)/utilsServidor.c
 
 
 ARCHIVOS_CONSOLA := consola/src/consola.c                                              $(CONFIG) $(UTILS_CLIENTE)
 CPU_SRC := cpu/src/
-ARCHIVOS_CPU := $(CPU_SRC)cpu.c $(CPU_SRC)conexionMemoria.c $(CPU_SRC)servidorKernel.c $(CONFIG) $(UTILS_CLIENTE) $(UTILS_SERVIDOR)
+ARCHIVOS_CPU := $(CPU_SRC)cpu.c														   $(CONFIG) $(UTILS_CLIENTE) $(UTILS_SERVIDOR)
 ARCHIVOS_FILESYS := file-system/src/fileSystem.c                                       $(CONFIG) $(UTILS_CLIENTE) $(UTILS_SERVIDOR)
 ARCHIVOS_KERNEL := kernel/src/kernel.c                                                 $(CONFIG) $(UTILS_CLIENTE) $(UTILS_SERVIDOR)
-ARCHIVOS_MEMORIA := memoria/src/memoria.c 					                           $(CONFIG)                  $(UTILS_SERVIDOR)
+ARCHIVOS_MEMORIA := memoria/src/memoria.c 					                           $(CONFIG)                  $(UTILS_SERVIDOR) $(MANEJO_LISTAS)
 
 
 CC := gcc
 CFLAGS := -g -I ./ -lcommons -Wall -Wextra
 
-trap: 
+trap:
 	@echo "Si estas aca te confundiste de ondis, pone \'make comp_MODULO\' con el modulo que queres compilar."
 
-comp_consola:
+Consola:
 	@echo "Compilando consola... "
 	@$(CC) $(ARCHIVOS_CONSOLA) -o consola/consola$(FILE_EXT)     $(CFLAGS) -lreadline
 
-comp_cpu:
+Cpu:
 	@echo "Compilando CPU... "
 	@$(CC) $(ARCHIVOS_CPU)     -o cpu/cpu$(FILE_EXT)             $(CFLAGS)
 
-comp_filesys:
+Filesys:
 	@echo "Compilando File System... "
 	@$(CC) $(ARCHIVOS_FILESYS) -o file-system/filesys$(FILE_EXT) $(CFLAGS)
 
-comp_kernel:
+Kernel:
 	@echo "Compilando Kernel... "
 	@$(CC) $(ARCHIVOS_KERNEL)  -o kernel/kernel$(FILE_EXT)       $(CFLAGS)
 
-comp_memoria:
+Memoria:
 	@echo "Compilando Memoria... "
 	@$(CC) $(ARCHIVOS_MEMORIA) -o memoria/memoria$(FILE_EXT)     $(CFLAGS)

@@ -1,4 +1,4 @@
-#include <include/cpu.h>
+#include "../include/cpu.h"
 
 
 void terminar_programa(int conexion, t_log* loggerCliente,t_log* loggerServidor,t_config* config);
@@ -14,12 +14,12 @@ int main(int argc, char *argv[]){
 
 	t_config* config;
 
-	char* clavesValidas[]={"kernel-cpu"};
-
+	Lista* clavesValidas=NULL;
+	insertar(clavesValidas,"kernel-cpu");
 
 	/*Inicializando Loggers*/
-	logger_clienteMemoria = iniciar_logger("CPUcliente.log","CPU-Memoria");
-	logger_servidorKernel= iniciar_logger("CPUservidor.log","Kernel-CPU");
+	logger_clienteMemoria = iniciar_logger("/home/utnso/tp-2023-1c-toTheEnd/cpu/CPUcliente.log","CPU-Memoria");
+	logger_servidorKernel= iniciar_logger("/home/utnso/tp-2023-1c-toTheEnd/cpu/CPUservidor.log","Kernel-CPU");
 
 	/*Inicializando los config*/
 	config=iniciarConfiguracion("/home/utnso/tp-2023-1c-toTheEnd/cpu/cpu.config",logger_clienteMemoria);//Ruta del archivo para el config ../cpu.config no anda   /home/utnso/tp-2023-1c-toTheEnd/cpu/
@@ -37,11 +37,11 @@ int main(int argc, char *argv[]){
 	/*Preparacion de la cpu para servir al kernel*/
 	conexion_servir_kernel=alistarServidor(logger_servidorKernel,config_get_string_value(config,"PUERTO_ESCUCHA"));
 
-	ejecutarServidor(conexion_servir_kernel, logger_servidorKernel,clavesValidas,1);
+	ejecutarServidor(conexion_servir_kernel, logger_servidorKernel,clavesValidas);
 
 
 
-	terminar_programa(conexion_memoria,logger_clienteMemoria,logger_servidorKernel,config);
+	//terminar_programa(conexion_memoria,logger_clienteMemoria,logger_servidorKernel,config);
 
     return EXIT_SUCCESS;
 }

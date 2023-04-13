@@ -1,6 +1,7 @@
 #include "../include/memoria.h"
 
 
+
 int main(){
 
     t_config* memoria_config;

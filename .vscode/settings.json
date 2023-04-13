@@ -17,6 +17,7 @@
         "configuraciones.h": "c",
         "unistd.h": "c",
         "cpu.h": "c",
-        "servidorkernel.h": "c"
+        "servidorkernel.h": "c",
+        "manejolistas.h": "c"
     },
 }

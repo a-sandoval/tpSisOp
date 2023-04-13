@@ -7,8 +7,8 @@
 #include<commons/config.h>
 #include <stdbool.h>
 
-#include "utilsCliente.h" 
-#include "utilsServidor.h" 
+#include "../../shared/include/utilsServidor.h"
+#include "../../shared/include/utilsCliente.h"
 
 #endif
 

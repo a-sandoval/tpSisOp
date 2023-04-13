@@ -10,7 +10,6 @@ int main() {
     t_log* logger_clienteFileSystem = iniciar_logger("KERNELcliente.log","Kernel-FileSystem");
     t_log* logger_servidorConsola = iniciar_logger("KERNELservidor.log","Consola-Kernel");
 
-
 	/*Inicializando los config*/
 	t_config* config_clienteMemoria = iniciarConfiguracion("../kernel.config",logger_clienteMemoria);
     t_config* config_clienteCPU = iniciarConfiguracion("../kernel.config",logger_clienteCPU);

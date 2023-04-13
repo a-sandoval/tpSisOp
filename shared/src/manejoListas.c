@@ -18,6 +18,7 @@ void insertar(Lista* lista, char* clave) {
         lista->cabeza = nodo; 
 }
 
+/*
 int tamanio_lista(Lista* lista){
     Nodo *r;
     r = lista->cabeza;
@@ -27,7 +28,9 @@ int tamanio_lista(Lista* lista){
         tamanio++;   
         r = r->siguiente;
     }   
+    return tamanio;
 }
+*/
 
 void borrarLista(Lista* lista){
     Nodo* r;
@@ -39,7 +42,7 @@ void borrarLista(Lista* lista){
 }
 
 
-bool esCLaveValida(Lista* lista, char* clave) {
+bool esClaveValida(Lista* lista, char* clave){
     Nodo *r;
     r = lista->cabeza;
     while(r != NULL && !strcmp(r->info, clave)){

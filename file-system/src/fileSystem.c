@@ -21,7 +21,7 @@ int main() {
 
 Lista* obtenerClavesValidas(t_config* config_fs){
 
-    Lista* lista; 
+    Lista* lista=NULL; 
 
     insertar(lista,config_get_string_value(config_fs, "CLAVE_FS_KERNEL_VALIDA")); 
 

@@ -6,7 +6,7 @@ int main(int, char *archivos[]) {
 
     int conexion;
     char *ip, *puerto;
-    t_log* logger = iniciarLogger("consola.log", "consola");
+    t_log* logger = iniciar_logger("consola.log", "consola");
 
     t_config* config = iniciarConfiguracion(archivos[2], logger);
     ip = config_get_string_value(config, "IP_KERNEL");
@@ -17,9 +17,7 @@ int main(int, char *archivos[]) {
     conexion = crear_conexion(ip, puerto);
 
     if (conexion == -1) { 
-        char *mensaje_error = string_from_format("No se pudo conectar a la Kernel por la ip %s y puerto %s", ip, puerto);
-        log_error(logger, mensaje_error);
-        free(mensaje_error);
+        log_error(logger, "No se pudo conectar a la Kernel por la ip %s y puerto %s", ip, puerto);
         log_destroy(logger);
         config_destroy(config);
         return 1;
@@ -30,9 +28,7 @@ int main(int, char *archivos[]) {
     FILE *codigo = fopen(archivos[1], "r");
 
     if (codigo == NULL) {
-        char *mensaje_error = string_from_format("No se pudo abrir el archivo %s", archivos[1]);
-        log_error(logger, mensaje_error);
-        free(mensaje_error);
+        log_error(logger, "No se pudo abrir el archivo %s", archivos[1]);
         log_destroy(logger);
         config_destroy(config);
         close(conexion);
