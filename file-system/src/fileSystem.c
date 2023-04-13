@@ -5,7 +5,7 @@ int main(void) {
     logger = iniciar_logger("fileSys.log","file-system");
     t_config* config_fs = config_create("file-system.config"); 
 
-    conectarseAMemoria(); 
+    int conexionAMemoria = conectarseAMemoria(); 
 
     escucharAlKernel(); 
 
