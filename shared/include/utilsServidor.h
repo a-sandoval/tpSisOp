@@ -25,7 +25,7 @@ int recibir_operacion(int);
 int alistarServidor(t_log *logger, char *puerto);
 int ejecutarServidor(int cliente_fd, t_log* logger, Lista* clavesValidas);
 char* recibir_clave(int socket_cliente);
-bool esClaveValida(char* claveRecibida, char* clavesValidas[], int claves_size);
+
 
 
 #endif /* UTILS_SERVIDOR_H */

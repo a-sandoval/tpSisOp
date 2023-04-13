@@ -107,6 +107,46 @@ int alistarServidor(t_log *logger, char *puerto){
 	return cliente_fd;
 }
 
+
+char* recibir_clave(int socket_cliente){
+	int size;
+	char* buffer = recibir_buffer(&size, socket_cliente);
+
+	return buffer;
+}
+
+int ejecutarServidor(int cliente_fd, t_log* logger, Lista* clavesValidas){
+	t_list* lista;
+	while (1) {
+		int cod_op = recibir_operacion(cliente_fd);
+		switch (cod_op) {
+		case MENSAJE:
+			char* claveRecibida = recibir_clave(cliente_fd);
+			bool claveValida = esClaveValida(clavesValidas, claveRecibida);
+			
+			if(!claveValida){
+				log_error(logger, "Cliente no reconocido"); // quien sos flaco?
+				return EXIT_FAILURE;
+			}
+			log_info(logger, "Clave valida, autorizo informacion");
+			free(claveRecibida); 
+			break;
+		case PAQUETE:
+			lista = recibir_paquete(cliente_fd);
+			log_info(logger, "Me llegaron los siguientes valores:\n"); 
+			//list_iterate(lista, (void*) iterator); NO ANDA EL ITERATOR SIN EL LOGGER VARIABLE GLOBAL
+			list_destroy_and_destroy_elements(lista, (void*)element_destroyer);
+			break;
+		case -1:
+			log_error(logger, "El cliente se desconecto");
+			return EXIT_FAILURE;
+		default:
+			log_warning(logger,"Operacion desconocida. No quieras meter la pata");
+			break;
+		}
+	}
+}
+
 /* Llamado a la funcion alistarServidor
 alistarServidor(logger, config_get_string_value(config,"PUERTO_ESCUCHA"));
 */
@@ -134,44 +174,4 @@ int ejecutarServidorOriginal(int cliente_fd, t_log* logger){
 		}
 	}
 
-}
-
-
-char* recibir_clave(int socket_cliente){
-	int size;
-	char* buffer = recibir_buffer(&size, socket_cliente);
-
-	return buffer;
-}
-
-int ejecutarServidor(int cliente_fd, t_log* logger, Lista* clavesValidas){
-	t_list* lista;
-	while (1) {
-		int cod_op = recibir_operacion(cliente_fd);
-		switch (cod_op) {
-		case MENSAJE:
-			char* claveRecibida = recibir_clave(cliente_fd);
-			bool claveValida = esClaveValida(claveRecibida, clavesValidas); 
-			
-			if(!claveValida){
-				log_error(logger, "Cliente no reconocido"); // quien sos flaco?
-				return EXIT_FAILURE;
-			}
-			log_info(logger, "Clave valida, autorizo informacion");
-			free(claveRecibida); 
-			break;
-		case PAQUETE:
-			lista = recibir_paquete(cliente_fd);
-			log_info(logger, "Me llegaron los siguientes valores:\n"); 
-			//list_iterate(lista, (void*) iterator); NO ANDA EL ITERATOR SIN EL LOGGER VARIABLE GLOBAL
-			list_destroy_and_destroy_elements(lista, (void*)element_destroyer);
-			break;
-		case -1:
-			log_error(logger, "El cliente se desconecto");
-			return EXIT_FAILURE;
-		default:
-			log_warning(logger,"Operacion desconocida. No quieras meter la pata");
-			break;
-		}
-	}
 }

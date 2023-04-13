@@ -1,5 +1,6 @@
 #ifndef LISTAS_H
-#define LISTAS_h
+#define LISTAS_H
+
 #include<stdio.h>
 #include<stdlib.h>
 #include<signal.h>
@@ -9,8 +10,6 @@
 #include<string.h>
 #include<commons/log.h>
 #include <commons/config.h>
-
-
 
 typedef struct NodoIdentificador{
     char* info;
@@ -24,8 +23,7 @@ typedef struct Lista {
 
 void insertar(Lista*, char*); 
 int tamanio_lista(Lista*); 
-void borrarLista(Lista*); 
-bool esCLaveValida(Lista* lista, char* clave);
-
+void borrarLista(Lista*);
+bool esClaveValida(Lista* lista, char* claveRecibida);
 
 #endif 

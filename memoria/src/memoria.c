@@ -6,7 +6,7 @@ int main(){
     t_config* memoria_config;
     logger = iniciar_logger("memoria.log", "Memoria");
 	memoria_config = iniciarConfiguracion("memoria.config", logger);
-	Lista* clavesValidas;
+	Lista* clavesValidas = NULL;
 
 	//inicio servidor y queda a la espera de clientes
 	int cliente_fd = alistarServidor(logger, config_get_string_value(memoria_config,"PUERTO_ESCUCHA"));
@@ -15,12 +15,12 @@ int main(){
 
 	if(rdoEjecucion == EXIT_FAILURE){
 		printf("Terminando servidor");
-		terminar_Programa(memoria_config,logger);
+		terminar_programa(memoria_config,logger);
 		borrarLista(clavesValidas);
 		return 0; 
 	}
 
-	terminar_Programa(memoria_config,logger);
+	terminar_programa(memoria_config,logger);
 	borrarLista(clavesValidas);
 
 	return 0;
@@ -40,9 +40,9 @@ void terminar_programa(t_config* memoriaconfig, t_log* logger){
 Lista* obtenerClavesValidas(t_config* memoria_config){
 	Lista* claves = NULL;
 	
-	insesrtar(claves, config_get_string_value(memoria_config, "CLAVE_CPU_MEMORIA"));
-	insesrtar(claves, config_get_string_value(memoria_config, "CLAVE_KERNEL_MEMORIA"));
-	insesrtar(claves, config_get_string_value(memoria_config, "CLAVE_FS_MEMORIA"));
+	insertar(claves, config_get_string_value(memoria_config, "CLAVE_CPU_MEMORIA"));
+	insertar(claves, config_get_string_value(memoria_config, "CLAVE_KERNEL_MEMORIA"));
+	insertar(claves, config_get_string_value(memoria_config, "CLAVE_FS_MEMORIA"));
 	
 	return claves;
 }

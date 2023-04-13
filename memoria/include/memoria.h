@@ -13,11 +13,16 @@
 #include<netdb.h>
 #include<commons/collections/list.h>
 #include<assert.h>
-#include<../shared/include/manejoListas.h>
+#include<shared/include/manejoListas.h>
+#include<shared/include/utilsCliente.h>
+#include<shared/include/utilsServidor.h>
+#include<shared/include/configuraciones.h>
 
 void iterator(char* value);
 
 extern t_log* logger;
+Lista* obtenerClavesValidas(t_config* memoria_config);
+void terminar_programa(t_config* memoriaconfig, t_log* logger);
 
 #endif 
 
