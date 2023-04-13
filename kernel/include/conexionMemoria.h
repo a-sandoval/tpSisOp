@@ -6,8 +6,7 @@
 #include "shared/include/utilsCliente.h"
 
 int conexionMemoria(t_config*);
-
-void obtenerDeConfiguracionComoCliente(t_config* ,char**, char**, char**); 
-// void terminar_programa(t_config*, t_log*);
+void obtenerDeConfiguracionComoClienteMemoria(t_config* ,char** , char** , char** ); 
+void terminar_programaMemoria(int, t_log*);
 
 #endif /* CONEXION_MEMORIA_H */

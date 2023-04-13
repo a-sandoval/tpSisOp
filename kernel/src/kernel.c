@@ -19,8 +19,3 @@ int main() {
     conexionFileSystem(config_clienteFileSystem);
 	servirAConsola(logger_servidorConsola,config_servidorConsola);
 }
-
-/* 
-VER SI COMPILA TODO
-VER SI PUEDO REUTILIZAR EL TERMINAR_PROGRAMA
-*/

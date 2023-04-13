@@ -27,4 +27,4 @@ int alistarServidor(t_log *logger, char *puerto);
 int ejecutarServidor(int cliente_fd, t_log* logger, Lista* clavesValidas);
 char* recibir_clave(int socket_cliente);
 
-#endif /* UTILS_SERVIDOR_H */
+#endif /* UTILS_SERVIDOR_H */ 

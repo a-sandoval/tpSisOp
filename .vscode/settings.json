@@ -21,6 +21,7 @@
         "manejolistas.h": "c",
         "memoria.h": "c",
         "filesystem.h": "c",
-        "stdlib.h": "c"
+        "stdlib.h": "c",
+        "servidorconsola.h": "c"
     },
 }

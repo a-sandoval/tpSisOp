@@ -6,7 +6,6 @@
 #include "shared/include/utilsCliente.h"
 
 int conexionCPU(t_config*);
-//void obtenerDeConfiguracionComoCliente(t_config* config_clienteCPU,char** puerto, char** ip, char** claveHandshake); 
-//void terminar_programa(int conexion, t_log* logger);
-
+void terminar_programaCPU(int , t_log* );
+void obtenerDeConfiguracionComoClienteCPU(t_config* ,char** , char** , char** ); 
 #endif /* CONEXION_CPU_H */

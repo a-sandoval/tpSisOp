@@ -7,7 +7,7 @@
 #include<readline/readline.h>
 #include<commons/log.h>
 #include<commons/collections/list.h>
-#include <commons/config.h>
+#include<commons/config.h>
 // Conexiones propias del kernel
 #include "../include/conexionMemoria.h"
 #include "../include/conexionCPU.h"
@@ -18,6 +18,8 @@
 #include "../../shared/include/utilsServidor.h"
 #include "../../shared/include/utilsCliente.h"
 #include"../../shared/include/manejoListas.h"
+
+//t_log* logger;
 
 /*
 int conexionMemoria(t_config* );

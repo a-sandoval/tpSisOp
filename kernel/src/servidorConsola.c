@@ -10,25 +10,25 @@ int servirAConsola(t_log* logger_servidorConsola, t_config* config_servidorConso
 
 	if(rdoEjecucion == EXIT_FAILURE){
 		printf("Terminando servidor");
-		terminar_programa(config_servidorConsola,logger_servidorConsola);
+		terminar_programa_sv(config_servidorConsola, logger_servidorConsola);
 		borrarLista(clavesValidas);
 		return 0; 
 	}
 
-	terminar_programa(config_servidorConsola,logger);
+	terminar_programa_sv(config_servidorConsola,logger_servidorConsola);
 	borrarLista(clavesValidas);
 
 	return 0;
 }
 
+void terminar_programa_sv(t_config* config_servidorConsola, t_log* logger_servidorConsola){
+	log_destroy(logger_servidorConsola);
+	config_destroy(config_servidorConsola);
+}
+
 void iterator(char* value) {
 	log_info(logger,"%s", value);
 }
-/*
-void terminar_programa(t_config* config_servidorConsola, t_log* logger_servidorConsola){
-	log_destroy(logger_servidorConsola);
-	config_destroy(config_servidorConsola);
-}**/
 
 Lista* obtenerClavesValidas(t_config* config_servidorConsola){
 	Lista* claves = NULL;

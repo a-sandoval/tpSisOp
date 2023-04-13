@@ -6,7 +6,7 @@
 #include "shared/include/utilsCliente.h"
 
 int conexionFileSystem(t_config*);
-void obtenerDeConfiguracionComoCliente(t_config* config_clienteFileSystem,char** puerto, char** ip, char** claveHandshake); 
-//void terminar_programa(int conexion, t_log* logger);
+void obtenerDeConfiguracionComoClienteFS(t_config* ,char** , char** , char** ); 
+void terminar_programaFS(int , t_log* );
 
 #endif /* CONEXION_FILESYSTEM_H */
