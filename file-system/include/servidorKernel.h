@@ -12,7 +12,7 @@
 
 #endif
 
-t_log* logger; 
+extern t_log* logger; 
 
 void escucharAlKernel(); 
 void obtenerDeConfiguracionComoServidor(char**, char**);

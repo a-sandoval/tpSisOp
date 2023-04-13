@@ -3,6 +3,7 @@
 
 #include <commons/config.h>
 #include "kernel/include/kernel.h"
+#include "shared/include/utilsCliente.h"
 
 int conexionFileSystem(t_config*);
 void obtenerDeConfiguracionComoCliente(t_config* config_clienteFileSystem,char** puerto, char** ip, char** claveHandshake); 

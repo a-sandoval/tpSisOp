@@ -91,9 +91,7 @@ void iterator(char* value) {
 	log_info(logger,"%s", value);
 }*/
 
-void element_destroyer(char*palabra){
-	free(palabra);
-}
+
 
 //FUNCIONES DE USO COLECTIVO PARA EL SERVIDOR:
 int alistarServidor(t_log *logger, char *puerto){
@@ -134,7 +132,7 @@ int ejecutarServidor(int cliente_fd, t_log* logger, Lista* clavesValidas){
 		case PAQUETE:
 			lista = recibir_paquete(cliente_fd);
 			log_info(logger, "Me llegaron los siguientes valores:\n"); 
-			//list_iterate(lista, (void*) iterator); NO ANDA EL ITERATOR SIN EL LOGGER VARIABLE GLOBAL
+			list_iterate(lista, (void*) iterator); //NO ANDA EL ITERATOR SIN EL LOGGER VARIABLE GLOBAL
 			list_destroy_and_destroy_elements(lista, (void*)element_destroyer);
 			break;
 		case -1:
@@ -147,6 +145,9 @@ int ejecutarServidor(int cliente_fd, t_log* logger, Lista* clavesValidas){
 	}
 }
 
+void element_destroyer(char*palabra){
+	free(palabra);
+}
 /* Llamado a la funcion alistarServidor
 alistarServidor(logger, config_get_string_value(config,"PUERTO_ESCUCHA"));
 */

@@ -1,9 +1,7 @@
 /* - Interprete entre el hardware y el software - */
 #include "kernel/include/kernel.h"
 
-// Parametros del main que me choree de Fede: int argc, char *argv[]
 int main() {
-
     /*Inicializando Loggers*/
 	t_log* logger_clienteMemoria = iniciar_logger("KERNELcliente.log","Kernel-Memoria");
     t_log* logger_clienteCPU = iniciar_logger("KERNELcliente.log","Kernel-CPU");

@@ -5,10 +5,10 @@ void escucharAlKernel() {
     char* puertoEscucha;
     char* claveValida; 
 
-    Lista* lista = NULL; 
-
     obtenerDeConfiguracionComoServidor(&puertoEscucha, &claveValida); 
 
+
+    Lista* lista = NULL; 
     insertar(lista,claveValida); 
 
     int kernel_fd = alistarServidor(logger, puertoEscucha);
@@ -20,7 +20,9 @@ void escucharAlKernel() {
 
 void obtenerDeConfiguracionComoServidor(char ** puertoEscucha, char** claveValida) {
 
-    t_config* configServer = config_create("file-system.config");
+    logger = iniciar_logger("fileSysLog", "Kernel -> File System"); 
+
+    t_config* configServer = iniciarConfiguracion("file-sys.config",logger);
 
     *puertoEscucha = config_get_string_value(configServer,"PUERTO_ESCUCHA");
 

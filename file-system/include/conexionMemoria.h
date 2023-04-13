@@ -11,6 +11,7 @@
 #include "shared/include/utilsServidor.h" 
 #include "shared/include/manejoListas.h"
 
+extern t_log *logger;
 
 int conectarseAMemoria(); 
 

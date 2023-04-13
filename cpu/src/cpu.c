@@ -1,9 +1,5 @@
 #include "../include/cpu.h"
 
-
-void terminar_programa(int conexion, t_log* loggerCliente,t_log* loggerServidor,t_config* config);
-int conexionMemoria(t_config* config);
-
 int main(int argc, char *argv[]){
 
 	int conexion_memoria;
@@ -29,7 +25,7 @@ int main(int argc, char *argv[]){
 	conexion_memoria=conexionMemoria(config);
 	if(conexion_memoria == -1){
 		log_error(logger_clienteMemoria,"No se pudo crear la conexion con la memoria");
-		terminar_programa(conexion_memoria,logger_clienteMemoria,logger_servidorKernel,config);
+		terminar_programa(conexion_memoria,logger_clienteMemoria,logger_servidorKernel,config, clavesValidas);
 		return EXIT_FAILURE; //abort o exit?
 	}
 
@@ -41,16 +37,22 @@ int main(int argc, char *argv[]){
 
 
 
-	//terminar_programa(conexion_memoria,logger_clienteMemoria,logger_servidorKernel,config);
+	//terminar_programa(conexion_memoria,logger_clienteMemoria,logger_servidorKernel,config,clavesValidas);
 
     return EXIT_SUCCESS;
 }
 
-void terminar_programa(int conexion, t_log* loggerCliente,t_log* loggerServidor,t_config* config)
+void iterator(char *value){
+	printf("Valor recibido: %s",value);
+	putchar('\n');
+}
+
+void terminar_programa(int conexion, t_log* loggerCliente,t_log* loggerServidor,t_config* config,Lista*lista)
 {
 	log_destroy(loggerCliente);
 	log_destroy(loggerServidor);
 	config_destroy(config);
+	borrarLista(lista);
 	liberar_conexion(conexion);
 }
 

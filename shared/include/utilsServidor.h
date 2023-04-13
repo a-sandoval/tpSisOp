@@ -21,6 +21,8 @@ int esperar_cliente(int,t_log*);
 t_list* recibir_paquete(int);
 void recibir_mensaje(int);
 int recibir_operacion(int);
+void element_destroyer(char*palabra);
+extern void iterator(char *value);
 int alistarServidor(t_log *logger, char *puerto);
 int ejecutarServidor(int cliente_fd, t_log* logger, Lista* clavesValidas);
 char* recibir_clave(int socket_cliente);

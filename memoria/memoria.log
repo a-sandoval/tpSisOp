@@ -1,2 +1,112 @@
 [INFO] 08:38:10:254 Memoria/(4952:4952): Memoria lista para recibir peticiones
 [INFO] 07:00:29:372 Memoria/(19922:19922): Servidor listo para recibir al cliente
+[INFO] 07:20:41:064 Memoria/(24223:24223): Servidor listo para recibir al cliente
+[INFO] 07:20:53:647 Memoria/(24223:24223): Se conecto un cliente!
+[INFO] 07:20:53:650 Memoria/(24223:24223): Me llegaron los siguientes valores:
+
+[INFO] 07:20:53:653 Memoria/(24223:24223): Me llegaron los siguientes valores:
+
+[INFO] 07:20:53:653 Memoria/(24223:24223): Me llegaron los siguientes valores:
+
+[INFO] 07:20:53:654 Memoria/(24223:24223): Me llegaron los siguientes valores:
+
+[INFO] 07:20:53:654 Memoria/(24223:24223): Me llegaron los siguientes valores:
+
+[INFO] 07:20:53:655 Memoria/(24223:24223): Me llegaron los siguientes valores:
+
+[INFO] 07:20:53:656 Memoria/(24223:24223): Me llegaron los siguientes valores:
+
+[INFO] 07:20:53:656 Memoria/(24223:24223): Me llegaron los siguientes valores:
+
+[INFO] 07:20:53:657 Memoria/(24223:24223): Me llegaron los siguientes valores:
+
+[INFO] 07:20:53:657 Memoria/(24223:24223): Me llegaron los siguientes valores:
+
+[INFO] 07:20:53:657 Memoria/(24223:24223): Me llegaron los siguientes valores:
+
+[INFO] 07:20:53:658 Memoria/(24223:24223): Me llegaron los siguientes valores:
+
+[INFO] 07:20:53:658 Memoria/(24223:24223): Me llegaron los siguientes valores:
+
+[INFO] 07:20:53:658 Memoria/(24223:24223): Me llegaron los siguientes valores:
+
+[INFO] 07:20:53:659 Memoria/(24223:24223): Me llegaron los siguientes valores:
+
+[INFO] 07:20:53:660 Memoria/(24223:24223): Me llegaron los siguientes valores:
+
+[ERROR] 07:20:53:660 Memoria/(24223:24223): El cliente se desconecto
+[INFO] 07:32:37:031 Memoria/(27430:27430): Servidor listo para recibir al cliente
+[INFO] 07:32:38:689 Memoria/(27430:27430): Se conecto un cliente!
+[INFO] 07:32:38:701 Memoria/(27430:27430): Me llegaron los siguientes valores:
+
+[INFO] 07:32:38:702 Memoria/(27430:27430): SET
+[INFO] 07:32:38:702 Memoria/(27430:27430): AX
+[INFO] 07:32:38:702 Memoria/(27430:27430): HOLA
+[INFO] 07:32:38:702 Memoria/(27430:27430): Me llegaron los siguientes valores:
+
+[INFO] 07:32:38:702 Memoria/(27430:27430): MOV_OUT
+[INFO] 07:32:38:702 Memoria/(27430:27430): 120
+[INFO] 07:32:38:703 Memoria/(27430:27430): AX
+[INFO] 07:32:38:703 Memoria/(27430:27430): Me llegaron los siguientes valores:
+
+[INFO] 07:32:38:704 Memoria/(27430:27430): WAIT
+[INFO] 07:32:38:704 Memoria/(27430:27430): DISCO
+[INFO] 07:32:38:704 Memoria/(27430:27430): Me llegaron los siguientes valores:
+
+[INFO] 07:32:38:704 Memoria/(27430:27430): I/O
+[INFO] 07:32:38:704 Memoria/(27430:27430): 10
+[INFO] 07:32:38:705 Memoria/(27430:27430): Me llegaron los siguientes valores:
+
+[INFO] 07:32:38:705 Memoria/(27430:27430): SIGNAL
+[INFO] 07:32:38:705 Memoria/(27430:27430): DISCO
+[INFO] 07:32:38:705 Memoria/(27430:27430): Me llegaron los siguientes valores:
+
+[INFO] 07:32:38:705 Memoria/(27430:27430): MOV_IN
+[INFO] 07:32:38:705 Memoria/(27430:27430): BX
+[INFO] 07:32:38:705 Memoria/(27430:27430): 120
+[INFO] 07:32:38:705 Memoria/(27430:27430): Me llegaron los siguientes valores:
+
+[INFO] 07:32:38:705 Memoria/(27430:27430): F_OPEN
+[INFO] 07:32:38:706 Memoria/(27430:27430): ARCHIVO
+[INFO] 07:32:38:706 Memoria/(27430:27430): Me llegaron los siguientes valores:
+
+[INFO] 07:32:38:706 Memoria/(27430:27430): YIELD
+[INFO] 07:32:38:706 Memoria/(27430:27430): Me llegaron los siguientes valores:
+
+[INFO] 07:32:38:706 Memoria/(27430:27430): F_TRUNCATE
+[INFO] 07:32:38:706 Memoria/(27430:27430): ARCHIVO
+[INFO] 07:32:38:706 Memoria/(27430:27430): 64
+[INFO] 07:32:38:707 Memoria/(27430:27430): Me llegaron los siguientes valores:
+
+[INFO] 07:32:38:707 Memoria/(27430:27430): F_SEEK
+[INFO] 07:32:38:707 Memoria/(27430:27430): ARCHIVO
+[INFO] 07:32:38:707 Memoria/(27430:27430): 10
+[INFO] 07:32:38:707 Memoria/(27430:27430): Me llegaron los siguientes valores:
+
+[INFO] 07:32:38:707 Memoria/(27430:27430): CREATE_SEGMENT
+[INFO] 07:32:38:707 Memoria/(27430:27430): 1
+[INFO] 07:32:38:707 Memoria/(27430:27430): 128
+[INFO] 07:32:38:707 Memoria/(27430:27430): Me llegaron los siguientes valores:
+
+[INFO] 07:32:38:707 Memoria/(27430:27430): F_WRITE
+[INFO] 07:32:38:707 Memoria/(27430:27430): ARCHIVO
+[INFO] 07:32:38:707 Memoria/(27430:27430): 4
+[INFO] 07:32:38:707 Memoria/(27430:27430): 4
+[INFO] 07:32:38:707 Memoria/(27430:27430): Me llegaron los siguientes valores:
+
+[INFO] 07:32:38:707 Memoria/(27430:27430): F_READ
+[INFO] 07:32:38:707 Memoria/(27430:27430): ARCHIVO
+[INFO] 07:32:38:708 Memoria/(27430:27430): 16
+[INFO] 07:32:38:708 Memoria/(27430:27430): 4
+[INFO] 07:32:38:708 Memoria/(27430:27430): Me llegaron los siguientes valores:
+
+[INFO] 07:32:38:708 Memoria/(27430:27430): DELETE_SEGMENT
+[INFO] 07:32:38:708 Memoria/(27430:27430): 1
+[INFO] 07:32:38:708 Memoria/(27430:27430): Me llegaron los siguientes valores:
+
+[INFO] 07:32:38:708 Memoria/(27430:27430): F_CLOSE
+[INFO] 07:32:38:708 Memoria/(27430:27430): ARCHIVO
+[INFO] 07:32:38:708 Memoria/(27430:27430): Me llegaron los siguientes valores:
+
+[INFO] 07:32:38:708 Memoria/(27430:27430): EXIT
+[ERROR] 07:32:38:708 Memoria/(27430:27430): El cliente se desconecto

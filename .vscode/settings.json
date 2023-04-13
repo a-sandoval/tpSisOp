@@ -18,6 +18,9 @@
         "unistd.h": "c",
         "cpu.h": "c",
         "servidorkernel.h": "c",
-        "manejolistas.h": "c"
+        "manejolistas.h": "c",
+        "memoria.h": "c",
+        "filesystem.h": "c",
+        "stdlib.h": "c"
     },
 }

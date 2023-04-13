@@ -14,8 +14,11 @@
 #include "../include/conexionMemoria.h"
 #include "../include/servidorKernel.h"
 
-t_log* loggerFileSys; 
-
 #endif
+
+void iterator(char* value);
+t_log* logger;
+
+
 
 
