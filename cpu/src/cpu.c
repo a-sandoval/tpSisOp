@@ -26,18 +26,18 @@ int main(int argc, char *argv[]){
 
 
 	/*Conexion a memoria*/
-	/*conexion_memoria=conexionMemoria(config);
+	conexion_memoria=conexionMemoria(config);
 	if(conexion_memoria == -1){
 		log_error(logger_clienteMemoria,"No se pudo crear la conexion con la memoria");
 		terminar_programa(conexion_memoria,logger_clienteMemoria,logger_servidorKernel,config);
 		return EXIT_FAILURE; //abort o exit?
-	}*/
+	}
 
 
 	/*Preparacion de la cpu para servir al kernel*/
-	conexion_servir_kernel=alistarServidor(logger_servidorKernel,config_get_string_value(config,"PUERTO_ESCUCHA"));
+	//conexion_servir_kernel=alistarServidor(logger_servidorKernel,config_get_string_value(config,"PUERTO_ESCUCHA"));
 
-	ejecutarServidor(conexion_servir_kernel, logger_servidorKernel,clavesValidas);
+	//ejecutarServidor(conexion_servir_kernel, logger_servidorKernel,clavesValidas);
 
 
 

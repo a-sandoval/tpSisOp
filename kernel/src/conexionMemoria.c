@@ -18,7 +18,8 @@ void obtenerDeConfiguracionComoCliente(t_config* config_clienteMemoria, char** p
     config_destroy(config_clienteMemoria); 
 }
 
+/*
 void terminar_programa(int conexion, t_log* logger){
 	log_destroy(logger);
 	liberar_conexion(conexion);
-}
+}*/

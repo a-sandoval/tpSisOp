@@ -17,8 +17,8 @@ void obtenerDeConfiguracionComoCliente(t_config* config_clienteCPU, char** puert
     *claveHandshake = config_get_string_value(config_clienteCPU,"CLAVE_KERNEL_CPU"); 
     config_destroy(config_clienteCPU); 
 }
-
+/*
 void terminar_programa(int conexion, t_log* logger){
 	log_destroy(logger);
 	liberar_conexion(conexion);
-}
+}*/

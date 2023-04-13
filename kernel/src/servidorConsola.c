@@ -24,11 +24,11 @@ int servirAConsola(t_log* logger_servidorConsola, t_config* config_servidorConso
 void iterator(char* value) {
 	log_info(logger,"%s", value);
 }
-
+/*
 void terminar_programa(t_config* config_servidorConsola, t_log* logger_servidorConsola){
 	log_destroy(logger_servidorConsola);
 	config_destroy(config_servidorConsola);
-}
+}**/
 
 Lista* obtenerClavesValidas(t_config* config_servidorConsola){
 	Lista* claves = NULL;

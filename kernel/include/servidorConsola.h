@@ -9,4 +9,8 @@ int servirAConsola(t_log*, t_config* );
 void iterator(char* );
 Lista* obtenerClavesValidas(t_config*);
 
+typedef struct Lista {
+    Nodo* cabeza;
+} Lista;
+
 #endif /* SERVER_H_ */

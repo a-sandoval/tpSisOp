@@ -6,6 +6,6 @@
 
 int conexionCPU(t_config*);
 void obtenerDeConfiguracionComoCliente(t_config* config_clienteCPU,char** puerto, char** ip, char** claveHandshake); 
-void terminar_programa(int conexion, t_log* logger);
+//void terminar_programa(int conexion, t_log* logger);
 
 #endif /* CONEXION_CPU_H */

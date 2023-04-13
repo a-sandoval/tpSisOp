@@ -18,7 +18,7 @@ void escucharAlKernel() {
 }
 
 
-char* obtenerDeConfiguracionComoServidor(char ** puertoEscucha, char** claveValida) {
+void obtenerDeConfiguracionComoServidor(char ** puertoEscucha, char** claveValida) {
 
     t_config* configServer = config_create("file-system.config");
 
@@ -28,5 +28,4 @@ char* obtenerDeConfiguracionComoServidor(char ** puertoEscucha, char** claveVali
 
     config_destroy(configServer); 
 
-    return puertoEscucha; 
 }

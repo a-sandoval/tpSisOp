@@ -75,4 +75,6 @@ void eliminar_paquete(t_paquete* paquete);
 
 int realizarConexion(char*ip,char* puerto,char* claveHandshake);
 
+void handshake(char* claveConfigCliente, int conexion_cliente);
+
 #endif /* UTILS_H_ */

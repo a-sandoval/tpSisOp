@@ -13,11 +13,14 @@ int conectarseAMemoria() {
 
    handshake(claveHandshake,conexionAMemoria); 
 
+
    return conexionAMemoria; 
 }
 
 
 void obtenerDeConfiguracionComoCliente(char** puerto, char** ip, char** claveHandshake) {
+
+    t_logger* logger = iniciar_logger("fileSys.log", "FileSys->Memoria"); 
 
     t_config* configFileSys = iniciarConfiguracion("file-system.config", logger); 
 
@@ -28,5 +31,8 @@ void obtenerDeConfiguracionComoCliente(char** puerto, char** ip, char** claveHan
     *claveHandshake = config_get_string_value(configFileSys,"CLAVE_FS_MEMORIA"); 
 
     config_destroy(configFileSys); 
+
+    log_destroy(logger); 
+
     
 }
