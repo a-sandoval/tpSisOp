@@ -4,9 +4,9 @@
 #include <commons/config.h>
 #include "kernel/include/kernel.h"
 
-int conexionMemoria();
+int conexionMemoria(t_config*);
 
-void obtenerDeConfiguracionComoCliente(t_config* config_clienteMemoria,char** puerto, char** ip, char** claveHandshake); 
-void terminar_programa(int conexion, t_log* logger);
+void obtenerDeConfiguracionComoCliente(t_config* ,char**, char**, char**); 
+void terminar_programa(int, t_log*);
 
 #endif /* CONEXION_MEMORIA_H */

@@ -16,7 +16,9 @@ UTILS_SERVIDOR := $(SHARED)/utilsServidor.c
 ARCHIVOS_CONSOLA := consola/src/consola.c                                              $(CONFIG) $(UTILS_CLIENTE)
 CPU_SRC := cpu/src/
 ARCHIVOS_CPU := $(CPU_SRC)cpu.c														   $(CONFIG) $(UTILS_CLIENTE) $(UTILS_SERVIDOR)
-ARCHIVOS_FILESYS := file-system/src/fileSystem.c                                       $(CONFIG) $(UTILS_CLIENTE) $(UTILS_SERVIDOR)
+FILESYS_SRC := file-system/src
+ARCHIVOS_FILESYS := $(FILESYS_SRC)/fileSystem.c $(FILESYS_SRC)/conexionMemoria.c $(FILESYS_SRC)/servidorKernel.c \
+				    $(CONFIG) $(UTILS_CLIENTE) $(UTILS_SERVIDOR)
 ARCHIVOS_KERNEL := kernel/src/kernel.c                                                 $(CONFIG) $(UTILS_CLIENTE) $(UTILS_SERVIDOR)
 ARCHIVOS_MEMORIA := memoria/src/memoria.c 					                           $(CONFIG)                  $(UTILS_SERVIDOR) $(MANEJO_LISTAS)
 

@@ -16,10 +16,10 @@ int main() {
     t_config* config_clienteFileSystem = iniciarConfiguracion("../kernel.config",logger_clienteFileSystem);
     t_config* config_servidorConsola = iniciarConfiguracion("../kernel.config",logger_servidorConsola);
 
-    int conexionMemoria(t_config* config_clienteMemoria);
-    int conexionCPU(t_config* config_clienteCPU);
-    int conexionFileSystem(t_config* config_clienteFileSystem);
-	int servirAConsola(t_log* logger_servidorConsola,t_config* config_servidorConsola);
+    conexionMemoria(config_clienteMemoria);
+    conexionCPU(config_clienteCPU);
+    conexionFileSystem(config_clienteFileSystem);
+	servirAConsola(logger_servidorConsola,config_servidorConsola);
 }
 
 /* 

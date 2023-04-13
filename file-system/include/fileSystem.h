@@ -11,10 +11,11 @@
 #include "shared/include/utilsCliente.h" 
 #include "shared/include/utilsServidor.h" 
 #include "shared/include/configuraciones.h"
-#include "conexionMemoria.h"
-#include "servidorKernel.h"
+#include "../include/conexionMemoria.h"
+#include "../include/servidorKernel.h"
 
 t_log* loggerFileSys; 
 
-
 #endif
+
+

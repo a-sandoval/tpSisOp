@@ -19,6 +19,13 @@
 #include "../../shared/include/utilsCliente.h"
 #include"../../shared/include/manejoListas.h"
 
+/*
+int conexionMemoria(t_config* );
+int conexionCPU(t_config* );
+int conexionFileSystem(t_config* );
+int servirAConsola(t_log* ,t_config* );
+*/
+
 /* 
 Por ser cliente
 //void leer_consola(t_log*); ?

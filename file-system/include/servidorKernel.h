@@ -15,5 +15,5 @@
 t_log* logger; 
 
 void escucharAlKernel(); 
-char* obtenerDeConfiguracionComoServidor(char**);
+char* obtenerDeConfiguracionComoServidor(char**, char**);
 
