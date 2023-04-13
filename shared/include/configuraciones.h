@@ -10,6 +10,7 @@
 #include<string.h>
 #include<commons/log.h>
 #include <commons/config.h>
+#include "manejoListas.h"
 
 /**
  * @brief Código de operación utilizado para enviar al servidor para informarle que tipo de paquete se utiliza.
@@ -38,7 +39,5 @@ t_config* iniciarConfiguracion(char* ruta, t_log* logger);
  */
 t_log* iniciar_logger(char* nombreArchivo, char* nombreLogger);
 
-
-//char* obtenerStringDe(t_config* configuracion, char* key); Aylu: decidimos usar el config_get_String_value
 
 #endif /* CONFIGURACIONES_H_ */

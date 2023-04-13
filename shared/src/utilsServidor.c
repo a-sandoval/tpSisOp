@@ -144,26 +144,14 @@ char* recibir_clave(int socket_cliente){
 	return buffer;
 }
 
-bool esClaveValida(char* claveRecibida, char* clavesValidas[], int claves_size){
-
-	int i;
-	for(i =0; i<claves_size;i++){
-		if(!strcmp(claveRecibida, clavesValidas[i])){
-			return true;
-		}
-	}
-
-	return false;
-}
-
-int ejecutarServidor(int cliente_fd, t_log* logger, char* clavesValidas[], int claves_size){
+int ejecutarServidor(int cliente_fd, t_log* logger, Lista* clavesValidas){
 	t_list* lista;
 	while (1) {
 		int cod_op = recibir_operacion(cliente_fd);
 		switch (cod_op) {
 		case MENSAJE:
 			char* claveRecibida = recibir_clave(cliente_fd);
-			bool claveValida = esClaveValida(claveRecibida, clavesValidas, claves_size); 
+			bool claveValida = esClaveValida(claveRecibida, clavesValidas); 
 			
 			if(!claveValida){
 				log_error(logger, "Cliente no reconocido"); // quien sos flaco?

@@ -23,7 +23,7 @@ t_list* recibir_paquete(int);
 void recibir_mensaje(int);
 int recibir_operacion(int);
 int alistarServidor(t_log *logger, char *puerto);
-int ejecutarServidor(int cliente_fd, t_log* logger, char* clavesValidas[], int claves_size);
+int ejecutarServidor(int cliente_fd, t_log* logger, Lista* clavesValidas);
 char* recibir_clave(int socket_cliente);
 bool esClaveValida(char* claveRecibida, char* clavesValidas[], int claves_size);
 

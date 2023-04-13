@@ -9,13 +9,13 @@
 #include<string.h>
 #include<commons/log.h>
 #include <commons/config.h>
-#endif 
+
 
 
 typedef struct NodoIdentificador{
     char* info;
     struct NodoIdentificador* siguiente;
-    
+
 } Nodo;
 
 typedef struct Lista {
@@ -24,3 +24,8 @@ typedef struct Lista {
 
 void insertar(Lista*, char*); 
 int tamanio_lista(Lista*); 
+void borrarLista(Lista*); 
+bool esCLaveValida(Lista* lista, char* clave);
+
+
+#endif 

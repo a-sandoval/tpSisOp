@@ -7,8 +7,7 @@ void insertar(Lista* lista, char* clave) {
     nodo->info= clave;
     
     r = lista->cabeza; 
-    while(r != NULL) 
-    {
+    while(r != NULL){
         ant = r;
         r = r->siguiente;
     }
@@ -19,15 +18,35 @@ void insertar(Lista* lista, char* clave) {
         lista->cabeza = nodo; 
 }
 
-int tamanio_lista(Lista* lista)
-{
+int tamanio_lista(Lista* lista){
     Nodo *r;
     r = lista->cabeza;
     int tamanio=0; 
     
-    while(r != NULL)
-    {
+    while(r != NULL){
         tamanio++;   
         r = r->siguiente;
     }   
+}
+
+void borrarLista(Lista* lista){
+    Nodo* r;
+    r = lista->cabeza;
+    
+    while(r != NULL){
+        free(r); 
+    }   
+}
+
+
+bool esCLaveValida(Lista* lista, char* clave) {
+    Nodo *r;
+    r = lista->cabeza;
+    while(r != NULL && !strcmp(r->info, clave)){
+        r = r->siguiente;
+    }   
+    if (strcmp(r->info,clave)) {
+        return true; 
+    }
+    return false; 
 }
