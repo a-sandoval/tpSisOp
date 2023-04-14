@@ -8,7 +8,7 @@ int main(void) {
     t_config* config_fs = iniciarConfiguracion("filesys.config", logger); 
 
     int conexionAMemoria = conectarseAMemoria(config_fs); 
-
+  
     escucharAlKernel(config_fs); 
 
     log_info(logger,"Se han creado conexiones pertinentes"); // Luego comentar

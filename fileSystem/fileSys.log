@@ -14,3 +14,8 @@
 [ERROR] 14:02:09:412 file-system/(9944:9944): Error al generar archivo de config
 [INFO] 14:08:08:096 file-system/(10613:10613): Vamos bien por ahora
 [INFO] 14:08:08:098 file-system/(10613:10613): Servidor listo para recibir al cliente
+[INFO] 14:22:40:749 file-system/(12195:12195): Vamos bien por ahora
+[INFO] 14:22:40:752 file-system/(12195:12195): Servidor listo para recibir al cliente
+[INFO] 14:28:08:781 file-system/(12481:12481): conexion realizaDa
+[INFO] 14:28:08:783 file-system/(12481:12481): Vamos bien por ahora
+[INFO] 14:28:08:785 file-system/(12481:12481): Servidor listo para recibir al cliente
