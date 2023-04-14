@@ -15,12 +15,6 @@ void escucharAlKernel(t_config* config_fs) {
 
     int resultadoEjecucion = ejecutarServidor(kernel_fd, logger, listaClavesValidas);  
 
-    if(resultadoEjecucion == EXIT_FAILURE){
-		log_error(logger,"Finalizando servidor..."); 
-    	borrarLista(listaClavesValidas);
-	
-	}
-
     borrarLista(listaClavesValidas); 
 
 

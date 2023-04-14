@@ -11,7 +11,7 @@ int main(void) {
   
     escucharAlKernel(config_fs); 
 
-    close(conexionAMemoria); 
+    liberar_conexion(conexionAMemoria); 
 
     log_destroy(logger); 
 
@@ -23,6 +23,8 @@ int main(void) {
 void iterator(char *value) {
     free(value);
 }
+
+
 
 
 
