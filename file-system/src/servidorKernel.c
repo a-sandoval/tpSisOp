@@ -7,20 +7,22 @@ void escucharAlKernel() {
 
     obtenerDeConfiguracionComoServidor(&puertoEscucha, &claveValida); 
 
-    Lista* lista = NULL; 
-    insertar(lista,claveValida); 
+    Lista* listaClavesValidas = malloc(sizeof(Lista)); 
+    listaClavesValidas-> cabeza = NULL; 
+
+    insertar(listaClavesValidas,claveValida); 
 
     int kernel_fd = alistarServidor(logger, puertoEscucha);
 
-    int resultadoEjecucion = ejecutarServidor(kernel_fd, logger, lista);  
+    int resultadoEjecucion = ejecutarServidor(kernel_fd, logger, listaClavesValidas);  
 
     if(resultadoEjecucion == EXIT_FAILURE){
 		printf("Doy por finalizado el servidor");
-    	borrarLista(lista);
+    	borrarLista(listaClavesValidas);
 	
 	}
 
-    borrarLista(lista); 
+    borrarLista(listaClavesValidas); 
 
 
 }
@@ -28,9 +30,16 @@ void escucharAlKernel() {
 
 void obtenerDeConfiguracionComoServidor(char ** puertoEscucha, char** claveValida) {
 
+    t_config* configServer = iniciarConfiguracion("file-sys.config",logger);
+
+    char* puerto = config_get_string_value(configServer,"PUERTO_ESCUCHA"); 
+
+    *puertoEscucha=malloc(sizeof(strlen(puerto)+1));
+    
+    strcpy(*puertoEscucha, puerto); 
+
     logger = iniciar_logger("fileSysLog", "Kernel -> File System"); 
 
-    t_config* configServer = iniciarConfiguracion("file-sys.config",logger);
 
     *puertoEscucha = config_get_string_value(configServer,"PUERTO_ESCUCHA");
 

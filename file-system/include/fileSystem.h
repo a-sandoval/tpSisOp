@@ -14,10 +14,12 @@
 #include "../include/conexionMemoria.h"
 #include "../include/servidorKernel.h"
 
-#endif
-
 void iterator(char* value);
 t_log* logger;
+
+
+#endif
+
 
 
 
