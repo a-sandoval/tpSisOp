@@ -19,7 +19,6 @@
 #include<shared/include/utilsServidor.h>
 #include<shared/include/configuraciones.h>
 
-t_log* logger_sv;
 int servirAConsola(t_log*, t_config* );
 void iterator(char* value);
 void terminar_programa_sv(t_config* ,t_log*);
