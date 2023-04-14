@@ -33,9 +33,10 @@ void terminar_programa_sv(t_config* config_servidorConsola, t_log* logger_servid
 }
 
 void iterator(char* value) {
-	log_info(logger_sv,"%s", value);
+	log_info(logger,"%s", value);
 }
 
 void obtenerClavesValidas(t_config* config_servidorConsola,Lista* claves){
-	insertar(claves, config_get_string_value(config_servidorConsola, "CLAVE_KERNEL_CONSOLA"));
+	insertar(claves, config_get_string_value(config_servidorConsola, "CLAVE_CONSOLA_KERNEL_MODO_USUARIO"));
+	insertar(claves, config_get_string_value(config_servidorConsola, "CLAVE_CONSOLA_KERNEL_MODO_ADMIN"));
 }

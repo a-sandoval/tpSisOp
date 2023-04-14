@@ -19,7 +19,7 @@
 #include "../../shared/include/utilsCliente.h"
 #include"../../shared/include/manejoListas.h"
 
-t_log* logger_sv;
+t_log* logger;
 
 /*
 int conexionMemoria(t_config* );
