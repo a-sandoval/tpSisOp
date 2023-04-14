@@ -20,7 +20,7 @@ CPU_SRC := cpu/src/
 ARCHIVOS_CPU     := $(CPU_SRC)cpu.c	\
 				    $(CONFIG) $(UTILS_CLIENTE) $(UTILS_SERVIDOR) $(MANEJO_LISTAS)
 
-FILESYS_SRC := file-system/src/
+FILESYS_SRC := fileSystem/src/
 ARCHIVOS_FILESYS := $(FILESYS_SRC)fileSystem.c $(FILESYS_SRC)conexionMemoria.c $(FILESYS_SRC)servidorKernel.c \
 				    $(CONFIG) $(UTILS_CLIENTE) $(UTILS_SERVIDOR) $(MANEJO_LISTAS)
 
@@ -47,7 +47,7 @@ Cpu:
 
 Filesys:
 	@echo "Compilando File System... "
-	@$(CC) $(ARCHIVOS_FILESYS) -o file-system/filesys$(FILE_EXT) $(CFLAGS)
+	@$(CC) $(ARCHIVOS_FILESYS) -o fileSystem/filesys$(FILE_EXT) $(CFLAGS)
 
 Kernel:
 	@echo "Compilando Kernel... "

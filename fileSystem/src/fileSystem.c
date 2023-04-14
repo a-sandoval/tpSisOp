@@ -5,7 +5,7 @@ int main(void) {
 
     logger = iniciar_logger("fileSys.log","file-system");
 
-    t_config* config_fs = iniciarConfiguracion("/home/utnso/tp-2023-1c-toTheEnd/file-system/file-system.config", logger); 
+    t_config* config_fs = iniciarConfiguracion("filesys.config", logger); 
 
     escucharAlKernel(); 
 
