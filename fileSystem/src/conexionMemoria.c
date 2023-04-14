@@ -8,9 +8,15 @@ int conectarseAMemoria(t_config* config_fs) {
 ; 
    char* claveHandshake = config_get_string_value(config_fs,"CLAVE_FS_MEMORIA"); 
 
-   int conexionAMemoria = crear_conexion(ip, puertoConexionAMemoria); 
+   int conexionAMemoria = realizarConexion(ip, puertoConexionAMemoria, claveHandshake); 
 
-   handshake(claveHandshake,conexionAMemoria); 
+   if (conexionAMemoria == -1) {
+
+      log_error(logger,"No se pudo crear la conexion con la memoria");
+		
+		return EXIT_FAILURE; //abort o exit?
+
+   }
 
    return conexionAMemoria; 
 }

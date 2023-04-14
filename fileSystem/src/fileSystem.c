@@ -9,7 +9,7 @@ int main(void) {
 
     int conexionAMemoria = conectarseAMemoria(config_fs); 
   
-    escucharAlKernel(config_fs); 
+    //escucharAlKernel(config_fs); 
 
     log_info(logger,"Se han creado conexiones pertinentes"); // Luego comentar
 

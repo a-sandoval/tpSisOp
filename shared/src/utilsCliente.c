@@ -124,12 +124,11 @@ int realizarConexion(char*ip, char* puerto, char* claveHandshake){
 
 	/*Conexion con el servidor*/
 	conexion = crear_conexion(ip, puerto);
-	if(conexion == -1){
-		return -1;
+	if(conexion != -1){
+		handshake(claveHandshake,conexion);
 	}
 
 	/*Si el servidor no esta activa, no puede realizarlo*/
-	handshake(claveHandshake,conexion);
 
 	return conexion;
 }
