@@ -45,3 +45,8 @@
 [INFO] 18:49:21:726 file-system/(9266:9266): Se conecto un cliente!
 [INFO] 18:49:21:732 file-system/(9266:9266): Clave valida, autorizo informacion
 [ERROR] 18:49:23:719 file-system/(9266:9266): El cliente se desconecto
+[INFO] 19:56:20:690 file-system/(17590:17590): Servidor listo para recibir al cliente
+[INFO] 19:57:26:191 file-system/(17590:17590): Se conecto un cliente!
+[INFO] 19:57:26:331 file-system/(17590:17590): Clave valida, autorizo informacion
+[ERROR] 19:57:26:352 file-system/(17590:17590): El cliente se desconecto
+[INFO] 19:59:50:987 file-system/(18193:18193): Servidor listo para recibir al cliente

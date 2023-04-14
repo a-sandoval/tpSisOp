@@ -208,3 +208,13 @@
 [INFO] 17:30:35:736 Memoria/(13490:13490): Clave valida, autorizo informacion
 [ERROR] 17:30:35:741 Memoria/(13490:13490): El cliente se desconecto
 [INFO] 17:30:35:741 Memoria/(13490:13490): Terminando servidor
+[INFO] 19:55:08:011 Memoria/(17361:17361): Servidor listo para recibir al cliente
+[INFO] 19:56:20:546 Memoria/(17361:17361): Se conecto un cliente!
+[INFO] 19:56:20:563 Memoria/(17361:17361): Clave valida, autorizo informacion
+[ERROR] 19:57:26:364 Memoria/(17361:17361): El cliente se desconecto
+[INFO] 19:57:26:368 Memoria/(17361:17361): Terminando servidor
+[INFO] 19:59:31:492 Memoria/(18083:18083): Servidor listo para recibir al cliente
+[INFO] 19:59:50:980 Memoria/(18083:18083): Se conecto un cliente!
+[INFO] 19:59:50:994 Memoria/(18083:18083): Clave valida, autorizo informacion
+[ERROR] 20:00:21:176 Memoria/(18083:18083): El cliente se desconecto
+[INFO] 20:00:21:389 Memoria/(18083:18083): Terminando servidor

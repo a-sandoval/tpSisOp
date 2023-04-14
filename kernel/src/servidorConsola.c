@@ -16,7 +16,6 @@ int servirAConsola(t_log* logger_servidorConsola, t_config* config_servidorConso
 	int rdoEjecucion = ejecutarServidor(cliente_fd,logger_servidorConsola, clavesValidas);
 
 	log_info(logger_servidorConsola,"Terminando servidor");
-	log_destroy(logger_servidorConsola);
 
 	borrarLista(clavesValidas);
 

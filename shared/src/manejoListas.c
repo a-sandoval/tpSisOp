@@ -60,16 +60,19 @@ void borrarLista(Lista* lista){
 /*ORIGINAL 
 */
 void borrarLista(Lista* lista){
-    Nodo* r; 
-    r = lista->cabeza;
+    Nodo* aux; 
+    Nodo* anterior; 
+    aux = lista->cabeza;
+    anterior=aux; 
     
-    while(r != NULL){
-        free(r->info);
-        free(r); 
-        r=r->siguiente; 
-    }
+    while(aux!=NULL) {
 
-    
+        aux = aux->siguiente; 
+        free(anterior->info); 
+        free(anterior); 
+        anterior=aux; 
+
+     }
     free(lista); 
 }
 

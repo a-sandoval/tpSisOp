@@ -7,3 +7,26 @@
 [INFO] 18:53:28:241 Consola-Kernel/(13447:13447): Me llegaron los siguientes valores:
 
 [INFO] 19:05:22:807 Consola-Kernel/(13788:13788): Servidor listo para recibir al cliente
+[INFO] 19:10:20:175 Consola-Kernel/(13788:13788): Se conecto un cliente!
+[INFO] 19:10:20:176 Consola-Kernel/(13788:13788): Clave valida, autorizo informacion
+[INFO] 19:10:20:179 Consola-Kernel/(13788:13788): Me llegaron los siguientes valores:
+
+[INFO] 19:11:21:907 Consola-Kernel/(14409:14409): Servidor listo para recibir al cliente
+[INFO] 19:11:25:368 Consola-Kernel/(14409:14409): Se conecto un cliente!
+[ERROR] 19:11:25:369 Consola-Kernel/(14409:14409): Cliente no reconocido
+[INFO] 19:11:25:369 Consola-Kernel/(14409:14409): Terminando servidor
+[INFO] 19:14:58:299 Consola-Kernel/(14922:14922): Servidor listo para recibir al cliente
+[INFO] 19:15:43:839 Consola-Kernel/(14922:14922): Se conecto un cliente!
+[INFO] 19:15:43:842 Consola-Kernel/(14922:14922): Clave valida, autorizo informacion
+[INFO] 19:15:43:847 Consola-Kernel/(14922:14922): Me llegaron los siguientes valores:
+
+[INFO] 19:15:54:388 Consola-Kernel/(15169:15169): Servidor listo para recibir al cliente
+[INFO] 19:16:07:525 Consola-Kernel/(15169:15169): Se conecto un cliente!
+[ERROR] 19:16:07:532 Consola-Kernel/(15169:15169): Cliente no reconocido
+[INFO] 19:16:07:532 Consola-Kernel/(15169:15169): Terminando servidor
+[INFO] 19:17:17:946 Consola-Kernel/(15350:15350): Servidor listo para recibir al cliente
+[INFO] 19:17:23:015 Consola-Kernel/(15350:15350): Se conecto un cliente!
+[ERROR] 19:17:23:017 Consola-Kernel/(15350:15350): Cliente no reconocido
+[INFO] 19:17:23:017 Consola-Kernel/(15350:15350): Terminando servidor
+[INFO] 19:41:06:033 Consola-Kernel/(16500:16500): Servidor listo para recibir al cliente
+[INFO] 19:57:26:002 Consola-Kernel/(17816:17816): Servidor listo para recibir al cliente

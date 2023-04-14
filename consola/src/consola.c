@@ -16,7 +16,7 @@ int main(int, char *archivos[]) {
 
     conexion = crear_conexion(ip, puerto);
 
-    if (conexion == -1) { 
+    if (!(conexion + 1)) { 
         log_error(logger, "No se pudo conectar a la Kernel por la ip %s y puerto %s", ip, puerto);
         log_destroy(logger);
         config_destroy(config);
@@ -40,7 +40,7 @@ int main(int, char *archivos[]) {
     //string_array_new y string_replace dan leaks
 
     // leer el archivo y enviar paquetes del codigo
-
+    enviar_mensaje(archivos[3], conexion);
     char lineaCodigo[1024];
     while(!feof(codigo)) {
         fgets(lineaCodigo, sizeof(lineaCodigo), codigo);
