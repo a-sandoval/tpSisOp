@@ -16,8 +16,8 @@ int main(){
     t_config *config_servidorConsola = iniciarConfiguracion("kernel.config", logger_servidorConsola);
 
     conexionMemoria(config_clienteMemoria);
-    conexionCPU(config_clienteCPU);
-    conexionFileSystem(config_clienteFileSystem);
-    servirAConsola(logger_servidorConsola, config_servidorConsola);
+    //conexionCPU(config_clienteCPU);
+    //conexionFileSystem(config_clienteFileSystem);
+    //servirAConsola(logger_servidorConsola, config_servidorConsola);
 
 }
