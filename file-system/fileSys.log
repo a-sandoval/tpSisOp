@@ -1,6 +1,4 @@
-[INFO] 12:41:22:343 file-system/(4683:4683): Hola
-[ERROR] 12:41:22:344 file-system/(4683:4683): Error al generar archivo de config
-[INFO] 12:41:42:720 file-system/(4759:4759): Hola
-[ERROR] 12:41:42:723 file-system/(4759:4759): Error al generar archivo de config
-[INFO] 12:42:40:226 file-system/(4918:4918): Hola
-[ERROR] 12:42:40:228 file-system/(4918:4918): Error al generar archivo de config
+[ERROR] 13:00:40:903 file-system/(6287:6287): Error al generar archivo de config
+[ERROR] 13:01:19:277 file-system/(6398:6398): Error al generar archivo de config
+[ERROR] 13:03:41:947 file-system/(6849:6849): Error al generar archivo de config
+[ERROR] 13:08:13:208 file-system/(7012:7012): Error al generar archivo de config
