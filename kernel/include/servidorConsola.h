@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <commons/log.h>
-#include "kernel/include/kernel.h"
+//#include "kernel/include/kernel.h"
 #include<commons/string.h>
 #include<commons/config.h>
 #include<readline/readline.h>
@@ -19,6 +19,7 @@
 #include<shared/include/utilsServidor.h>
 #include<shared/include/configuraciones.h>
 
+extern t_log *logger;
 int servirAConsola(t_log*, t_config* );
 void iterator(char* value);
 void terminar_programa_sv(t_config* ,t_log*);

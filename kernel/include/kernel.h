@@ -3,11 +3,11 @@
 #define KERNEL_H_
 
 // Generales
-#include<commons/string.h>
-#include<readline/readline.h>
-#include<commons/log.h>
-#include<commons/collections/list.h>
-#include<commons/config.h>
+#include <commons/string.h>
+#include <readline/readline.h>
+#include <commons/log.h>
+#include <commons/collections/list.h>
+#include <commons/config.h>
 // Conexiones propias del kernel
 #include "../include/conexionMemoria.h"
 #include "../include/conexionCPU.h"
@@ -17,13 +17,13 @@
 #include "../../shared/include/configuraciones.h"
 #include "../../shared/include/utilsServidor.h"
 #include "../../shared/include/utilsCliente.h"
-#include"../../shared/include/manejoListas.h"
+#include "../../shared/include/manejoListas.h"
 
-extern t_log* logger;
-extern t_log *logger_clienteMemoria;
-extern t_log *logger_clienteCPU;
-extern t_log *logger_clienteFileSystem;
-extern t_log *logger_servidorConsola;
+t_log *logger;
+t_log *logger_clienteMemoria;
+t_log *logger_clienteCPU;
+t_log *logger_clienteFileSystem;
+t_log *logger_servidorConsola;
 
 /*
 int conexionMemoria(t_config* );
@@ -32,7 +32,7 @@ int conexionFileSystem(t_config* );
 int servirAConsola(t_log* ,t_config* );
 */
 
-/* 
+/*
 Por ser cliente
 //void leer_consola(t_log*); ?
 void terminar_programa(char* , t_log*, t_config*); //Useless ahora mismo

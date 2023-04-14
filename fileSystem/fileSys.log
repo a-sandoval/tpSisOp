@@ -19,3 +19,8 @@
 [INFO] 14:28:08:781 file-system/(12481:12481): conexion realizaDa
 [INFO] 14:28:08:783 file-system/(12481:12481): Vamos bien por ahora
 [INFO] 14:28:08:785 file-system/(12481:12481): Servidor listo para recibir al cliente
+[INFO] 15:57:51:861 file-system/(7805:7805): Vamos bien por ahora
+[INFO] 15:57:51:864 file-system/(7805:7805): Servidor listo para recibir al cliente
+[INFO] 16:01:57:265 file-system/(7805:7805): Se conecto un cliente!
+[INFO] 16:01:57:273 file-system/(7805:7805): Me llegaron los siguientes valores:
+
