@@ -19,7 +19,11 @@
 #include "../../shared/include/utilsCliente.h"
 #include"../../shared/include/manejoListas.h"
 
-t_log* logger;
+extern t_log* logger;
+extern t_log *logger_clienteMemoria;
+extern t_log *logger_clienteCPU;
+extern t_log *logger_clienteFileSystem;
+extern t_log *logger_servidorConsola;
 
 /*
 int conexionMemoria(t_config* );
