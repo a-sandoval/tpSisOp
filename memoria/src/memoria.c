@@ -18,14 +18,13 @@ int main(){
 
 	int rdoEjecucion = ejecutarServidor(cliente_fd,logger, clavesValidas);
 
-	if(rdoEjecucion == EXIT_FAILURE){
-		printf("Terminando servidor");
-		terminar_programa(memoria_config,logger);
-		borrarLista(clavesValidas);
-		return 0; 
-	}
-
-	terminar_programa(memoria_config,logger);
+	//if(rdoEjecucion == EXIT_FAILURE){
+	//terminar_programa(memoria_config,logger);
+	
+	config_destroy(memoria_config); 
+	log_info(logger,"Terminando servidor");
+	log_destroy(logger);
+	printf("tuki");
 	borrarLista(clavesValidas);
 
 	return 0;
@@ -40,7 +39,6 @@ void terminar_programa(t_config* memoriaconfig, t_log* logger){
 	log_destroy(logger);
 	config_destroy(memoriaconfig);
 }
-
 
 void obtenerClavesValidas(t_config* memoria_config,Lista* claves){
 	

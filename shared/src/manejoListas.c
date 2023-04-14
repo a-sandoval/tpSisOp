@@ -39,29 +39,6 @@ void insertar(Lista* lista, char* clave) {
 }
 
 /*
-int tamanio_lista(Lista* lista){
-    Nodo *r;
-    r = lista->cabeza;
-    int tamanio=0; 
-    
-    while(r != NULL){
-        tamanio++;   
-        r = r->siguiente;
-    }   
-    return tamanio;
-}
-*/
-
-/*typedef struct NodoIdentificador{
-    char* info;
-    struct NodoIdentificador* siguiente;
-
-} Nodo;
-
-typedef struct Lista {
-    Nodo* cabeza;
-} Lista;*/
-
 void borrarLista(Lista* lista){
     Nodo* ant,*act,*sig;
     ant = lista->cabeza;
@@ -76,39 +53,28 @@ void borrarLista(Lista* lista){
         ant=sig;
     }
 
-    //free(lista->cabeza); //Me parece que ya la libera
-    free(lista); //Lo agregue yo: Brisa  
-}
+    //free(lista->cabeza); 
+    free(lista); 
+}*/
 
-/* ORIGINAL
+/*ORIGINAL 
+*/
 void borrarLista(Lista* lista){
-    Nodo* r,*aux;
+    Nodo* r; 
     r = lista->cabeza;
     
     while(r != NULL){
         free(r->info);
+        free(r); 
         r=r->siguiente; 
     }
 
-    //free(lista->cabeza); //Me parece que ya la libera
-    free(lista); //Lo agregue yo: Brisa  
+    
+    free(lista); 
 }
-*/
 
 
-/*bool esClaveValida(Lista* lista, char* clave){
-    Nodo *r;
-    r = lista->cabeza;
-    while(r != NULL && !strcmp(r->info, clave)){//ANtes estaba un not !strcmp
-        r = r->siguiente;
-    }   
-    if (strcmp(r->info,clave)) {
-        return true; 
-    }
-    return false; 
-}*/
 
-/* VERSION BRISA, PORQUE NO ME FUNCIONA LA ORIGINAL*/
 bool esClaveValida(Lista* lista, char* clave){
     Nodo *r;
     r = lista->cabeza;

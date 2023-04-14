@@ -155,3 +155,56 @@
 [ERROR] 19:43:44:749 Memoria/(2817:2817): El cliente se desconecto
 [INFO] 12:25:05:403 Memoria/(3726:3726): Servidor listo para recibir al cliente
 [INFO] 16:18:59:863 Memoria/(10351:10351): Servidor listo para recibir al cliente
+[INFO] 16:53:37:844 Memoria/(10351:10351): Se conecto un cliente!
+[INFO] 16:53:37:849 Memoria/(10351:10351): Clave valida, autorizo informacion
+[ERROR] 16:53:37:852 Memoria/(10351:10351): El cliente se desconecto
+[INFO] 16:54:39:499 Memoria/(10896:10896): Servidor listo para recibir al cliente
+[INFO] 16:54:43:167 Memoria/(10896:10896): Se conecto un cliente!
+[INFO] 16:54:43:170 Memoria/(10896:10896): Clave valida, autorizo informacion
+[ERROR] 16:54:43:171 Memoria/(10896:10896): El cliente se desconecto
+[INFO] 17:14:04:610 Memoria/(11373:11373): Servidor listo para recibir al cliente
+[INFO] 17:14:07:630 Memoria/(11373:11373): Se conecto un cliente!
+[INFO] 17:14:07:635 Memoria/(11373:11373): Clave valida, autorizo informacion
+[ERROR] 17:14:07:640 Memoria/(11373:11373): El cliente se desconecto
+[INFO] 17:14:07:640 Memoria/(11373:11373): Terminando servidor
+[INFO] 17:15:04:425 Memoria/(11632:11632): Servidor listo para recibir al cliente
+[INFO] 17:15:06:099 Memoria/(11632:11632): Se conecto un cliente!
+[INFO] 17:15:06:102 Memoria/(11632:11632): Clave valida, autorizo informacion
+[ERROR] 17:15:06:105 Memoria/(11632:11632): El cliente se desconecto
+[INFO] 17:16:23:703 Memoria/(11782:11782): Servidor listo para recibir al cliente
+[INFO] 17:16:26:280 Memoria/(11782:11782): Se conecto un cliente!
+[INFO] 17:16:26:283 Memoria/(11782:11782): Clave valida, autorizo informacion
+[ERROR] 17:16:26:286 Memoria/(11782:11782): El cliente se desconecto
+[INFO] 17:17:30:856 Memoria/(11968:11968): Servidor listo para recibir al cliente
+[INFO] 17:17:34:221 Memoria/(11968:11968): Se conecto un cliente!
+[INFO] 17:17:34:223 Memoria/(11968:11968): Clave valida, autorizo informacion
+[ERROR] 17:17:34:225 Memoria/(11968:11968): El cliente se desconecto
+[INFO] 17:17:34:225 Memoria/(11968:11968): Terminando servidor
+[INFO] 17:21:36:487 Memoria/(12311:12311): Servidor listo para recibir al cliente
+[INFO] 17:21:41:046 Memoria/(12311:12311): Se conecto un cliente!
+[INFO] 17:21:41:048 Memoria/(12311:12311): Clave valida, autorizo informacion
+[ERROR] 17:21:41:053 Memoria/(12311:12311): El cliente se desconecto
+[INFO] 17:22:19:114 Memoria/(12436:12436): Servidor listo para recibir al cliente
+[INFO] 17:22:23:563 Memoria/(12436:12436): Se conecto un cliente!
+[INFO] 17:22:23:578 Memoria/(12436:12436): Clave valida, autorizo informacion
+[ERROR] 17:22:23:581 Memoria/(12436:12436): El cliente se desconecto
+[INFO] 17:22:54:561 Memoria/(12677:12677): Servidor listo para recibir al cliente
+[INFO] 17:23:00:054 Memoria/(12677:12677): Se conecto un cliente!
+[INFO] 17:23:00:058 Memoria/(12677:12677): Clave valida, autorizo informacion
+[ERROR] 17:23:00:060 Memoria/(12677:12677): El cliente se desconecto
+[INFO] 17:23:00:060 Memoria/(12677:12677): Terminando servidor
+[INFO] 17:23:18:935 Memoria/(12815:12815): Servidor listo para recibir al cliente
+[INFO] 17:23:21:587 Memoria/(12815:12815): Se conecto un cliente!
+[INFO] 17:23:21:596 Memoria/(12815:12815): Clave valida, autorizo informacion
+[ERROR] 17:23:21:599 Memoria/(12815:12815): El cliente se desconecto
+[INFO] 17:23:21:599 Memoria/(12815:12815): Terminando servidor
+[INFO] 17:23:29:610 Memoria/(12906:12906): Servidor listo para recibir al cliente
+[INFO] 17:23:32:020 Memoria/(12906:12906): Se conecto un cliente!
+[INFO] 17:23:32:022 Memoria/(12906:12906): Clave valida, autorizo informacion
+[ERROR] 17:23:32:025 Memoria/(12906:12906): El cliente se desconecto
+[INFO] 17:23:32:025 Memoria/(12906:12906): Terminando servidor
+[INFO] 17:30:25:512 Memoria/(13490:13490): Servidor listo para recibir al cliente
+[INFO] 17:30:35:735 Memoria/(13490:13490): Se conecto un cliente!
+[INFO] 17:30:35:736 Memoria/(13490:13490): Clave valida, autorizo informacion
+[ERROR] 17:30:35:741 Memoria/(13490:13490): El cliente se desconecto
+[INFO] 17:30:35:741 Memoria/(13490:13490): Terminando servidor
