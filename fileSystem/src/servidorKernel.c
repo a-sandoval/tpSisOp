@@ -1,12 +1,11 @@
 #include "fileSystem/include/servidorKernel.h"
 
-void escucharAlKernel() {
+void escucharAlKernel(t_config* config_fs) {
 
-    char* puertoEscucha;
-    char* claveValida; 
+    char* puertoEscucha= config_get_string_value(config_fs,"PUERTO_ESCUCHA"); 
+    char* claveValida = config_get_string_value(config_fs,"CLAVE_FS_KERNEL_VALIDA");
 
-    obtenerDeConfiguracionComoServidor(&puertoEscucha, &claveValida); 
-
+    log_info(logger, "Vamos bien por ahora"); 
     Lista* listaClavesValidas = malloc(sizeof(Lista)); 
     listaClavesValidas-> cabeza = NULL; 
 
@@ -27,24 +26,3 @@ void escucharAlKernel() {
 
 }
 
-
-void obtenerDeConfiguracionComoServidor(char ** puertoEscucha, char** claveValida) {
-
-    t_config* configServer = iniciarConfiguracion("file-sys.config",logger);
-
-    char* puerto = config_get_string_value(configServer,"PUERTO_ESCUCHA"); 
-
-    *puertoEscucha=malloc(sizeof(strlen(puerto)+1));
-    
-    strcpy(*puertoEscucha, puerto); 
-
-    logger = iniciar_logger("fileSysLog", "Kernel -> File System"); 
-
-
-    *puertoEscucha = config_get_string_value(configServer,"PUERTO_ESCUCHA");
-
-    *claveValida = config_get_string_value(configServer,"CLAVE_FS_KERNEL_VALIDA");
-
-    config_destroy(configServer); 
-
-}

@@ -1,13 +1,12 @@
 #include "fileSystem/include/conexionMemoria.h"
 
 
-int conectarseAMemoria() {
+int conectarseAMemoria(t_config* config_fs) {
 
-   char* puertoConexionAMemoria; 
-   char* ip; 
-   char* claveHandshake; 
-
-   obtenerDeConfiguracionComoCliente(&puertoConexionAMemoria,&ip,&claveHandshake); 
+   char* puertoConexionAMemoria= config_get_string_value(config_fs,"PUERTO_MEMORIA"); 
+   char* ip= config_get_string_value(config_fs,"IP_MEMORIA"); 
+; 
+   char* claveHandshake = config_get_string_value(config_fs,"CLAVE_FS_MEMORIA"); 
 
    int conexionAMemoria = crear_conexion(ip, puertoConexionAMemoria); 
 
@@ -17,21 +16,3 @@ int conectarseAMemoria() {
 }
 
 
-void obtenerDeConfiguracionComoCliente(char** puerto, char** ip, char** claveHandshake) {
-
-    logger = iniciar_logger("fileSys.log", "FileSys->Memoria"); 
-
-    t_config* configFileSys = iniciarConfiguracion("file-system.config", logger); 
-
-    *puerto = config_get_string_value(configFileSys,"PUERTO_MEMORIA");
-
-    *ip = config_get_string_value(configFileSys,"IP_MEMORIA"); 
-
-    *claveHandshake = config_get_string_value(configFileSys,"CLAVE_FS_MEMORIA"); 
-
-    config_destroy(configFileSys); 
-
-    log_destroy(logger); 
-
-    
-}

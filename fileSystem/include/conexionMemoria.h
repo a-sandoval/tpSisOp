@@ -13,9 +13,8 @@
 
 extern t_log *logger;
 
-int conectarseAMemoria(); 
+int conectarseAMemoria(t_config*); 
 
-void obtenerDeConfiguracionComoCliente(char** puerto, char** ip, char** claveHandshake); 
 
 
 #endif

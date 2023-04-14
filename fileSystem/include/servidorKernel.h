@@ -14,6 +14,5 @@
 
 extern t_log* logger; 
 
-void escucharAlKernel(); 
-void obtenerDeConfiguracionComoServidor(char**, char**);
+void escucharAlKernel(t_config*); 
 
