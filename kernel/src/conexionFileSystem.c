@@ -2,23 +2,13 @@
 #include "kernel/include/conexionFileSystem.h"
 
 int conexionFileSystem(t_config* config_clienteFileSystem){
-   char* puertoConexionAFileSystem; 
-   char* ip; 
-   char* claveHandshake; 
-   obtenerDeConfiguracionComoClienteFS(config_clienteFileSystem, &puertoConexionAFileSystem,&ip,&claveHandshake);    
-   int conexionAFileSystem = crear_conexion(ip, puertoConexionAFileSystem); 
+    char* puerto = config_get_string_value(config_clienteFileSystem,"PUERTO_FILESYSTEM");
+    char* ip = config_get_string_value(config_clienteFileSystem,"IP_FILESYSTEM"); 
+    char* claveHandshake = config_get_string_value(config_clienteFileSystem,"CLAVE_KERNEL_FILESYSTEM"); 
+   
+   int conexionAFileSystem = crear_conexion(ip, puerto); 
    handshake(claveHandshake,conexionAFileSystem); 
+
+   
    return conexionAFileSystem; 
-}
-
-void obtenerDeConfiguracionComoClienteFS(t_config* config_clienteFileSystem, char** puerto, char** ip, char** claveHandshake) {
-    *puerto = config_get_string_value(config_clienteFileSystem,"PUERTO_FILESYSTEM");
-    *ip = config_get_string_value(config_clienteFileSystem,"IP_FILESYSTEM"); 
-    *claveHandshake = config_get_string_value(config_clienteFileSystem,"CLAVE_KERNEL_FILESYSTEM"); 
-    config_destroy(config_clienteFileSystem); 
-}
-
-void terminar_programaFS(int conexion, t_log* logger){
-	log_destroy(logger);
-	liberar_conexion(conexion);
 }

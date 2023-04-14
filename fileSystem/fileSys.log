@@ -36,3 +36,12 @@
 [INFO] 17:23:21:597 file-system/(12837:12837): Se han creado conexiones pertinentes
 [INFO] 17:23:32:024 file-system/(12937:12937): Se han creado conexiones pertinentes
 [INFO] 17:30:35:739 file-system/(13532:13532): Se han creado conexiones pertinentes
+[ERROR] 18:31:00:797 file-system/(9266:9266): No se pudo crear la conexion con la memoria
+[INFO] 18:31:00:801 file-system/(9266:9266): Servidor listo para recibir al cliente
+[ERROR] 18:31:22:872 file-system/(9341:9341): No se pudo crear la conexion con la memoria
+[INFO] 18:31:23:070 file-system/(9341:9341): Servidor listo para recibir al cliente
+[ERROR] 18:33:07:680 file-system/(9549:9549): No se pudo crear la conexion con la memoria
+[INFO] 18:33:08:087 file-system/(9549:9549): Servidor listo para recibir al cliente
+[INFO] 18:49:21:726 file-system/(9266:9266): Se conecto un cliente!
+[INFO] 18:49:21:732 file-system/(9266:9266): Clave valida, autorizo informacion
+[ERROR] 18:49:23:719 file-system/(9266:9266): El cliente se desconecto

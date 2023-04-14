@@ -8,6 +8,5 @@
 
 extern t_log *logger_clienteCPU;
 int conexionCPU(t_config *);
-void terminar_programaCPU(int, t_log *);
-void obtenerDeConfiguracionComoClienteCPU(t_config *, char **, char **, char **);
+
 #endif /* CONEXION_CPU_H */

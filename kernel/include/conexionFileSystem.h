@@ -7,7 +7,6 @@
 
 extern t_log *logger_clienteFileSystem;
 int conexionFileSystem(t_config*);
-void obtenerDeConfiguracionComoClienteFS(t_config* ,char** , char** , char** ); 
-void terminar_programaFS(int , t_log* );
+
 
 #endif /* CONEXION_FILESYSTEM_H */

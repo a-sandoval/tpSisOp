@@ -20,10 +20,6 @@
 #include "../../shared/include/manejoListas.h"
 
 t_log *logger;
-t_log *logger_clienteMemoria;
-t_log *logger_clienteCPU;
-t_log *logger_clienteFileSystem;
-t_log *logger_servidorConsola;
 
 /*
 int conexionMemoria(t_config* );
@@ -37,5 +33,9 @@ Por ser cliente
 //void leer_consola(t_log*); ?
 void terminar_programa(char* , t_log*, t_config*); //Useless ahora mismo
 */
+
+
+
+void terminar_programa(int, t_log*, t_config*); 
 
 #endif

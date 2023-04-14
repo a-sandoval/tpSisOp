@@ -24,7 +24,7 @@ int main(){
 	config_destroy(memoria_config); 
 	log_info(logger,"Terminando servidor");
 	log_destroy(logger);
-	printf("tuki");
+	//printf("tuki");
 	borrarLista(clavesValidas);
 
 	return 0;
