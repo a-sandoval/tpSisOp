@@ -4,7 +4,6 @@
 
 // Generales
 #include <commons/string.h>
-#include <readline/readline.h>
 #include <commons/log.h>
 #include <commons/collections/list.h>
 #include <commons/config.h>

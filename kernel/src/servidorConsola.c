@@ -13,7 +13,8 @@ int servirAConsola(t_log* logger_servidorConsola, t_config* config_servidorConso
 	//inicio servidor y queda a la espera de clientes
 	int cliente_fd = alistarServidor(logger_servidorConsola, puertoDeEscucha);
 
-	int rdoEjecucion = ejecutarServidor(cliente_fd,logger_servidorConsola, clavesValidas);
+	//int rdoEjecucion = 
+	ejecutarServidor(cliente_fd,logger_servidorConsola, clavesValidas);
 
 	log_info(logger_servidorConsola,"Terminando servidor");
 
@@ -22,8 +23,10 @@ int servirAConsola(t_log* logger_servidorConsola, t_config* config_servidorConso
 	return 0;
 }
 
-void iterator(char* value) {
-	log_info(logger,"%s", value);
+void iterator(char *value) {
+    t_log *logger_servidorConsolaTemp = iniciar_logger("KERNELservidor.log", "Consola-Kernel");
+    log_info(logger_servidorConsolaTemp, value);
+    log_destroy(logger_servidorConsolaTemp);
 }
 
 void obtenerClavesValidas(t_config* config_servidorConsola,Lista* claves){

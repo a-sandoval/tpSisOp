@@ -1,10 +1,10 @@
-#include "../include/memoria.h"
+#include "memoria/include/memoria.h"
 
 
 
 int main(){
 
-    t_config* memoria_config;
+	t_config* memoria_config;
     logger = iniciar_logger("memoria.log", "Memoria");
 	memoria_config = iniciarConfiguracion("memoria.config", logger);
 
@@ -16,7 +16,8 @@ int main(){
 	//inicio servidor y queda a la espera de clientes
 	int cliente_fd = alistarServidor(logger, config_get_string_value(memoria_config,"PUERTO_ESCUCHA"));
 
-	int rdoEjecucion = ejecutarServidor(cliente_fd,logger, clavesValidas);
+	//int rdoEjecucion = 
+	ejecutarServidor(cliente_fd,logger, clavesValidas);
 
 	//if(rdoEjecucion == EXIT_FAILURE){
 	//terminar_programa(memoria_config,logger);
@@ -27,10 +28,30 @@ int main(){
 	//printf("tuki");
 	borrarLista(clavesValidas);
 
+	/* 
+	
+	█▄▄ █░░ █▀█ █▀█ █░█ █▀▀   █▀ █▀█ █▀█ █▀█ █▀█ █▀▀ █▀ ▄▀█   ▀ █▀█
+	█▄█ █▄▄ █▄█ ▀▀█ █▄█ ██▄   ▄█ █▄█ █▀▄ █▀▀ █▀▄ ██▄ ▄█ █▀█   ▄ █▄█
+
+	pthread_t hilo[3];
+	for(int i = 0; i < 3; i++) {
+		pthread_create(&hilo[i], NULL, procesoPrincipal, string_from_format("Hilo: %d", i+1));
+		usleep(1000);
+	}
+		pthread_join(hilo[0], NULL);
+		pthread_join(hilo[1], NULL);
+		pthread_join(hilo[2], NULL);
+	*/
 	return 0;
     
 }
+/*
+void *procesoPrincipal(void *thread_name) {
 
+	return NULL;
+
+}
+*/
 void iterator(char* value) {
 	log_info(logger,"%s", value);
 }

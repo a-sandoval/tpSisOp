@@ -16,15 +16,19 @@ int main(){
     t_config *config_servidorConsola = iniciarConfiguracion("kernel.config", logger_servidorConsola);
 
     int conexionAMemoria = conexionMemoria(config_clienteMemoria);
+    if(!(conexionAMemoria + 1)) log_error(logger_clienteMemoria, "No se pudo conectar al servidor.");
     terminar_programa(conexionAMemoria, logger_clienteMemoria, config_clienteMemoria);
 
     int conexionACPU = conexionCPU(config_clienteCPU);
+    if(!(conexionACPU + 1)) log_error(logger_clienteCPU, "No se pudo conectar al servidor.");
     terminar_programa(conexionACPU, logger_clienteCPU, config_clienteCPU);
 
     int conexionAFS = conexionFileSystem(config_clienteFileSystem);
+    if(!(conexionAFS + 1)) log_error(logger_clienteFileSystem, "No se pudo conectar al servidor.");
     terminar_programa(conexionAFS, logger_clienteFileSystem, config_clienteFileSystem);
 
-    int servidorDeConsola = servirAConsola(logger_servidorConsola, config_servidorConsola);
+    //int servidorDeConsola = 
+    servirAConsola(logger_servidorConsola, config_servidorConsola);
     log_destroy(logger_servidorConsola);
     config_destroy(config_servidorConsola);
 

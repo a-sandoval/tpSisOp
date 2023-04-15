@@ -13,7 +13,8 @@ void escucharAlKernel(t_config* config_fs) {
 
     int kernel_fd = alistarServidor(logger, puertoEscucha);
 
-    int resultadoEjecucion = ejecutarServidor(kernel_fd, logger, listaClavesValidas);  
+    //int resultadoEjecucion = 
+    ejecutarServidor(kernel_fd, logger, listaClavesValidas);  
 
     borrarLista(listaClavesValidas); 
 

@@ -131,7 +131,7 @@ int ejecutarServidor(int cliente_fd, t_log* logger, Lista* clavesValidas){
 			break;
 		case PAQUETE:
 			lista = recibir_paquete(cliente_fd);
-			log_info(logger, "Me llegaron los siguientes valores:\n"); 
+			log_info(logger, "Me llegaron los siguientes valores:"); 
 			list_iterate(lista, (void*) iterator); //NO ANDA EL ITERATOR SIN EL LOGGER VARIABLE GLOBAL
 			list_destroy_and_destroy_elements(lista, (void*)element_destroyer);
 			break;
@@ -145,7 +145,7 @@ int ejecutarServidor(int cliente_fd, t_log* logger, Lista* clavesValidas){
 	}
 }
 
-void element_destroyer(char*palabra){
+void element_destroyer(char *palabra){
 	free(palabra);
 }
 /* Llamado a la funcion alistarServidor

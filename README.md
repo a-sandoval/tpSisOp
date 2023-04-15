@@ -52,28 +52,28 @@ Se van a utilizar 7 claves distintas para comunicar a los distintos módulos dur
 
 - Cada módulo debe tener su archivo de configuración respectivo (ver consigna para formato).
     - [X] Consola
-    - [ ] CPU
-    - [ ] File System
-    - [ ] Kernel
-    - [ ] Memoria
+    - [X] CPU
+    - [X] File System
+    - [X] Kernel
+    - [X] Memoria
 - Cada módulo debe tener su conjunto de funciones de cliente y/ó servidor para conectarse con otros módulos.
     - [X] Consola
-    - [ ] CPU
-    - [ ] File System
-    - [ ] Kernel
-    - [ ] Memoria
+    - [X] CPU
+    - [X] File System
+    - [X] Kernel
+    - [X] Memoria
 
 De ser posible:
 
 - Cada módulo debe abrir sus respectivos puertos y esperar conexiones entrantes (sin necesidad de preparar el handshake).
-    - [ ] CPU
-    - [ ] File System
-    - [ ] Kernel
-    - [ ] Memoria
+    - [X] CPU
+    - [X] File System
+    - [X] Kernel
+    - [X] Memoria
 
 - Cada módulo debe conectarse al servidor requerido (sin necesidad de preparar el handshake).
-    - [ ] Consola
-    - [ ] CPU
-    - [ ] File System
-    - [ ] Kernel
+    - [X] Consola
+    - [X] CPU
+    - [X] File System
+    - [X] Kernel
 
