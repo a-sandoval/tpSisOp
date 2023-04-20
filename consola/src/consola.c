@@ -6,11 +6,11 @@ int main(int, char *archivos[]) {
 
     int conexion;
     char *ip, *puerto;
-    t_log* logger = iniciar_logger("consola.log", "consola");
+    logger = iniciarLogger("consola.log", "consola");
 
-    t_config* config = iniciarConfiguracion(archivos[2], logger);
-    ip = config_get_string_value(config, "IP_KERNEL");
-    puerto = config_get_string_value(config, "PUERTO_KERNEL");
+    config = iniciarConfiguracion(archivos[2], logger);
+    ip = confGet(config, "IP_KERNEL");
+    puerto = confGet(config, "PUERTO_KERNEL");
 
     // conexion al kernel
 

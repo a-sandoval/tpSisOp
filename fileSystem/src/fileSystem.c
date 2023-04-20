@@ -1,21 +1,21 @@
-#include "../include/fileSystem.h"
+#include "fileSystem/include/fileSystem.h"
 
 int main(void) {
 
 
-    logger = iniciar_logger("fileSys.log","file-system");
+    logger = iniciarLogger("fileSys.log","file-system");
 
-    t_config* config_fs = iniciarConfiguracion("filesys.config", logger); 
+    config = iniciarConfiguracion("filesys.config", logger); 
 
-    int conexionAMemoria = conectarseAMemoria(config_fs); 
+    int conexionAMemoria = conectarseAMemoria(); 
   
-    escucharAlKernel(config_fs); 
+    escucharAlKernel(); 
 
     liberar_conexion(conexionAMemoria); 
 
     log_destroy(logger); 
 
-    config_destroy(config_fs); 
+    config_destroy(config); 
     
     return 0;
 }

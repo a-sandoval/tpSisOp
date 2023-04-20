@@ -1,22 +1,22 @@
 /* CONSOLA - cliente | KERNEL - sevidor*/
 #include "kernel/include/servidorConsola.h"
 
-int servirAConsola(t_log* logger_servidorConsola, t_config* config_servidorConsola){
+int servirAConsola(){
 
-	char* puertoDeEscucha = config_get_string_value(config_servidorConsola,"PUERTO_ESCUCHA"); 
+	char* puertoDeEscucha = confGet(config, "PUERTO_ESCUCHA"); 
 	
 	Lista* clavesValidas = malloc(sizeof(Lista));
 	clavesValidas->cabeza = NULL;
 
-	obtenerClavesValidas(config_servidorConsola,clavesValidas);
+	obtenerClavesValidas(config, clavesValidas);
 	
 	//inicio servidor y queda a la espera de clientes
-	int cliente_fd = alistarServidor(logger_servidorConsola, puertoDeEscucha);
+	int cliente_fd = alistarServidor(logger, puertoDeEscucha);
 
 	//int rdoEjecucion = 
-	ejecutarServidor(cliente_fd,logger_servidorConsola, clavesValidas);
+	ejecutarServidor(cliente_fd, logger, clavesValidas);
 
-	log_info(logger_servidorConsola,"Terminando servidor");
+	log_info(logger, "Terminando servidor");
 
 	borrarLista(clavesValidas);
 
@@ -24,12 +24,10 @@ int servirAConsola(t_log* logger_servidorConsola, t_config* config_servidorConso
 }
 
 void iterator(char *value) {
-    t_log *logger_servidorConsolaTemp = iniciar_logger("KERNELservidor.log", "Consola-Kernel");
-    log_info(logger_servidorConsolaTemp, value);
-    log_destroy(logger_servidorConsolaTemp);
+    log_info(logger, value);
 }
 
-void obtenerClavesValidas(t_config* config_servidorConsola,Lista* claves){
-	insertar(claves, config_get_string_value(config_servidorConsola, "CLAVE_CONSOLA_KERNEL_MODO_USUARIO"));
-	insertar(claves, config_get_string_value(config_servidorConsola, "CLAVE_CONSOLA_KERNEL_MODO_ADMIN"));
+void obtenerClavesValidas(t_config* config, Lista* claves){
+	insertar(claves, confGet(config, "CLAVE_CONSOLA_KERNEL_MODO_USUARIO"));
+	insertar(claves, confGet(config, "CLAVE_CONSOLA_KERNEL_MODO_ADMIN"));
 }

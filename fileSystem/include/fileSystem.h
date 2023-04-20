@@ -6,17 +6,15 @@
 #include<commons/log.h>
 #include<commons/string.h>
 #include<commons/config.h>
-#include<readline/readline.h>
 
 #include "shared/include/utilsCliente.h" 
 #include "shared/include/utilsServidor.h" 
 #include "shared/include/configuraciones.h"
-#include "../include/conexionMemoria.h"
-#include "../include/servidorKernel.h"
+#include "shared/include/global.h"
+#include "fileSystem/include/conexionMemoria.h"
+#include "fileSystem/include/servidorKernel.h"
 
 void iterator(char* value);
-t_log* logger;
-
 
 #endif
 

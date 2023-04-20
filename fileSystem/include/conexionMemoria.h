@@ -12,8 +12,9 @@
 #include "shared/include/manejoListas.h"
 
 extern t_log *logger;
+extern t_config *config;
 
-int conectarseAMemoria(t_config*); 
+int conectarseAMemoria(); 
 
 
 

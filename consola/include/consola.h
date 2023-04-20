@@ -12,6 +12,7 @@
 
 #include "shared/include/utilsCliente.h"
 #include "shared/include/configuraciones.h"
+#include "shared/include/global.h"
 
 typedef struct {
     char *nombre;

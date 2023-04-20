@@ -1,12 +1,10 @@
 #include "fileSystem/include/conexionMemoria.h"
 
+int conectarseAMemoria() {
 
-int conectarseAMemoria(t_config* config_fs) {
-
-   char* puertoConexionAMemoria= config_get_string_value(config_fs,"PUERTO_MEMORIA"); 
-   char* ip= config_get_string_value(config_fs,"IP_MEMORIA"); 
-; 
-   char* claveHandshake = config_get_string_value(config_fs,"CLAVE_FS_MEMORIA"); 
+   char* puertoConexionAMemoria = confGet(config,"PUERTO_MEMORIA"); 
+   char* ip = confGet(config,"IP_MEMORIA"); 
+   char* claveHandshake = confGet(config,"CLAVE_FS_MEMORIA"); 
 
    int conexionAMemoria = realizarConexion(ip, puertoConexionAMemoria, claveHandshake); 
 

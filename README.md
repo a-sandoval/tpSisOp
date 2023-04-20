@@ -54,8 +54,7 @@ Se van a utilizar 7 claves distintas para comunicar a los distintos módulos dur
 
 - [X] Abre archivo de configuración y logger.
 - [X] Se conecta a Kernel y envia instrucciones.
-- [ ] Globalizar configuracion, loggers y sockets. (Fede)
-- [ ] Forma de indicar al Kernel que es la consola numero n. (Fede)
+- [X] Globalizar configuracion, loggers y sockets. (Fede)
 
 ### Módulo Kernel
 
@@ -66,7 +65,7 @@ Se van a utilizar 7 claves distintas para comunicar a los distintos módulos dur
 - [ ] Planificacion de procesos con FIFO
 - [ ] Planear como agregar el HNNR (HRRN?).
 - [ ] Configurar para que se mantenga recibiendo conexiones indefinidamente hasta que se termine el programa. (Fede)
-- [ ] Globalizar configuracion, loggers y sockets. (Fede)
+- [X] Globalizar configuracion, loggers y sockets. (Fede)
 
 ### Módulo CPU
 
@@ -77,26 +76,26 @@ Se van a utilizar 7 claves distintas para comunicar a los distintos módulos dur
     - [ ] YIELD (Desalojar voluntariamente el proceso de la CPU).
     - [ ] EXIT (Syscall de finalización de proceso).
 - [ ] Configurar para que se mantenga recibiendo conexiones indefinidamente hasta que se termine el programa. (Fede)
-- [ ] Globalizar configuracion, loggers y sockets. (Fede)
+- [X] Globalizar configuracion, loggers y sockets. (Fede)
 
 ### Módulo File System
 
 - [X] Abre archivo de configuración y logger.
 - [X] Se conecta a memoria, espera conexiones de Kernel.
 - [ ] Configurar para que se mantenga recibiendo conexiones indefinidamente hasta que se termine el programa. (Fede)
-- [ ] Globalizar configuracion, loggers y sockets. (Fede)
+- [X] Globalizar configuracion, loggers y sockets. (Fede)
 
 ### Módulo Memoria
 
 - [X] Abre archivo de configuración y logger.
 - [X] Recibir conexiones de CPU, Kernel y File System.
 - [ ] Configurar para que se mantenga recibiendo conexiones indefinidamente hasta que se termine el programa. (Fede)
-- [ ] Globalizar configuracion, loggers y sockets. (Fede)
+- [X] Globalizar configuracion, loggers y sockets. (Fede)
 
 ### Módulo Shared
 
 - [ ] Documentar funciones.
-- [ ] Añadir global.h para todas las variables globales que necesitemos generalmente (logger, config, etc.).
+- [X] Añadir global.h para todas las variables globales que necesitemos generalmente (logger, config, etc.).
 - [ ] Traspasar toda dependencia de nuestras listas al commons/collections/list.h.
 
 ### Módulo pruebas

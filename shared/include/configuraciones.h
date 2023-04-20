@@ -37,7 +37,10 @@ t_config* iniciarConfiguracion(char* ruta, t_log* logger);
  * @param nombreLogger Nombre del logger.
  * @return Retorna el logger creado.
  */
-t_log* iniciar_logger(char* nombreArchivo, char* nombreLogger);
+t_log* iniciarLogger(char* nombreArchivo, char* nombreLogger);
 
+t_log *cambiarNombre(t_log *logger, char *nuevoNombre);
+
+char *confGet(t_config *config, char *key);
 
 #endif /* CONFIGURACIONES_H_ */

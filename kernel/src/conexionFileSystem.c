@@ -1,14 +1,12 @@
 /* KERNEL- cliente | FYLESYSTEM - sevidor*/
 #include "kernel/include/conexionFileSystem.h"
 
-int conexionFileSystem(t_config* config_clienteFileSystem){
-    char* puerto = config_get_string_value(config_clienteFileSystem,"PUERTO_FILESYSTEM");
-    char* ip = config_get_string_value(config_clienteFileSystem,"IP_FILESYSTEM"); 
-    char* claveHandshake = config_get_string_value(config_clienteFileSystem,"CLAVE_KERNEL_FILESYSTEM"); 
+int conexionFileSystem(){
+    char* puerto = confGet(config,"PUERTO_FILESYSTEM");
+    char* ip = confGet(config,"IP_FILESYSTEM"); 
+    char* claveHandshake = confGet(config,"CLAVE_KERNEL_FILESYSTEM"); 
+    int conexionAFileSystem = realizarConexion(ip, puerto, claveHandshake); 
+    log_info(logger, "Conexion creada: %d", conexionAFileSystem); 
    
-   int conexionAFileSystem = crear_conexion(ip, puerto); 
-   handshake(claveHandshake,conexionAFileSystem); 
-
-   
-   return conexionAFileSystem; 
+    return conexionAFileSystem; 
 }

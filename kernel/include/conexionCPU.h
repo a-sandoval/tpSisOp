@@ -6,7 +6,8 @@
 // #include "kernel/include/kernel.h"
 #include "shared/include/utilsCliente.h"
 
-extern t_log *logger_clienteCPU;
-int conexionCPU(t_config *);
+extern t_log *logger;
+extern t_config *config;
+int conexionCPU();
 
 #endif /* CONEXION_CPU_H */
