@@ -148,9 +148,6 @@ int ejecutarServidor(int cliente_fd, t_log* logger, Lista* clavesValidas){
 void element_destroyer(char *palabra){
 	free(palabra);
 }
-/* Llamado a la funcion alistarServidor
-alistarServidor(logger, config_get_string_value(config,"PUERTO_ESCUCHA"));
-*/
 
 int ejecutarServidorOriginal(int cliente_fd, t_log* logger){
 	t_list* lista;

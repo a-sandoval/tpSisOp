@@ -1,80 +1,64 @@
-#include "../include/cpu.h"
+#include "cpu/include/cpu.h"
 
 int main(void){
 
-	int conexion_memoria;
-	int conexion_servir_kernel;
-
-	t_log* logger_clienteMemoria;
-	t_log* logger_servidorKernel;
-
-	t_config* config;
-
-	Lista* clavesValidas=malloc(sizeof(Lista));
-	clavesValidas->cabeza=NULL;
-	insertar(clavesValidas,"kernel-cpu");
-
-	imprimirLista(clavesValidas);
-	putchar('\n');
+	Lista *clavesValidas = malloc(sizeof(Lista));
+	clavesValidas->cabeza = NULL;
 
 	/*Inicializando Loggers*/
-	logger_clienteMemoria = iniciar_logger("CPUcliente.log","CPU-Memoria");
-	logger_servidorKernel= iniciar_logger("CPUservidor.log","Kernel-CPU");
+	logger = iniciarLogger("CPUcliente.log", "CPU-Memoria");
 
 	/*Inicializando los config*/
-	config=iniciarConfiguracion("cpu.config",logger_clienteMemoria);//Ruta del archivo para el config ../cpu.config no anda   /home/utnso/tp-2023-1c-toTheEnd/cpu/
-
+	config = iniciarConfiguracion("cpu.config", logger);
+	insertar(clavesValidas, confGet(config, "CLAVE_KERNEL_CPU"));
+	imprimirLista(clavesValidas);
 
 	/*Conexion a memoria*/
-	conexion_memoria=conexionMemoria(config);
+	int conexion_memoria = conexionMemoria(logger);
 	if(conexion_memoria == -1){
-		log_error(logger_clienteMemoria,"No se pudo crear la conexion con la memoria");
-		terminar_programa(conexion_memoria,logger_clienteMemoria,logger_servidorKernel,config, clavesValidas);
+		log_error(logger, "No se pudo crear la conexion con la memoria");
+		terminarPrograma(conexion_memoria, clavesValidas);
 		return EXIT_FAILURE; //abort o exit?
 	}
 
 
 	/*Preparacion de la cpu para servir al kernel*/
-	conexion_servir_kernel=alistarServidor(logger_servidorKernel,config_get_string_value(config,"PUERTO_ESCUCHA"));
+	cambiarNombre(logger, "CPU-Kernel");
+	int conexion_servir_kernel = alistarServidor(logger, confGet(config,"PUERTO_ESCUCHA"));
 
-	ejecutarServidor(conexion_servir_kernel, logger_servidorKernel,clavesValidas);
+	ejecutarServidor(conexion_servir_kernel, logger, clavesValidas);
 
-
-	terminar_programa(conexion_memoria,logger_clienteMemoria,logger_servidorKernel,config,clavesValidas);
+	terminarPrograma(conexion_memoria, clavesValidas);
 
     return EXIT_SUCCESS;
 }
 
 void iterator(char *value){
-	printf("Valor recibido: %s",value);
-	putchar('\n');
+	log_info(logger, "Valor recibido: %s\n",value);
 }
 
-void terminar_programa(int conexion, t_log* loggerCliente,t_log* loggerServidor,t_config* config,Lista*lista)
+void terminarPrograma(int conexion, Lista*lista)
 {
-	log_destroy(loggerCliente);
-	log_destroy(loggerServidor);
+	log_destroy(logger);
 	config_destroy(config);
 	borrarLista(lista);
 	liberar_conexion(conexion);
 }
 
-int conexionMemoria(t_config* config){
+int conexionMemoria(){
 
 	/* Variables */
 
 	int conexion;
-	char* valor = config_get_string_value(config,"CLAVE_CPU_MEMORIA");
-	char* ip = config_get_string_value(config,"IP_MEMORIA");
-	char* puerto = config_get_string_value(config,"PUERTO_MEMORIA");
+	char* valor = confGet(config,"CLAVE_CPU_MEMORIA");
+	char* ip = confGet(config,"IP_MEMORIA");
+	char* puerto = confGet(config,"PUERTO_MEMORIA");
 
 	/*Configuraciones*/
-	printf("VALOR: %s, IP: %s, PUERTO:%s",valor,ip,puerto);
-	putchar('\n');
+	log_info(logger, "VALOR: %s, IP: %s, PUERTO:%s", valor, ip, puerto);
 
 	conexion = realizarConexion(ip,puerto,valor);
-	printf("VALOR DE LA CONEXION: %d",conexion);
-	putchar('\n');
+	log_info(logger, "VALOR DE LA CONEXION: %d", conexion);
 
 	/*Liberar memoria*/
 	/*free(valor);

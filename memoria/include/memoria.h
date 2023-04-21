@@ -2,29 +2,22 @@
 #define MEMORIA_MAIN_H_
 
 #include<stdio.h>
-#include<string.h>
-#include<sys/socket.h>
-#include<unistd.h>
-#include<netdb.h>
 #include<stdlib.h>
-#include<pthread.h>
 #include<commons/log.h>
 #include<commons/string.h>
 #include<commons/config.h>
 #include<commons/collections/list.h>
-#include<assert.h>
-#include<shared/include/manejoListas.h>
-#include<shared/include/utilsCliente.h>
-#include<shared/include/utilsServidor.h>
-#include<shared/include/configuraciones.h>
+
+#include "shared/include/manejoListas.h"
+#include "shared/include/utilsCliente.h"
+#include "shared/include/utilsServidor.h"
+#include "shared/include/configuraciones.h"
+#include "shared/include/global.h"
 
 void iterator(char* value);
 
-t_log* logger;
-//Lista* obtenerClavesValidas(t_config* memoria_config); original
 void obtenerClavesValidas(t_config* memoria_config,Lista* claves);
-void terminar_programa(t_config* memoriaconfig, t_log* logger);
-void *procesoPrincipal(void*);
+void terminarPrograma(t_config* memoriaconfig, t_log* logger);
 
 #endif 
 

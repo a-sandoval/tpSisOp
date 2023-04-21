@@ -1,9 +1,9 @@
 #include "fileSystem/include/servidorKernel.h"
 
-void escucharAlKernel(t_config* config_fs) {
+void escucharAlKernel() {
 
-    char* puertoEscucha= config_get_string_value(config_fs,"PUERTO_ESCUCHA"); 
-    char* claveValida = config_get_string_value(config_fs,"CLAVE_FS_KERNEL_VALIDA");
+    char* puertoEscucha= confGet(config,"PUERTO_ESCUCHA"); 
+    char* claveValida = confGet(config,"CLAVE_FS_KERNEL_VALIDA");
 
     //log_info(logger, "Vamos bien por ahora"); 
     Lista* listaClavesValidas = malloc(sizeof(Lista)); 

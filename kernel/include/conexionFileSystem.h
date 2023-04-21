@@ -2,11 +2,13 @@
 #define CONEXION_FILESYSTEM_H
 
 #include <commons/config.h>
-//#include "kernel/include/kernel.h"
+#include <commons/log.h>
 #include "shared/include/utilsCliente.h"
 
-extern t_log *logger_clienteFileSystem;
-int conexionFileSystem(t_config*);
+extern t_log *logger;
+extern t_config *config;
+
+int conexionFileSystem();
 
 
 #endif /* CONEXION_FILESYSTEM_H */

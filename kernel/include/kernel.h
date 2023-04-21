@@ -8,17 +8,16 @@
 #include <commons/collections/list.h>
 #include <commons/config.h>
 // Conexiones propias del kernel
-#include "../include/conexionMemoria.h"
-#include "../include/conexionCPU.h"
-#include "../include/conexionFileSystem.h"
-#include "../include/servidorConsola.h"
+#include "kernel/include/conexionMemoria.h"
+#include "kernel/include/conexionCPU.h"
+#include "kernel/include/conexionFileSystem.h"
+#include "kernel/include/servidorConsola.h"
 // Utils y funciones del shared
-#include "../../shared/include/configuraciones.h"
-#include "../../shared/include/utilsServidor.h"
-#include "../../shared/include/utilsCliente.h"
-#include "../../shared/include/manejoListas.h"
-
-t_log *logger;
+#include "shared/include/configuraciones.h"
+#include "shared/include/utilsServidor.h"
+#include "shared/include/utilsCliente.h"
+#include "shared/include/manejoListas.h"
+#include "shared/include/global.h"
 
 /*
 int conexionMemoria(t_config* );
@@ -27,14 +26,7 @@ int conexionFileSystem(t_config* );
 int servirAConsola(t_log* ,t_config* );
 */
 
-/*
-Por ser cliente
-//void leer_consola(t_log*); ?
-void terminar_programa(char* , t_log*, t_config*); //Useless ahora mismo
-*/
-
-
-
-void terminar_programa(int, t_log*, t_config*); 
+void terminarPrograma(t_log *logger, t_config *config);
+int conexion(char *CONEXION);
 
 #endif
