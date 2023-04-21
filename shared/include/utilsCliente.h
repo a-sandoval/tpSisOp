@@ -12,6 +12,9 @@
 #include <commons/config.h>
 #include "configuraciones.h"
 
+extern t_log *logger;
+extern t_config *config;
+
 /**
  * @brief Información dentro de un paquete utilizado para enviar información a un servidor.
  *        Se divide en un int componiendo el tamaño del stream, y el stream en sí, que es la composición de información.

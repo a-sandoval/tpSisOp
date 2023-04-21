@@ -2,20 +2,18 @@
 
 void escucharAlKernel() {
 
-    char* puertoEscucha= confGet(config,"PUERTO_ESCUCHA"); 
+    char* puertoEscucha= confGet("PUERTO_ESCUCHA"); 
     //log_info(logger, "Vamos bien por ahora"); 
     t_list* clavesValidas = list_create();
 
-    list_add(clavesValidas,(
-    void *) confGet(config,"CLAVE_FS_KERNEL_VALIDA"));
+    list_add(clavesValidas,(void *) confGet("CLAVE_FS_KERNEL_VALIDA"));
 
-    int kernel_fd = alistarServidor(logger, puertoEscucha);
+    int kernel_fd = alistarServidor(puertoEscucha);
 
     //int resultadoEjecucion = 
-    ejecutarServidor(kernel_fd, logger, clavesValidas);  
+    ejecutarServidor(kernel_fd, clavesValidas);  
 
-    list_destroy_and_destroy_elements(clavesValidas,element_destroyer);
-
+    list_destroy(clavesValidas);
 
 }
 

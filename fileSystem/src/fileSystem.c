@@ -5,17 +5,15 @@ int main(void) {
 
     logger = iniciarLogger("fileSys.log","file-system");
 
-    config = iniciarConfiguracion("filesys.config", logger); 
+    config = iniciarConfiguracion("filesys.config"); 
 
     int conexionAMemoria = conectarseAMemoria(); 
   
     escucharAlKernel(); 
 
-    liberar_conexion(conexionAMemoria); 
+    close(conexionAMemoria); 
 
-    log_destroy(logger); 
-
-    config_destroy(config); 
+    terminarPrograma(NULL);
     
     return 0;
 }

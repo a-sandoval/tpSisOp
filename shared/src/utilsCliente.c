@@ -110,10 +110,6 @@ void eliminar_paquete(t_paquete* paquete){
 	free(paquete);
 }
 
-void liberar_conexion(int socket_cliente){
-	close(socket_cliente);
-}
-
 
 void handshake(char* claveConfigCliente, int conexion_cliente){
 	enviar_mensaje(claveConfigCliente, conexion_cliente); 

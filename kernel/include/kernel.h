@@ -16,17 +16,8 @@
 #include "shared/include/configuraciones.h"
 #include "shared/include/utilsServidor.h"
 #include "shared/include/utilsCliente.h"
-#include "shared/include/manejoListas.h"
 #include "shared/include/global.h"
 
-/*
-int conexionMemoria(t_config* );
-int conexionCPU(t_config* );
-int conexionFileSystem(t_config* );
-int servirAConsola(t_log* ,t_config* );
-*/
-
-void terminarPrograma(t_log *logger, t_config *config);
 int conexion(char *CONEXION);
 
 #endif

@@ -8,16 +8,25 @@
 #include<commons/config.h>
 #include<commons/collections/list.h>
 
-#include "shared/include/manejoListas.h"
 #include "shared/include/utilsCliente.h"
 #include "shared/include/utilsServidor.h"
 #include "shared/include/configuraciones.h"
 #include "shared/include/global.h"
 
 void iterator(char* value);
+/**
+ * @brief Obtiene las claves validas para conexion entre modulos del archivo de configuracion
 
-void obtenerClavesValidas(t_config* memoria_config,t_list* claves);
-void terminarPrograma(t_config* memoriaconfig, t_log* logger);
+ * @param claves Lista de claves Validas.
+ * @return
+ */
+void obtenerClavesValidas(t_list* claves);
+/**
+ * @brief 
+
+ * @return
+ */
+void terminarPrograma();
 
 #endif 
 

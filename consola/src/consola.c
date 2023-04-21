@@ -8,9 +8,9 @@ int main(int, char *archivos[]) {
     char *ip, *puerto;
     logger = iniciarLogger("consola.log", "consola");
 
-    config = iniciarConfiguracion(archivos[2], logger);
-    ip = confGet(config, "IP_KERNEL");
-    puerto = confGet(config, "PUERTO_KERNEL");
+    config = iniciarConfiguracion(archivos[2]);
+    ip = confGet("IP_KERNEL");
+    puerto = confGet("PUERTO_KERNEL");
 
     // conexion al kernel
 
@@ -29,9 +29,8 @@ int main(int, char *archivos[]) {
 
     if (codigo == NULL) {
         log_error(logger, "No se pudo abrir el archivo %s", archivos[1]);
-        log_destroy(logger);
-        config_destroy(config);
         close(conexion);
+        terminarPrograma(NULL);
         return 1;
     }
     //rl_attempted_completion_function = autoCompletar;
@@ -78,9 +77,9 @@ int main(int, char *archivos[]) {
 
     // cerrar archivos
 
+    close(conexion);
     fclose(codigo);
-    log_destroy(logger);
-    config_destroy(config);
+    terminarPrograma(NULL);
 
     return 0;
 }

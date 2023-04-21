@@ -3,21 +3,21 @@
 
 int servirAConsola(){
 
-	char* puertoDeEscucha = confGet(config, "PUERTO_ESCUCHA"); 
+	char* puertoDeEscucha = confGet("PUERTO_ESCUCHA"); 
 	
 	t_list* clavesValidas = list_create();
 
-	obtenerClavesValidas(config, clavesValidas);
+	obtenerClavesValidas(clavesValidas);
 	
 	//inicio servidor y queda a la espera de clientes
-	int cliente_fd = alistarServidor(logger, puertoDeEscucha);
+	int cliente_fd = alistarServidor(puertoDeEscucha);
 
 	//int rdoEjecucion = 
-	ejecutarServidor(cliente_fd, logger, clavesValidas);
+	ejecutarServidor(cliente_fd, clavesValidas);
 
 	log_info(logger, "Terminando servidor");
 
-	list_destroy_and_destroy_elements(clavesValidas, element_destroyer);
+	list_destroy(clavesValidas);
 
 	return 0;
 }
@@ -26,8 +26,8 @@ void iterator(char *value) {
     log_info(logger, value);
 }
 
-void obtenerClavesValidas(t_config* config, t_list* clavesValidas){
+void obtenerClavesValidas(t_list* clavesValidas){
 
-	list_add(clavesValidas,(void *) confGet(config, "CLAVE_CONSOLA_KERNEL_MODO_USUARIO"));
-	list_add(clavesValidas,(void *) confGet(config, "CLAVE_CONSOLA_KERNEL_MODO_ADMIN"));
+	list_add(clavesValidas,(void *) confGet("CLAVE_CONSOLA_KERNEL_MODO_USUARIO"));
+	list_add(clavesValidas,(void *) confGet("CLAVE_CONSOLA_KERNEL_MODO_ADMIN"));
 }

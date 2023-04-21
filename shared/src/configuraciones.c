@@ -1,7 +1,7 @@
-#include "../include/configuraciones.h"
+#include "shared/include/configuraciones.h"
 
 //ARCHIVO DE CONFIGURACION (CLIENTE)
-t_config* iniciarConfiguracion(char* ruta, t_log* logger){
+t_config* iniciarConfiguracion(char* ruta){
 
     t_config* nuevoConfig=config_create(ruta); 
 
@@ -27,13 +27,21 @@ t_log* iniciarLogger(char* nombreArchivo, char* nombreLogger){
 	return nuevoLogger;
 }
 
-t_log *cambiarNombre(t_log *logger, char *nuevoNombre) {
+t_log *cambiarNombre(char *nuevoNombre) {
     t_log *nuevoLogger = logger;
 	free(logger->program_name);
     nuevoLogger->program_name = strdup(nuevoNombre);
     return nuevoLogger;
 }
 
-char *confGet(t_config *config, char *key) {
+char *confGet(char *key) {
 	return config_get_string_value(config, key);
+}
+
+void terminarPrograma(t_list* lista)
+{
+	log_destroy(logger);
+	config_destroy(config);
+	if (lista != NULL) list_destroy(lista);
+
 }

@@ -1,7 +1,5 @@
 #include "../include/utilsServidor.h"
 
-char* claveRecibida;
-
 //Se le agrego el parametro logger, para que funciones
 int iniciar_servidor(char *puerto,t_log* logger){
 
@@ -90,9 +88,8 @@ t_list* recibir_paquete(int socket_cliente){
 
 
 
-
 //FUNCIONES DE USO COLECTIVO PARA EL SERVIDOR:
-int alistarServidor(t_log *logger, char *puerto){
+int alistarServidor(char *puerto){
 
 	int server_fd = iniciar_servidor(puerto,logger);
 
@@ -111,28 +108,22 @@ char* recibir_clave(int socket_cliente){
 	return buffer;
 }
 
-bool esClaveValida(void* clave){
-    
-	if(!strcmp(claveRecibida, clave)){
-            return true;
-        }
-       
-    else return false; 
-    
+char* claveRecibida;
+
+bool esClaveValida(void *clave){
+	return !strcmp(claveRecibida, clave);
 }
 
-int ejecutarServidor(int cliente_fd, t_log* logger, t_list* clavesValidas){
+int ejecutarServidor(int cliente_fd, t_list* clavesValidas){
 	t_list* lista;
 	while (1) {
 		int cod_op = recibir_operacion(cliente_fd);
 		switch (cod_op) {
 		case MENSAJE:
 			claveRecibida = recibir_clave(cliente_fd);
-			
-			//bool claveValida = esClaveValida(clavesValidas, claveRecibida);
-			
+
 			if(!list_any_satisfy(clavesValidas,esClaveValida)){
-				log_error(logger, "Cliente no reconocido"); // quien sos flaco?
+				log_error(logger, "Cliente no reconocido"); 
 				return EXIT_FAILURE;
 			}
 			log_info(logger, "Clave valida, autorizo informacion");
@@ -158,30 +149,3 @@ void element_destroyer(void *palabra){
 	free(palabra);
 }
 
-/*
-int ejecutarServidorOriginal(int cliente_fd, t_log* logger){
-	t_list* lista;
-	while (1) {
-		int cod_op = recibir_operacion(cliente_fd);
-		switch (cod_op) {
-		case MENSAJE:
-			recibir_mensaje(cliente_fd);
-			break;
-		case PAQUETE:
-			lista = recibir_paquete(cliente_fd);
-			log_info(logger, "Me llegaron los siguientes valores:\n"); 
-			//list_iterate(lista, (void*) iterator); No permite pasarle el logger como patametro
-			list_destroy_and_destroy_elements(lista, (void*)element_destroyer);
-			break;
-		case -1:
-			log_error(logger, "El cliente se desconecto");
-			return EXIT_FAILURE;
-		default:
-			log_warning(logger,"Operacion desconocida. No quieras meter la pata");
-			break;
-		}
-	}
-
-}
-
-*/

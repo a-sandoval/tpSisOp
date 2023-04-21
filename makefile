@@ -8,28 +8,26 @@ endif
 
 SHARED := shared/src
 CONFIG         := $(SHARED)/configuraciones.c
-MANEJO_LISTAS  := $(SHARED)/manejoListas.c
 UTILS_CLIENTE  := $(SHARED)/utilsCliente.c
 UTILS_SERVIDOR := $(SHARED)/utilsServidor.c
 
 
 ARCHIVOS_CONSOLA := consola/src/consola.c \
-                    $(CONFIG) $(UTILS_CLIENTE) $(MANEJO_LISTAS)
+                    $(CONFIG) $(UTILS_CLIENTE) 
 
 CPU_SRC := cpu/src/
 ARCHIVOS_CPU     := $(CPU_SRC)cpu.c	\
-				    $(CONFIG) $(UTILS_CLIENTE) $(UTILS_SERVIDOR) $(MANEJO_LISTAS)
+				    $(CONFIG) $(UTILS_CLIENTE) $(UTILS_SERVIDOR) 
 
 FILESYS_SRC := fileSystem/src/
 ARCHIVOS_FILESYS := $(FILESYS_SRC)fileSystem.c $(FILESYS_SRC)conexionMemoria.c $(FILESYS_SRC)servidorKernel.c \
-				    $(CONFIG) $(UTILS_CLIENTE) $(UTILS_SERVIDOR) $(MANEJO_LISTAS)
+				    $(CONFIG) $(UTILS_CLIENTE) $(UTILS_SERVIDOR) 
 
 ARCHIVOS_KERNEL  := kernel/src/kernel.c kernel/src/conexionMemoria.c  kernel/src/conexionCPU.c  kernel/src/conexionFileSystem.c  kernel/src/servidorConsola.c \
-                    $(CONFIG) $(UTILS_CLIENTE) $(UTILS_SERVIDOR) $(MANEJO_LISTAS)
+                    $(CONFIG) $(UTILS_CLIENTE) $(UTILS_SERVIDOR) 
 
 ARCHIVOS_MEMORIA := memoria/src/memoria.c \
-                    $(CONFIG)                  $(UTILS_SERVIDOR) $(MANEJO_LISTAS)
-
+                    $(CONFIG)                  $(UTILS_SERVIDOR) 
 
 CC := gcc
 CFLAGS := -g -I ./ -lcommons -Wall -Wextra
