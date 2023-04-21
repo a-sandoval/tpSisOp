@@ -12,6 +12,6 @@ extern t_log *logger;
 extern t_config *config;
 int servirAConsola();
 void iterator(char* value);
-void obtenerClavesValidas(t_config *config, Lista *claves);
+void obtenerClavesValidas(t_config *config, t_list *claves);
 
 #endif /* SERVER_H_ */

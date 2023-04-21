@@ -16,7 +16,7 @@
 
 void iterator(char* value);
 
-void obtenerClavesValidas(t_config* memoria_config,Lista* claves);
+void obtenerClavesValidas(t_config* memoria_config,t_list* claves);
 void terminarPrograma(t_config* memoriaconfig, t_log* logger);
 
 #endif 

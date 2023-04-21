@@ -5,8 +5,9 @@ int main(){
     logger = iniciarLogger("memoria.log", "Memoria");
 	config = iniciarConfiguracion("memoria.config", logger);
 
-	Lista* clavesValidas = malloc(sizeof(Lista));
-	clavesValidas->cabeza=NULL;
+	t_list* clavesValidas = list_create();
+
+	
 	obtenerClavesValidas(config,clavesValidas);
 
 	//inicio servidor y queda a la espera de clientes
@@ -19,7 +20,7 @@ int main(){
 	
 	log_info(logger,"Terminando servidor");
 	close(cliente_fd);
-	borrarLista(clavesValidas);
+	list_destroy_and_destroy_elements(clavesValidas,element_destroyer);
 
 	terminarPrograma(config,logger);
 	return 0;
@@ -35,9 +36,10 @@ void terminarPrograma(t_config* memoriaconfig, t_log* logger){
 	config_destroy(memoriaconfig);
 }
 
-void obtenerClavesValidas(t_config* config, Lista* claves){
+void obtenerClavesValidas(t_config* config, t_list* clavesValidas){
+
+	list_add(clavesValidas,(void *) confGet(config, "CLAVE_CPU_MEMORIA"));
+	list_add(clavesValidas,(void *) confGet(config, "CLAVE_KERNEL_MEMORIA"));
+	list_add(clavesValidas,(void *) confGet(config, "CLAVE_FS_MEMORIA"));
 	
-	insertar(claves, confGet(config, "CLAVE_CPU_MEMORIA"));
-	insertar(claves, confGet(config, "CLAVE_KERNEL_MEMORIA"));
-	insertar(claves, confGet(config, "CLAVE_FS_MEMORIA"));
 }

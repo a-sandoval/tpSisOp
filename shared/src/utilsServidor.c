@@ -1,5 +1,7 @@
 #include "../include/utilsServidor.h"
 
+char* claveRecibida;
+
 //Se le agrego el parametro logger, para que funciones
 int iniciar_servidor(char *puerto,t_log* logger){
 
@@ -86,10 +88,6 @@ t_list* recibir_paquete(int socket_cliente){
 	return valores;
 }
 
-/*Funcione con printf ?? es para no tener una variable externa todos.
-void iterator(char* value) {
-	log_info(logger,"%s", value);
-}*/
 
 
 
@@ -113,16 +111,27 @@ char* recibir_clave(int socket_cliente){
 	return buffer;
 }
 
-int ejecutarServidor(int cliente_fd, t_log* logger, Lista* clavesValidas){
+bool esClaveValida(void* clave){
+    
+	if(!strcmp(claveRecibida, clave)){
+            return true;
+        }
+       
+    else return false; 
+    
+}
+
+int ejecutarServidor(int cliente_fd, t_log* logger, t_list* clavesValidas){
 	t_list* lista;
 	while (1) {
 		int cod_op = recibir_operacion(cliente_fd);
 		switch (cod_op) {
 		case MENSAJE:
-			char* claveRecibida = recibir_clave(cliente_fd);
-			bool claveValida = esClaveValida(clavesValidas, claveRecibida);
+			claveRecibida = recibir_clave(cliente_fd);
 			
-			if(!claveValida){
+			//bool claveValida = esClaveValida(clavesValidas, claveRecibida);
+			
+			if(!list_any_satisfy(clavesValidas,esClaveValida)){
 				log_error(logger, "Cliente no reconocido"); // quien sos flaco?
 				return EXIT_FAILURE;
 			}
@@ -132,7 +141,7 @@ int ejecutarServidor(int cliente_fd, t_log* logger, Lista* clavesValidas){
 		case PAQUETE:
 			lista = recibir_paquete(cliente_fd);
 			log_info(logger, "Me llegaron los siguientes valores:"); 
-			list_iterate(lista, (void*) iterator); //NO ANDA EL ITERATOR SIN EL LOGGER VARIABLE GLOBAL
+			list_iterate(lista, (void*) iterator); 
 			list_destroy_and_destroy_elements(lista, (void*)element_destroyer);
 			break;
 		case -1:
@@ -145,10 +154,11 @@ int ejecutarServidor(int cliente_fd, t_log* logger, Lista* clavesValidas){
 	}
 }
 
-void element_destroyer(char *palabra){
+void element_destroyer(void *palabra){
 	free(palabra);
 }
 
+/*
 int ejecutarServidorOriginal(int cliente_fd, t_log* logger){
 	t_list* lista;
 	while (1) {
@@ -173,3 +183,5 @@ int ejecutarServidorOriginal(int cliente_fd, t_log* logger){
 	}
 
 }
+
+*/

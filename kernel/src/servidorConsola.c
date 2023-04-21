@@ -5,8 +5,7 @@ int servirAConsola(){
 
 	char* puertoDeEscucha = confGet(config, "PUERTO_ESCUCHA"); 
 	
-	Lista* clavesValidas = malloc(sizeof(Lista));
-	clavesValidas->cabeza = NULL;
+	t_list* clavesValidas = list_create();
 
 	obtenerClavesValidas(config, clavesValidas);
 	
@@ -18,7 +17,7 @@ int servirAConsola(){
 
 	log_info(logger, "Terminando servidor");
 
-	borrarLista(clavesValidas);
+	list_destroy_and_destroy_elements(clavesValidas, element_destroyer);
 
 	return 0;
 }
@@ -27,7 +26,8 @@ void iterator(char *value) {
     log_info(logger, value);
 }
 
-void obtenerClavesValidas(t_config* config, Lista* claves){
-	insertar(claves, confGet(config, "CLAVE_CONSOLA_KERNEL_MODO_USUARIO"));
-	insertar(claves, confGet(config, "CLAVE_CONSOLA_KERNEL_MODO_ADMIN"));
+void obtenerClavesValidas(t_config* config, t_list* clavesValidas){
+
+	list_add(clavesValidas,(void *) confGet(config, "CLAVE_CONSOLA_KERNEL_MODO_USUARIO"));
+	list_add(clavesValidas,(void *) confGet(config, "CLAVE_CONSOLA_KERNEL_MODO_ADMIN"));
 }

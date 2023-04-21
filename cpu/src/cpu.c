@@ -2,16 +2,14 @@
 
 int main(void){
 
-	Lista *clavesValidas = malloc(sizeof(Lista));
-	clavesValidas->cabeza = NULL;
+	t_list* clavesValidas = list_create();
 
 	/*Inicializando Loggers*/
 	logger = iniciarLogger("CPUcliente.log", "CPU-Memoria");
 
 	/*Inicializando los config*/
 	config = iniciarConfiguracion("cpu.config", logger);
-	insertar(clavesValidas, confGet(config, "CLAVE_KERNEL_CPU"));
-	imprimirLista(clavesValidas);
+	list_add(clavesValidas, confGet(config, "CLAVE_KERNEL_CPU"));
 
 	/*Conexion a memoria*/
 	int conexion_memoria = conexionMemoria(logger);
@@ -37,11 +35,11 @@ void iterator(char *value){
 	log_info(logger, "Valor recibido: %s\n",value);
 }
 
-void terminarPrograma(int conexion, Lista*lista)
+void terminarPrograma(int conexion, t_list* lista)
 {
 	log_destroy(logger);
 	config_destroy(config);
-	borrarLista(lista);
+	list_destroy_and_destroy_elements(lista, element_destroyer);
 	liberar_conexion(conexion);
 }
 

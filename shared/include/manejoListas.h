@@ -21,7 +21,7 @@ typedef struct Lista {
     Nodo* cabeza;
 } Lista;
 
-bool esClaveValida(Lista*, char*);
+//bool esClaveValida(Lista*, char*);
 void insertar(Lista*, char*); 
 void borrarLista(Lista*);
 void imprimirLista(Lista* lista);
