@@ -2,33 +2,33 @@
 
 int main(void){
 
-	Lista *clavesValidas = malloc(sizeof(Lista));
-	clavesValidas->cabeza = NULL;
+	t_list* clavesValidas = list_create();
 
 	/*Inicializando Loggers*/
 	logger = iniciarLogger("CPUcliente.log", "CPU-Memoria");
 
 	/*Inicializando los config*/
-	config = iniciarConfiguracion("cpu.config", logger);
-	insertar(clavesValidas, confGet(config, "CLAVE_KERNEL_CPU"));
-	imprimirLista(clavesValidas);
+	config = iniciarConfiguracion("cpu.config");
+	list_add(clavesValidas, confGet("CLAVE_KERNEL_CPU"));
 
 	/*Conexion a memoria*/
-	int conexion_memoria = conexionMemoria(logger);
+	int conexion_memoria = conexionMemoria();
 	if(conexion_memoria == -1){
 		log_error(logger, "No se pudo crear la conexion con la memoria");
-		terminarPrograma(conexion_memoria, clavesValidas);
+		terminarPrograma(clavesValidas);
+		close(conexion_memoria);
 		return EXIT_FAILURE; //abort o exit?
 	}
 
 
 	/*Preparacion de la cpu para servir al kernel*/
-	cambiarNombre(logger, "CPU-Kernel");
-	int conexion_servir_kernel = alistarServidor(logger, confGet(config,"PUERTO_ESCUCHA"));
+	cambiarNombre("CPU-Kernel");
+	int conexion_servir_kernel = alistarServidor(confGet("PUERTO_ESCUCHA"));
 
-	ejecutarServidor(conexion_servir_kernel, logger, clavesValidas);
+	ejecutarServidor(conexion_servir_kernel, clavesValidas);
+	close(conexion_memoria);
 
-	terminarPrograma(conexion_memoria, clavesValidas);
+	terminarPrograma(clavesValidas);
 
     return EXIT_SUCCESS;
 }
@@ -37,22 +37,14 @@ void iterator(char *value){
 	log_info(logger, "Valor recibido: %s\n",value);
 }
 
-void terminarPrograma(int conexion, Lista*lista)
-{
-	log_destroy(logger);
-	config_destroy(config);
-	borrarLista(lista);
-	liberar_conexion(conexion);
-}
-
 int conexionMemoria(){
 
 	/* Variables */
 
 	int conexion;
-	char* valor = confGet(config,"CLAVE_CPU_MEMORIA");
-	char* ip = confGet(config,"IP_MEMORIA");
-	char* puerto = confGet(config,"PUERTO_MEMORIA");
+	char* valor = confGet("CLAVE_CPU_MEMORIA");
+	char* ip = confGet("IP_MEMORIA");
+	char* puerto = confGet("PUERTO_MEMORIA");
 
 	/*Configuraciones*/
 	log_info(logger, "VALOR: %s, IP: %s, PUERTO:%s", valor, ip, puerto);
@@ -60,10 +52,6 @@ int conexionMemoria(){
 	conexion = realizarConexion(ip,puerto,valor);
 	log_info(logger, "VALOR DE LA CONEXION: %d", conexion);
 
-	/*Liberar memoria*/
-	/*free(valor);
-	free(ip);
-	free(puerto);*/
 
 	return conexion;
 

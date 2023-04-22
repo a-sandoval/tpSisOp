@@ -3,7 +3,6 @@
 
 #include <commons/config.h>
 #include <commons/string.h>
-// #include "kernel/include/kernel.h"
 #include "shared/include/utilsCliente.h"
 
 extern t_log *logger;

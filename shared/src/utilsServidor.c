@@ -86,15 +86,10 @@ t_list* recibir_paquete(int socket_cliente){
 	return valores;
 }
 
-/*Funcione con printf ?? es para no tener una variable externa todos.
-void iterator(char* value) {
-	log_info(logger,"%s", value);
-}*/
-
 
 
 //FUNCIONES DE USO COLECTIVO PARA EL SERVIDOR:
-int alistarServidor(t_log *logger, char *puerto){
+int alistarServidor(char *puerto){
 
 	int server_fd = iniciar_servidor(puerto,logger);
 
@@ -113,17 +108,22 @@ char* recibir_clave(int socket_cliente){
 	return buffer;
 }
 
-int ejecutarServidor(int cliente_fd, t_log* logger, Lista* clavesValidas){
+char* claveRecibida;
+
+bool esClaveValida(void *clave){
+	return !strcmp(claveRecibida, clave);
+}
+
+int ejecutarServidor(int cliente_fd, t_list* clavesValidas){
 	t_list* lista;
 	while (1) {
 		int cod_op = recibir_operacion(cliente_fd);
 		switch (cod_op) {
 		case MENSAJE:
-			char* claveRecibida = recibir_clave(cliente_fd);
-			bool claveValida = esClaveValida(clavesValidas, claveRecibida);
-			
-			if(!claveValida){
-				log_error(logger, "Cliente no reconocido"); // quien sos flaco?
+			claveRecibida = recibir_clave(cliente_fd);
+
+			if(!list_any_satisfy(clavesValidas,esClaveValida)){
+				log_error(logger, "Cliente no reconocido"); 
 				return EXIT_FAILURE;
 			}
 			log_info(logger, "Clave valida, autorizo informacion");
@@ -132,7 +132,7 @@ int ejecutarServidor(int cliente_fd, t_log* logger, Lista* clavesValidas){
 		case PAQUETE:
 			lista = recibir_paquete(cliente_fd);
 			log_info(logger, "Me llegaron los siguientes valores:"); 
-			list_iterate(lista, (void*) iterator); //NO ANDA EL ITERATOR SIN EL LOGGER VARIABLE GLOBAL
+			list_iterate(lista, (void*) iterator); 
 			list_destroy_and_destroy_elements(lista, (void*)element_destroyer);
 			break;
 		case -1:
@@ -145,31 +145,7 @@ int ejecutarServidor(int cliente_fd, t_log* logger, Lista* clavesValidas){
 	}
 }
 
-void element_destroyer(char *palabra){
+void element_destroyer(void *palabra){
 	free(palabra);
 }
 
-int ejecutarServidorOriginal(int cliente_fd, t_log* logger){
-	t_list* lista;
-	while (1) {
-		int cod_op = recibir_operacion(cliente_fd);
-		switch (cod_op) {
-		case MENSAJE:
-			recibir_mensaje(cliente_fd);
-			break;
-		case PAQUETE:
-			lista = recibir_paquete(cliente_fd);
-			log_info(logger, "Me llegaron los siguientes valores:\n"); 
-			//list_iterate(lista, (void*) iterator); No permite pasarle el logger como patametro
-			list_destroy_and_destroy_elements(lista, (void*)element_destroyer);
-			break;
-		case -1:
-			log_error(logger, "El cliente se desconecto");
-			return EXIT_FAILURE;
-		default:
-			log_warning(logger,"Operacion desconocida. No quieras meter la pata");
-			break;
-		}
-	}
-
-}

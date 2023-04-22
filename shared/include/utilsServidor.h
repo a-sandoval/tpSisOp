@@ -12,19 +12,23 @@
 #include<string.h>
 #include<assert.h>
 #include"configuraciones.h"
-#include "manejoListas.h" 
+
+extern t_log *logger;
+extern t_config *config;
 
 void* recibir_buffer(int*, int);
 
-int iniciar_servidor(char*puerto,t_log*logger);//Se le agrego un parametro
+bool esClaveValida(void *clave);
+
+int iniciar_servidor(char*puerto,t_log*logger);
 int esperar_cliente(int,t_log*);
 t_list* recibir_paquete(int);
 void recibir_mensaje(int);
 int recibir_operacion(int);
-void element_destroyer(char*palabra);
+void element_destroyer(void* palabra);
 extern void iterator(char *value);
-int alistarServidor(t_log *logger, char *puerto);
-int ejecutarServidor(int cliente_fd, t_log* logger, Lista* clavesValidas);
+int alistarServidor(char *puerto);
+int ejecutarServidor(int cliente_fd, t_list* clavesValidas);
 char* recibir_clave(int socket_cliente);
 
 #endif /* UTILS_SERVIDOR_H */ 

@@ -2,9 +2,9 @@
 
 int conectarseAMemoria() {
 
-   char* puertoConexionAMemoria = confGet(config,"PUERTO_MEMORIA"); 
-   char* ip = confGet(config,"IP_MEMORIA"); 
-   char* claveHandshake = confGet(config,"CLAVE_FS_MEMORIA"); 
+   char* puertoConexionAMemoria = confGet("PUERTO_MEMORIA"); 
+   char* ip = confGet("IP_MEMORIA"); 
+   char* claveHandshake = confGet("CLAVE_FS_MEMORIA"); 
 
    int conexionAMemoria = realizarConexion(ip, puertoConexionAMemoria, claveHandshake); 
 
