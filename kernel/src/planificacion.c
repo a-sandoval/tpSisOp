@@ -4,17 +4,17 @@ int32_t procesosCreados = 0;
 t_list* pcbs_new; 
 //t_list* pcbs_ready; 
 
-t_pcb crearPCB() {
+t_pcb* crearPCB() {
 
-    t_pcb nuevoPCB; 
-    nuevoPCB.estado = NEW; 
-    nuevoPCB.pid = procesosCreados; 
-    nuevoPCB.estimadoProximaRafaga = obtenerEstimacionInicial(); 
-    nuevoPCB.llegadaAReady = temporal_create(); 
+    t_pcb* nuevoPCB = malloc(sizeof(t_pcb)); 
+    nuevoPCB->estado = NEW; 
+    nuevoPCB->pid = procesosCreados; 
+    nuevoPCB->estimadoProximaRafaga = obtenerEstimacionInicial(); 
+    nuevoPCB->llegadaAReady = temporal_create(); 
 
     procesosCreados++; //para el nuevo pid
 
-    log_info(logger,"Se crea el proceso <%d> en NEW", nuevoPCB.pid); 
+    log_info(logger,"Se crea el proceso <%d> en NEW", nuevoPCB->pid); 
 
 
     return nuevoPCB; 
@@ -28,7 +28,7 @@ int obtenerEstimacionInicial() {
 }
 
  t_pcb proximoAEjecutarFIFO(t_list* procesosReady){
-    t_pcb proximo = ()list_get(procesosReady, 0);
-    return proximo;
+    t_pcb *proximo = (t_pcb*)list_get(procesosReady, 0);
+    return *proximo;
 }
 

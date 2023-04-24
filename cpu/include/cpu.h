@@ -35,8 +35,7 @@ typedef enum t_comando {
 typedef struct t_instruccion {
 
     t_comando comando; 
-
-
+    char* parametros[3]; 
 
 }t_instruccion; 
 

@@ -40,6 +40,6 @@ typedef struct t_pcb {
 
 
 int obtenerEstimacionInicial(); 
-t_pcb crearPCB(); 
+t_pcb* crearPCB(); 
 
 #endif 
