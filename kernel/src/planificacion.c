@@ -2,7 +2,12 @@
 
 int32_t procesosCreados = 0; 
 t_list* pcbs_new; 
-//t_list* pcbs_ready; 
+t_list* pcbs_ready; 
+
+void inicializarListasPCB(){
+    pcbs_new = list_create();
+    lee mi wpp porfissss
+}
 
 t_pcb* crearPCB() {
 
@@ -29,4 +34,10 @@ int obtenerEstimacionInicial() {
  t_pcb* proximoAEjecutarFIFO(t_list* procesosReady){
     return (t_pcb*)list_get(procesosReady, 0);
 }
+
+/*
+void paseReadyExecuteFIFO(t_list* pcbs_ready,t_list*pcbs_ready){
+
+}
+*/
 
