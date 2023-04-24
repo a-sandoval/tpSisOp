@@ -56,15 +56,17 @@ int obtenerGradoMultiprogramacion(){
 }
 
 t_pcb* desencolar(t_list* pcbs){
-    return (t_pcb*)list_get(pcbs, 0);    
+    return (t_pcb*)list_remove(pcbs, 0);
 }
 
-void encolar(t_list* pcbs){
-    list_add();
+void encolar(t_list* pcbs,t_pcb* pcb){
+    list_add(pcbs,(void *)pcb);
 }
 
-void cambiarNewAReady(){
-
+void cambiarEstadoNewAReady(){
+    t_pcb* pcb=desencolar(pcbs_new);
+    pcb->estado = READY;
+    encolar(pcbs_ready,pcb);
 }
 
  t_pcb* proximoAEjecutarFIFO(){

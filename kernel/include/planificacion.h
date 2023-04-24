@@ -101,4 +101,25 @@ int obtenerGradoMultiprogramacion();
  */
 t_pcb* proximoAEjecutarFIFO();
 
+/**
+ * @brief Selecciona el proximo pcb a ejecutar segun el algoritmo FIFO
+ * @param pcbs lista de pcbs de la cual se va a extraer el primer elemento
+ * @return el proximo puntero a t_pcb a ejecutar
+ */
+t_pcb* desencolar(t_list* pcbs);
+
+
+/**
+ * @brief Selecciona el proximo pcb a ejecutar segun el algoritmo FIFO
+ * @param pcbs lista de pcbs donde se encola el pcb
+ * @param pcb el puntero a t_pcb a encolar en la lista de pcbs
+ */
+void encolar(t_list* pcbs,t_pcb* pcb);
+
+
+/**
+ * @brief Toma el primer pcb de la lista de pcbs_new, lo encola en la lista de pcbs_ready y lo cambia a estado READY
+ */
+void cambiarEstadoNewAReady();
+
 #endif 
