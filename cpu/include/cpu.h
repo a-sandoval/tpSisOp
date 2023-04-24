@@ -32,6 +32,7 @@ typedef enum t_comando {
     EXIT, 
 
 } t_comando; 
+
 typedef struct t_instruccion {
 
     t_comando comando; 

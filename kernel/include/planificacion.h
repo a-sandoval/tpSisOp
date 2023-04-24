@@ -12,15 +12,14 @@
 extern t_log *logger;
 extern t_config *config;
 
-typedef enum {
-
+typedef enum estadoProceso{
+    
     NEW, 
     READY, 
     EXEC, 
     BLOCK, 
     EXIT,
 } estadoProceso; 
-
 
 
 typedef struct t_pcb {

@@ -1,4 +1,4 @@
-#include "planificacion.h"
+#include "kernel/include/planificacion.h"
 
 int32_t procesosCreados = 0; 
 t_list* pcbs_new; 
@@ -27,8 +27,7 @@ int obtenerEstimacionInicial() {
     
 }
 
- t_pcb proximoAEjecutarFIFO(t_list* procesosReady){
-    t_pcb *proximo = (t_pcb*)list_get(procesosReady, 0);
-    return *proximo;
+ t_pcb* proximoAEjecutarFIFO(t_list* procesosReady){
+    return (t_pcb*)list_get(procesosReady, 0);
 }
 
