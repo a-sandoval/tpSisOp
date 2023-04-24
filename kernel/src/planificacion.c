@@ -12,8 +12,8 @@ void inicializarListasPCBS(){
     pcbs_block = list_create();    
 }
 
-void destruirListaPCB(t_list* pcb){
-    list_destroy_and_destroy_elements(pcb,(void*)destruirPCB);
+void destruirListaPCB(t_list* pcbs){
+    list_destroy_and_destroy_elements(pcbs,(void*)destruirPCB);
 }
 
 t_pcb* crearPCB() {
@@ -55,9 +55,20 @@ int obtenerGradoMultiprogramacion(){
     return config_get_int_value(config,"GRADO_MAX_MULTIPROGRAMACION");
 }
 
- t_pcb* proximoAEjecutarFIFO(){
-    return (t_pcb*)list_get(pcbs_ready, 0);
+t_pcb* desencolar(t_list* pcbs){
+    return (t_pcb*)list_get(pcbs, 0);    
 }
 
-//void cambiarDeNewAReady(); CAMBIAR DE ESTADO
+t_pcb* encolar(t_list* pcbs){
+    
+}
+
+void cambiarNewAReady(){
+
+}
+
+ t_pcb* proximoAEjecutarFIFO(){
+    return desencolar(pcbs_ready);
+}
+
 

@@ -38,8 +38,20 @@ typedef struct t_pcb {
 
 } t_pcb; 
 
+/**
+ * @brief Obtiene la estimacion inicial de rafaga del archivo de configuraciones del kernel
 
-int obtenerEstimacionInicial(); 
+ * @param
+ * @return el valor de la estimacion inicial de la rafaga
+ */
+int obtenerEstimacionInicial();
+
+/**
+ * @brief Crea e inicializa todos los miembros de una estructura de tipo t_pcb
+
+ * @param
+ * @return un puntero a t_pcb listo para usar
+ */
 t_pcb* crearPCB();
 
 /**
@@ -53,10 +65,26 @@ void inicializarListasPCBS();
 /**
  * @brief Libera la memoria de una lista de pcbs
 
- * @param
+ * @param pcbs lista de pcbs
  * @return
  */
-void destruirListaPCB(t_list* pcb);
+void destruirListaPCB(t_list* pcbs);
+
+/**
+ * @brief Libera la memoria asociada a un pcb
+
+ * @param pcb puntero a una estructura de tipo pcb
+ * @return
+ */
+void destruirPCB(t_pcb* pcb);
+
+/**
+ * @brief Libera la memoria de una instruccion
+
+ * @param instruccion instruccion de tipo t_instruccion
+ * @return
+ */
+void destruirInstruccion(t_instruccion* instruccion);
 
 /**
  * @brief obtiene el grado multiprogramacion del archivo de configuraciones
