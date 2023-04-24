@@ -42,21 +42,18 @@ int main(int, char *archivos[]) {
             string_array_push(&listaParametros, string_substring_until(temp, strlen(temp) - 1));
             free(temp);
             
-            t_comando_total comComp = prepararComando(comando, listaParametros);
+            //t_comando_total comComp = prepararComando(comando, listaParametros);
 
             t_paquete *paquete = crearPaquete();
           /*agregar_a_paquete(paquete, (void)comComp.cantParametros, sizeof(int));
-            agregar_a_paquete(paquete, (void)comComp.longNombre, sizeof(int));
             agregar_a_paquete(paquete, (void)comComp.longParametros[0], sizeof(int));
             agregar_a_paquete(paquete, (void)comComp.longParametros[1], sizeof(int));
             agregar_a_paquete(paquete, (void)comComp.longParametros[2], sizeof(int)); */
-            agregar_a_paquete
-                (paquete, 
-                 comComp.nombre, 
-                 sizeof(char) * comComp.longNombre + 1);
-            int i = 0;
-            while(!queue_is_empty(comComp.filaParametros)) {
-                agregar_a_paquete(paquete, queue_pop(comComp.filaParametros), sizeof(char) * comComp.longParametros[i] + 1);
+            agregar_a_paquete(paquete, &comando, sizeof(int));
+            int i = 1;
+            //while(!queue_is_empty(comComp.filaParametros)) {
+            while(!listaParametros[i]){
+                agregar_a_paquete(paquete, listaParametros[i], strlen(listaParametros[i]));
                 i++;
             }
 
@@ -85,7 +82,7 @@ t_comando buscarComando(char *comando) {
     
     return listaComandos[i];
 }
-
+/*
 t_comando_total prepararComando(t_comando comando, char **parametros) {
     t_comando_total comandoCompleto;
     comandoCompleto.cantParametros = comando.cantParametros;
@@ -102,4 +99,4 @@ t_comando_total prepararComando(t_comando comando, char **parametros) {
     comandoCompleto.nombre = strdup(comando.nombre);
 
     return comandoCompleto;
-}
+} */
