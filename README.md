@@ -96,7 +96,7 @@ Se van a utilizar 7 claves distintas para comunicar a los distintos módulos dur
 
 - [ ] Documentar funciones.
 - [X] Añadir global.h para todas las variables globales que necesitemos generalmente (logger, config, etc.).
-- [ ] Traspasar toda dependencia de nuestras listas al commons/collections/list.h.
+- [X ] Traspasar toda dependencia de nuestras listas al commons/collections/list.h.
 
 ### Módulo pruebas
 
