@@ -2,9 +2,12 @@
 
 int32_t procesosCreados = 0; 
 t_list* pcbs_new; 
-//t_list* pcbs_ready; 
+t_list* pcbs_ready; 
 
-void inicializarListas
+void inicializarListasPCB(){
+    pcbs_new = list_create();
+    lee mi wpp porfissss
+}
 
 t_pcb* crearPCB() {
 
