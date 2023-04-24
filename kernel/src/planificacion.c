@@ -18,7 +18,7 @@ t_pcb* crearPCB() {
 
     return nuevoPCB; 
 
-} 
+}
  
 int obtenerEstimacionInicial() {
 
