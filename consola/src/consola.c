@@ -71,6 +71,7 @@ int main(int, char *archivos[]) {
             eliminar_paquete(paquete);
             free(comComp.nombre);
             queue_destroy(comComp.filaParametros);
+            sleep(1);
         }
         string_array_destroy(listaParametros);
     }

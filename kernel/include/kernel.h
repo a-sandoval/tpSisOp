@@ -20,6 +20,6 @@
 #include "shared/include/utilsCliente.h"
 #include "shared/include/global.h"
 
-void* conexion(char *CONEXION);
+int conexion(char *CONEXION);
 
 #endif

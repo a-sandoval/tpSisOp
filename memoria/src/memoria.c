@@ -13,14 +13,45 @@ int main(){
 	int cliente_fd = alistarServidor(confGet("PUERTO_ESCUCHA"));
 
 	//int rdoEjecucion = 
-	ejecutarServidor(cliente_fd,  clavesValidas);
+	ejecutarServidor(cliente_fd);
 
 	//if(rdoEjecucion == EXIT_FAILURE) terminarPrograma(config,logger);
 	
+	
+	/*
+	pthread_t threadCPU;
+    if(!pthread_create(&threadCPU, NULL, (void*) ejecutarServidor, &cliente_fd)){
+        pthread_detach(threadCPU);
+	}	
+    else {
+        log_error(logger, "Error en iniciar el servidor a CPU");
+        return EXIT_FAILURE;
+    }
+
+	pthread_t threadKernel;
+    if(!pthread_create(&threadKernel, NULL, (void*) ejecutarServidor, &cliente_fd)){
+        pthread_detach(threadKernel);
+	}	
+    else {
+        log_error(logger, "Error en iniciar el servidor a Kernel");
+        return EXIT_FAILURE;
+    }
+
+	pthread_t threadFS;
+    if(!pthread_create(&threadFS, NULL, (void*) ejecutarServidor, &cliente_fd)){
+        pthread_detach(threadFS);
+	}	
+    else {
+        log_error(logger, "Error en iniciar el servidor a FS");
+        return EXIT_FAILURE;
+    }
+	*/
+
+	terminarPrograma(clavesValidas);
+
 	log_info(logger,"Terminando servidor");
 	close(cliente_fd);
 
-	terminarPrograma(clavesValidas);
 	return 0;
     
 }

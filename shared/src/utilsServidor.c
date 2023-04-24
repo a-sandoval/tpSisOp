@@ -114,7 +114,7 @@ bool esClaveValida(void *clave){
 	return !strcmp(claveRecibida, clave);
 }
 
-int ejecutarServidor(int cliente_fd, t_list* clavesValidas){
+int ejecutarServidor(int cliente_fd){
 	t_list* lista;
 	while (1) {
 		int cod_op = recibir_operacion(cliente_fd);

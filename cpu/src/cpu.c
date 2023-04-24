@@ -25,7 +25,7 @@ int main(void){
 	cambiarNombre("CPU-Kernel");
 	int conexion_servir_kernel = alistarServidor(confGet("PUERTO_ESCUCHA"));
 
-	ejecutarServidor(conexion_servir_kernel, clavesValidas);
+	ejecutarServidor(conexion_servir_kernel);
 	close(conexion_memoria);
 
 	terminarPrograma(clavesValidas);

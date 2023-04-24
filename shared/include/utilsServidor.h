@@ -15,6 +15,7 @@
 
 extern t_log *logger;
 extern t_config *config;
+extern t_list *clavesValidas;
 
 void* recibir_buffer(int*, int);
 
@@ -28,7 +29,7 @@ int recibir_operacion(int);
 void element_destroyer(void* palabra);
 extern void iterator(char *value);
 int alistarServidor(char *puerto);
-int ejecutarServidor(int cliente_fd, t_list* clavesValidas);
+int ejecutarServidor(int cliente_fd);
 char* recibir_clave(int socket_cliente);
 
 #endif /* UTILS_SERVIDOR_H */ 

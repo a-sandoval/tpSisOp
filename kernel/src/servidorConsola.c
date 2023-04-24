@@ -3,20 +3,29 @@
 
 int servirAConsola(){
 
+	signal(SIGINT, agarrarSIGINT);
+
 	char* puertoDeEscucha = confGet("PUERTO_ESCUCHA"); 
 	
-	t_list* clavesValidas = list_create();
+	clavesValidas = list_create();
 
-	obtenerClavesValidas(clavesValidas);
+	obtenerClavesValidas();
 	
-	//inicio servidor y queda a la espera de clientes
-	int cliente_fd = alistarServidor(puertoDeEscucha);
+	while(!pararPrograma) {
+		//inicio servidor y queda a la espera de clientes
+		int cliente_fd = alistarServidor(puertoDeEscucha);
 
-	t_pcb* pcb = crearPCB(); 
+		t_pcb* pcb = crearPCB(); 
 
-	//int rdoEjecucion = 
-	ejecutarServidor(cliente_fd, clavesValidas);
-
+		pthread_t servidorConsola;
+    	if(!pthread_create(&servidorConsola, NULL,(void *) ejecutarServidor, &cliente_fd)){
+    	    pthread_detach(servidorConsola);
+    	}
+    	else{
+    	    log_error(logger, "Error al inciar servidor Kernel, Abort");
+    	    return EXIT_FAILURE;
+    	}
+	}
 	//log_info(logger, "Terminando servidor");
 
 	list_destroy(clavesValidas);
@@ -28,8 +37,12 @@ void iterator(char *value) {
     log_info(logger, value);
 }
 
-void obtenerClavesValidas(t_list* clavesValidas){
+void obtenerClavesValidas(){
 
 	list_add(clavesValidas,(void *) confGet("CLAVE_CONSOLA_KERNEL_MODO_USUARIO"));
 	list_add(clavesValidas,(void *) confGet("CLAVE_CONSOLA_KERNEL_MODO_ADMIN"));
+}
+
+void agarrarSIGINT(int SIGNUM) {
+	pararPrograma = 1;
 }

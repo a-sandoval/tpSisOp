@@ -3,6 +3,7 @@
 
 int main(){
 
+    
     /*Inicializando Logger*/
     logger = iniciarLogger("kernel.log", "Kernel");
 
@@ -10,52 +11,36 @@ int main(){
     config = iniciarConfiguracion("kernel.config");
 
     /*
-    pthread_t conexionMemoria;
+    // Generar conexion a memoria
     logger = cambiarNombre("Kernel-Memoria");
-    if(!pthread_create(&conexionMemoria, NULL,(void *)conexion("MEMORIA"), NULL)){
-        pthread_detach(conexionMemoria);
-    }
-    else{
-        log_error(logger, "Error al inciar conexion a memoria, Abort");
-        return EXIT_FAILURE;
-    }
+    int conexionAMemoria = conexion("MEMORIA");
+    if(!(conexionAMemoria + 1))
+        log_error(logger, "No se pudo conectar al servidor.");   
+    else
+        close(conexionAMemoria);
 
-     pthread_t conexionCPU;
-     int* conexionACPU;
+    // Generar conexion a CPU    
     logger = cambiarNombre("Kernel-CPU");
-    if(!pthread_create(&conexionCPU, NULL,(void *) conexion("CPU"), NULL)){
-        pthread_detach(conexionCPU);
-    }
-    else{
-        log_error(logger, "Error al inciar conexion a CPU, Abort");
-        return EXIT_FAILURE;
-    }
+    int conexionACPU = conexion("CPU");
+    if(!(conexionACPU + 1))
+        log_error(logger, "No se pudo conectar al servidor.");
+    else
+        close(conexionACPU);
 
-    pthread_t conexionFS;
-    int* conexionAFS;
+    // Generar conexion a File System
     logger = cambiarNombre("Kernel-FS");
-    if(!pthread_create(&conexionFS, NULL,(void *) conexion("FILESYSTEM"), NULL)){
-        pthread_detach(conexionFS);
-    }
-    else{
-        log_error(logger, "Error al inciar conexion a FS, Abort");
-        return EXIT_FAILURE;
-    }
+    int conexionAFS = conexion("FILESYSTEM");
+    if(!(conexionAFS + 1))
+        log_error(logger, "No se pudo conectar al servidor.");
+    else
+        close(conexionAFS);
 
     */
 
-    pthread_t servidorConsola;
     logger = cambiarNombre("Kernel-Consola");
-    if(!pthread_create(&servidorConsola, NULL,(void *) servirAConsola(), NULL)){
-        pthread_detach(servidorConsola);
-
-    }
-    else{
-        log_error(logger, "Error al inciar servidor Kernel, Abort");
-        return EXIT_FAILURE;
-    }
+    int servidorDeConsola = servirAConsola();
+    close(servidorDeConsola);
    
-
 
     terminarPrograma(NULL);
 
@@ -64,7 +49,7 @@ int main(){
 
 
 
-void* conexion(char *CONEXION) {
+int conexion(char *CONEXION) {
     char *KEYS[] = {
         string_from_format("PUERTO_%s", CONEXION), 
         string_from_format("IP_%s", CONEXION), 
@@ -81,6 +66,6 @@ void* conexion(char *CONEXION) {
 
     close(conexion);
 
-    //return conexion;
+    return conexion;
 
 }
