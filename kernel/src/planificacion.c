@@ -19,6 +19,10 @@ t_pcb* crearPCB() {
     return nuevoPCB; 
 
 }
+
+void paseNewReady(t_list* pcbs_new,t_list*pcbs_ready){
+    
+}
  
 int obtenerEstimacionInicial() {
 
