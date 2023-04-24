@@ -6,7 +6,6 @@ t_list* pcbs_ready;
 
 void inicializarListasPCB(){
     pcbs_new = list_create();
-    lee mi wpp porfissss
 }
 
 t_pcb* crearPCB() {

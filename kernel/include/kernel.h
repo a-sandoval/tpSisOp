@@ -7,6 +7,8 @@
 #include <commons/log.h>
 #include <commons/collections/list.h>
 #include <commons/config.h>
+#include <pthread.h>
+#include <semaphore.h>
 // Conexiones propias del kernel
 #include "kernel/include/conexionMemoria.h"
 #include "kernel/include/conexionCPU.h"
@@ -18,6 +20,6 @@
 #include "shared/include/utilsCliente.h"
 #include "shared/include/global.h"
 
-int conexion(char *CONEXION);
+void* conexion(char *CONEXION);
 
 #endif
