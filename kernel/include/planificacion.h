@@ -55,4 +55,19 @@ t_pcb* crearPCB();
  */
 void inicializarListasPCBS(); 
 
+/**
+ * @brief obtiene el grado multiprogramacion del archivo de configuraciones
+ * @param
+ * @return el grado de multiprogramacion de la cpu
+ */
+int obtenerGradoMultiprogramacion();
+
+/**
+ * @brief Selecciona el proximo pcb a ejecutar segun el algoritmo FIFO
+
+ * @param
+ * @return el proximo puntero a t_pcb a ejecutar
+ */
+t_pcb* proximoAEjecutarFIFO();
+
 #endif 
