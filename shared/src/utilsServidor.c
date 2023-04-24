@@ -131,7 +131,7 @@ int ejecutarServidor(int cliente_fd, t_list* clavesValidas){
 			break;
 		case PAQUETE:
 			lista = recibir_paquete(cliente_fd);
-			log_info(logger, "Me llegaron los siguientes valores:"); 
+			//log_info(logger, "Me llegaron los siguientes valores:"); 
 			list_iterate(lista, (void*) iterator); 
 			list_destroy_and_destroy_elements(lista, (void*)element_destroyer);
 			break;
