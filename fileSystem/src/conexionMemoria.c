@@ -12,7 +12,7 @@ int conectarseAMemoria() {
 
       log_error(logger,"No se pudo crear la conexion con la memoria");
 		
-		return EXIT_FAILURE; //abort o exit?
+		return EXIT_FAILURE; 
 
    }
 
