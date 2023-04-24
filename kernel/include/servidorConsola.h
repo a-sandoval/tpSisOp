@@ -12,7 +12,7 @@ extern t_log *logger;
 extern t_config *config;
 
 int servirAConsola();
-void iterator(char* value);
+void iterator(void* value);
 void obtenerClavesValidas(t_list *clavesValidas);
 
 #endif /* SERVER_H_ */

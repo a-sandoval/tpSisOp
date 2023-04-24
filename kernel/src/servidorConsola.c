@@ -1,4 +1,4 @@
-/* CONSOLA - cliente | KERNEL - sevidor*/
+/* CONSOLA - cliente | KERNEL - servidor*/
 #include "kernel/include/servidorConsola.h"
 
 int servirAConsola(){

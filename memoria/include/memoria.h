@@ -13,7 +13,7 @@
 #include "shared/include/configuraciones.h"
 #include "shared/include/global.h"
 
-void iterator(char* value);
+void iterator(void*); 
 /**
  * @brief Obtiene las claves validas para conexion entre modulos del archivo de configuracion
 

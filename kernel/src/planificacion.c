@@ -2,11 +2,18 @@
 
 int32_t procesosCreados = 0; 
 t_list* pcbs_new; 
-t_list* pcbs_ready; 
+t_list* pcbs_ready;
+t_list* pcbs_block;
 
-void inicializarListasPCB(){
+void inicializarListasPCBS(){
     pcbs_new = list_create();
-    lee mi wpp porfissss
+    pcbs_ready = list_create();
+    pcbs_block = list_create();
+}
+
+//Destruir listas PCBS
+void destruirListaPCB(t_list* pcb){
+    list_destroy_and_destroy_elements(pcb,(void*)destruirPCB);
 }
 
 t_pcb* crearPCB() {
@@ -25,6 +32,11 @@ t_pcb* crearPCB() {
 
 }
  
+
+void destruirPCB(t_pcb* pcb){
+    free(pcb);
+}
+
 int obtenerEstimacionInicial() {
 
     return config_get_int_value(config,"ESTIMACION_INICIAL"); 

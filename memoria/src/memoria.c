@@ -25,8 +25,8 @@ int main(){
     
 }
 
-void iterator(char* value) {
-	log_info(logger,"%s", value);
+void iterator(void* value) {
+	free(value); 
 }
 
 
