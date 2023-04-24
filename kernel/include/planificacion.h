@@ -18,27 +18,30 @@ typedef enum {
     READY, 
     EXEC, 
     BLOCK, 
-    EXIT
+    EXIT,
 } estadoProceso; 
 
+int32_t procesosCreados = 0; 
+t_list* pcbs_new; 
+t_list* pcbs_ready; 
 
 typedef struct t_pcb {
 
-    int id;
-    t_list* instrucciones = list_create(); 
+    int32_t pid; 
+    t_list* instrucciones; 
     int programCounter;   
+    estadoProceso estado; 
     t_reg* registrosCPU;   // Puntero o no? 
-    int estimadoProximaRafaga = obtenerEstimacionInicial(); // en miliseg
-    t_temporal* llegadaAReady = temporal_create(); 
+    int estimadoProximaRafaga; 
+    t_temporal* llegadaAReady; 
 
-    //TO DO: TABLA DE SEGMENTOS Y TABLA DE ARCHIVOS + contexto de ejecucion
+    //TO DO: TABLA DE SEGMENTOS Y TABLA DE ARCHIVOS 
 
 
 } t_pcb; 
 
-t_list* pcbs_new; 
-t_list* pcbs_ready; 
 
 int obtenerEstimacionInicial(); 
+t_pcb crearPCB(); 
 
 #endif 

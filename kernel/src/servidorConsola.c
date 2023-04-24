@@ -12,6 +12,8 @@ int servirAConsola(){
 	//inicio servidor y queda a la espera de clientes
 	int cliente_fd = alistarServidor(puertoDeEscucha);
 
+	t_pcb pcb = crearPCB(); 
+
 	//int rdoEjecucion = 
 	ejecutarServidor(cliente_fd, clavesValidas);
 

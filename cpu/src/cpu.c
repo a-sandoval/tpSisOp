@@ -31,6 +31,9 @@ int main(void){
 	terminarPrograma(clavesValidas);
 
     return EXIT_SUCCESS;
+
+	//recibirContextoEjecucion(t_pcb pcbParaSacarCosas);
+	//ejecutarInstruccion(t-pcb pcb, );
 }
 
 void iterator(char *value){
