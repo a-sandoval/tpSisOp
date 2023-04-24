@@ -16,7 +16,6 @@ t_pcb* crearPCB() {
 
     log_info(logger,"Se crea el proceso <%d> en NEW", nuevoPCB->pid); 
 
-
     return nuevoPCB; 
 
 } 
