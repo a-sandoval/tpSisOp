@@ -33,12 +33,13 @@ int main(void){
     return EXIT_SUCCESS;
 
 	//recibirContextoEjecucion(t_pcb pcbParaSacarCosas); TENGO QUE HACERLA
-	//ejecutarInstruccion(t-pcb pcb, t_instruccion instruccion);
+	//ejecutarInstruccion(t_pcb pcb, t_instruccion instruccion);
 }
 
 /*
 ejecutarInstruccion(t-pcb pcb, t_instruccion instruccion){
-	if(instruccion está en la lista de instrucciones el pcb){
+	
+	if(bool list_any_satisfy(t_list* instrucciones, bool(*==instruccion)(void*));){
 		cicloDeInstruccion(instruccion);
 	} else {
 		prinf("ERROR: No es posible realizar la instruccion");
