@@ -17,7 +17,7 @@ int servirAConsola(){
 	//int rdoEjecucion = 
 	ejecutarServidor(cliente_fd, clavesValidas);
 
-	log_info(logger, "Terminando servidor");
+	//log_info(logger, "Terminando servidor");
 
 	list_destroy(clavesValidas);
 

@@ -7,7 +7,7 @@
 #include <commons/collections/list.h>
 #include <commons/temporal.h>
 #include "shared/include/utilsCliente.h"
-#include "cpu/include/registros.h""
+#include "cpu/include/registros.h"
 
 extern t_log *logger;
 extern t_config *config;
@@ -21,9 +21,7 @@ typedef enum {
     EXIT,
 } estadoProceso; 
 
-int32_t procesosCreados = 0; 
-t_list* pcbs_new; 
-t_list* pcbs_ready; 
+
 
 typedef struct t_pcb {
 

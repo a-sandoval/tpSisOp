@@ -32,9 +32,19 @@ int main(void){
 
     return EXIT_SUCCESS;
 
-	//recibirContextoEjecucion(t_pcb pcbParaSacarCosas);
-	//ejecutarInstruccion(t-pcb pcb, );
+	//recibirContextoEjecucion(t_pcb pcbParaSacarCosas); TENGO QUE HACERLA
+	//ejecutarInstruccion(t-pcb pcb, t_instruccion instruccion);
 }
+
+/*
+ejecutarInstruccion(t-pcb pcb, t_instruccion instruccion){
+	if(instruccion está en la lista de instrucciones el pcb){
+		cicloDeInstruccion(instruccion);
+	} else {
+		prinf("ERROR: No es posible realizar la instruccion");
+	}
+}
+*/
 
 void iterator(char *value){
 	log_info(logger, "Valor recibido: %s\n",value);

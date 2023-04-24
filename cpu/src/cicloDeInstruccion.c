@@ -7,3 +7,4 @@ int cicloDeInstruccion(void){
 
     int execute();
 }
+//IR ACTUALIZANDO EL PCB MIENTRAS SE VA EJECUTANDO
