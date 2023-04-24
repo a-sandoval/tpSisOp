@@ -36,6 +36,8 @@ typedef struct t_pcb {
 
 } t_pcb; 
 
+t_list* pcbs_new; 
+t_list* pcbs_ready; 
 
 int obtenerEstimacionInicial(); 
 

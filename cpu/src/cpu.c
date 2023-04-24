@@ -47,10 +47,10 @@ int conexionMemoria(){
 	char* puerto = confGet("PUERTO_MEMORIA");
 
 	/*Configuraciones*/
-	log_info(logger, "VALOR: %s, IP: %s, PUERTO:%s", valor, ip, puerto);
+	//log_info(logger, "VALOR: %s, IP: %s, PUERTO:%s", valor, ip, puerto);
 
 	conexion = realizarConexion(ip,puerto,valor);
-	log_info(logger, "VALOR DE LA CONEXION: %d", conexion);
+	//log_info(logger, "VALOR DE LA CONEXION: %d", conexion);
 
 
 	return conexion;
