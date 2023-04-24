@@ -37,7 +37,7 @@ int main(int, char *archivos[]) {
         char **listaParametros = string_n_split(lineaCodigo, 4, " ");
         t_comando comando = buscarComando(listaParametros[0]);
 
-        if (comando.nombre != NULL) {
+        if (!(comando+1)) {
             char *temp = string_array_pop(listaParametros);
             string_array_push(&listaParametros, string_substring_until(temp, strlen(temp) - 1));
             free(temp);
