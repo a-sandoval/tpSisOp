@@ -39,6 +39,14 @@ typedef struct t_pcb {
 
 
 int obtenerEstimacionInicial(); 
-t_pcb* crearPCB(); 
+t_pcb* crearPCB();
+
+/**
+ * @brief Crea todas las listas de PCBs en los distintos estados
+
+ * @param
+ * @return
+ */
+void inicializarListasPCBS(); 
 
 #endif 

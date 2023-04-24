@@ -4,11 +4,13 @@ int32_t procesosCreados = 0;
 t_list* pcbs_new; 
 t_list* pcbs_ready;
 t_list* pcbs_block;
+t_list* pcb_instrucciones; 
 
 void inicializarListasPCBS(){
     pcbs_new = list_create();
     pcbs_ready = list_create();
     pcbs_block = list_create();
+    pcb_instrucciones = list_create();
 }
 
 //Destruir listas PCBS
@@ -21,6 +23,7 @@ t_pcb* crearPCB() {
     t_pcb* nuevoPCB = malloc(sizeof(t_pcb)); 
     nuevoPCB->estado = NEW; 
     nuevoPCB->pid = procesosCreados; 
+    nuevoPCB->instrucciones = pcb_instrucciones; 
     nuevoPCB->estimadoProximaRafaga = obtenerEstimacionInicial(); 
     nuevoPCB->llegadaAReady = temporal_create(); 
 
@@ -43,13 +46,9 @@ int obtenerEstimacionInicial() {
     
 }
 
- t_pcb* proximoAEjecutarFIFO(t_list* procesosReady){
-    return (t_pcb*)list_get(procesosReady, 0);
+ t_pcb* proximoAEjecutarFIFO(){
+    return (t_pcb*)list_get(pcbs_ready, 0);
 }
 
-/*
-void paseReadyExecuteFIFO(t_list* pcbs_ready,t_list*pcbs_ready){
-
-}
-*/
+//void cambiarDeNewAReady(); CAMBIAR DE ESTADO
 

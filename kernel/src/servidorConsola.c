@@ -1,6 +1,9 @@
 /* CONSOLA - cliente | KERNEL - servidor*/
 #include "kernel/include/servidorConsola.h"
 
+t_pcb* pcb; 
+
+
 int servirAConsola(){
 
 	char* puertoDeEscucha = confGet("PUERTO_ESCUCHA"); 
@@ -12,7 +15,7 @@ int servirAConsola(){
 	//inicio servidor y queda a la espera de clientes
 	int cliente_fd = alistarServidor(puertoDeEscucha);
 
-	t_pcb* pcb = crearPCB(); 
+	pcb = crearPCB(); 
 
 	//int rdoEjecucion = 
 	ejecutarServidor(cliente_fd, clavesValidas);
@@ -24,8 +27,11 @@ int servirAConsola(){
 	return 0;
 }
 
-void iterator(char *value) {
-    log_info(logger, value);
+void iterator(void *value) {
+    
+	list_add(pcb->instrucciones,value); 
+
+
 }
 
 void obtenerClavesValidas(t_list* clavesValidas){
