@@ -4,6 +4,8 @@ int32_t procesosCreados = 0;
 t_list* pcbs_new; 
 //t_list* pcbs_ready; 
 
+void inicializarListas
+
 t_pcb* crearPCB() {
 
     t_pcb* nuevoPCB = malloc(sizeof(t_pcb)); 
@@ -19,10 +21,6 @@ t_pcb* crearPCB() {
     return nuevoPCB; 
 
 }
-
-void paseNewReady(t_list* pcbs_new,t_list*pcbs_ready){
-    
-}
  
 int obtenerEstimacionInicial() {
 
@@ -33,4 +31,10 @@ int obtenerEstimacionInicial() {
  t_pcb* proximoAEjecutarFIFO(t_list* procesosReady){
     return (t_pcb*)list_get(procesosReady, 0);
 }
+
+/*
+void paseReadyExecuteFIFO(t_list* pcbs_ready,t_list*pcbs_ready){
+
+}
+*/
 
