@@ -51,6 +51,14 @@ t_pcb* crearPCB();
 void inicializarListasPCBS(); 
 
 /**
+ * @brief Libera la memoria de una lista de pcbs
+
+ * @param
+ * @return
+ */
+void destruirListaPCB(t_list* pcb);
+
+/**
  * @brief obtiene el grado multiprogramacion del archivo de configuraciones
  * @param
  * @return el grado de multiprogramacion de la cpu
