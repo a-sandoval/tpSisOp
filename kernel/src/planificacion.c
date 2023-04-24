@@ -59,8 +59,8 @@ t_pcb* desencolar(t_list* pcbs){
     return (t_pcb*)list_get(pcbs, 0);    
 }
 
-t_pcb* encolar(t_list* pcbs){
-    
+void encolar(t_list* pcbs){
+    list_add();
 }
 
 void cambiarNewAReady(){

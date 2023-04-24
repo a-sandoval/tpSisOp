@@ -15,10 +15,9 @@
 #include "shared/include/global.h"
 
 typedef struct {
-    int  longNombre;
     int  cantParametros;
     int  longParametros[3];
-    char *nombre;
+    t_comando nombre;
     t_queue *filaParametros;
 } t_comando_total;
 
