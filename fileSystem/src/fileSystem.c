@@ -18,7 +18,7 @@ int main(void) {
     return 0;
 }
 
-void iterator(char *value) {
+void iterator(void*value) {
     free(value);
 }
 

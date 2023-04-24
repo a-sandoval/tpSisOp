@@ -125,7 +125,7 @@ int ejecutarServidor(){
 				log_error(logger, "Cliente no reconocido"); 
 				return EXIT_FAILURE;
 			}
-			log_info(logger, "Clave valida, autorizo informacion");
+			log_info(logger, "Se autoriza continuar");
 			free(claveRecibida); 
 			break;
 		case PAQUETE:

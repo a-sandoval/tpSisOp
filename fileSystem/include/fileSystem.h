@@ -14,7 +14,7 @@
 #include "fileSystem/include/conexionMemoria.h"
 #include "fileSystem/include/servidorKernel.h"
 
-void iterator(char* value);
+void iterator(void* value);
 
 #endif
 
