@@ -7,6 +7,7 @@
 #include <commons/collections/list.h>
 #include <commons/temporal.h>
 #include "shared/include/utilsCliente.h"
+#include <shared/include/global.h>
 #include "cpu/include/registros.h"
 
 extern t_log *logger;
@@ -48,5 +49,20 @@ t_pcb* crearPCB();
  * @return
  */
 void inicializarListasPCBS(); 
+
+/**
+ * @brief obtiene el grado multiprogramacion del archivo de configuraciones
+ * @param
+ * @return el grado de multiprogramacion de la cpu
+ */
+int obtenerGradoMultiprogramacion();
+
+/**
+ * @brief Selecciona el proximo pcb a ejecutar segun el algoritmo FIFO
+
+ * @param
+ * @return el proximo puntero a t_pcb a ejecutar
+ */
+t_pcb* proximoAEjecutarFIFO();
 
 #endif 
