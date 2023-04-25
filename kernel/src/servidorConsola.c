@@ -13,7 +13,6 @@ int servirAConsola(){
 	clavesValidas = list_create();
 	queueConexiones = queue_create(); 
 
-	obtenerClavesValidas();
 	
 	while(!pararPrograma) {
 		//inicio servidor y queda a la espera de clientes
@@ -37,20 +36,12 @@ int servirAConsola(){
     	    return EXIT_FAILURE;
     	}
 	}
-	//log_info(logger, "Terminando servidor");
-
-	list_destroy(clavesValidas);
+	
 
 	return 0;
 }
 
 
-
-void obtenerClavesValidas(){
-
-	list_add(clavesValidas,(void *) confGet("CLAVE_CONSOLA_KERNEL_MODO_USUARIO"));
-	list_add(clavesValidas,(void *) confGet("CLAVE_CONSOLA_KERNEL_MODO_ADMIN"));
-}
 
 void agarrarSIGINT(int SIGNUM) {
 	pararPrograma = 1;

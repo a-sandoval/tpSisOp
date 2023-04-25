@@ -3,20 +3,13 @@
 int main(int, char *archivos[]) {
 
     // inicializacion de las variables
-
-    int conexion;
     char *ip, *puerto;
     logger = iniciarLogger("consola.log", "consola");
 
     config = iniciarConfiguracion(archivos[2]);
-    ip = confGet("IP_KERNEL");
-    puerto = confGet("PUERTO_KERNEL");
 
-    // conexion al kernel
-
-    conexion = crear_conexion(ip, puerto);
-
-    if (!(conexion + 1)) { 
+    int conexionAKernel = conexion("CONSOLA", "KERNEL");
+    if (!(conexionAKernel + 1)) { 
         log_error(logger, "No se pudo conectar a la Kernel por la ip %s y puerto %s", ip, puerto);
         log_destroy(logger);
         config_destroy(config);
@@ -51,7 +44,7 @@ int main(int, char *archivos[]) {
             
             t_comando_total comComp = prepararComando(comando, listaParametros);
 
-            t_paquete *paquete = crear_paquete();
+            t_paquete *paquete = crearPaquete();
           /*agregar_a_paquete(paquete, (void)comComp.cantParametros, sizeof(int));
             agregar_a_paquete(paquete, (void)comComp.longNombre, sizeof(int));
             agregar_a_paquete(paquete, (void)comComp.longParametros[0], sizeof(int));

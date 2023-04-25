@@ -7,7 +7,7 @@ int main(void) {
 
     config = iniciarConfiguracion("filesys.config"); 
 
-    int conexionAMemoria = conectarseAMemoria(); 
+    int conexionAMemoria = conexion("FILE-SYSTEM", "MEMORIA");
   
     escucharAlKernel(); 
 

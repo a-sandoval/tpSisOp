@@ -39,4 +39,6 @@ t_comando buscarComando(char *comando);
 
 t_comando_total prepararComando(t_comando comando, char **parametros);
 
+int conexion(char *CONEXION, char *SERVIDOR);
+
 #endif /* CLIENT_H_ */

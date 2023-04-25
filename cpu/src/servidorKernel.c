@@ -1,4 +1,4 @@
-#include "fileSystem/include/servidorKernel.h"
+#include "cpu/include/servidorKernel.h"
 
 void escucharAlKernel() {
 
@@ -6,11 +6,13 @@ void escucharAlKernel() {
 
     t_list* clavesValidas = list_create();
 
+    list_add(clavesValidas,(void *) confGet("CLAVE_CPU_KERNEL"));
 
     alistarServidor(puertoEscucha);
 
     ejecutarServidor(socketCliente, clavesValidas);  
 
+    list_destroy(clavesValidas);
 
 }
 

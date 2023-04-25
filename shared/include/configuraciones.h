@@ -44,6 +44,6 @@ t_log *cambiarNombre(char *nuevoNombre);
 
 char *confGet(char *key);
 
-void terminarPrograma(t_list *lista);
+void terminarPrograma();
 
 #endif /* CONFIGURACIONES_H_ */

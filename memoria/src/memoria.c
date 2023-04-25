@@ -48,9 +48,9 @@ int main(){
 
 	*/
 
-	terminarPrograma(clavesValidas);
 
 	log_info(logger,"Terminando servidor");
+	terminarPrograma();
 
 	return 0;
     
@@ -58,14 +58,4 @@ int main(){
 
 void iterator(void* value) {
 	log_info(logger,"%s", value);
-}
-
-
-
-void obtenerClavesValidas(){ // posiblemente borremos al carajo estas claves
-
-	list_add(clavesValidas,(void *) confGet("CLAVE_CPU_MEMORIA"));
-	list_add(clavesValidas,(void *) confGet("CLAVE_KERNEL_MEMORIA"));
-	list_add(clavesValidas,(void *) confGet("CLAVE_FS_MEMORIA"));
-	
 }

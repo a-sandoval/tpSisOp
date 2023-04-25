@@ -1,0 +1,1 @@
+// va a ser para cuando haya que hacerles peticiones a memoria
