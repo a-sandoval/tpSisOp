@@ -87,7 +87,9 @@ int main(int, char *archivos[]) {
 
 t_comando buscarComando(char *comando) {
     int i = 0;
-    while(listaComandos->cantParametros != -1 && !string_contains(comando, listaComandos[i].nombre)) i++;
+
+    while(listaComandos[i].cantParametros != -1 && !string_contains(comando, listaComandos[i].nombre)) i++;
+    
     return listaComandos[i];
 }
 

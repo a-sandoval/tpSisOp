@@ -23,9 +23,9 @@ int main(void){
 
 	/*Preparacion de la cpu para servir al kernel*/
 	cambiarNombre("CPU-Kernel");
-	int conexion_servir_kernel = alistarServidor(confGet("PUERTO_ESCUCHA"));
+	alistarServidor(confGet("PUERTO_ESCUCHA"));
 
-	ejecutarServidor(conexion_servir_kernel);
+	ejecutarServidor(socketCliente);
 	close(conexion_memoria);
 
 	terminarPrograma(clavesValidas);
@@ -46,7 +46,7 @@ ejecutarInstruccion(t-pcb pcb, t_instruccion instruccion){
 }
 */
 
-void iterator(char *value){
+void iterator(void *value){
 	log_info(logger, "Valor recibido: %s\n",value);
 }
 

@@ -10,10 +10,10 @@ int main(){
 	obtenerClavesValidas(clavesValidas);
 
 	//inicio servidor y queda a la espera de clientes
-	int cliente_fd = alistarServidor(confGet("PUERTO_ESCUCHA"));
+	alistarServidor(confGet("PUERTO_ESCUCHA"));
 
 	//int rdoEjecucion = 
-	ejecutarServidor(cliente_fd);
+	ejecutarServidor(socketCliente);
 
 	//if(rdoEjecucion == EXIT_FAILURE) terminarPrograma(config,logger);
 	
@@ -45,24 +45,24 @@ int main(){
         log_error(logger, "Error en iniciar el servidor a FS");
         return EXIT_FAILURE;
     }
+
 	*/
 
 	terminarPrograma(clavesValidas);
 
 	log_info(logger,"Terminando servidor");
-	close(cliente_fd);
 
 	return 0;
     
 }
 
-void iterator(char* value) {
+void iterator(void* value) {
 	log_info(logger,"%s", value);
 }
 
 
 
-void obtenerClavesValidas(t_list* clavesValidas){
+void obtenerClavesValidas(){ // posiblemente borremos al carajo estas claves
 
 	list_add(clavesValidas,(void *) confGet("CLAVE_CPU_MEMORIA"));
 	list_add(clavesValidas,(void *) confGet("CLAVE_KERNEL_MEMORIA"));

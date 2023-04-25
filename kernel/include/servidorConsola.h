@@ -6,19 +6,22 @@
 #include <signal.h>
 #include <commons/log.h>
 #include <commons/config.h>
+#include <commons/collections/queue.h>
 #include <shared/include/utilsCliente.h>
 #include <shared/include/utilsServidor.h>
 #include <shared/include/configuraciones.h>
 #include "planificacion.h"
 #include <pthread.h>
+#include <semaphore.h>
 
+extern int socketClienteFD;
 extern t_log *logger;
 extern t_config *config;
 extern t_list *clavesValidas;
 extern volatile sig_atomic_t pararPrograma;
 
 int servirAConsola();
-void iterator(char* value);
+void iterator(void* value);
 void obtenerClavesValidas();
 void agarrarSIGINT(int SIGNUM);
 

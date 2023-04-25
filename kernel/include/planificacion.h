@@ -7,6 +7,7 @@
 #include <commons/collections/list.h>
 #include <commons/temporal.h>
 #include "shared/include/utilsCliente.h"
+#include <shared/include/global.h>
 #include "cpu/include/registros.h"
 
 extern t_log *logger;
@@ -36,6 +37,11 @@ typedef struct t_pcb {
 
 
 } t_pcb; 
+
+int32_t procesosCreados = 0; 
+t_list* pcbsNEW; 
+t_list* pcbsREADY;
+t_list* pcbsBLOCK;
 
 
 int obtenerEstimacionInicial(); 

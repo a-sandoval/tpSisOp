@@ -1,7 +1,7 @@
 #include "../include/utilsServidor.h"
 
 //Se le agrego el parametro logger, para que funciones
-int iniciar_servidor(char *puerto,t_log* logger){
+int iniciar_servidor(char *puerto){
 
 	int socket_servidor;
 
@@ -30,50 +30,50 @@ int iniciar_servidor(char *puerto,t_log* logger){
 }
 
 //Se agrego Logger como parametro
-int esperar_cliente(int socket_servidor,t_log* logger){
+int esperar_cliente(int socket_servidor){
 
-	int socket_cliente = accept(socket_servidor, NULL, NULL);
+	int socketClienteFD = accept(socket_servidor, NULL, NULL);
 	log_info(logger, "Se conecto un cliente!");
 
-	return socket_cliente;
+	return socketClienteFD;
 }
 
-int recibir_operacion(int socket_cliente){
+int recibir_operacion(){
 	int cod_op;
-	if(recv(socket_cliente, &cod_op, sizeof(int), MSG_WAITALL) > 0)
+	if(recv(socketCliente, &cod_op, sizeof(int), MSG_WAITALL) > 0)
 		return cod_op;
 	else
 	{
-		close(socket_cliente);
+		close(socketCliente);
 		return -1;
 	}
 }
 
-void* recibir_buffer(int* size, int socket_cliente){
+void* recibir_buffer(int* size){
 	void * buffer;
 
-	recv(socket_cliente, size, sizeof(int), MSG_WAITALL);
+	recv(socketCliente, size, sizeof(int), MSG_WAITALL);
 	buffer = malloc(*size);
-	recv(socket_cliente, buffer, *size, MSG_WAITALL);
+	recv(socketCliente, buffer, *size, MSG_WAITALL);
 
 	return buffer;
 }
 
-void recibir_mensaje(int socket_cliente)
+void recibir_mensaje()
 {
 	int size;
-	char* buffer = recibir_buffer(&size, socket_cliente);
+	char* buffer = recibir_buffer(&size);
 	free(buffer);
 }
 
-t_list* recibir_paquete(int socket_cliente){
+t_list* recibir_paquete(){
 	int size;
 	int desplazamiento = 0;
 	void * buffer;
 	t_list* valores = list_create();
 	int tamanio;
 
-	buffer = recibir_buffer(&size, socket_cliente);
+	buffer = recibir_buffer(&size);
 	while(desplazamiento < size){
 		memcpy(&tamanio, buffer + desplazamiento, sizeof(int));
 		desplazamiento+=sizeof(int);
@@ -89,21 +89,19 @@ t_list* recibir_paquete(int socket_cliente){
 
 
 //FUNCIONES DE USO COLECTIVO PARA EL SERVIDOR:
-int alistarServidor(char *puerto){
+void alistarServidor(char *puerto){
 
-	int server_fd = iniciar_servidor(puerto,logger);
+	int server_fd = iniciar_servidor(puerto);
 
 	log_info(logger, "Servidor listo para recibir al cliente");
 
-	int cliente_fd = esperar_cliente(server_fd,logger);
-
-	return cliente_fd;
+	int socketCliente = esperar_cliente(server_fd);
 }
 
 
-char* recibir_clave(int socket_cliente){
+char* recibir_clave(){
 	int size;
-	char* buffer = recibir_buffer(&size, socket_cliente);
+	char* buffer = recibir_buffer(&size);
 
 	return buffer;
 }
@@ -114,13 +112,13 @@ bool esClaveValida(void *clave){
 	return !strcmp(claveRecibida, clave);
 }
 
-int ejecutarServidor(int cliente_fd){
+int ejecutarServidor(){
 	t_list* lista;
 	while (1) {
-		int cod_op = recibir_operacion(cliente_fd);
+		int cod_op = recibir_operacion();
 		switch (cod_op) {
 		case MENSAJE:
-			claveRecibida = recibir_clave(cliente_fd);
+			claveRecibida = recibir_clave();
 
 			if(!list_any_satisfy(clavesValidas,esClaveValida)){
 				log_error(logger, "Cliente no reconocido"); 
@@ -130,7 +128,7 @@ int ejecutarServidor(int cliente_fd){
 			free(claveRecibida); 
 			break;
 		case PAQUETE:
-			lista = recibir_paquete(cliente_fd);
+			lista = recibir_paquete();
 			//log_info(logger, "Me llegaron los siguientes valores:"); 
 			list_iterate(lista, (void*) iterator); 
 			list_destroy_and_destroy_elements(lista, (void*)element_destroyer);
