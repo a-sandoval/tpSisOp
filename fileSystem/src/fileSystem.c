@@ -13,7 +13,7 @@ int main(void) {
 
     close(conexionAMemoria); 
 
-    terminarPrograma(NULL);
+    terminarPrograma();
     
     return 0;
 }

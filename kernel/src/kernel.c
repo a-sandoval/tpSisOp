@@ -41,7 +41,7 @@ int main(){
     int servidorDeConsola = servirAConsola();
     close(servidorDeConsola);
 
-    terminarPrograma(NULL);
+    terminarPrograma();
 
     return 0; 
 }

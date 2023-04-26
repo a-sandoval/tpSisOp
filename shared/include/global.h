@@ -3,6 +3,7 @@
 
     #include <commons/log.h>
     #include <commons/config.h>
+    #include <signal.h>
 
     int socketClienteFD;
     t_log* logger;

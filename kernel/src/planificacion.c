@@ -1,7 +1,6 @@
 #include "kernel/include/planificacion.h"
 
 
-
 void inicializarListasPCBS(){
     pcbsNEW = list_create();
     pcbsREADY = list_create();
@@ -30,7 +29,7 @@ t_pcb* crearPCB() {
     return nuevoPCB; 
 
 }
- 
+
 
 void destruirPCB(t_pcb* pcb){
     list_destroy_and_destroy_elements(pcb->instrucciones,(void*)destruirInstruccion); 

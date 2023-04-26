@@ -14,7 +14,6 @@ extern t_log *logger;
 extern t_config *config;
 
 typedef enum estadoProceso{
-    
     NEW, 
     READY, 
     EXEC, 
