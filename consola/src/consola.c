@@ -73,7 +73,7 @@ int main(int, char *archivos[]) {
 
     close(conexion);
     fclose(codigo);
-    terminarPrograma();
+    terminarPrograma(NULL);
 
     return 0;
 }
