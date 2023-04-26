@@ -112,6 +112,6 @@ int ejecutarServidorKernel(){
 	}
 
 	// suponiendo un PCB con instrucciones
-	encolar(*pcbsNEW, PCB);
+	encolar(pcbsNEW, PCB);
 }
 

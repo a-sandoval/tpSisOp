@@ -43,6 +43,11 @@ typedef struct t_pcb {
 
 } t_pcb; 
 
+int32_t procesosCreados = 0; 
+t_list* pcbsNEW; 
+t_list* pcbsREADY;
+t_list* pcbsBLOCK;
+
 /**
  * @brief Obtiene la estimacion inicial de rafaga del archivo de configuraciones del kernel
 
