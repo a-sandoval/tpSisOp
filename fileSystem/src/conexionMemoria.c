@@ -9,14 +9,9 @@ int conectarseAMemoria() {
    int conexionAMemoria = realizarConexion(ip, puertoConexionAMemoria, claveHandshake); 
 
    if (conexionAMemoria == -1) {
-
       log_error(logger,"No se pudo crear la conexion con la memoria");
-		
 		return EXIT_FAILURE; 
-
    }
 
    return conexionAMemoria; 
 }
-
-

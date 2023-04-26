@@ -7,7 +7,7 @@ void cicloDeInstruccion(){
 
     executeCPU();
 }
-// IR ACTUALIZANDO EL PCB MIENTRAS SE VA EJECUTANDO
+// IR ACTUALIZANDO EL PCB MIENTRAS SE VA EJECUTANDO 
 
  
 void executeCPU(){

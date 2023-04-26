@@ -24,7 +24,7 @@ void* serializar_paquete(t_paquete* paquete, int bytes){
 	return magic;
 }
 
-int crear_conexion(char *ip, char* puerto){
+int crearConexion(char *ip, char* puerto){
 	struct addrinfo hints;
 	struct addrinfo *server_info;
 
@@ -38,7 +38,6 @@ int crear_conexion(char *ip, char* puerto){
 	int socket_cliente = socket(server_info->ai_family,
                 			    server_info->ai_socktype,
                 			    server_info->ai_protocol);
-
 	
 	if (!connect(socket_cliente, server_info->ai_addr, server_info->ai_addrlen)) {
 		freeaddrinfo(server_info);
@@ -79,7 +78,7 @@ void crear_buffer(t_paquete* paquete){
 	paquete->buffer->stream = NULL;
 }
 
-t_paquete* crear_paquete(void){
+t_paquete* crearPaquete(void){
 	t_paquete* paquete = malloc(sizeof(t_paquete));
 	paquete->codigo_operacion = PAQUETE;
 	crear_buffer(paquete);
@@ -110,21 +109,20 @@ void eliminar_paquete(t_paquete* paquete){
 	free(paquete);
 }
 
+int conexion(char *CLIENTE, char *SERVIDOR) {
+    char *KEYS[] = {
+        string_from_format("PUERTO_%s", SERVIDOR), 
+        string_from_format("IP_%s", SERVIDOR), 
+        string_from_format("CLAVE_%s_%s", CLIENTE, SERVIDOR)
+    };
+    char *puerto = confGet(KEYS[0]); 
+    free(KEYS[0]);  
+    char *ip = confGet(KEYS[1]);  
+    free(KEYS[1]);  
+    char *claveHandshake = confGet(KEYS[2]);
+    free(KEYS[2]);  
+    int conexion = crearConexion(ip, puerto); 
+    log_info(logger, "Conexion creada: %d", conexion); 
 
-void handshake(char* claveConfigCliente, int conexion_cliente){
-	enviar_mensaje(claveConfigCliente, conexion_cliente); 
-}
-
-int realizarConexion(char*ip, char* puerto, char* claveHandshake){
-	int conexion;
-
-	/*Conexion con el servidor*/
-	conexion = crear_conexion(ip, puerto);
-	if(conexion != -1){
-		handshake(claveHandshake,conexion);
-	}
-
-	/*Si el servidor no esta activa, no puede realizarlo*/
-
-	return conexion;
+    return conexion;
 }

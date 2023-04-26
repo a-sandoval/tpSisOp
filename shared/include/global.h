@@ -4,8 +4,12 @@
     #include <commons/log.h>
     #include <commons/config.h>
 
+    int socketClienteFD;
     t_log* logger;
     t_config* config;
+    t_list* clavesValidas;
+    volatile sig_atomic_t pararPrograma;
+
 
 typedef enum t_comando {
 
@@ -28,7 +32,7 @@ typedef enum t_comando {
 
 } t_comando; 
 
-char *listaComandos[] = {
+char *listaComandosGlobal[] = {
 
     [SET] = "SET",
     [MOV_IN] = "MOV_IN",
@@ -55,5 +59,7 @@ typedef struct t_instruccion {
     char* parametros[3]; 
 
 }t_instruccion; 
+
+
 
 #endif

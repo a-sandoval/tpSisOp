@@ -3,20 +3,13 @@
 int main(int, char *archivos[]) {
 
     // inicializacion de las variables
-
-    int conexion;
     char *ip, *puerto;
     logger = iniciarLogger("consola.log", "consola");
 
     config = iniciarConfiguracion(archivos[2]);
-    ip = confGet("IP_KERNEL");
-    puerto = confGet("PUERTO_KERNEL");
 
-    // conexion al kernel
-
-    conexion = crear_conexion(ip, puerto);
-
-    if (!(conexion + 1)) { 
+    int conexionAKernel = conexion("CONSOLA", "KERNEL");
+    if (!(conexionAKernel + 1)) { 
         log_error(logger, "No se pudo conectar a la Kernel por la ip %s y puerto %s", ip, puerto);
         log_destroy(logger);
         config_destroy(config);
@@ -51,7 +44,7 @@ int main(int, char *archivos[]) {
             
             //t_comando_total comComp = prepararComando(comando, listaParametros);
 
-            t_paquete *paquete = crear_paquete();
+            t_paquete *paquete = crearPaquete();
           /*agregar_a_paquete(paquete, (void)comComp.cantParametros, sizeof(int));
             agregar_a_paquete(paquete, (void)comComp.longParametros[0], sizeof(int));
             agregar_a_paquete(paquete, (void)comComp.longParametros[1], sizeof(int));
@@ -66,8 +59,9 @@ int main(int, char *archivos[]) {
 
             enviar_paquete(paquete, conexion);
             eliminar_paquete(paquete);
-            //free(comComp.nombre);
-            //queue_destroy(comComp.filaParametros);
+            free(comComp.nombre);
+            queue_destroy(comComp.filaParametros);
+            sleep(1);
         }
         string_array_destroy(listaParametros);
     }
@@ -76,31 +70,29 @@ int main(int, char *archivos[]) {
 
     close(conexion);
     fclose(codigo);
-    terminarPrograma(NULL);
+    terminarPrograma();
 
     return 0;
 }
 
 t_comando buscarComando(char *comando) {
     int i = 0;
-    while(!string_contains(comando, listaComandos[i]) && i <= EXIT) i++;
-    return i;
+
+    while(listaComandos[i].cantParametros != -1 && !string_contains(comando, listaComandos[i].nombre)) i++;
+    
+    return listaComandos[i];
 }
 /*
 t_comando_total prepararComando(t_comando comando, char **parametros) {
     t_comando_total comandoCompleto;
     comandoCompleto.cantParametros = comando.cantParametros;
     comandoCompleto.filaParametros = queue_create();
-
     for (int i = 1; i < 4; i++) 
         comandoCompleto.longParametros[i - 1] = 
             (i <= comando.cantParametros) ? strlen(parametros[i]) : 0;
-
     for (int i = 1; i <= comando.cantParametros; i++) 
         queue_push(comandoCompleto.filaParametros, (void *)parametros[i]);
-
     comandoCompleto.longNombre = strlen(comando.nombre);
     comandoCompleto.nombre = strdup(comando.nombre);
-
     return comandoCompleto;
 } */

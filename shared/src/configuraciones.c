@@ -38,10 +38,9 @@ char *confGet(char *key) {
 	return config_get_string_value(config, key);
 }
 
-void terminarPrograma(t_list* lista)
+void terminarPrograma()
 {
 	log_destroy(logger);
 	config_destroy(config);
-	if (lista != NULL) list_destroy(lista);
 
 }

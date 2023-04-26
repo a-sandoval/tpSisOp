@@ -1,15 +1,11 @@
 #include "kernel/include/planificacion.h"
 
-int32_t procesosCreados = 0; 
-t_list* pcbs_new; 
-t_list* pcbs_ready;
-t_list* pcbs_block;
 
 
 void inicializarListasPCBS(){
-    pcbs_new = list_create();
-    pcbs_ready = list_create();
-    pcbs_block = list_create();    
+    pcbsNEW = list_create();
+    pcbsREADY = list_create();
+    pcbsBLOCK = list_create();    
 }
 
 void destruirListaPCB(t_list* pcbs){
@@ -27,7 +23,7 @@ t_pcb* crearPCB() {
 
     procesosCreados++; //para el nuevo pid
 
-    list_add(pcbs_new,(void*)nuevoPCB); 
+    list_add(pcbsNEW, (void*)nuevoPCB); 
 
     log_info(logger,"Se crea el proceso <%d> en NEW", nuevoPCB->pid); 
 
@@ -64,13 +60,11 @@ void encolar(t_list* pcbs,t_pcb* pcb){
 }
 
 void cambiarEstadoNewAReady(){
-    t_pcb* pcb=desencolar(pcbs_new);
+    t_pcb* pcb=desencolar(pcbsNEW);
     pcb->estado = READY;
-    encolar(pcbs_ready,pcb);
+    encolar(pcbsREADY,pcb);
 }
 
  t_pcb* proximoAEjecutarFIFO(){
-    return desencolar(pcbs_ready);
+    return desencolar(pcbsREADY);
 }
-
-

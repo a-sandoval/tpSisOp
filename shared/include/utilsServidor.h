@@ -13,22 +13,22 @@
 #include<assert.h>
 #include"configuraciones.h"
 
+extern int socketCliente;
 extern t_log *logger;
 extern t_config *config;
+extern t_list *clavesValidas;
 
-void* recibir_buffer(int*, int);
-
+void* recibir_buffer(int*);
 bool esClaveValida(void *clave);
-
-int iniciar_servidor(char*puerto,t_log*logger);
-int esperar_cliente(int,t_log*);
-t_list* recibir_paquete(int);
-void recibir_mensaje(int);
-int recibir_operacion(int);
+int iniciar_servidor(char*puerto);
+int esperar_cliente(int);
+t_list* recibir_paquete();
+void recibir_mensaje();
+int recibir_operacion();
 void element_destroyer(void* palabra);
-extern void iterator(void* value);
-int alistarServidor(char *puerto);
-int ejecutarServidor(int cliente_fd, t_list* clavesValidas);
-char* recibir_clave(int socket_cliente);
+extern void iterator(void *value);
+void alistarServidor(char *puerto);
+int ejecutarServidor();
+char* recibir_clave();
 
 #endif /* UTILS_SERVIDOR_H */ 

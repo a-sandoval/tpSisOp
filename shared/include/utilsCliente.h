@@ -40,7 +40,7 @@ typedef struct
  * @param puerto Puerto al que solicitar un socket disponible.
  * @return Socket con la conexión realizada.
  */
-int crear_conexion(char* ip, char* puerto);
+int crearConexion(char* ip, char* puerto);
 /**
  * @brief Se envia un paquete del tipo MENSAJE que envia un string al socket solicitado.
  * @param mensaje El string a enviar.
@@ -51,7 +51,7 @@ void enviar_mensaje(char* mensaje, int socket_cliente);
  * @brief Se inicializa un paquete con código de operación PAQUETE.
  * @return Retorna el paquete antes inicializado, o -1 en caso de error.
  */
-t_paquete* crear_paquete(void);
+t_paquete* crearPaquete(void);
 /**
  * @brief Se agrega un void* al paquete elegido, apendeandolo al final del paquete.
  * @param paquete Paquete al que se agrega el valor.
@@ -76,8 +76,6 @@ void liberar_conexion(int socket_cliente);
  */
 void eliminar_paquete(t_paquete* paquete);
 
-int realizarConexion(char*ip,char* puerto,char* claveHandshake);
-
-void handshake(char* claveConfigCliente, int conexion_cliente);
+int conexion(char *CLIENTE, char *SERVIDOR);
 
 #endif /* UTILS_H_ */
