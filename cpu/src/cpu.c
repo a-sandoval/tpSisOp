@@ -38,7 +38,7 @@ int main(void){
 
 /*
 ejecutarInstruccion(t-pcb pcb, t_instruccion instruccion){
-	
+	listaInstrucciones = pcb.
 	if(bool list_any_satisfy(t_list* instrucciones, bool(*==instruccion)(void*));){
 		cicloDeInstruccion(instruccion);
 	} else {
