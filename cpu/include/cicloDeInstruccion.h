@@ -6,17 +6,20 @@
 #include <commons/log.h>
 #include "shared/include/global.h"
 #include<commons/collections/list.h>
-#include"cpu/include/registros.h"
 #include "shared/include/configuraciones.h"
-#include "kernel/include/planificacion.h"
-#include "cpu/include/registros.h"
+#include "shared/include/pcb.h"
+
+#include <stdio.h>
+#include <stdlib.h>
 
 void cicloDeInstruccion();
 void fetch();
 void decode();
-void executeCPU();
+void execute();
 
-void set(t_reg , int );
+void set(char* , char* );
 int obtenerTiempoEspera();
+
+extern t_pcb* PCB;
 
 #endif 

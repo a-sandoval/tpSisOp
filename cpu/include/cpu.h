@@ -10,7 +10,7 @@
 #include<commons/collections/list.h>
 
 int conexionMemoria();
-void iterator(char *value);
+void iterator(void *value);
 
 
 

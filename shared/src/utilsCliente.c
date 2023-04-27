@@ -1,4 +1,4 @@
-#include "../include/utilsCliente.h"
+#include "shared/include/utilsCliente.h"
 
 /**
  * @brief Dado un paquete y la cantidad de bytes que contiene, se empaqueta la cantidad de bytes en un void, 
@@ -15,6 +15,20 @@ void* serializar_paquete(t_paquete* paquete, int bytes){
 	int desplazamiento = 0;
 
 	memcpy(magic + desplazamiento, &(paquete->codigo_operacion), sizeof(int));
+	desplazamiento+= sizeof(int);
+	memcpy(magic + desplazamiento, &(paquete->buffer->size), sizeof(int));
+	desplazamiento+= sizeof(int);
+	memcpy(magic + desplazamiento, paquete->buffer->stream, paquete->buffer->size);
+	desplazamiento+= paquete->buffer->size;
+
+	return magic;
+}
+
+void* serializar_PCB(t_paquete* paquete, int bytes){
+	void * magic = malloc(bytes);
+	int desplazamiento = 0;
+
+	memcpy(magic + desplazamiento, &(paquete->codigo_operacion), sizeof(t_pcb));
 	desplazamiento+= sizeof(int);
 	memcpy(magic + desplazamiento, &(paquete->buffer->size), sizeof(int));
 	desplazamiento+= sizeof(int);
@@ -109,18 +123,15 @@ void eliminar_paquete(t_paquete* paquete){
 	free(paquete);
 }
 
-int conexion(char *CLIENTE, char *SERVIDOR) {
+int conexion(char *SERVIDOR) {
     char *KEYS[] = {
         string_from_format("PUERTO_%s", SERVIDOR), 
         string_from_format("IP_%s", SERVIDOR), 
-        string_from_format("CLAVE_%s_%s", CLIENTE, SERVIDOR)
     };
     char *puerto = confGet(KEYS[0]); 
     free(KEYS[0]);  
     char *ip = confGet(KEYS[1]);  
     free(KEYS[1]);  
-    char *claveHandshake = confGet(KEYS[2]);
-    free(KEYS[2]);  
     int conexion = crearConexion(ip, puerto); 
     log_info(logger, "Conexion creada: %d", conexion); 
 

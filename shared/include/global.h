@@ -33,7 +33,7 @@ typedef enum t_comando {
 
 } t_comando; 
 
-char *listaComandosGlobal[] = {
+char *listaComandos[] = {
 
     [SET] = "SET",
     [MOV_IN] = "MOV_IN",
@@ -60,6 +60,7 @@ typedef struct t_instruccion {
     char* parametros[3]; 
 
 }t_instruccion; 
+
 
 
 

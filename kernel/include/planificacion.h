@@ -8,44 +8,16 @@
 #include <commons/temporal.h>
 #include "shared/include/utilsCliente.h"
 #include <shared/include/global.h>
-#include "cpu/include/registros.h"
+#include "shared/include/pcb.h"
 
 extern t_log *logger;
 extern t_config *config;
 
-typedef enum estadoProceso{
-    NEW, 
-    READY, 
-    EXEC, 
-    BLOCK, 
-    EXIT,
-} estadoProceso; 
-
 int32_t procesosCreados = 0; 
 t_list* pcbsNEW; 
 t_list* pcbsREADY;
 t_list* pcbsBLOCK;
 
-
-typedef struct t_pcb {
-
-    int32_t pid; 
-    t_list* instrucciones; 
-    int programCounter;   
-    estadoProceso estado; 
-    t_reg* registrosCPU;   // Puntero o no? 
-    int estimadoProximaRafaga; 
-    t_temporal* llegadaAReady; 
-
-    //TO DO: TABLA DE SEGMENTOS Y TABLA DE ARCHIVOS 
-
-
-} t_pcb; 
-
-int32_t procesosCreados = 0; 
-t_list* pcbsNEW; 
-t_list* pcbsREADY;
-t_list* pcbsBLOCK;
 
 /**
  * @brief Obtiene la estimacion inicial de rafaga del archivo de configuraciones del kernel

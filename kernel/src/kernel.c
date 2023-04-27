@@ -3,14 +3,14 @@
 
 int main(){
 
-    
+
     /*Inicializando Logger*/
     logger = iniciarLogger("kernel.log", "Kernel");
 
     /*Inicializando el config*/
     config = iniciarConfiguracion("kernel.config");
-
     
+    /*
     // Generar conexion a memoria
     logger = cambiarNombre("Kernel-Memoria");
     int conexionAMemoria = conexion("KERNEL", "MEMORIA");
@@ -35,7 +35,7 @@ int main(){
     else
         close(conexionAFS);
 
-    
+    */
 
     logger = cambiarNombre("Kernel-Consola");
     int servidorDeConsola = servirAConsola();

@@ -1,16 +1,18 @@
 #ifndef UTILS_CLIENTE_H
 #define UTILS_CLIENTE_H
 
-#include<stdio.h>
-#include<stdlib.h>
-#include<signal.h>
-#include<unistd.h>
-#include<sys/socket.h>
-#include<netdb.h>
-#include<string.h>
-#include<commons/log.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <signal.h>
+#include <unistd.h>
+#include <sys/socket.h>
+#include <netdb.h>
+#include <string.h>
+#include <commons/log.h>
 #include <commons/config.h>
+#include <commons/string.h>
 #include "configuraciones.h"
+#include "pcb.h"
 
 extern t_log *logger;
 extern t_config *config;
@@ -76,6 +78,8 @@ void liberar_conexion(int socket_cliente);
  */
 void eliminar_paquete(t_paquete* paquete);
 
-int conexion(char *CLIENTE, char *SERVIDOR);
+void* serializar_PCB(t_paquete* paquete, int bytes);
+
+int conexion(char *SERVIDOR);
 
 #endif /* UTILS_H_ */

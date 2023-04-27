@@ -118,6 +118,7 @@ int ejecutarServidor(){
 	while (1) {
 		int cod_op = recibir_operacion();
 		switch (cod_op) {
+			//creo que esto no se usa ahora que no hay handshake
 		case MENSAJE:
 			claveRecibida = recibir_clave();
 

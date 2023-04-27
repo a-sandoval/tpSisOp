@@ -10,7 +10,6 @@ int servirAConsola(){
 
 	char* puertoDeEscucha = confGet("PUERTO_ESCUCHA"); 
 	
-	clavesValidas = list_create();
 	queueConexiones = queue_create(); 
 
 	

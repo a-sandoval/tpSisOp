@@ -26,7 +26,7 @@ t_list* recibir_paquete();
 void recibir_mensaje();
 int recibir_operacion();
 void element_destroyer(void* palabra);
-extern void iterator(void *value);
+void iterator(void *value);
 void alistarServidor(char *puerto);
 int ejecutarServidor();
 char* recibir_clave();

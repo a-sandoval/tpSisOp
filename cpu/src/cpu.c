@@ -1,5 +1,7 @@
 #include "cpu/include/cpu.h"
 
+
+
 int main(void){
 	/*Inicializando Loggers*/
 	logger = iniciarLogger("cpu.log", "CPU-Memoria");
@@ -8,7 +10,7 @@ int main(void){
 	config = iniciarConfiguracion("cpu.config");
 
 	/*Conexion a memoria*/
-	int conexionAMemoria = conexion("CPU", "MEMORIA");
+	int conexionAMemoria = conexion("MEMORIA");
 
 	cambiarNombre("CPU-Kernel");
     escucharAlKernel();
@@ -32,6 +34,6 @@ ejecutarInstruccion(t-pcb pcb, t_instruccion instruccion){
 }
 */
 
-void iterator(char *value){
+void iterator(void *value){
 	log_info(logger, "Valor recibido: %s\n",value);
 }
