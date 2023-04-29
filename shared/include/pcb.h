@@ -23,6 +23,7 @@ typedef struct {
 typedef struct  {
 
     int32_t pid; 
+    int socketPCB; 
     t_list* instrucciones; 
     int programCounter;   
     estadoProceso estado; 

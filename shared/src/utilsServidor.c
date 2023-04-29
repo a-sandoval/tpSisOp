@@ -1,6 +1,5 @@
 #include "../include/utilsServidor.h"
 
-//Se le agrego el parametro logger, para que funciones
 int iniciar_servidor(char *puerto){
 
 	int socket_servidor;
@@ -29,7 +28,6 @@ int iniciar_servidor(char *puerto){
 	return socket_servidor;
 }
 
-//Se agrego Logger como parametro
 int esperar_cliente(int socket_servidor){
 
 	int socketClienteFD = accept(socket_servidor, NULL, NULL);

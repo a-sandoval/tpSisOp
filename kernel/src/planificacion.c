@@ -4,7 +4,6 @@
 void inicializarListasPCBS(){
     pcbsNEW = list_create();
     pcbsREADY = list_create();
-    pcbsBLOCK = list_create();    
 }
 
 void destruirListaPCB(t_list* pcbs){
@@ -58,10 +57,19 @@ void encolar(t_list* pcbs,t_pcb* pcb){
     list_add(pcbs,(void *)pcb);
 }
 
-void cambiarEstadoNewAReady(){
+void planificarALargoPlazo(){
+    
+    //sem_wait(&hayProcesosNuevos); 
     t_pcb* pcb=desencolar(pcbsNEW);
     pcb->estado = READY;
     encolar(pcbsREADY,pcb);
+    //sem_post(&hayProcesosReady)
+}
+
+void planificarACortoPlazo() {
+    
+    log_info(logger,"Hola"); 
+    
 }
 
  t_pcb* proximoAEjecutarFIFO(){

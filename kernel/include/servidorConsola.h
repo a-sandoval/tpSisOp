@@ -19,11 +19,11 @@ extern int socketClienteFD;
 extern t_log *logger;
 extern t_config *config;
 extern t_list *clavesValidas;
-extern volatile sig_atomic_t pararPrograma;
+//extern volatile sig_atomic_t pararPrograma;
 
 int servirAConsola();
 void iterator(void* value);
 void obtenerClavesValidas();
-void agarrarSIGINT(int SIGNUM);
+//void agarrarSIGINT(int SIGNUM);
 
 #endif /* SERVER_H_ */

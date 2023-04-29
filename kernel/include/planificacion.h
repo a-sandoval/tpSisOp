@@ -16,7 +16,6 @@ extern t_config *config;
 int32_t procesosCreados = 0; 
 t_list* pcbsNEW; 
 t_list* pcbsREADY;
-t_list* pcbsBLOCK;
 
 
 /**
@@ -94,6 +93,9 @@ void encolar(t_list* pcbs,t_pcb* pcb);
 /**
  * @brief Toma el primer pcb de la lista de pcbs_new, lo encola en la lista de pcbs_ready y lo cambia a estado READY
  */
-void cambiarEstadoNewAReady();
+void planificarALargoPlazo();
+
+
+void planificarACortoPlazo(); 
 
 #endif 
