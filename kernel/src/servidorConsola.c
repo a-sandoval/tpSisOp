@@ -55,7 +55,7 @@ void alistarServidorKernel(char *puerto){ //cambiar nombre y ver de unificarlo a
 	log_info(logger, "Servidor listo para recibir al cliente");
 
 	int socketClienteFD = esperar_cliente(server_fd);	
-	t_pcb* proceso = crear_PCB(); 
+	t_pcb* proceso = crearPCB(); 
 	proceso->socketPCB=socketClienteFD; 
 	
 	//Tiene que recibir el socket y mandarlo dentro del struct del pcb

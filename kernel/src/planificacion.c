@@ -68,7 +68,8 @@ void planificarALargoPlazo(){
 
 void planificarACortoPlazo() {
     
-    log_info(logger,"Hola"); 
+    t_pcb* aEjecutar = desencolar(pcbsREADY);
+    aEjecutar->estado = EXEC; 
     
 }
 
