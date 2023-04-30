@@ -24,7 +24,7 @@ Y la memoria va a actuar como servidor principal recibiendo paquetes del CPU, el
 
 ## Puertos
 
-Se deben considerar 5 + la cantidad de consolas máximas de puertos distintos para que el sistema funcione sin que se mezclen los puertos:
+Se deben considerar 4 + la cantidad de consolas máximas de puertos distintos para que el sistema funcione sin que se mezclen los puertos:
 
 Los tres puertos que recibe la memoria (por el CPU, FS, y Kernel): 
 
@@ -33,20 +33,6 @@ Los dos puertos individuales del CPU y el FS:
 Y los puertos del Kernel para recibir a todas las consolas: 
 
 (Para los puertos, cualquiera entre 1024 y 65535 sirve, recomendaria usar uno mayor a 10000 por su rareza)
-
-## Claves
-
-Se van a utilizar 7 claves distintas para comunicar a los distintos módulos durante el handshake:
-
-1. De la consola en modo usuario al kernel: "usuario"
-2. De la consola en modo kernel al kernel: "admin"
-3. Del kernel al CPU: "kernel-cpu"
-4. Del kernel al FS: "kernel-fs"
-5. Del kernel a la memoria: "kernel-mem"
-6. Del CPU a la memoria: "cpu-mem"
-7. Del FS a la memoria: "fs-mem"
-
-(De otra manera se podria utiilzar un enum simple)
 
 ## Tareas para este checkpoint
 
