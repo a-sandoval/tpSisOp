@@ -24,6 +24,9 @@ extern t_list *clavesValidas;
 int servirAConsola();
 void iterator(void* value);
 void obtenerClavesValidas();
+void recibirConsolas(); 
+void ejecutarServidorKernel(); 
+
 //void agarrarSIGINT(int SIGNUM);
 
 #endif /* SERVER_H_ */

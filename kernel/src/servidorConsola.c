@@ -13,7 +13,7 @@ int servirAConsola(){
 
 
 		pthread_t recibirConsolas; // Hilo Principal -> Recibe consolas y crea PCBs 
-    	if(!pthread_create(&recibirConsolas, NULL,(void *) alistarServidorKernel, &puertoDeEscucha)){
+    	if(!pthread_create(&recibirConsolas, NULL,(void *) recibirConsolas, &puertoDeEscucha)){
     	    pthread_detach(recibirConsolas);
     	}
     	else{
@@ -23,7 +23,7 @@ int servirAConsola(){
 
 		pthread_t planificadorLargoPlazo; //Hilo Planificador Largo Plazo -> Mueve procesos de NEW a READY
     	if(!pthread_create(&planificadorLargoPlazo, NULL,(void *) planificarALargoPlazo, NULL)){
-    	    pthread_detach(&planificadorLargoPlazo);
+    	    pthread_detach(planificadorLargoPlazo);
     	}
     	else{
     	    log_error(logger, "Error al inciar servidor Kernel, Abort");
@@ -46,7 +46,7 @@ int servirAConsola(){
 	pararPrograma = 1;
 }*/ 
 
-void alistarServidorKernel(char *puerto){ //cambiar nombre y ver de unificarlo a ejecutarServidor
+void recibirConsolas(char *puerto){ //cambiar nombre y ver de unificarlo a ejecutarServidor
 	
 	int server_fd = iniciar_servidor(puerto);
 
@@ -55,8 +55,10 @@ void alistarServidorKernel(char *puerto){ //cambiar nombre y ver de unificarlo a
 	log_info(logger, "Servidor listo para recibir al cliente");
 
 	int socketClienteFD = esperar_cliente(server_fd);	
-	t_pcb* proceso = crearPCB(); 
-	proceso->socketPCB=socketClienteFD; 
+	
+	
+
+	ejecutarServidorKernel(); 
 	
 	//Tiene que recibir el socket y mandarlo dentro del struct del pcb
 	// cada vez que carga un proceso deberia hacer signal no?
@@ -69,7 +71,7 @@ void iterator(void *value){
 	list_add(PCB->instrucciones, value);
 }
 
-int ejecutarServidorKernel(){
+void ejecutarServidorKernel(){
 	
 	t_list* lista;
 
@@ -78,16 +80,16 @@ int ejecutarServidorKernel(){
 	sem_init(&hayProcesos,0,0); //no se si la 2da variable esta bien
 
 	sem_wait(&hayProcesos);*/ 
-	int socketCliente;
-	//socketCliente = queue_pop(queueConexiones);
+	
 	PCB = crearPCB(); 
+	PCB->socketPCB=socketClienteFD; 
 
 	int cod_op = 0;
 	while (cod_op != -1) {
-		cod_op = recibir_operacion(socketCliente); 
+		cod_op = recibir_operacion(socketClienteFD); 
 		switch (cod_op) {
 		case MENSAJE:
-			char *claveRecibida = recibir_clave(socketCliente);
+			char *claveRecibida = recibir_clave(socketClienteFD);
 			log_info(logger, "Se conecto %s", claveRecibida);
 			free(claveRecibida); 
 			break;
