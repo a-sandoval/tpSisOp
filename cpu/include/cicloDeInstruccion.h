@@ -13,7 +13,6 @@
 #include <stdlib.h>
 
 
-
 void cicloDeInstruccion();
 void fetch();
 void decode();

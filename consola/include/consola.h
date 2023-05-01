@@ -12,6 +12,9 @@
 
 #include "shared/include/utilsCliente.h"
 #include "shared/include/configuraciones.h"
-#include "shared/include/global.h"
+
+int socketCliente;
+t_log* logger;
+t_config* config;
 
 #endif /* CLIENT_H_ */

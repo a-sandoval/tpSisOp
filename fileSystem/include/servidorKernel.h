@@ -10,8 +10,6 @@
 #include "shared/include/utilsServidor.h"
 #include "shared/include/utilsCliente.h"
 
-extern t_log *logger;
-extern t_config *config;
 
 void escucharAlKernel(); 
 

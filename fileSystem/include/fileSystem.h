@@ -14,6 +14,10 @@
 #include "fileSystem/include/conexionMemoria.h"
 #include "fileSystem/include/servidorKernel.h"
 
+int socketCliente;
+t_log* logger;
+t_config* config;
+
 void iterator(void* value);
 
 #endif

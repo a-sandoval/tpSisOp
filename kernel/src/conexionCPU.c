@@ -66,7 +66,6 @@ void enviar_contexto(){ //socket es global y el pcb de donde saco el contexto tm
     */
     // cargo todos los valores en el paquete
     agregar_a_paquete(paquete,(void *)&contextoEjecucion->pid, sizeof(contextoEjecucion->pid));
-    agregar_a_paquete(paquete,(void *)&contextoEjecucion->socketPCB, sizeof(contextoEjecucion->socketPCB));
     agregar_a_paquete(paquete,(void *)&contextoEjecucion->programCounter, sizeof(contextoEjecucion->programCounter));
     agregar_a_paquete(paquete,&contextoEjecucion->registrosCPU, sizeof(contextoEjecucion->registrosCPU)); // a chequear ese ampersand
     agregar_a_paquete(paquete,(void *)&contextoEjecucion->instruccionesLength, sizeof(contextoEjecucion->instruccionesLength));
@@ -97,8 +96,6 @@ t_contexto* recibir_contexto(){
 	while(desplazamiento < size){ //segun entiendo el while hace que se quede esperando a recbibir absoulamente todos los datos
         memcpy(&(nuevoContexto->pid), buffer+desplazamiento, sizeof(nuevoContexto->pid));
         desplazamiento+=sizeof(nuevoContexto->pid);
-        memcpy(&(nuevoContexto->socketPCB), buffer+desplazamiento, sizeof(nuevoContexto->socketPCB));
-        desplazamiento+=sizeof(nuevoContexto->socketPCB);
         memcpy(&(nuevoContexto->programCounter), buffer+desplazamiento, sizeof(nuevoContexto->programCounter));
         desplazamiento+=sizeof(nuevoContexto->programCounter);
         memcpy(&(nuevoContexto->registrosCPU), buffer+desplazamiento, sizeof(nuevoContexto->registrosCPU));

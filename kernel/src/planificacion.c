@@ -25,6 +25,8 @@ t_pcb* crearPCB() {
     nuevoPCB->instrucciones = list_create(); 
     nuevoPCB->estimadoProximaRafaga = obtenerEstimacionInicial(); 
     nuevoPCB->llegadaAReady = temporal_create(); 
+    nuevoPCB->tablaDeArchivos = list_create(); 
+    nuevoPCB->tablaDeSegmentos=list_create(); 
 
     procesosCreados++; //para el nuevo pid
 

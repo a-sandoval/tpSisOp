@@ -11,12 +11,6 @@
 #include "shared/include/global.h"
 #include <semaphore.h>
 
-
-extern int socketCliente; 
-extern t_log *logger;
-extern t_config *config;
-
-
 extern t_list* pcbsNEW; 
 extern t_list* pcbsREADY;
 

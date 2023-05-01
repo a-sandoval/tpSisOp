@@ -14,13 +14,6 @@
 #include <pthread.h>
 
 
-extern int socketCliente;
-extern t_log *logger;
-extern t_config *config;
-
-
-
-
 int servirAConsola();
 void iterator(void* value);
 void recibirConsolas(); 

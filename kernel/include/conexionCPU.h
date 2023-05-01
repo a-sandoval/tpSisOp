@@ -10,7 +10,6 @@
 typedef struct {
 //ver tipos de datos para hacer el sizeof mas legible
     uint32_t pid; 
-    int socketPCB; 
     t_list* instrucciones; 
     uint32_t instruccionesLength;
     estadoProceso estado; 
@@ -22,12 +21,8 @@ typedef struct {
 
 } t_contexto; 
 
-extern t_log *logger;
-extern t_config *config;
+
 int conexionCPU();
-extern int socketCliente;
-
-
 
 void* serializar_contextoEjecucion(t_paquete* paquete, int bytes);
 void enviar_contexto();

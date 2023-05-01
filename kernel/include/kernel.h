@@ -20,6 +20,8 @@
 //#include "shared/include/utilsCliente.h"
 
 
-
+int socketCliente;
+t_log* logger;
+t_config* config;
 
 #endif

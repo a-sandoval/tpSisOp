@@ -21,7 +21,7 @@ int main(int, char *archivos[]) {
 
     if (codigo == NULL) {
         log_error(logger, "No se pudo abrir el archivo %s", archivos[1]);
-        close(socketClienteFD);
+        close(socketCliente);
         terminarPrograma(NULL);
         return 1;
     }
@@ -46,7 +46,7 @@ int main(int, char *archivos[]) {
 
     // cerrar archivos
 
-    close(socketClienteFD);
+    close(socketCliente);
     fclose(codigo);
     terminarPrograma(NULL);
 

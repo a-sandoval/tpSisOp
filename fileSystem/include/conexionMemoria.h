@@ -10,11 +10,8 @@
 #include "shared/include/utilsCliente.h" 
 #include "shared/include/utilsServidor.h" 
 
-extern t_log *logger;
-extern t_config *config;
 
 int conectarseAMemoria(); 
-
 
 
 #endif
