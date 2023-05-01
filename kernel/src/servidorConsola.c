@@ -51,7 +51,7 @@ void recibirConsolas(char *puerto){ //cambiar nombre y ver de unificarlo a ejecu
 
 	log_info(logger, "Servidor listo para recibir al cliente");
 
-	int socketClienteFD = esperar_cliente(server_fd);	
+	int socketCliente = esperar_cliente(server_fd);	
 	
 	
 
@@ -79,20 +79,20 @@ void ejecutarServidorKernel(){
 	sem_wait(&hayProcesos);*/ 
 	
 	PCB = crearPCB(); 
-	PCB->socketPCB=socketClienteFD; 
+	PCB->socketPCB=socketCliente; 
 
 
 	int cod_op = 0;
 	while (cod_op != -1) {
-		cod_op = recibir_operacion(socketClienteFD); 
+		cod_op = recibir_operacion(socketCliente); 
 		switch (cod_op) {
 		case MENSAJE:
-			char *claveRecibida = recibir_clave(socketClienteFD);
+			char *claveRecibida = recibir_clave(socketCliente);
 			log_info(logger, "Se conecto %s", claveRecibida);
 			free(claveRecibida); 
 			break;
 		case PAQUETE:
-			lista = recibir_paquete(socketClienteFD);
+			lista = recibir_paquete(socketCliente);
 			//log_info(logger, "Me llegaron los siguientes valores:"); 
 			list_iterate(lista, (void*) iterator); 
 			list_destroy_and_destroy_elements(lista, (void*)element_destroyer);

@@ -22,6 +22,7 @@ typedef enum
 {	
 	MENSAJE,
 	PAQUETE, 
+	CONTEXTOEJECUCION
 
 }op_code;
 

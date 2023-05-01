@@ -44,9 +44,12 @@ int obtenerTiempoEspera(){
 //YIELD --> Desaloja voluntariamente el proceso de la CPU. Devuelve el Contexto de Ejecución actualizado al Kernel.
 
 void yield(){ 
+    /* ya no laburo con el pcb, ahora es el contexto de ejecucion
     int32_t procesoID = PCB->pid;
     PCB -> estado = READY; //Asumo que está en EXEC el proceso
+     
     devolverContextoActualizado(procesoID);
+    */
 }  
 
 devolverContextoActualizado(procesoID){
@@ -57,6 +60,6 @@ devolverContextoActualizado(procesoID){
 
 void exit(){
     int32_t proceso = process_getpid();
-    PCB -> estado = SALIDA;
+    //PCB -> estado = SALIDA;
     devolverContextoActualizado(proceso);
 }

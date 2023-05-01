@@ -7,10 +7,12 @@
 #include "shared/include/global.h"
 #include<commons/collections/list.h>
 #include "shared/include/configuraciones.h"
-#include "shared/include/pcb.h"
+
 
 #include <stdio.h>
 #include <stdlib.h>
+
+
 
 void cicloDeInstruccion();
 void fetch();
@@ -20,6 +22,6 @@ void execute();
 void set(char* , char* );
 int obtenerTiempoEspera();
 
-extern t_pcb* PCB;
+
 
 #endif 

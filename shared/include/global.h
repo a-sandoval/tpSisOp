@@ -5,7 +5,7 @@
     #include <commons/config.h>
     #include <signal.h>
 
-    int socketClienteFD;
+    int socketCliente;
     t_log* logger;
     t_config* config;
     t_list* clavesValidas;
