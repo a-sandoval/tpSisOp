@@ -8,4 +8,6 @@ int conexionFileSystem(){
         log_error(logger, "No se pudo conectar al servidor.");
     else
         close(conexionAFS);
+
+    return 0;
 }

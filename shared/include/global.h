@@ -8,8 +8,6 @@
     int socketCliente;
     t_log* logger;
     t_config* config;
-    t_list* clavesValidas;
-    volatile sig_atomic_t pararPrograma;
 
 
 typedef enum t_comando {

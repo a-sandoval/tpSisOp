@@ -48,11 +48,11 @@ void yield(){
     int32_t procesoID = PCB->pid;
     PCB -> estado = READY; //Asumo que está en EXEC el proceso
      
-    devolverContextoActualizado(procesoID);
+    enviarContexto(procesoID);
     */
 }  
 
-devolverContextoActualizado(procesoID){
+enviarContexto(procesoID){
     //serializar
 }
 
@@ -61,5 +61,5 @@ devolverContextoActualizado(procesoID){
 void exit(){
     int32_t proceso = process_getpid();
     //PCB -> estado = SALIDA;
-    devolverContextoActualizado(proceso);
+    enviarContexto(proceso);
 }

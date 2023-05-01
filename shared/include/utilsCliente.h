@@ -12,7 +12,7 @@
 #include <commons/config.h>
 #include <commons/string.h>
 #include "configuraciones.h"
-#include "pcb.h"
+
 
 extern t_log *logger;
 extern t_config *config;

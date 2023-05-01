@@ -8,4 +8,6 @@ int conexionMemoria() {
         log_error(logger, "No se pudo conectar al servidor.");   
     else
         close(conexionAMemoria);
+
+    return 0;
 }

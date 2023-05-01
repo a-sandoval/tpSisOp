@@ -7,9 +7,11 @@
 #include <commons/collections/list.h>
 #include <commons/temporal.h>
 #include "shared/include/utilsCliente.h"
-#include <shared/include/global.h>
 #include "pcb.h"
+#include "shared/include/global.h"
+#include <semaphore.h>
 
+ 
 extern t_log *logger;
 extern t_config *config;
 
@@ -17,6 +19,8 @@ int32_t procesosCreados = 0;
 t_list* pcbsNEW; 
 t_list* pcbsREADY;
 
+sem_t hayProcesosReady;
+sem_t hayProcesosNuevos;
 
 /**
  * @brief Obtiene la estimacion inicial de rafaga del archivo de configuraciones del kernel

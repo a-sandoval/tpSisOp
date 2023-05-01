@@ -59,15 +59,16 @@ void encolar(t_list* pcbs,t_pcb* pcb){
 
 void planificarALargoPlazo(){
     
-    //sem_wait(&hayProcesosNuevos); 
+    sem_wait(&hayProcesosNuevos); 
     t_pcb* pcb=desencolar(pcbsNEW);
     pcb->estado = READY;
     encolar(pcbsREADY,pcb);
-    //sem_post(&hayProcesosReady)
+    sem_post(&hayProcesosReady);
 }
 
 void planificarACortoPlazo() {
     
+    sem_wait(&hayProcesosReady); 
     t_pcb* aEjecutar = desencolar(pcbsREADY);
     aEjecutar->estado = EXEC; 
     

@@ -31,7 +31,7 @@ int iniciar_servidor(char *puerto){
 int esperar_cliente(int socket_servidor){
 
 	int socketClienteFD = accept(socket_servidor, NULL, NULL);
-	log_info(logger, "Se conecto un cliente!");
+	//log_info(logger, "Se conecto un cliente!");
 
 	return socketClienteFD;
 }
@@ -93,7 +93,7 @@ void alistarServidor(char *puerto){
 
 	log_info(logger, "Servidor listo para recibir al cliente");
 
-	int socketCliente = esperar_cliente(server_fd);
+	esperar_cliente(server_fd);
 }
 
 
@@ -104,28 +104,17 @@ char* recibir_clave(){
 	return buffer;
 }
 
-//la clave la deberia sacar del archivo de config
-char* claveRecibida;
-
-bool esClaveValida(void *clave){
-	return !strcmp(claveRecibida, clave);
-}
 
 int ejecutarServidor(){
 	t_list* lista;
 	while (1) {
 		int cod_op = recibir_operacion();
 		switch (cod_op) {
-			//creo que esto no se usa ahora que no hay handshake
+			
 		case MENSAJE:
-			claveRecibida = recibir_clave();
-
-			if(!list_any_satisfy(clavesValidas,esClaveValida)){
-				log_error(logger, "Cliente no reconocido"); 
-				return EXIT_FAILURE;
-			}
+			
 			log_info(logger, "Se autoriza continuar");
-			free(claveRecibida); 
+			
 			break;
 		case PAQUETE:
 			lista = recibir_paquete();

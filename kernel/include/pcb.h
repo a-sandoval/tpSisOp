@@ -4,8 +4,6 @@
 #include<commons/collections/list.h>
 #include<commons/temporal.h>
 
-
-
 typedef enum estadoProceso{
     NEW, 
     READY,
@@ -34,6 +32,8 @@ typedef struct  {
     //TO DO: TABLA DE SEGMENTOS Y TABLA DE ARCHIVOS 
 
 } t_pcb; 
+
+
 
 t_pcb* PCB;
 

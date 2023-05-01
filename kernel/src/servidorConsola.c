@@ -2,25 +2,22 @@
 #include "kernel/include/servidorConsola.h"
 
 
-
-sem_t hayProcesosNuevos; 
-
 int servirAConsola(){
 
 
 	char* puertoDeEscucha = confGet("PUERTO_ESCUCHA"); 
+	sem_init(&hayProcesosNuevos,0,0);
 
-
-		pthread_t recibirConsolas; // Hilo Principal -> Recibe consolas y crea PCBs 
+	pthread_t recibirConsolas; // Hilo Principal -> Recibe consolas y crea PCBs 
     	if(!pthread_create(&recibirConsolas, NULL,(void *) recibirConsolas, &puertoDeEscucha)){
-    	    pthread_detach(recibirConsolas);
+    	    pthread_join(recibirConsolas,NULL);
     	}
     	else{
     	    log_error(logger, "Error al iniciar servidor Kernel, Abort");
     	    return EXIT_FAILURE;
     	}
 
-		pthread_t planificadorLargoPlazo; //Hilo Planificador Largo Plazo -> Mueve procesos de NEW a READY
+	pthread_t planificadorLargoPlazo; //Hilo Planificador Largo Plazo -> Mueve procesos de NEW a READY
     	if(!pthread_create(&planificadorLargoPlazo, NULL,(void *) planificarALargoPlazo, NULL)){
     	    pthread_detach(planificadorLargoPlazo);
     	}
@@ -29,7 +26,7 @@ int servirAConsola(){
     	    return EXIT_FAILURE;
 		}
 
-		pthread_t planificadorCortoPlazo;  //Hilo Planificador Corto Plazo --> Mueve procesos de READY a EXEC
+	pthread_t planificadorCortoPlazo;  //Hilo Planificador Corto Plazo --> Mueve procesos de READY a EXEC
 		if(!pthread_create(&planificadorCortoPlazo, NULL,(void *) planificarACortoPlazo, NULL)){
     	    pthread_detach(planificadorCortoPlazo);
     	}
@@ -43,23 +40,17 @@ int servirAConsola(){
 
 
 
-void recibirConsolas(char *puerto){ //cambiar nombre y ver de unificarlo a ejecutarServidor
+void recibirConsolas(char *puerto){ 
 	
 	int server_fd = iniciar_servidor(puerto);
 
 	while(1){
 
-	log_info(logger, "Servidor listo para recibir al cliente");
-
-	int socketCliente = esperar_cliente(server_fd);	
+		socketCliente = esperar_cliente(server_fd);	
 	
+		ejecutarServidorKernel(); 
 	
-
-	ejecutarServidorKernel(); 
-	
-	//Tiene que recibir el socket y mandarlo dentro del struct del pcb
-	// cada vez que carga un proceso deberia hacer signal no?
-	sem_post(&hayProcesosNuevos);
+		sem_post(&hayProcesosNuevos);
 	}
 
 }
@@ -71,12 +62,6 @@ void iterator(void *value){
 void ejecutarServidorKernel(){
 	
 	t_list* lista;
-
-	//se que esto esta mal porque le tiene que mandar la señal otra funcion y no va declarado aca
-	/*sem_t hayProcesos; 
-	sem_init(&hayProcesos,0,0); //no se si la 2da variable esta bien
-
-	sem_wait(&hayProcesos);*/ 
 	
 	PCB = crearPCB(); 
 	PCB->socketPCB=socketCliente; 

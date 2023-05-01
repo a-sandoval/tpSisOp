@@ -2,9 +2,6 @@
 #include "kernel/include/conexionCPU.h"
 
 
-
-
-
 t_buffer bufferContexto;
 t_contexto* contextoEjecucion;
 
@@ -16,15 +13,27 @@ int conexionCPU() {
         log_error(logger, "No se pudo conectar al servidor.");
     else{
         // aca tendria que asignarle al pcb global los valores que le corresponden al proximo proceso que va
-        // de ready a exec, para pasarrselo a la cpu
+        // de ready a exec, para pasarselo a la cpu
         //enviar_contexto();
+
+        // aca a su vez hay que recibir el contexto actualizado que mande la cpu, deserializarlo y cambiarlo en el PCB
+        //Noc si esto iria aca porque en realidad seria como un case compartido con las cosas
+        //que tiene que recibir de memoria y fs tm no?
+        int operacion=recibir_operacion();
+
+        switch(operacion){
+            case CONTEXTOEJECUCION:
+                recibir_contexto();
+        }
         close(conexionACPU);
 
     }
     
+    return 0;
  
 }
 
+// FUNCIONES PARA ENVIO DE CONTEXTO DE EJECUCION
 
 void* serializar_contextoEjecucion(t_paquete* paquete, int bytes){ //creo que quedo igual al serializar paquete original
 	void * magic = malloc(bytes);
@@ -56,12 +65,13 @@ void enviar_contexto(){ //socket es global y el pcb de donde saco el contexto tm
     paquete->buffer->stream = malloc(paquete->buffer->size);
     */
     // cargo todos los valores en el paquete
-    agregar_a_paquete(paquete,contextoEjecucion->pid, sizeof(contextoEjecucion->pid));
-    agregar_a_paquete(paquete,contextoEjecucion->socketPCB, sizeof(contextoEjecucion->socketPCB));
-    agregar_a_paquete(paquete,contextoEjecucion->programCounter, sizeof(contextoEjecucion->programCounter));
+    agregar_a_paquete(paquete,(void *)&contextoEjecucion->pid, sizeof(contextoEjecucion->pid));
+    agregar_a_paquete(paquete,(void *)&contextoEjecucion->socketPCB, sizeof(contextoEjecucion->socketPCB));
+    agregar_a_paquete(paquete,(void *)&contextoEjecucion->programCounter, sizeof(contextoEjecucion->programCounter));
     agregar_a_paquete(paquete,&contextoEjecucion->registrosCPU, sizeof(contextoEjecucion->registrosCPU)); // a chequear ese ampersand
-    agregar_a_paquete(paquete,contextoEjecucion->instruccionesLength, sizeof(contextoEjecucion->instruccionesLength));
+    agregar_a_paquete(paquete,(void *)&contextoEjecucion->instruccionesLength, sizeof(contextoEjecucion->instruccionesLength));
     agregar_a_paquete(paquete,contextoEjecucion->instrucciones, contextoEjecucion->instruccionesLength);
+    agregar_a_paquete(paquete,(void *)contextoEjecucion->estado, sizeof(estadoProceso));
 
     enviar_paquete(paquete,socketCliente);
 
@@ -69,27 +79,43 @@ void enviar_contexto(){ //socket es global y el pcb de donde saco el contexto tm
 }
 
 
-void agregar_a_paquete(t_paquete* paquete, void* valor, int tamanio){
-    //esta funcion ademas de hacer el memcpy va pidiendo la memoria necesaria para el stream y actualizando el size actual del buffer
-	paquete->buffer->stream = realloc(paquete->buffer->stream, paquete->buffer->size + tamanio + sizeof(int));
 
-	memcpy(paquete->buffer->stream + paquete->buffer->size, &tamanio, sizeof(int));
-	memcpy(paquete->buffer->stream + paquete->buffer->size + sizeof(int), valor, tamanio);
 
-	paquete->buffer->size += tamanio + sizeof(int);
+//FUNCIONES PARA RECIBIR NUEVO CONTEXTO POR PARTE DE LA CPU
+
+
+t_contexto* recibir_contexto(){
+    //deserializar
+
+    t_contexto* nuevoContexto = malloc(sizeof(t_contexto));
+	int size;
+	int desplazamiento = 0;
+	void * buffer;
+
+
+	buffer = recibir_buffer(&size);
+	while(desplazamiento < size){ //segun entiendo el while hace que se quede esperando a recbibir absoulamente todos los datos
+        memcpy(&(nuevoContexto->pid), buffer+desplazamiento, sizeof(nuevoContexto->pid));
+        desplazamiento+=sizeof(nuevoContexto->pid);
+        memcpy(&(nuevoContexto->socketPCB), buffer+desplazamiento, sizeof(nuevoContexto->socketPCB));
+        desplazamiento+=sizeof(nuevoContexto->socketPCB);
+        memcpy(&(nuevoContexto->programCounter), buffer+desplazamiento, sizeof(nuevoContexto->programCounter));
+        desplazamiento+=sizeof(nuevoContexto->programCounter);
+        memcpy(&(nuevoContexto->registrosCPU), buffer+desplazamiento, sizeof(nuevoContexto->registrosCPU));
+        desplazamiento+=sizeof(nuevoContexto->registrosCPU);
+    
+        memcpy(&(nuevoContexto->instruccionesLength), buffer+desplazamiento, sizeof(nuevoContexto->instruccionesLength));
+        desplazamiento += sizeof(nuevoContexto->instruccionesLength);
+        nuevoContexto->instrucciones = malloc(nuevoContexto->instruccionesLength);
+        memcpy(nuevoContexto->instrucciones , buffer+desplazamiento, nuevoContexto->instruccionesLength);
+		
+        memcpy(&(nuevoContexto->estado), buffer+desplazamiento, sizeof(estadoProceso));
+        desplazamiento+=sizeof(estadoProceso);
+		
+	}
+
+
+	free(buffer);
+	return nuevoContexto;
 }
 
-void enviar_paquete(t_paquete* paquete, int socket_cliente){
-	int bytes = paquete->buffer->size + 2*sizeof(int);
-	void* a_enviar = serializar_contextoEjecucion(paquete, bytes);
-
-	send(socket_cliente, a_enviar, bytes, 0);
-
-	free(a_enviar);
-}
-
-void eliminar_paquete(t_paquete* paquete){
-	free(paquete->buffer->stream);
-	free(paquete->buffer);
-	free(paquete);
-}
