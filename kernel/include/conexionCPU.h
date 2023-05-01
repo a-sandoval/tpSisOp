@@ -28,6 +28,7 @@ int conexionCPU();
 extern int socketCliente;
 
 
+
 void* serializar_contextoEjecucion(t_paquete* paquete, int bytes);
 void enviar_contexto();
 

@@ -35,7 +35,6 @@ typedef struct  {
 
 
 
-t_pcb* PCB;
 
 
 

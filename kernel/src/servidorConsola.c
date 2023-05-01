@@ -1,12 +1,15 @@
 /* CONSOLA - cliente | KERNEL - servidor*/
 #include "kernel/include/servidorConsola.h"
 
+t_pcb* PCB; 
 
 int servirAConsola(){
 
 
 	char* puertoDeEscucha = confGet("PUERTO_ESCUCHA"); 
 	sem_init(&hayProcesosNuevos,0,0);
+	sem_init(&hayProcesosReady,0,0); 
+	inicializarListasPCBS(); 
 
 	pthread_t recibirConsolas; // Hilo Principal -> Recibe consolas y crea PCBs 
     	if(!pthread_create(&recibirConsolas, NULL,(void *) recibirConsolas, &puertoDeEscucha)){

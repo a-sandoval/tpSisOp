@@ -12,11 +12,13 @@
 //#include <shared/include/configuraciones.h>
 #include "planificacion.h"
 #include <pthread.h>
-#include <semaphore.h>
+
 
 extern int socketCliente;
 extern t_log *logger;
 extern t_config *config;
+
+
 
 
 int servirAConsola();

@@ -11,16 +11,19 @@
 #include "shared/include/global.h"
 #include <semaphore.h>
 
- 
+
+extern int socketCliente; 
 extern t_log *logger;
 extern t_config *config;
 
-int32_t procesosCreados = 0; 
-t_list* pcbsNEW; 
-t_list* pcbsREADY;
 
-sem_t hayProcesosReady;
-sem_t hayProcesosNuevos;
+extern t_list* pcbsNEW; 
+extern t_list* pcbsREADY;
+
+extern sem_t hayProcesosReady;
+extern sem_t hayProcesosNuevos;
+
+
 
 /**
  * @brief Obtiene la estimacion inicial de rafaga del archivo de configuraciones del kernel

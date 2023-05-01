@@ -1,5 +1,12 @@
 #include "kernel/include/planificacion.h"
 
+sem_t hayProcesosReady;
+sem_t hayProcesosNuevos;
+t_list* pcbsNEW; 
+t_list* pcbsREADY;
+int32_t procesosCreados = 0; 
+
+
 
 void inicializarListasPCBS(){
     pcbsNEW = list_create();
