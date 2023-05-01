@@ -18,7 +18,7 @@ typedef struct {
     char RAX[16], RBX[16], RCX[16], RDX[16];
 }t_reg;
 
-typedef struct  {
+typedef struct {
 
     int32_t pid; 
 
@@ -36,9 +36,10 @@ typedef struct  {
 
     t_temporal* llegadaAReady; 
     
-    t_list* tablaDeSe
+    t_list* tablaDeSegmentos; 
+
+    t_list* tablaDeArchivos; 
     
-    //TO DO: TABLA DE SEGMENTOS Y TABLA DE ARCHIVOS 
 
 } t_pcb; 
 
