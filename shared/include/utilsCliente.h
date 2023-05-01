@@ -78,7 +78,6 @@ void liberar_conexion(int socket_cliente);
  */
 void eliminar_paquete(t_paquete* paquete);
 
-void* serializar_PCB(t_paquete* paquete, int bytes);
 
 int conexion(char *SERVIDOR);
 

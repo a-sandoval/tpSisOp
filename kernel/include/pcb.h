@@ -3,7 +3,7 @@
 
 #include<commons/collections/list.h>
 #include<commons/temporal.h>
-#include "utilsCliente.h"
+
 
 
 typedef enum estadoProceso{
@@ -35,6 +35,8 @@ typedef struct  {
 
 } t_pcb; 
 
-t_buffer bufferPCB;
+t_pcb* PCB;
+
+
 
 #endif

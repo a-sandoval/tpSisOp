@@ -12,28 +12,16 @@ int main(){
     
     /*
     // Generar conexion a memoria
-    logger = cambiarNombre("Kernel-Memoria");
-    int conexionAMemoria = conexion("KERNEL", "MEMORIA");
-    if(!(conexionAMemoria + 1))
-        log_error(logger, "No se pudo conectar al servidor.");   
-    else
-        close(conexionAMemoria);
+        conexionMemoria();
+   
 
-    // Generar conexion a CPU    
-    logger = cambiarNombre("Kernel-CPU");
-    int conexionACPU = conexion("KERNEL", "CPU");
-    if(!(conexionACPU + 1))
-        log_error(logger, "No se pudo conectar al servidor.");
-    else
-        close(conexionACPU);
+    // Generar conexion a CPU  
+      conexionCpu();
+    
 
     // Generar conexion a File System
-    logger = cambiarNombre("Kernel-FS");
-    int conexionAFS = conexion("KERNEL", "FILESYSTEM");
-    if(!(conexionAFS + 1))
-        log_error(logger, "No se pudo conectar al servidor.");
-    else
-        close(conexionAFS);
+        conexionFileSystem();
+    
 
     */
 

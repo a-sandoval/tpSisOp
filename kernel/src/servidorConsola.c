@@ -1,13 +1,12 @@
 /* CONSOLA - cliente | KERNEL - servidor*/
 #include "kernel/include/servidorConsola.h"
 
-t_pcb* PCB;
+
 
 sem_t hayProcesosNuevos; 
 
 int servirAConsola(){
 
-	//signal(SIGINT, agarrarSIGINT);
 
 	char* puertoDeEscucha = confGet("PUERTO_ESCUCHA"); 
 
@@ -42,9 +41,7 @@ int servirAConsola(){
 	return 0;
 }
 
-/*void agarrarSIGINT(int SIGNUM) {
-	pararPrograma = 1;
-}*/ 
+
 
 void recibirConsolas(char *puerto){ //cambiar nombre y ver de unificarlo a ejecutarServidor
 	
@@ -84,6 +81,7 @@ void ejecutarServidorKernel(){
 	PCB = crearPCB(); 
 	PCB->socketPCB=socketClienteFD; 
 
+
 	int cod_op = 0;
 	while (cod_op != -1) {
 		cod_op = recibir_operacion(socketClienteFD); 
@@ -111,3 +109,4 @@ void ejecutarServidorKernel(){
 	// suponiendo un PCB con instrucciones
 	encolar(pcbsNEW, PCB);
 }
+

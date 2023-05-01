@@ -8,7 +8,7 @@
 #include <commons/temporal.h>
 #include "shared/include/utilsCliente.h"
 #include <shared/include/global.h>
-#include "shared/include/pcb.h"
+#include "pcb.h"
 
 extern t_log *logger;
 extern t_config *config;
