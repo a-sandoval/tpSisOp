@@ -78,7 +78,8 @@ void ejecutarServidorKernel(){
 			case PAQUETE:
 				lista = recibir_paquete(socketCliente);
 				list_iterate(lista, (void*) iterator); 
-				list_destroy_and_destroy_elements(lista, (void*)element_destroyer);
+				//list_destroy_and_destroy_elements(lista, (void*)element_destroyer);
+				list_destroy(lista);
 				break;
 			case -1:
 				ingresarANew(PCB);

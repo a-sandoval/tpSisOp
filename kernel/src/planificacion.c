@@ -75,6 +75,10 @@ void encolar(t_list* pcbs,t_pcb* pcb){
     list_add(pcbs,(void *)pcb);
 }
 
+void instruct_print(void *value) {
+    log_info(logger, "Que linda mi instruccion: %s", (char *)value);
+}
+
 void planificarALargoPlazo(){
 
     while (1) {
@@ -88,6 +92,7 @@ void planificarALargoPlazo(){
         t_pcb* pcb = obtenerSiguienteAReady(); 
     	log_info(logger, "PID: %d - Estado Anterior: %d - Estado Actual: %s", pcb->pid, pcb->estado, estadoActual);
         pcb->estado = READY;
+        //list_iterate(pcb->instrucciones, instruct_print);
         
         //pthread_mutex_unlock(&mutexListaNew);
         sem_post(&hayProcesosReady);
