@@ -1,6 +1,7 @@
 #include "shared/include/configuraciones.h"
 
-//ARCHIVO DE CONFIGURACION (CLIENTE)
+// CONFIG
+
 t_config* iniciarConfiguracion(char* ruta){
 
     t_config* nuevoConfig = config_create(ruta); 
@@ -14,13 +15,17 @@ t_config* iniciarConfiguracion(char* ruta){
     return nuevoConfig; 
 }
 
+char *confGet(char *key) {
+	return config_get_string_value(config, key);
+}
+
 // LOGS 
 
 t_log* iniciarLogger(char* nombreArchivo, char* nombreLogger){
 	t_log* nuevoLogger = log_create(nombreArchivo, nombreLogger, 1, LOG_LEVEL_DEBUG);
 
 	if(nuevoLogger == NULL) {
-		printf("No se pudo crear el logger");
+		perror("No se pudo crear el logger");
 		exit(1);
 	}
 
@@ -32,10 +37,6 @@ t_log *cambiarNombre(char *nuevoNombre) {
 	free(logger->program_name);
     nuevoLogger->program_name = strdup(nuevoNombre);
     return nuevoLogger;
-}
-
-char *confGet(char *key) {
-	return config_get_string_value(config, key);
 }
 
 void terminarPrograma() {

@@ -8,6 +8,8 @@
  * 
  * @brief La consola tiene el trabajo de mandar al Kernel las instrucciones recibidas de los archivos.
  * 
+ * @authors To The End
+ * 
  * La consola se divide en tres etapas principales:
  * 
  * - Inicio: Se prepara el programa abriendo la configuracion, el logger y el archivo de pseudocodigo, y se abre conexion con el Kernel, en caso de fallar cualquiera de estos puntos termina el programa con codigo de error = 1.
@@ -21,6 +23,8 @@
  * + Se crea el paquete, se prepara, y se envia.
  * + Se libera la memoria.
  * 
+ * @file consola.h
+ * 
  */
 
 #include <stdio.h>
@@ -31,6 +35,7 @@
 #include <commons/string.h>
 #include <commons/config.h>
 
+#include "shared/include/global.h"
 #include "shared/include/utilsCliente.h"
 #include "shared/include/configuraciones.h"
 
@@ -46,18 +51,6 @@
  * Socket utilizado para conectarse y enviar informacion al Kernel.
  */
 int socketCliente;
-
-/**
- * @var logger 
- * Logger global para documentar todo evento que ocurra en la consola.
- */
-t_log* logger;
-
-/**
- * @var config 
- * Archivo de configuracion utilizado para sacar informacion variada para su uso en la consola.
- */
-t_config* config;
 
 /**
  * @fn int   main  (int, char *archivos[])
