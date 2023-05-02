@@ -93,6 +93,7 @@ void planificarALargoPlazo(){
     	log_info(logger, "PID: %d - Estado Anterior: %d - Estado Actual: %s", pcb->pid, pcb->estado, estadoActual);
         pcb->estado = READY;
         //list_iterate(pcb->instrucciones, instruct_print);
+        encolar(pcbsREADY, pcb);
         
         //pthread_mutex_unlock(&mutexListaNew);
         sem_post(&hayProcesosReady);
@@ -113,10 +114,14 @@ t_pcb *obtenerSiguienteAReady()
 
 
 void planificarACortoPlazo() {
-    
-    sem_wait(&hayProcesosReady); 
-    t_pcb* aEjecutar = desencolar(pcbsREADY);
-    aEjecutar->estado = EXEC; 
+    while (1) {
+        sem_wait(&hayProcesosReady); 
+        t_pcb* aEjecutar = desencolar(pcbsREADY);
+        aEjecutar->estado = EXEC; 
+        sleep (2);
+        aEjecutar->estado = SALIDA;
+        enviarMensaje("Terminado", aEjecutar->socketPCB);
+    }
 }
 
  t_pcb* proximoAEjecutarFIFO(){

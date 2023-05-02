@@ -1,4 +1,4 @@
-#include "../include/utilsServidor.h"
+#include "shared/include/utilsServidor.h"
 
 int iniciarServidor(char *puerto){
 
@@ -56,6 +56,14 @@ void* recibir_buffer(int* size){
 
 	return buffer;
 }
+
+char *recibirMensaje()
+{
+	int size;
+	char *buffer = recibir_buffer(&size);
+	return buffer;
+}
+
 
 t_list* recibir_paquete(){
 	int size;
@@ -119,13 +127,6 @@ void element_destroyer(void *palabra){
 // █▀░ █▄█ █░▀█ █▄▄ █ █▄█ █░▀█ ██▄ ▄█   █▄▀ ██▄ █▀▀ █▀▄ ██▄ █▄▄ █▀█ █▄▀ █▀█ ▄█
 
 /*
-
-void recibir_mensaje()
-{
-	int size;
-	char* buffer = recibir_buffer(&size);
-	free(buffer);
-}
 
 char* recibir_clave(){
 	int size;

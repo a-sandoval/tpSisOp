@@ -26,10 +26,10 @@ void element_destroyer(void* palabra);
 void iterator(void *value);
 int alistarServidor(char *puerto);
 int ejecutarServidor();
+char *recibirMensaje();
 
 /*
 bool esClaveValida(void *clave);
-void recibir_mensaje();
 char* recibir_clave();
 
 */

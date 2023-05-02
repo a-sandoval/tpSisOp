@@ -37,14 +37,14 @@ int crearConexion(char *ip, char *puerto)
 
 	getaddrinfo(ip, puerto, &hints, &server_info);
 
-	int socket_cliente = socket(server_info->ai_family,
+	int socketCliente = socket(server_info->ai_family,
 								server_info->ai_socktype,
 								server_info->ai_protocol);
 
-	if (!connect(socket_cliente, server_info->ai_addr, server_info->ai_addrlen))
+	if (!connect(socketCliente, server_info->ai_addr, server_info->ai_addrlen))
 	{
 		freeaddrinfo(server_info);
-		return socket_cliente;
+		return socketCliente;
 	}
 	else
 	{
@@ -53,7 +53,7 @@ int crearConexion(char *ip, char *puerto)
 	}
 }
 
-void enviar_mensaje(char *mensaje, int socket_cliente)
+void enviarMensaje(char *mensaje, int socketCliente)
 {
 	t_paquete *paquete = malloc(sizeof(t_paquete));
 
@@ -67,7 +67,7 @@ void enviar_mensaje(char *mensaje, int socket_cliente)
 
 	void *a_enviar = serializar_paquete(paquete, bytes);
 
-	send(socket_cliente, a_enviar, bytes, 0);
+	send(socketCliente, a_enviar, bytes, 0);
 
 	free(a_enviar);
 	eliminarPaquete(paquete);
@@ -103,12 +103,12 @@ void agregarAPaquete(t_paquete *paquete, void *valor, int tamanio)
 	paquete->buffer->size += tamanio + sizeof(int);
 }
 
-void enviarPaquete(t_paquete *paquete, int socket_cliente)
+void enviarPaquete(t_paquete *paquete, int socketCliente)
 {
 	int bytes = paquete->buffer->size + 2 * sizeof(int);
 	void *a_enviar = serializar_paquete(paquete, bytes);
 
-	send(socket_cliente, a_enviar, bytes, 0);
+	send(socketCliente, a_enviar, bytes, 0);
 
 	free(a_enviar);
 }
@@ -131,7 +131,7 @@ int conexion(char *SERVIDOR)
 	char *ip = confGet(KEYS[1]);
 	free(KEYS[1]);
 	int conexion = crearConexion(ip, puerto);
-	log_info(logger, "Conexion creada: %d", conexion);
+	//log_info(logger, "Conexion creada: %d", conexion);
 
 	return conexion;
 }

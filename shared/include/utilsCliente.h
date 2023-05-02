@@ -54,12 +54,12 @@ typedef struct
  */
 int crearConexion(char* ip, char* puerto);
 /**
- * @fn void enviar_mensaje(char* mensaje, int socket_cliente)
+ * @fn void enviarMensaje(char* mensaje, int socketCliente)
  * @brief Se envia un paquete del tipo MENSAJE que envia un string al socket solicitado.
  * @param mensaje El string a enviar.
- * @param socket_cliente El socket mediante el cual enviar el mensaje.
+ * @param socketCliente El socket mediante el cual enviar el mensaje.
  */
-void enviar_mensaje(char* mensaje, int socket_cliente);
+void enviarMensaje(char* mensaje, int socketCliente);
 /**
  * @fn t_paquete* crearPaquete(void)
  * @brief Se inicializa un paquete con código de operación PAQUETE.
@@ -75,12 +75,12 @@ t_paquete* crearPaquete(void);
  */
 void agregarAPaquete(t_paquete* paquete, void* valor, int tamanio);
 /**
- * @fn void enviarPaquete(t_paquete* paquete, int socket_cliente)
+ * @fn void enviarPaquete(t_paquete* paquete, int socketCliente)
  * @brief Se envia un paquete mediante el socket utilizado.
  * @param paquete Paquete a enviar.
- * @param socket_cliente Socket utilizado.
+ * @param socketCliente Socket utilizado.
  */
-void enviarPaquete(t_paquete* paquete, int socket_cliente);
+void enviarPaquete(t_paquete* paquete, int socketCliente);
 /**
  * @fn void eliminarPaquete(t_paquete* paquete)
  * @brief Elimina un paquete y libera la memoria asociada a sus datos.

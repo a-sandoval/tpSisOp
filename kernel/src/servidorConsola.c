@@ -22,7 +22,7 @@ int servirAConsola(){
     	    log_error(logger, "Error al inciar servidor Kernel, Abort");
     	    return EXIT_FAILURE;
 		}
-/*
+
 	pthread_t planificadorCortoPlazo_h;  //Hilo Planificador Corto Plazo --> Mueve procesos de READY a EXEC
 		if(!pthread_create(&planificadorCortoPlazo_h, NULL,(void *) planificarACortoPlazo, NULL)){
     	    pthread_detach(planificadorCortoPlazo_h);
@@ -31,7 +31,7 @@ int servirAConsola(){
     	    log_error(logger, "Error al inciar servidor Kernel, Abort");
     	    return EXIT_FAILURE;
 		}
-*/
+
 	pthread_t recibirConsolas_h; // Hilo Principal -> Recibe consolas y crea PCBs 
     	if(!pthread_create(&recibirConsolas_h, NULL,(void *) recibirConsolas, puertoDeEscucha)){
     	    pthread_join(recibirConsolas_h, NULL);
@@ -81,9 +81,14 @@ void ejecutarServidorKernel(){
 				//list_destroy_and_destroy_elements(lista, (void*)element_destroyer);
 				list_destroy(lista);
 				break;
-			case -1:
-				ingresarANew(PCB);
-				return;
+			case MENSAJE:
+				char *mensaje = recibirMensaje();
+				log_info(logger, mensaje);
+				if (!strcmp(mensaje, "Fin de instrucciones")) {
+					ingresarANew(PCB);
+					return;
+				}
+				else break;
 			default:
 				break;
 			}
