@@ -9,8 +9,10 @@
 
 #include "shared/include/utilsServidor.h"
 #include "shared/include/utilsCliente.h"
+#include "cpu/include/cicloDeInstruccion.h"
 
 
 void escucharAlKernel(); 
+void iterator(void *value);
 
 #endif

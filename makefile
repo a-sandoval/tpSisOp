@@ -16,7 +16,7 @@ ARCHIVOS_CONSOLA := consola/src/consola.c \
                     $(CONFIG) $(UTILS_CLIENTE) 
 
 CPU_SRC := cpu/src/
-ARCHIVOS_CPU     := $(CPU_SRC)cpu.c	\
+ARCHIVOS_CPU     := $(CPU_SRC)cpu.c	$(CPU_SRC)servidorKernel.c $(CPU_SRC)cicloDeInstruccion.c $(CPU_SRC)conexionMemoria.c \
 				    $(CONFIG) $(UTILS_CLIENTE) $(UTILS_SERVIDOR) 
 
 FILESYS_SRC := fileSystem/src/

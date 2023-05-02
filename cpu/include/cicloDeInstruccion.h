@@ -3,11 +3,13 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
+#include <unistd.h>
 #include <commons/string.h>
 #include <commons/config.h>
 #include <commons/log.h>
 #include "shared/include/global.h"
-#include<commons/collections/list.h>
+#include <commons/collections/list.h>
 #include "shared/include/configuraciones.h"
 
 typedef enum estadoProceso{
@@ -27,8 +29,8 @@ typedef struct {
 typedef struct { 
 //ver tipos de datos para hacer el sizeof mas legible
     uint32_t pid; 
-    t_list* instrucciones; 
     uint32_t instruccionesLength;
+    t_list* instrucciones; 
     estadoProceso estado; 
     int programCounter;   
     t_reg* registrosCPU;
@@ -41,26 +43,8 @@ void fetch();
 void decode();
 void execute();
 
-void set(char* , char* );
+void set_c(char* , char* );
 int obtenerTiempoEspera();
 
-char *listaComandos[] = {
-    [SET] = "SET",
-    [MOV_IN] = "MOV_IN",
-    [MOV_OUT] = "MOV_OUT", 
-    [IO] = "I/O",
-    [F_OPEN] = "F_OPEN",
-    [F_CLOSE] = "F_CLOSE", 
-    [F_SEEK] = "F_SEEK",
-    [F_READ] = "F_READ",
-    [F_WRITE] = "F_WRITE", 
-    [F_TRUNCATE] = "F_TRUNCATE",
-    [WAIT] = "WAIT",
-    [SIGNAL] = "SIGNAL",
-    [CREATE_SEGMENT] = "CREATE_SEGMENT",
-    [DELETE_SEGMENT] = "DELETE_SEGMENT",
-    [YIELD] = "YIELD",
-    [EXIT] = "EXIT"
-};
 
 #endif 

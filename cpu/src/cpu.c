@@ -1,22 +1,15 @@
 #include "cpu/include/cpu.h"
 
-
-
 int main(void){
-	/*Inicializando Loggers*/
 	logger = iniciarLogger("cpu.log", "CPU-Memoria");
-
-	/*Inicializando los config*/
 	config = iniciarConfiguracion("cpu.config");
-
-	/*Conexion a memoria*/
 	int conexionAMemoria = conexion("MEMORIA");
 
 	cambiarNombre("CPU-Kernel");
     escucharAlKernel();
+
 	close(conexionAMemoria);
 	terminarPrograma(); 
-
     return EXIT_SUCCESS;
 
 	//recibirContextoEjecucion(t_pcb pcbParaSacarCosas); TENGO QUE HACERLA
@@ -33,7 +26,3 @@ ejecutarInstruccion(t-pcb pcb, t_instruccion instruccion){
 	}
 }
 */
-
-void iterator(void *value){
-	log_info(logger, "Valor recibido: %s\n",value);
-}

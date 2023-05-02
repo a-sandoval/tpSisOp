@@ -21,25 +21,15 @@ typedef struct {
 typedef struct {
 
     uint32_t pid; 
-
     int socketPCB; 
-
     t_list* instrucciones; 
-
     uint32_t programCounter;   
-
     estadoProceso estado; 
-
     t_reg* registrosCPU;   
-
     int estimadoProximaRafaga; 
-
     t_temporal* llegadaAReady; 
-    
     t_list* tablaDeSegmentos; 
-
     t_list* tablaDeArchivos; 
-    
 
 } t_pcb; 
 
