@@ -25,7 +25,7 @@ int main(){
 
     */
 
-    logger = cambiarNombre("Kernel-Consola");
+    //logger = cambiarNombre("Kernel-Consola\0");
     int servidorDeConsola = servirAConsola();
     close(servidorDeConsola);
 

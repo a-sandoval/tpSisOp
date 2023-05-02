@@ -51,6 +51,8 @@
  * Socket utilizado para conectarse y enviar informacion al Kernel.
  */
 int socketCliente;
+t_log *logger;
+t_config *config;
 
 /**
  * @fn int   main  (int, char *archivos[])

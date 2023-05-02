@@ -85,11 +85,11 @@ void planificarALargoPlazo(){
 
         //sem_wait(sem_multiprogra)
        
-        t_pcb* pcb=obtenerSiguienteAReady(); 
+        t_pcb* pcb = obtenerSiguienteAReady(); 
     	log_info(logger, "PID: %d - Estado Anterior: %d - Estado Actual: %s", pcb->pid, pcb->estado, estadoActual);
         pcb->estado = READY;
         
-        pthread_mutex_unlock(&mutexListaNew);
+        //pthread_mutex_unlock(&mutexListaNew);
         sem_post(&hayProcesosReady);
 
     }
