@@ -47,9 +47,9 @@ Y los puertos del Kernel para recibir a todas las consolas:
 - [X] Abre archivo de configuración y logger.
 - [X] Se conecta a CPU, Memoria y File System.
 - [ ] Esperar constantemente conexiones de consolas (Tal vez llegar a mas de 1).
-- [ ] Recibir instrucciones y armar el PCB.
-- [ ] Planificacion de procesos con FIFO
-- [ ] Planear como agregar el HNNR (HRRN?).
+- [X] Recibir instrucciones y armar el PCB.
+- [X] Planificacion de procesos con FIFO
+- [ ] Planear como agregar el HRRN.
 - [ ] Configurar para que se mantenga recibiendo conexiones indefinidamente hasta que se termine el programa. (Fede)
 - [X] Globalizar configuracion, loggers y sockets. (Fede)
 
@@ -82,7 +82,7 @@ Y los puertos del Kernel para recibir a todas las consolas:
 
 - [ ] Documentar funciones.
 - [X] Añadir global.h para todas las variables globales que necesitemos generalmente (logger, config, etc.).
-- [X ] Traspasar toda dependencia de nuestras listas al commons/collections/list.h.
+- [X]Traspasar toda dependencia de nuestras listas al commons/collections/list.h.
 
 ### Módulo pruebas
 
