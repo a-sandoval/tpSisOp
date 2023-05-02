@@ -60,13 +60,13 @@ t_paquete* crearPaquete(void);
  * @param valor Dato a añadir al paquete.
  * @param tamanio Tamaño del valor a añadir, usualmente un sizeof(valor) servira, pero en el caso de strings se puede utilizar (strlen(valor) + 1) * sizeof(int)
  */
-void agregar_a_paquete(t_paquete* paquete, void* valor, int tamanio);
+void agregarAPaquete(t_paquete* paquete, void* valor, int tamanio);
 /**
  * @brief Se envia un paquete mediante el socket utilizado.
  * @param paquete Paquete a enviar.
  * @param socket_cliente Socket utilizado.
  */
-void enviar_paquete(t_paquete* paquete, int socket_cliente);
+void enviarPaquete(t_paquete* paquete, int socket_cliente);
 /**
  * @brief Libera una conexión de un socket cliente dado.
  * @param socket_cliente El número de socket del cliente a liberar.
@@ -76,7 +76,7 @@ void liberar_conexion(int socket_cliente);
  * @brief Elimina un paquete y libera la memoria asociada a sus datos.
  * @param paquete El puntero al paquete a eliminar.
  */
-void eliminar_paquete(t_paquete* paquete);
+void eliminarPaquete(t_paquete* paquete);
 
 
 int conexion(char *SERVIDOR);

@@ -70,7 +70,7 @@ void enviar_mensaje(char *mensaje, int socket_cliente)
 	send(socket_cliente, a_enviar, bytes, 0);
 
 	free(a_enviar);
-	eliminar_paquete(paquete);
+	eliminarPaquete(paquete);
 }
 
 //lo que hacen las funciones crear buffer y crear paquete ya lo hace la funcion enviar mensaje
@@ -93,7 +93,7 @@ t_paquete *crearPaquete(void)
 	return paquete;
 }
 
-void agregar_a_paquete(t_paquete *paquete, void *valor, int tamanio)
+void agregarAPaquete(t_paquete *paquete, void *valor, int tamanio)
 {
 	paquete->buffer->stream = realloc(paquete->buffer->stream, paquete->buffer->size + tamanio + sizeof(int));
 
@@ -103,7 +103,7 @@ void agregar_a_paquete(t_paquete *paquete, void *valor, int tamanio)
 	paquete->buffer->size += tamanio + sizeof(int);
 }
 
-void enviar_paquete(t_paquete *paquete, int socket_cliente)
+void enviarPaquete(t_paquete *paquete, int socket_cliente)
 {
 	int bytes = paquete->buffer->size + 2 * sizeof(int);
 	void *a_enviar = serializar_paquete(paquete, bytes);
@@ -113,7 +113,7 @@ void enviar_paquete(t_paquete *paquete, int socket_cliente)
 	free(a_enviar);
 }
 
-void eliminar_paquete(t_paquete *paquete)
+void eliminarPaquete(t_paquete *paquete)
 {
 	free(paquete->buffer->stream);
 	free(paquete->buffer);

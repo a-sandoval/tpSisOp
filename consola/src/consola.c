@@ -1,54 +1,52 @@
 #include "consola/include/consola.h"
 
 int main(int, char *archivos[]) {
-
-    // inicializacion de las variables
-    logger = iniciarLogger("consola.log", "consola");
-
-    config = iniciarConfiguracion(archivos[2]);
-
-    /*socketClienteFD = conexion("KERNEL");
-    if (!(socketClienteFD + 1)) { 
-        log_error(logger, "No se pudo conectar a la Kernel");
-        log_destroy(logger);
-        config_destroy(config);
-        return 1;
-    }
-    */
-    // apertura del archivo de pseudocodigo
-
-    FILE *codigo = fopen(archivos[1], "r");
-
-    if (codigo == NULL) {
-        log_error(logger, "No se pudo abrir el archivo %s", archivos[1]);
-        close(socketCliente);
-        terminarPrograma(NULL);
-        return 1;
-    }
-
-    // leer el archivo y enviar paquetes del codigo
+    logger        = iniciarLogger("consola.log", "consola");
+    config        = iniciarConfiguracion(archivos[2]);
+    socketCliente = conexion("KERNEL");
+    if (!(socketCliente + 1)) error("No se pudo conectar a la Kernel");
+    FILE *codigo = abrir(archivos[1], "r");
+    size_t cantChars = MAX_CHARS;
 
     while(!feof(codigo)) {
-        char *lineaCodigo = malloc(sizeof(char));
-        int i = 0;
-        for (; ((lineaCodigo[i] = fgetc(codigo) )!= '\n') && !feof(codigo); i++);
-        lineaCodigo[i] = '\0';
-        printf("%s \n", lineaCodigo);
+        char *linea = (char *) malloc (sizeof (char) * cantChars);
+        if (linea == NULL) error("No se pudo alocar memoria");
+
+        getline(&linea, &cantChars, codigo);
+        char *lineaCodigo = string_replace(linea, "\n\0", "\0");
 
         t_paquete *paquete = crearPaquete();
-        agregar_a_paquete (paquete, lineaCodigo, sizeof(char) * strlen(lineaCodigo) + 1);
-
-        //enviar_paquete(paquete, socketClienteFD);
-        eliminar_paquete(paquete);
+        agregarAPaquete ( paquete, lineaCodigo, sizeof(char) * strlen(lineaCodigo) + 1 );
+        enviarPaquete(paquete, socketCliente);
+        
+        eliminarPaquete(paquete);
         free(lineaCodigo);
-        //sleep(1);
+        free(linea);
     }
-
-    // cerrar archivos
 
     close(socketCliente);
     fclose(codigo);
-    terminarPrograma(NULL);
+    terminarPrograma();
 
     return 0;
+}
+
+FILE *abrir(char *archivo, char *tipoDeArchivo) {
+    FILE *codigo = fopen(archivo, tipoDeArchivo);
+    if (codigo == NULL) error("No se pudo abrir el archivo %s", archivo);
+    return codigo;
+}
+
+void error (char *mensajeFormato, ...) {
+    va_list argumentos;
+    va_start(argumentos, mensajeFormato);
+
+    char *mensajeCompleto = string_from_vformat(mensajeFormato, argumentos);
+
+    log_error(logger, "%s", mensajeCompleto);
+
+    va_end(argumentos);
+    close(socketCliente);
+    terminarPrograma();
+    exit(1);
 }

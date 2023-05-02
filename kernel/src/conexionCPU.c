@@ -57,16 +57,16 @@ void enviar_contexto(){
 	paquete->buffer = malloc(sizeof(t_buffer));
    
     // cargo todos los valores en el paquete
-    agregar_a_paquete(paquete,(void *)&contextoEjecucion->pid, sizeof(contextoEjecucion->pid));
-    agregar_a_paquete(paquete,(void *)&contextoEjecucion->programCounter, sizeof(contextoEjecucion->programCounter));
-    agregar_a_paquete(paquete,&contextoEjecucion->registrosCPU, sizeof(contextoEjecucion->registrosCPU)); // a chequear ese ampersand
-    agregar_a_paquete(paquete,(void *)&contextoEjecucion->instruccionesLength, sizeof(contextoEjecucion->instruccionesLength));
-    agregar_a_paquete(paquete,contextoEjecucion->instrucciones, contextoEjecucion->instruccionesLength);
-    agregar_a_paquete(paquete,(void *)contextoEjecucion->estado, sizeof(estadoProceso));
+    agregarAPaquete(paquete,(void *)&contextoEjecucion->pid, sizeof(contextoEjecucion->pid));
+    agregarAPaquete(paquete,(void *)&contextoEjecucion->programCounter, sizeof(contextoEjecucion->programCounter));
+    agregarAPaquete(paquete,&contextoEjecucion->registrosCPU, sizeof(contextoEjecucion->registrosCPU)); // a chequear ese ampersand
+    agregarAPaquete(paquete,(void *)&contextoEjecucion->instruccionesLength, sizeof(contextoEjecucion->instruccionesLength));
+    agregarAPaquete(paquete,contextoEjecucion->instrucciones, contextoEjecucion->instruccionesLength);
+    agregarAPaquete(paquete,(void *)contextoEjecucion->estado, sizeof(estadoProceso));
 
-    enviar_paquete(paquete,socketCliente);
+    enviarPaquete(paquete,socketCliente);
 
-	eliminar_paquete(paquete);
+	eliminarPaquete(paquete);
 }
 
 
