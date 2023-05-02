@@ -22,6 +22,7 @@ t_pcb* crearPCB() {
     t_pcb* nuevoPCB = malloc(sizeof(t_pcb)); 
     nuevoPCB->estado = NEW; 
     nuevoPCB->pid = procesosCreados; 
+    nuevoPCB->programCounter = 0;
     nuevoPCB->instrucciones = list_create(); 
     nuevoPCB->estimadoProximaRafaga = obtenerEstimacionInicial(); 
     nuevoPCB->llegadaAReady = temporal_create(); 
@@ -97,7 +98,7 @@ void planificarALargoPlazo(){
 }
 
 
-t_pcb *obtenerSiguienteAready()
+t_pcb *obtenerSiguienteAReady()
 {
     	pthread_mutex_lock(&mutexListaNew);
     	t_pcb *pcb = desencolar(pcbsNEW);

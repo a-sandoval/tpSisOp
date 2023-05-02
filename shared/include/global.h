@@ -26,13 +26,12 @@
      * @var logger 
      * Logger global para documentar todo evento que ocurra.
      */
-    t_log *logger;
-
+ 
     /**
      * @var config 
      * Archivo de configuracion utilizado para sacar informacion variada para su uso.
      */
-    t_config *config;
+   
 
     /**
      * 

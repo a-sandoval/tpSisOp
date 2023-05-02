@@ -10,13 +10,14 @@
 #include "pcb.h"
 #include "shared/include/global.h"
 #include <semaphore.h>
+#include <pthread.h>
 
 extern t_list* pcbsNEW; 
 extern t_list* pcbsREADY;
 
 extern sem_t hayProcesosReady;
 extern sem_t hayProcesosNuevos;
-extern pthread_mutex_t mutexLista; 
+extern pthread_mutex_t mutexListaNew; 
 
 
 /**
@@ -99,7 +100,9 @@ void planificarALargoPlazo();
 
 void planificarACortoPlazo(); 
 
-t_pcb *obtenerSiguienteAready();
+t_pcb *obtenerSiguienteAReady();
+
+void ingresarANew(t_pcb *pcb); 
 
 
 #endif 
