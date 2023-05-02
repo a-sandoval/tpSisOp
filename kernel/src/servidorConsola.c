@@ -9,6 +9,9 @@ int servirAConsola(){
 	char* puertoDeEscucha = confGet("PUERTO_ESCUCHA"); 
 	sem_init(&hayProcesosNuevos,0,0);
 	sem_init(&hayProcesosReady,0,0); 
+	pthread_mutex_init(&mutexLista, NULL);
+
+
 	inicializarListasPCBS(); 
 
 	pthread_t recibirConsolas; // Hilo Principal -> Recibe consolas y crea PCBs 
@@ -70,9 +73,8 @@ void ejecutarServidorKernel(){
 	PCB->socketPCB=socketCliente; 
 
 
-	int cod_op = 0;
-	while (cod_op != -1) {
-		cod_op = recibir_operacion(socketCliente); 
+	while (1) {
+		int cod_op = recibir_operacion(socketCliente); 
 		switch (cod_op) {
 		case MENSAJE:
 			char *claveRecibida = recibir_clave(socketCliente);
@@ -85,16 +87,11 @@ void ejecutarServidorKernel(){
 			list_iterate(lista, (void*) iterator); 
 			list_destroy_and_destroy_elements(lista, (void*)element_destroyer);
 			break;
-		case -1:
-			log_error(logger, "El cliente se desconecto");
-			break;
 		default:
-			log_warning(logger,"Operacion desconocida. No quieras meter la pata");
 			break;
 		}
 	}
 
-	// suponiendo un PCB con instrucciones
-	encolar(pcbsNEW, PCB);
+	ingresarANew(PCB); 
 }
 

@@ -16,7 +16,7 @@ extern t_list* pcbsREADY;
 
 extern sem_t hayProcesosReady;
 extern sem_t hayProcesosNuevos;
-
+extern pthread_mutex_t mutexLista; 
 
 
 /**
@@ -98,5 +98,8 @@ void planificarALargoPlazo();
 
 
 void planificarACortoPlazo(); 
+
+t_pcb *obtenerSiguienteAready();
+
 
 #endif 

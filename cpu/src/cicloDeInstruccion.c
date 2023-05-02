@@ -2,12 +2,16 @@
 
 void cicloDeInstruccion(){
     // IR ACTUALIZANDO EL PCB MIENTRAS SE VA EJECUTANDO 
-    fetch();
+    fetch();//busca la próxima instruccion a ejecutar. Lista en pcb
 
-    decode();
+    decode();//interpreta que instruccion va a ajecutar y si requiere traduccion logica o fisica
 
-    execute();
+
+    execute();//ejecuta la instruccion
+
 }
+
+
 
 // ------- Funciones del ciclo ------- //
 void fetch() {
@@ -44,13 +48,10 @@ int obtenerTiempoEspera(){
 //YIELD --> Desaloja voluntariamente el proceso de la CPU. Devuelve el Contexto de Ejecución actualizado al Kernel.
 
 void yield(){ 
-    /* ya no laburo con el pcb, ahora es el contexto de ejecucion
-    int32_t procesoID = PCB->pid;
-    PCB -> estado = READY; //Asumo que está en EXEC el proceso
-     
-    enviarContexto(procesoID);
-    */
-}  
+    int32_t proceso = pocess_getpid();
+    //PCB -> estado = READY; //Asumo que está en EXEC el proceso
+    enviarContexto(proceso);
+}
 
 enviarContexto(procesoID){
     //serializar

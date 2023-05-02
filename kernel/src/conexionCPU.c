@@ -49,21 +49,13 @@ void* serializar_contextoEjecucion(t_paquete* paquete, int bytes){ //creo que qu
 	return magic;
 }
 
-//lo de las funciones crear paquete y crear buffer se esta haciendo aca adentro 
-//enviar contexto podria ser una llamada a crear paquete y agregar a paquete enviar paquete y eliminar
-void enviar_contexto(){ //socket es global y el pcb de donde saco el contexto tmb
+
+void enviar_contexto(){ 
     t_paquete* paquete = malloc(sizeof(t_paquete));
     
     paquete->codigo_operacion = CONTEXTOEJECUCION;
 	paquete->buffer = malloc(sizeof(t_buffer));
-    /* esto lo hace tmb la funcion agregar a paquete
-        indique el tamaño del buffer y pedi el lugar necesario para poder cargar el stream con los valores a enviar
-
-    paquete->buffer->size = sizeof(contextoEjecucion->pid)+sizeof(contextoEjecucion->socketPCB)+
-                            sizeof(contextoEjecucion->programCounter)+sizeof(contextoEjecucion->registrosCPU)+
-                            sizeof(contextoEjecucion->instruccionesLength)+strlen(contextoEjecucion->instrucciones); //noc si funciona esto de las instrucciones
-    paquete->buffer->stream = malloc(paquete->buffer->size);
-    */
+   
     // cargo todos los valores en el paquete
     agregar_a_paquete(paquete,(void *)&contextoEjecucion->pid, sizeof(contextoEjecucion->pid));
     agregar_a_paquete(paquete,(void *)&contextoEjecucion->programCounter, sizeof(contextoEjecucion->programCounter));

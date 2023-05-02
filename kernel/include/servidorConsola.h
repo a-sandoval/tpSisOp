@@ -20,5 +20,4 @@ void recibirConsolas();
 void ejecutarServidorKernel(); 
 
 
-
 #endif /* SERVER_H_ */

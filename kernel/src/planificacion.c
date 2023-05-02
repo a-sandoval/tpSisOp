@@ -5,7 +5,7 @@ sem_t hayProcesosNuevos;
 t_list* pcbsNEW; 
 t_list* pcbsREADY;
 int32_t procesosCreados = 0; 
-
+pthread_mutex_t mutexListaNew; 
 
 
 void inicializarListasPCBS(){
@@ -30,11 +30,19 @@ t_pcb* crearPCB() {
 
     procesosCreados++; //para el nuevo pid
 
-    list_add(pcbsNEW, (void*)nuevoPCB); 
-
-    log_info(logger,"Se crea el proceso <%d> en NEW", nuevoPCB->pid); 
-
     return nuevoPCB; 
+
+}
+
+void ingresarANew(t_pcb *pcb) {
+
+    pthread_mutex_lock(&mutexListaNew);
+
+    list_add(pcbsNEW, (void*)pcb); 
+    
+    log_info(logger,"Se crea el proceso <%d> en NEW", pcb->pid); 
+
+    pthread_mutex_unlock(&mutexListaNew);
 
 }
 
@@ -67,20 +75,42 @@ void encolar(t_list* pcbs,t_pcb* pcb){
 }
 
 void planificarALargoPlazo(){
+
+    while (1) {
+
+        char* estadoActual = "READY"; //Esto es una ilegalidad ?-?
+
+        sem_wait(&hayProcesosNuevos); 
+
+        //sem_wait(sem_multiprogra)
+       
+        t_pcb* pcb=obtenerSiguienteAReady(); 
+    	log_info(logger, "PID: %d - Estado Anterior: %d - Estado Actual: %s", pcb->pid, pcb->estado, estadoActual);
+        pcb->estado = READY;
+        
+        pthread_mutex_unlock(&mutexListaNew);
+        sem_post(&hayProcesosReady);
+
+    }
     
-    sem_wait(&hayProcesosNuevos); 
-    t_pcb* pcb=desencolar(pcbsNEW);
-    pcb->estado = READY;
-    encolar(pcbsREADY,pcb);
-    sem_post(&hayProcesosReady);
+   
 }
+
+
+t_pcb *obtenerSiguienteAready()
+{
+    	pthread_mutex_lock(&mutexListaNew);
+    	t_pcb *pcb = desencolar(pcbsNEW);
+    	pthread_mutex_unlock(&mutexListaNew);
+    	return pcb;
+}
+
 
 void planificarACortoPlazo() {
     
     sem_wait(&hayProcesosReady); 
     t_pcb* aEjecutar = desencolar(pcbsREADY);
     aEjecutar->estado = EXEC; 
-    
 }
 
  t_pcb* proximoAEjecutarFIFO(){

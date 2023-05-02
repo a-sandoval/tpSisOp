@@ -20,17 +20,17 @@ typedef struct {
 
 typedef struct {
 
-    int32_t pid; 
+    uint32_t pid; 
 
     int socketPCB; 
 
     t_list* instrucciones; 
 
-    int programCounter;   
+    uint32_t programCounter;   
 
     estadoProceso estado; 
 
-    t_reg registrosCPU;   // Puntero o no? 
+    t_reg* registrosCPU;   
 
     int estimadoProximaRafaga; 
 

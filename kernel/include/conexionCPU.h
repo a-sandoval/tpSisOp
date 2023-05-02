@@ -14,10 +14,9 @@ typedef struct {
     uint32_t instruccionesLength;
     estadoProceso estado; 
     int programCounter;   
-    t_reg registrosCPU;   // Puntero o no? 
-
-    
-    //TO DO: TABLA DE SEGMENTOS Y TABLA DE ARCHIVOS 
+    t_reg* registrosCPU;   
+    t_list* tablaDeSegmentos; 
+    t_list* tablaDeArchivos; 
 
 } t_contexto; 
 
