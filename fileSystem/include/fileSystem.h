@@ -1,22 +1,25 @@
 #ifndef FILE_SYS_H
 #define FILE_SYS_H
 
-#include<stdio.h>
-#include<stdlib.h>
+/**
+ * @addtogroup FileSystem
+ * @{
+ * 
+ * @file fileSystem.h
+ * @authors To-The-End
+ */
+
 #include<commons/log.h>
-#include<commons/string.h>
 #include<commons/config.h>
 
 #include "shared/include/utilsCliente.h" 
-#include "shared/include/utilsServidor.h" 
 #include "shared/include/configuraciones.h"
 #include "shared/include/global.h"
-#include "fileSystem/include/conexionMemoria.h"
+
 #include "fileSystem/include/servidorKernel.h"
 
 int socketCliente;
-t_log* logger;
-t_config* config;
+int socketMemoria;
 
 void iterator(void* value);
 

@@ -36,7 +36,7 @@ int esperar_cliente(int socket_servidor){
 	return socketClienteFD;
 }
 
-int recibir_operacion(int socketCliente){
+int recibir_operacion(){
 	int cod_op;
 	if(recv(socketCliente, &cod_op, sizeof(int), MSG_WAITALL) > 0)
 		return cod_op;
@@ -47,7 +47,7 @@ int recibir_operacion(int socketCliente){
 	}
 }
 
-void* recibir_buffer(int* size, int socketCliente){
+void* recibir_buffer(int* size){
 	void * buffer;
 
 	recv(socketCliente, size, sizeof(int), MSG_WAITALL);
@@ -57,14 +57,14 @@ void* recibir_buffer(int* size, int socketCliente){
 	return buffer;
 }
 
-t_list* recibir_paquete(int socketCliente){
+t_list* recibir_paquete(){
 	int size;
 	int desplazamiento = 0;
 	void * buffer;
 	t_list* valores = list_create();
 	int tamanio;
 
-	buffer = recibir_buffer(&size, socketCliente);
+	buffer = recibir_buffer(&size);
 	while(desplazamiento < size){
 		memcpy(&tamanio, buffer + desplazamiento, sizeof(int));
 		desplazamiento+=sizeof(int);
@@ -88,16 +88,16 @@ int alistarServidor(char *puerto){
 	return esperar_cliente(server_fd);
 }
 
-int ejecutarServidor(int socketCliente){
+int ejecutarServidor(){
 	t_list* lista;
 	while (1) {
-		int codOP = recibir_operacion(socketCliente);
+		int codOP = recibir_operacion();
 		switch (codOP) {
 			case MENSAJE:
 				log_info(logger, "Se autoriza continuar");
 				break;
 			case PAQUETE:
-				lista = recibir_paquete(socketCliente);
+				lista = recibir_paquete();
 				list_iterate(lista, (void*) iterator); 
 				list_destroy_and_destroy_elements(lista, (void*)element_destroyer);
 				break;

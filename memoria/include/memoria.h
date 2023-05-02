@@ -25,11 +25,11 @@
 #include "shared/include/configuraciones.h"
 
 /**
- * @var socketFD
+ * @var socketCliente
  * Socket para recibir conexiones.
  * 
  */
-int socketFD;
+int socketCliente;
 
 /**
  * @fn void iterator (void* value)

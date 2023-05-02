@@ -20,7 +20,7 @@ ARCHIVOS_CPU     := $(CPU_SRC)cpu.c	\
 				    $(CONFIG) $(UTILS_CLIENTE) $(UTILS_SERVIDOR) 
 
 FILESYS_SRC := fileSystem/src/
-ARCHIVOS_FILESYS := $(FILESYS_SRC)fileSystem.c $(FILESYS_SRC)conexionMemoria.c $(FILESYS_SRC)servidorKernel.c \
+ARCHIVOS_FILESYS := $(FILESYS_SRC)fileSystem.c $(FILESYS_SRC)servidorKernel.c \
 				    $(CONFIG) $(UTILS_CLIENTE) $(UTILS_SERVIDOR) 
 
 ARCHIVOS_KERNEL  := kernel/src/kernel.c kernel/src/conexionMemoria.c  kernel/src/conexionCPU.c  kernel/src/conexionFileSystem.c  kernel/src/servidorConsola.c kernel/src/planificacion.c \

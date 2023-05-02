@@ -5,10 +5,10 @@ int main(){
 	config = iniciarConfiguracion("memoria.config");
 
 	//inicio servidor y queda a la espera de clientes
-	socketFD = alistarServidor(confGet("PUERTO_ESCUCHA"));
+	socketCliente = alistarServidor(confGet("PUERTO_ESCUCHA"));
 
 	//int rdoEjecucion = 
-	ejecutarServidor(socketFD);
+	ejecutarServidor(socketCliente);
 
 	//if(rdoEjecucion == EXIT_FAILURE) terminarPrograma(config,logger);
 	

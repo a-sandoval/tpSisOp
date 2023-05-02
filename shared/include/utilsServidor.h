@@ -17,18 +17,18 @@ extern int socketCliente;
 extern t_log *logger;
 extern t_config *config;
 
-void* recibir_buffer(int* size, int socketCliente);
-bool esClaveValida(void *clave);
 int iniciarServidor(char*puerto);
+void* recibir_buffer(int* size);
 int esperar_cliente(int);
-t_list* recibir_paquete(int socketCliente);
-int recibir_operacion(int socketCliente);
+t_list* recibir_paquete();
+int recibir_operacion();
 void element_destroyer(void* palabra);
 void iterator(void *value);
 int alistarServidor(char *puerto);
-int ejecutarServidor(int socketCliente);
+int ejecutarServidor();
 
 /*
+bool esClaveValida(void *clave);
 void recibir_mensaje();
 char* recibir_clave();
 
