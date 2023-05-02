@@ -4,7 +4,7 @@
 # TAG += value [value, ...]
 # Values that contain spaces should be placed between quotes (\" \").
 
-PROJECT_NAME           = "Consola"
+PROJECT_NAME           = "| Trabajo Practico Sistemas Operativos |"
 ALLOW_UNICODE_NAMES    = YES
 OUTPUT_LANGUAGE        = Spanish
 BRIEF_MEMBER_DESC      = YES
@@ -157,7 +157,7 @@ NUM_PROC_THREADS       = 1
 # normally produced when WARNINGS is set to YES.
 # The default value is: NO.
 
-EXTRACT_ALL            = YES
+EXTRACT_ALL            = NO
 
 # With the correct setting of option CASE_SENSE_NAMES doxygen will better be
 # able to match the capabilities of the underlying filesystem. In case the

@@ -1,19 +1,14 @@
 #include "memoria/include/memoria.h"
 
 int main(){
-
     logger = iniciarLogger("memoria.log", "Memoria");
 	config = iniciarConfiguracion("memoria.config");
 
-	t_list* clavesValidas = list_create();
-	
-	obtenerClavesValidas(clavesValidas);
-
 	//inicio servidor y queda a la espera de clientes
-	alistarServidor(confGet("PUERTO_ESCUCHA"));
+	socketFD = alistarServidor(confGet("PUERTO_ESCUCHA"));
 
 	//int rdoEjecucion = 
-	ejecutarServidor(socketCliente);
+	ejecutarServidor(socketFD);
 
 	//if(rdoEjecucion == EXIT_FAILURE) terminarPrograma(config,logger);
 	
@@ -25,6 +20,7 @@ int main(){
 	}	
     else {
         log_error(logger, "Error en iniciar el servidor a CPU");
+	    terminarPrograma();
         return EXIT_FAILURE;
     }
 	pthread_t threadKernel;
@@ -33,6 +29,7 @@ int main(){
 	}	
     else {
         log_error(logger, "Error en iniciar el servidor a Kernel");
+	    terminarPrograma();
         return EXIT_FAILURE;
     }
 	pthread_t threadFS;
@@ -41,18 +38,17 @@ int main(){
 	}	
     else {
         log_error(logger, "Error en iniciar el servidor a FS");
+	    terminarPrograma();
         return EXIT_FAILURE;
     }
 	*/
 
 
-	log_info(logger,"Terminando servidor");
+	//log_info(logger,"Terminando servidor");
 	terminarPrograma();
-
 	return 0;
-    
 }
 
 void iterator(void* value) {
-	log_info(logger,"%s", value);
+	log_info(logger,"%s", (char *) value);
 }

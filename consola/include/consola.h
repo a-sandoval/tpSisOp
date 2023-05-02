@@ -2,9 +2,8 @@
 #define CLIENT_H_
 
 /** 
+ * @defgroup Consola Consola
  * @addtogroup Consola
- * 
- * @ingroup Consola
  * @{
  * 
  * @brief La consola tiene el trabajo de mandar al Kernel las instrucciones recibidas de los archivos.
@@ -22,18 +21,6 @@
  * + Se crea el paquete, se prepara, y se envia.
  * + Se libera la memoria.
  * 
- * @var socketCliente 
- * Socket utilizado para conectarse y enviar informacion al Kernel.
- * @var logger 
- * Logger global para documentar todo evento que ocurra en la consola.
- * @var config 
- * Archivo de configuracion utilizado para sacar informacion variada para su uso en la consola.
- * 
- * @fn int   main  (int, char *archivos[])
- * @param archivos La consola debe recibir dos archivos necesariamente; 
- *                 el primero es el archivo de codigo que le envia al Kernel, 
- *                 y el segundo es el archivo de configuracion para conocer IP y Puerto del Kernel.
- * @return Se retorna un 0 en corrida correcta y un 1 en caso de un fallo.
  */
 
 #include <stdio.h>
@@ -55,11 +42,30 @@
 #define MAX_CHARS 2048
 
 /**
+ * @var socketCliente 
+ * Socket utilizado para conectarse y enviar informacion al Kernel.
  */
 int socketCliente;
+
+/**
+ * @var logger 
+ * Logger global para documentar todo evento que ocurra en la consola.
+ */
 t_log* logger;
+
+/**
+ * @var config 
+ * Archivo de configuracion utilizado para sacar informacion variada para su uso en la consola.
+ */
 t_config* config;
 
+/**
+ * @fn int   main  (int, char *archivos[])
+ * @param archivos La consola debe recibir dos archivos necesariamente; 
+ *                 el primero es el archivo de codigo que le envia al Kernel, 
+ *                 y el segundo es el archivo de configuracion para conocer IP y Puerto del Kernel.
+ * @return Se retorna un 0 en corrida correcta y un 1 en caso de un fallo.
+ */
 int   main  (int, char *archivos[]);
 
 /**
@@ -82,7 +88,9 @@ FILE *abrir (char *archivo, char *tipoDeArchivo);
 void error (char *mensajeFormato, ...) __attribute__((format(printf, 1, 2)));
 
 /**
- * Fin de la consola.
+ * Fin de la consola. 
+ * 
+ * @}
  * 
  */
 

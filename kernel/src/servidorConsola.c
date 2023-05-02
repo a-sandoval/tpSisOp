@@ -48,7 +48,7 @@ int servirAConsola(){
 
 void recibirConsolas(char *puerto){ 
 	
-	int server_fd = iniciar_servidor(puerto);
+	int server_fd = iniciarServidor(puerto);
 
 	while(1){
 

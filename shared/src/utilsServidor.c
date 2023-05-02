@@ -1,6 +1,6 @@
 #include "../include/utilsServidor.h"
 
-int iniciar_servidor(char *puerto){
+int iniciarServidor(char *puerto){
 
 	int socket_servidor;
 
@@ -36,7 +36,7 @@ int esperar_cliente(int socket_servidor){
 	return socketClienteFD;
 }
 
-int recibir_operacion(){
+int recibir_operacion(int socketCliente){
 	int cod_op;
 	if(recv(socketCliente, &cod_op, sizeof(int), MSG_WAITALL) > 0)
 		return cod_op;
@@ -47,7 +47,7 @@ int recibir_operacion(){
 	}
 }
 
-void* recibir_buffer(int* size){
+void* recibir_buffer(int* size, int socketCliente){
 	void * buffer;
 
 	recv(socketCliente, size, sizeof(int), MSG_WAITALL);
@@ -57,21 +57,14 @@ void* recibir_buffer(int* size){
 	return buffer;
 }
 
-void recibir_mensaje()
-{
-	int size;
-	char* buffer = recibir_buffer(&size);
-	free(buffer);
-}
-
-t_list* recibir_paquete(){
+t_list* recibir_paquete(int socketCliente){
 	int size;
 	int desplazamiento = 0;
 	void * buffer;
 	t_list* valores = list_create();
 	int tamanio;
 
-	buffer = recibir_buffer(&size);
+	buffer = recibir_buffer(&size, socketCliente);
 	while(desplazamiento < size){
 		memcpy(&tamanio, buffer + desplazamiento, sizeof(int));
 		desplazamiento+=sizeof(int);
@@ -85,48 +78,35 @@ t_list* recibir_paquete(){
 }
 
 
-
 //FUNCIONES DE USO COLECTIVO PARA EL SERVIDOR:
-void alistarServidor(char *puerto){
+int alistarServidor(char *puerto){
 
-	int server_fd = iniciar_servidor(puerto);
+	int server_fd = iniciarServidor(puerto);
 
 	log_info(logger, "Servidor listo para recibir al cliente");
 
-	esperar_cliente(server_fd);
+	return esperar_cliente(server_fd);
 }
 
-
-char* recibir_clave(){
-	int size;
-	char* buffer = recibir_buffer(&size);
-
-	return buffer;
-}
-
-
-int ejecutarServidor(){
+int ejecutarServidor(int socketCliente){
 	t_list* lista;
 	while (1) {
-		int cod_op = recibir_operacion();
-		switch (cod_op) {
-			
-		case MENSAJE:
-			
-			log_info(logger, "Se autoriza continuar");
-			
-			break;
-		case PAQUETE:
-			lista = recibir_paquete();
-			list_iterate(lista, (void*) iterator); 
-			list_destroy_and_destroy_elements(lista, (void*)element_destroyer);
-			break;
-		case -1:
-			log_error(logger, "El cliente se desconecto");
-			return EXIT_FAILURE;
-		default:
-			log_warning(logger,"Operacion desconocida. No quieras meter la pata");
-			break;
+		int codOP = recibir_operacion(socketCliente);
+		switch (codOP) {
+			case MENSAJE:
+				log_info(logger, "Se autoriza continuar");
+				break;
+			case PAQUETE:
+				lista = recibir_paquete(socketCliente);
+				list_iterate(lista, (void*) iterator); 
+				list_destroy_and_destroy_elements(lista, (void*)element_destroyer);
+				break;
+			case -1:
+				log_error(logger, "El cliente se desconecto");
+				return EXIT_FAILURE;
+			default:
+				log_warning(logger,"Operacion desconocida. No quieras meter la pata");
+				break;
 		}
 	}
 }
@@ -134,3 +114,24 @@ int ejecutarServidor(){
 void element_destroyer(void *palabra){
 	free(palabra);
 }
+
+// █▀▀ █░█ █▄░█ █▀▀ █ █▀█ █▄░█ █▀▀ █▀   █▀▄ █▀▀ █▀█ █▀█ █▀▀ █▀▀ ▄▀█ █▀▄ ▄▀█ █▀
+// █▀░ █▄█ █░▀█ █▄▄ █ █▄█ █░▀█ ██▄ ▄█   █▄▀ ██▄ █▀▀ █▀▄ ██▄ █▄▄ █▀█ █▄▀ █▀█ ▄█
+
+/*
+
+void recibir_mensaje()
+{
+	int size;
+	char* buffer = recibir_buffer(&size);
+	free(buffer);
+}
+
+char* recibir_clave(){
+	int size;
+	char* buffer = recibir_buffer(&size);
+	return buffer;
+}
+
+
+*/
