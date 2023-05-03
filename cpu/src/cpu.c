@@ -13,6 +13,11 @@ int main(void){
     return EXIT_SUCCESS;
 
 	t_contexto *contextoActual = recibir_contexto();
-	cicloDeInstruccion(contextoActual);
-	// Hacer validador de que se haya recibido bien el contexto
+	if(contextoActual != NULL){
+		cicloDeInstruccion(contextoActual);
+	}else{
+		log_error(logger,"Algoritmo invalido. Debe ingresar FIFO o HRRN");
+		//“PID: <PID> - Error SEG_FAULT- Segmento: <NUMERO SEGMENTO> - Offset: <OFFSET> - Tamaño: <TAMAÑO>”
+		//"PID: %d - Ejecutando: %s -  %s", contextoActual->pid, "YIELD", 0
+	}
 }

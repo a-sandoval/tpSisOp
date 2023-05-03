@@ -13,6 +13,7 @@
 #include "shared/include/configuraciones.h"
 #include "shared/include/utilsCliente.h"
 #include "shared/include/utilsServidor.h"
+#include<commons/temporal.h>
 
 t_contexto *contextoActual;
 
@@ -50,7 +51,6 @@ typedef struct {
 }t_reg;
 
 typedef struct { 
-//ver tipos de datos para hacer el sizeof mas legible
     uint32_t pid; 
     uint32_t instruccionesLength;
     t_list* instrucciones; 
@@ -88,6 +88,7 @@ void* serializar_contextoEjecucion(t_paquete* paquete, int bytes){
 
 void enviar_contexto(){ 
     t_paquete* paquete = malloc(sizeof(t_paquete));
+    t_contexto* contextoEjecucion;
     
     paquete->codigo_operacion = CONTEXTOEJECUCION;
 	paquete->buffer = malloc(sizeof(t_buffer));
