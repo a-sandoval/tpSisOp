@@ -61,7 +61,7 @@ typedef struct {
     t_list* tablaDeArchivos; 
 } t_contexto; 
 
-void cicloDeInstruccion();
+void cicloDeInstruccion(t_contexto* contextoActual);
 void fetch();
 void decode();
 void execute();

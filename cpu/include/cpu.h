@@ -18,7 +18,7 @@ t_config* config;
 
 int conexionMemoria();
 
-//FUNCIONES PARA RECIBIR NUEVO CONTEXTO POR PARTE DEL KERNEL
+//FUNCION PARA RECIBIR NUEVO CONTEXTO POR PARTE DEL KERNEL
 t_contexto* recibir_contexto(){
     t_contexto* nuevoContexto = malloc(sizeof(t_contexto));
 	int size;

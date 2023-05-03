@@ -1,30 +1,41 @@
 #include "cpu/include/cicloDeInstruccion.h"
 
-void cicloDeInstruccion(t_contexto *contextoActual){
-    fetch();//busca la próxima instruccion a ejecutar. Lista en pcb
+void cicloDeInstruccion(t_contexto* contextoActual){
+    int instruccionAEjecutar;
+    void fetch(instruccionAEjecutar);//busca la próxima instruccion a ejecutar. Lista en pcb
 
     decode();//interpreta que instruccion va a ajecutar y si requiere traduccion logica o fisica
 
-    execute();//ejecuta la instruccion
+    execute(instruccionAEjecutar);//ejecuta la instruccion
 }
 
 // ------- Funciones del ciclo ------- //
-void fetch() {
-    /* Funcion choreada de Fede que tengo que moldear:
-    t_comando buscarComando(char *comando) {
-        int i = 0;
-        while(listaComandos[i].cantParametros != -1 && !string_contains(comando, listaComandos[i].nombre)) i++;
-        return listaComandos[i];
-    }
-    */
+void fetch(instruccionAEjecutar) { // Esta parte grita REVISAR
+    t_list* listaInstrucciones = contextoActual->instrucciones;
+    int numInstruccionABuscar = contextoActual->programCounter;
+    instruccionAEjecutar = listaComandos[numInstruccionABuscar];
+    contextoActual->programCounter=+1;
 }
 
 void decode(){
 
 }
  
-void execute(){
-    //case de instrucciones, dependiendo del caso se mete en una y ejecuta
+void execute(instruccionAEjecutar){
+    while(1){
+        switch(instruccionAEjecutar){
+            case SET:
+                char* registro, valor; //?
+                set_c(registro, valor);
+                break;
+            case YIELD:
+                yield_c();
+                break;
+            case EXIT:
+                exit_c();
+                break;
+        }
+    }
 }
 
 // ------- Funciones del execute SET - YIELD - EXIT ------- //
