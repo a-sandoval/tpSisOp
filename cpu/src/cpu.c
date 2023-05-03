@@ -12,17 +12,7 @@ int main(void){
 	terminarPrograma(); 
     return EXIT_SUCCESS;
 
-	//recibirContextoEjecucion(t_pcb pcbParaSacarCosas); TENGO QUE HACERLA
-	//ejecutarInstruccion(t_pcb pcb, t_instruccion instruccion);
+	t_contexto *contextoActual = recibir_contexto();
+	cicloDeInstruccion(contextoActual);
+	// Hacer validador de que se haya recibido bien el contexto
 }
-
-/*
-ejecutarInstruccion(t-pcb pcb, t_instruccion instruccion){
-	listaInstrucciones = pcb.
-	if(bool list_any_satisfy(t_list* instrucciones, bool(*==instruccion)(void*));){
-		cicloDeInstruccion(instruccion);
-	} else {
-		prinf("ERROR: No es posible realizar la instruccion");
-	}
-}
-*/
