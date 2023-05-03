@@ -6,7 +6,9 @@ t_list* pcbsNEW;
 t_list* pcbsREADY;
 int32_t procesosCreados = 0; 
 pthread_mutex_t mutexListaNew; 
+sem_t semGradoMultiprogramacion;
 
+char* estadosProcesos[5] = {"NEW","READY","EXEC","BLOCK","SALIDA"};
 
 void inicializarListasPCBS(){
     pcbsNEW = list_create();
@@ -83,15 +85,16 @@ void planificarALargoPlazo(){
 
     while (1) {
 
-        char* estadoActual = "READY"; //Esto es una ilegalidad ?-?
-
         sem_wait(&hayProcesosNuevos); 
 
-        //sem_wait(sem_multiprogra)
+        sem_wait(&semGradoMultiprogramacion);
        
-        t_pcb* pcb = obtenerSiguienteAReady(); 
-    	log_info(logger, "PID: %d - Estado Anterior: %d - Estado Actual: %s", pcb->pid, pcb->estado, estadoActual);
-        pcb->estado = READY;
+        t_pcb* pcb = obtenerSiguienteAReady();
+        estadoProceso estadoAnterior= pcb->estado;
+        pcb->estado=READY;
+
+    	log_info(logger, "PID: %d - Estado Anterior: %s - Estado Actual: %s", pcb->pid, estadosProcesos[estadoAnterior], estadosProcesos[pcb->estado]);
+
         //list_iterate(pcb->instrucciones, instruct_print);
         encolar(pcbsREADY, pcb);
         

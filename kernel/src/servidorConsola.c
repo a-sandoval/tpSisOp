@@ -1,16 +1,24 @@
 /* CONSOLA - cliente | KERNEL - servidor*/
 #include "kernel/include/servidorConsola.h"
 
-t_pcb* PCB; 
+t_pcb* PCB;
+int gradoMultiprogramacion; 
+
+
+void inicializarSemaforos(){
+    pthread_mutex_init(&mutexListaNew,NULL);
+    sem_init(&hayProcesosReady,0,0);
+    sem_init(&hayProcesosNuevos,0,0);
+    sem_init(&semGradoMultiprogramacion,0,gradoMultiprogramacion);
+}
 
 int servirAConsola(){
 
+	gradoMultiprogramacion = obtenerGradoMultiprogramacion();
 
 	char* puertoDeEscucha = confGet("PUERTO_ESCUCHA"); 
-	sem_init(&hayProcesosNuevos,0,0);
-	sem_init(&hayProcesosReady,0,0); 
-	pthread_mutex_init(&mutexListaNew, NULL);
 
+	inicializarSemaforos();
 
 	inicializarListasPCBS(); 
 

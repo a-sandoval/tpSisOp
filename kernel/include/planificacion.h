@@ -17,7 +17,8 @@ extern t_list* pcbsREADY;
 
 extern sem_t hayProcesosReady;
 extern sem_t hayProcesosNuevos;
-extern pthread_mutex_t mutexListaNew; 
+extern pthread_mutex_t mutexListaNew;
+extern sem_t semGradoMultiprogramacion; 
 
 
 /**
@@ -97,12 +98,10 @@ void encolar(t_list* pcbs,t_pcb* pcb);
  */
 void planificarALargoPlazo();
 
-
 void planificarACortoPlazo(); 
 
 t_pcb *obtenerSiguienteAReady();
 
 void ingresarANew(t_pcb *pcb); 
-
 
 #endif 

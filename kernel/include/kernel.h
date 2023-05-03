@@ -13,12 +13,12 @@
 #include "kernel/include/conexionCPU.h"
 #include "kernel/include/conexionFileSystem.h"
 #include "kernel/include/servidorConsola.h"
+#include "kernel/include/planificacion.h"
 
 // Utils y funciones del shared
 #include "shared/include/configuraciones.h"
 //#include "shared/include/utilsServidor.h"
 //#include "shared/include/utilsCliente.h"
-
 
 int socketCliente;
 t_log* logger;
