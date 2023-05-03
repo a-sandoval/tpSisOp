@@ -16,8 +16,7 @@ int main(void){
 	if(contextoActual != NULL){
 		cicloDeInstruccion(contextoActual);
 	}else{
-		log_error(logger,"Algoritmo invalido. Debe ingresar FIFO o HRRN");
-		//“PID: <PID> - Error SEG_FAULT- Segmento: <NUMERO SEGMENTO> - Offset: <OFFSET> - Tamaño: <TAMAÑO>”
-		//"PID: %d - Ejecutando: %s -  %s", contextoActual->pid, "YIELD", 0
+		int offset; //ESTO ESTÁ MAL PERO LO DEJO PARA QUE NO ROMPA
+		log_error(logger,"PID: %d - Error SEG_FAULT- Segmento: %s - Offset: %s - Tamanio: %s", contextoActual->pid, contextoActual->tablaDeSegmentos, offset,contextoActual->instruccionesLength);
 	}
 }
