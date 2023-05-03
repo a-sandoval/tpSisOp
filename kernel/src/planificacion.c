@@ -117,14 +117,16 @@ t_pcb *obtenerSiguienteAReady()
 
 
 void planificarACortoPlazo(t_pcb* (*proximoAEjecutar)()) {
+
     while (1) {
         sem_wait(&hayProcesosReady); 
-        t_pcb* aEjecutar = proximoAEjecutar();//Originalmente: desencolar(pcbsREADY);
+        t_pcb* aEjecutar = proximoAEjecutar();
         aEjecutar->estado = EXEC; 
         sleep (2);
         aEjecutar->estado = SALIDA;
         enviarMensaje("Terminado", aEjecutar->socketPCB);
     }
+
 }
 
 char* obtenerAlgoritmoPlanificacion(){

@@ -4,14 +4,6 @@
 t_pcb* PCB;
 int gradoMultiprogramacion; 
 
-
-void inicializarSemaforos(){
-    pthread_mutex_init(&mutexListaNew,NULL);
-    sem_init(&hayProcesosReady,0,0);
-    sem_init(&hayProcesosNuevos,0,0);
-    sem_init(&semGradoMultiprogramacion,0,gradoMultiprogramacion);
-}
-
 int servirAConsola(){
 
 	gradoMultiprogramacion = obtenerGradoMultiprogramacion();
@@ -32,7 +24,7 @@ int servirAConsola(){
 		}
 
 	pthread_t planificadorCortoPlazo_h;  //Hilo Planificador Corto Plazo --> Mueve procesos de READY a EXEC
-		if(!pthread_create(&planificadorCortoPlazo_h, NULL, (void *) planificarACortoPlazoSegunALgoritmo(), NULL)){
+		if(!pthread_create(&planificadorCortoPlazo_h, NULL, (void*) planificarACortoPlazoSegunALgoritmo, NULL)){
     	    pthread_detach(planificadorCortoPlazo_h);
     	}
     	else{
@@ -103,3 +95,9 @@ void ejecutarServidorKernel(){
 	}
 }
 
+void inicializarSemaforos(){
+    pthread_mutex_init(&mutexListaNew,NULL);
+    sem_init(&hayProcesosReady,0,0);
+    sem_init(&hayProcesosNuevos,0,0);
+    sem_init(&semGradoMultiprogramacion,0,gradoMultiprogramacion);
+}
