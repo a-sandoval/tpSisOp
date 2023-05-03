@@ -21,7 +21,6 @@ void ejecutarServidorKernel();
 
 /**
 * @brief Inicializa todos los semaforos necesarios para que el kernel sirva a la consola
-* @param gradoMultiprogramacion gradoMultiprogramacion extraido del config
 */
 void inicializarSemaforos();
 

@@ -98,10 +98,40 @@ void encolar(t_list* pcbs,t_pcb* pcb);
  */
 void planificarALargoPlazo();
 
-void planificarACortoPlazo(); 
-
+/**
+ * @brief Obtiene el primer proceso en la cola de news. 
+ */
 t_pcb *obtenerSiguienteAReady();
 
+/**
+ * @brief se agrega un nuevo pcb al final de la lista de news 
+ */
 void ingresarANew(t_pcb *pcb); 
+
+/**
+ * @brief realiza la planificacion a corto plazo
+ * @param proximoAEjecutar puntero a funcion que devuelve el proximo proceso a ejecutar siguiendo el algoritmo correspondiente
+*/
+void planificarACortoPlazo(t_pcb* (*proximoAEjecutar)());
+
+/**
+ * @brief obtiene del archivo de configuracion el algoritmo con que se va a realizar la planificacion a corto plazo
+ * */
+char* obtenerAlgoritmoPlanificacion();
+
+/** 
+ * @brief planificador a corto plazo segun algoritmo de planificacion extraido del archivo de configuraciones
+*/
+void planificarACortoPlazoSegunALgoritmo();
+/**
+ * @brief indica el proximo elemento de la lista ready a ejecutar siguiendo el algoritmo FIFO
+*/
+ t_pcb* proximoAEjecutarFIFO();
+
+/**
+ * @brief indica el proximo elemento de la lista ready a ejecutar siguiendo el algoritmo HRRN
+*/
+ t_pcb* proximoAEjecutarHRRN();
+
 
 #endif 

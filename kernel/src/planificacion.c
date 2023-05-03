@@ -41,7 +41,7 @@ void ingresarANew(t_pcb *pcb) {
 
     pthread_mutex_lock(&mutexListaNew);
 
-    list_add(pcbsNEW, (void*)pcb); 
+    encolar(pcbsNEW,pcb);//pARA NO REPETIR LOGICA: ENCOLAR QUE hace lo mismo: list_add(pcbsNEW, (void*)pcb); 
     
     log_info(logger,"Se crea el proceso <%d> en NEW", pcb->pid); 
 
@@ -116,10 +116,10 @@ t_pcb *obtenerSiguienteAReady()
 }
 
 
-void planificarACortoPlazo() {
+void planificarACortoPlazo(t_pcb* (*proximoAEjecutar)()) {
     while (1) {
         sem_wait(&hayProcesosReady); 
-        t_pcb* aEjecutar = desencolar(pcbsREADY);
+        t_pcb* aEjecutar = proximoAEjecutar();//Originalmente: desencolar(pcbsREADY);
         aEjecutar->estado = EXEC; 
         sleep (2);
         aEjecutar->estado = SALIDA;
@@ -127,6 +127,31 @@ void planificarACortoPlazo() {
     }
 }
 
+char* obtenerAlgoritmoPlanificacion(){
+    return config_get_string_value(config,"ALGORITMO_PLANIFICACION");
+}
+
+void planificarACortoPlazoSegunALgoritmo(){
+    char* algoritmoPlanificador = obtenerAlgoritmoPlanificacion();
+
+    if(!strcmp(algoritmoPlanificador,"FIFO")){
+        planificarACortoPlazo(proximoAEjecutarFIFO);
+    }
+    else if(!strcmp(algoritmoPlanificador,"HRRN")){
+        planificarACortoPlazo(proximoAEjecutarHRRN);
+    }
+    else{
+        log_error(logger,"Algoritmo invalido. Debe ingresar FIFO o HRRN");
+        abort();
+    }
+}
+
+
  t_pcb* proximoAEjecutarFIFO(){
     return desencolar(pcbsREADY);
+}
+
+ t_pcb* proximoAEjecutarHRRN(){
+    //TODO
+    return NULL;
 }

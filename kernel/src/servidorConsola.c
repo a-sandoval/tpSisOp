@@ -32,7 +32,7 @@ int servirAConsola(){
 		}
 
 	pthread_t planificadorCortoPlazo_h;  //Hilo Planificador Corto Plazo --> Mueve procesos de READY a EXEC
-		if(!pthread_create(&planificadorCortoPlazo_h, NULL,(void *) planificarACortoPlazo, NULL)){
+		if(!pthread_create(&planificadorCortoPlazo_h, NULL, (void *) planificarACortoPlazoSegunALgoritmo(), NULL)){
     	    pthread_detach(planificadorCortoPlazo_h);
     	}
     	else{
