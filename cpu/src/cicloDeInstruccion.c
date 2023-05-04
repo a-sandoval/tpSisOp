@@ -1,40 +1,62 @@
 #include "cpu/include/cicloDeInstruccion.h"
 
-void cicloDeInstruccion(t_contexto* contextoActual){
-    int instruccionAEjecutar;
-    void fetch(instruccionAEjecutar);//busca la próxima instruccion a ejecutar. Lista en pcb
+char* instruccionAEjecutar; 
+char** elementosInstruccion; 
+int instruccionActual; 
+int cantParametros;
+t_contexto* contextoActual; 
+
+void cicloDeInstruccion(t_contexto* contextoRecibido){
+
+    contextoActual = contextoRecibido; 
+    
+    fetch();//busca la próxima instruccion a ejecutar. Lista en pcb
 
     decode();//interpreta que instruccion va a ajecutar y si requiere traduccion logica o fisica
 
-    execute(instruccionAEjecutar);//ejecuta la instruccion 
+    execute();//ejecuta la instruccion 
 }
 
 // ------- Funciones del ciclo ------- //
-void fetch(instruccionAEjecutar) { 
-    //t_list* listaInstrucciones = contextoActual->instrucciones;
+void fetch() { 
     int numInstruccionABuscar = contextoActual->programCounter;
-    instruccionAEjecutar = listaComandos[numInstruccionABuscar+1];// Nose si está bien agarrarlo de acá pq tendría q salir de la lista del pcb
+    instruccionAEjecutar = list_get(contextoActual->instrucciones,numInstruccionABuscar); 
     contextoActual->programCounter=+1;
 }
 
 void decode(){
+    elementosInstruccion = string_split(instruccionAEjecutar, " ");
+    cantParametros = string_array_size(elementosInstruccion) - 1;
+    instruccionActual = buscar(elementosInstruccion[0], listaComandos);
 }
  
-void execute(instruccionAEjecutar){
+void execute(){
     while(1){
-        switch(instruccionAEjecutar){
+        switch(cantParametros) {
+            case 0:
+                log_info(logger, "PID: %d - Ejecutando: %s ", contextoActual->pid, elementosInstruccion[0]);
+                break;
+            case 1:
+                log_info(logger, "PID: %d - Ejecutando: %s -  %s", contextoActual->pid, elementosInstruccion[0], elementosInstruccion[1]);
+                break;
+            case 2:   
+                log_info(logger, "PID: %d - Ejecutando: %s -  %s, %s", contextoActual->pid, elementosInstruccion[0], elementosInstruccion[1], elementosInstruccion[2]);
+                break; 
+            case 3:
+                log_info(logger, "PID: %d - Ejecutando: %s -  %s, %s, %s", contextoActual->pid, elementosInstruccion[0], elementosInstruccion[1], elementosInstruccion[2], elementosInstruccion[3]);
+                break; 
+        }
+
+        switch(instruccionActual){
             case SET:
-                char* registro, valor;
-                set_c(registro, valor);
-                log_info(logger, "PID: %d - Ejecutando: %s -  %s", contextoActual->pid, "SET", (registro,valor));
+                //char* registro, valor; // Falta asignacion a partir del string split
+                set_c(elementosInstruccion[1], elementosInstruccion[2]);
                 break;
             case YIELD:
                 yield_c();
-                log_info(logger, "PID: %d - Ejecutando: %s -  %s", contextoActual->pid, "YIELD", 0);
                 break;
             case EXIT:
                 exit_c();
-                log_info(logger, "PID: %d - Ejecutando: %s -  %s", contextoActual->pid, "SET", 0);
                 break;
         }
     }
@@ -44,8 +66,12 @@ void execute(instruccionAEjecutar){
 
 //SET (Registro, Valor) --> Asigna al registro el valor pasado como parámetro.
 void set_c(char* registro, char* valor){
+    
+    contextoActual->registrosCPU; 
+
     int tiempoEspera = obtenerTiempoEspera();
     sleep(tiempoEspera);
+    
     strcpy(registro, valor);
 }
 
@@ -69,4 +95,10 @@ void exit_c(){
 void enviarContextoActualizado(){
     // serializar_contextoEjecucion(t_paquete* paquete, int bytes);
     enviar_contexto();
+}
+
+int buscar(char *elemento, char **lista) {
+    int i = 0;
+    for (; strcmp(lista[i], elemento) && i <= string_array_size(lista); i++);
+    return (i > string_array_size(lista)) ? -1 : i;
 }

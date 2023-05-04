@@ -42,7 +42,7 @@ typedef enum estadoProceso{
     EXEC,
     BLOCK,
     SALIDA
-} estadoProceso; 
+} estadoProceso;  
 
 typedef struct {
     char AX[4], BX[4], CX[4], DX[4];
@@ -56,7 +56,7 @@ typedef struct {
     t_list* instrucciones; 
     estadoProceso estado; 
     int programCounter;   
-    t_reg* registrosCPU;
+    t_dictionary* registrosCPU;
     t_list* tablaDeSegmentos; 
     t_list* tablaDeArchivos; 
 } t_contexto; 
@@ -69,7 +69,7 @@ void execute();
 void set_c(char* , char* );
 int obtenerTiempoEspera();
 
-// Las soguientes funciones están encanutadas de conexionesCPU, lit lo mismo
+// Las ioguientes funciones están encanutadas de conexionesCPU, lit lo mismo
 
 // FUNCIONES PARA ENVIO DE CONTEXTO DE EJECUCION
 void* serializar_contextoEjecucion(t_paquete* paquete, int bytes){

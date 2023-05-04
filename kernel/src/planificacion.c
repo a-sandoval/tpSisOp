@@ -41,7 +41,7 @@ void ingresarANew(t_pcb *pcb) {
 
     pthread_mutex_lock(&mutexListaNew);
 
-    encolar(pcbsNEW,pcb);//pARA NO REPETIR LOGICA: ENCOLAR QUE hace lo mismo: list_add(pcbsNEW, (void*)pcb); 
+    encolar(pcbsNEW,pcb);
     
     log_info(logger,"Se crea el proceso <%d> en NEW", pcb->pid); 
 
@@ -102,8 +102,6 @@ void planificarALargoPlazo(){
         sem_post(&hayProcesosReady);
 
     }
-    
-   
 }
 
 
@@ -122,19 +120,19 @@ void planificarACortoPlazo(t_pcb* (*proximoAEjecutar)()) {
         sem_wait(&hayProcesosReady); 
         t_pcb* aEjecutar = proximoAEjecutar();
         aEjecutar->estado = EXEC; 
+        // ESTO ES ALGO DEL MOMENTO, NO LO HACE EL KERNEL!!!
         sleep (2);
         aEjecutar->estado = SALIDA;
         enviarMensaje("Terminado", aEjecutar->socketPCB);
     }
-
 }
 
 char* obtenerAlgoritmoPlanificacion(){
     return config_get_string_value(config,"ALGORITMO_PLANIFICACION");
 }
 
-void planificarACortoPlazoSegunALgoritmo(){
-    char* algoritmoPlanificador = obtenerAlgoritmoPlanificacion();
+void planificarACortoPlazoSegunAlgoritmo(){
+    char* algoritmoPlanificador =obtenerAlgoritmoPlanificacion();
 
     if(!strcmp(algoritmoPlanificador,"FIFO")){
         planificarACortoPlazo(proximoAEjecutarFIFO);
