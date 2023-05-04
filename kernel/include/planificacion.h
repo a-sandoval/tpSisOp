@@ -122,7 +122,7 @@ char* obtenerAlgoritmoPlanificacion();
 /** 
  * @brief planificador a corto plazo segun algoritmo de planificacion extraido del archivo de configuraciones
 */
-void planificarACortoPlazoSegunALgoritmo();
+void planificarACortoPlazoSegunAlgoritmo();
 /**
  * @brief indica el proximo elemento de la lista ready a ejecutar siguiendo el algoritmo FIFO
 */
