@@ -15,8 +15,6 @@
 #include "shared/include/utilsServidor.h"
 #include<commons/temporal.h>
 
-t_contexto *contextoActual;
-
 char *listaComandos[] = {
     [SET] = "SET",
     [MOV_IN] = "MOV_IN",
@@ -43,13 +41,6 @@ typedef enum estadoProceso{
     BLOCK,
     SALIDA
 } estadoProceso;  
-
-typedef struct {
-    char AX[4], BX[4], CX[4], DX[4];
-    char EAX[8], EBX[8], ECX[8], EDX[8];
-    char RAX[16], RBX[16], RCX[16], RDX[16];
-}t_reg;
-
 typedef struct { 
     uint32_t pid; 
     uint32_t instruccionesLength;
@@ -65,8 +56,13 @@ void cicloDeInstruccion(t_contexto* contextoActual);
 void fetch();
 void decode();
 void execute();
+int buscar(char *elemento, char **lista); 
+
 
 void set_c(char* , char* );
+void yield_c(); 
+void exit_c(); 
+
 int obtenerTiempoEspera();
 
 // Las ioguientes funciones están encanutadas de conexionesCPU, lit lo mismo

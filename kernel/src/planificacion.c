@@ -53,11 +53,17 @@ void ingresarANew(t_pcb *pcb) {
 
 void destruirPCB(t_pcb* pcb){
     list_destroy_and_destroy_elements(pcb->instrucciones,(void*)destruirInstruccion); 
+    dictionary_destroy_and_destroy_elements(pcb->registrosCPU, (void*)destruirRegistro); 
     free(pcb);
 }
 
 void destruirInstruccion(t_instruccion* instruccion) {
     free(instruccion); 
+}
+
+void destruirRegistro(char* registro) {
+
+    free(registro); 
 }
 
 int obtenerEstimacionInicial() {
@@ -155,4 +161,25 @@ void planificarACortoPlazoSegunAlgoritmo(){
  t_pcb* proximoAEjecutarHRRN(){
     //TODO
     return NULL;
+}
+
+t_dictionary* crearDiccionarioDeRegistros() {
+
+    t_dictionary* registros = dictionary_create(); 
+
+    dictionary_put(registros, "AX",  "0000"); 
+    dictionary_put(registros, "BX",  "0000"); 
+    dictionary_put(registros, "CX",  "0000"); 
+    dictionary_put(registros, "DX",  "0000"); 
+    dictionary_put(registros, "EAX", "00000000"); 
+    dictionary_put(registros, "EBX", "00000000");
+    dictionary_put(registros, "ECX", "00000000");
+    dictionary_put(registros, "EDX", "00000000"); 
+    dictionary_put(registros, "RAX", "0000000000000000"); 
+    dictionary_put(registros, "RBX", "0000000000000000");
+    dictionary_put(registros, "RCX", "0000000000000000");
+    dictionary_put(registros, "RDX", "0000000000000000"); 
+
+    return registros;
+
 }

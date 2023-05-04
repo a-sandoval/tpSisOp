@@ -63,6 +63,9 @@ void destruirPCB(t_pcb* pcb);
  */
 void destruirInstruccion(t_instruccion* instruccion);
 
+
+void destruirRegistro(char* registro); 
+
 /**
  * @brief obtiene el grado multiprogramacion del archivo de configuraciones
  * @param
@@ -132,6 +135,9 @@ void planificarACortoPlazoSegunAlgoritmo();
  * @brief indica el proximo elemento de la lista ready a ejecutar siguiendo el algoritmo HRRN
 */
  t_pcb* proximoAEjecutarHRRN();
+
+ t_dictionary* crearDiccionarioDeRegistros(); 
+
 
 
 #endif 

@@ -24,7 +24,7 @@ int servirAConsola(){
 		}
 
 	pthread_t planificadorCortoPlazo_h;  //Hilo Planificador Corto Plazo --> Mueve procesos de READY a EXEC
-		if(!pthread_create(&planificadorCortoPlazo_h, NULL, (void*) planificarACortoPlazoSegunALgoritmo, NULL)){
+		if(!pthread_create(&planificadorCortoPlazo_h, NULL, (void*) planificarACortoPlazoSegunAlgoritmo, NULL)){
     	    pthread_detach(planificadorCortoPlazo_h);
     	}
     	else{
@@ -83,7 +83,7 @@ void ejecutarServidorKernel(){
 				break;
 			case MENSAJE:
 				char *mensaje = recibirMensaje();
-				log_info(logger, mensaje);
+				log_info(logger, "%s", mensaje);
 				if (!strcmp(mensaje, "Fin de instrucciones")) {
 					ingresarANew(PCB);
 					return;
@@ -92,6 +92,7 @@ void ejecutarServidorKernel(){
 			default:
 				break;
 			}
+			
 	}
 }
 

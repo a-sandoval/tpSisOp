@@ -66,7 +66,8 @@ void execute() {
 //SET (Registro, Valor) --> Asigna al registro el valor pasado como parámetro.
 void set_c(char* registro, char* valor){
     int tiempoEspera = obtenerTiempoEspera();
-    sleep(tiempoEspera);
+    sleep(tiempoEspera); 
+    free(dictionary_get(contextoActual->registrosCPU,registro)); 
     dictionary_put(contextoActual->registrosCPU, registro, valor);
 }
 

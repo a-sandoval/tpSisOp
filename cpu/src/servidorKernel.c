@@ -10,7 +10,7 @@ void escucharAlKernel() {
 }
 
 void iterator(void *value){
-	cicloDeInstruccion();
+	
 }
 
 int ejecutarServidorCPU(){
