@@ -12,7 +12,7 @@ void cicloDeInstruccion(t_contexto* contextoRecibido){
     
     fetch();//busca la próxima instruccion a ejecutar. Lista en pcb
 
-    decode();//interpreta que instruccion va a ajecutar y si requiere traduccion logica o fisica
+    decode();//interpreta que instruccion va a ejecutar y si requiere traduccion logica o fisica
 
     execute();//ejecuta la instruccion 
 }
@@ -25,40 +25,39 @@ void fetch() {
 }
 
 void decode(){
+    instruccionAEjecutar = string_replace(instruccionAEjecutar, "\0", "");
     elementosInstruccion = string_split(instruccionAEjecutar, " ");
     cantParametros = string_array_size(elementosInstruccion) - 1;
     instruccionActual = buscar(elementosInstruccion[0], listaComandos);
 }
  
-void execute(){
-    while(1){
-        switch(cantParametros) {
-            case 0:
-                log_info(logger, "PID: %d - Ejecutando: %s ", contextoActual->pid, elementosInstruccion[0]);
-                break;
-            case 1:
-                log_info(logger, "PID: %d - Ejecutando: %s -  %s", contextoActual->pid, elementosInstruccion[0], elementosInstruccion[1]);
-                break;
-            case 2:   
-                log_info(logger, "PID: %d - Ejecutando: %s -  %s, %s", contextoActual->pid, elementosInstruccion[0], elementosInstruccion[1], elementosInstruccion[2]);
-                break; 
-            case 3:
-                log_info(logger, "PID: %d - Ejecutando: %s -  %s, %s, %s", contextoActual->pid, elementosInstruccion[0], elementosInstruccion[1], elementosInstruccion[2], elementosInstruccion[3]);
-                break; 
-        }
-
-        switch(instruccionActual){
-            case SET:
-                //char* registro, valor; // Falta asignacion a partir del string split
-                set_c(elementosInstruccion[1], elementosInstruccion[2]);
-                break;
-            case YIELD:
-                yield_c();
-                break;
-            case EXIT:
-                exit_c();
-                break;
-        }
+void execute() {
+    switch(cantParametros) {
+        case 0:
+            log_info(logger, "PID: %d - Ejecutando: %s ", contextoActual->pid, elementosInstruccion[0]);
+            break;
+        case 1:
+            log_info(logger, "PID: %d - Ejecutando: %s -  %s", contextoActual->pid, elementosInstruccion[0], elementosInstruccion[1]);
+            break;
+        case 2:   
+            log_info(logger, "PID: %d - Ejecutando: %s -  %s, %s", contextoActual->pid, elementosInstruccion[0], elementosInstruccion[1], elementosInstruccion[2]);
+            break; 
+        case 3:
+            log_info(logger, "PID: %d - Ejecutando: %s -  %s, %s, %s", contextoActual->pid, elementosInstruccion[0], elementosInstruccion[1], elementosInstruccion[2], elementosInstruccion[3]);
+            break; 
+    }
+    switch(instruccionActual){
+        case SET:
+            set_c(elementosInstruccion[1], elementosInstruccion[2]);
+            break;
+        case YIELD:
+            yield_c();
+            break;
+        case EXIT:
+            exit_c();
+            break;
+        default:
+            break;
     }
 }
 
@@ -66,13 +65,9 @@ void execute(){
 
 //SET (Registro, Valor) --> Asigna al registro el valor pasado como parámetro.
 void set_c(char* registro, char* valor){
-    
-    contextoActual->registrosCPU; 
-
     int tiempoEspera = obtenerTiempoEspera();
     sleep(tiempoEspera);
-    
-    strcpy(registro, valor);
+    dictionary_put(contextoActual->registrosCPU, registro, valor);
 }
 
 int obtenerTiempoEspera(){

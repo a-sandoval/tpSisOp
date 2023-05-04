@@ -30,6 +30,7 @@ t_pcb* crearPCB() {
     nuevoPCB->llegadaAReady = temporal_create(); 
     nuevoPCB->tablaDeArchivos = list_create(); 
     nuevoPCB->tablaDeSegmentos=list_create(); 
+    nuevoPCB->registrosCPU = crearDiccionarioDeRegistros(); 
 
     procesosCreados++; //para el nuevo pid
 

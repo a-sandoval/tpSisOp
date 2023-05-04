@@ -2,6 +2,7 @@
 #define PCB_H_
 
 #include<commons/collections/list.h>
+#include<commons/collections/dictionary.h>
 #include<commons/temporal.h>
 
 typedef enum estadoProceso{
@@ -31,5 +32,26 @@ typedef struct {
     t_list* tablaDeArchivos; 
 
 } t_pcb; 
+
+t_dictionary* crearDiccionarioDeRegistros() {
+
+    t_dictionary* registros = dictionary_create(); 
+
+    dictionary_put(registros, "AX",  "0000"); 
+    dictionary_put(registros, "BX",  "0000"); 
+    dictionary_put(registros, "CX",  "0000"); 
+    dictionary_put(registros, "DX",  "0000"); 
+    dictionary_put(registros, "EAX", "00000000"); 
+    dictionary_put(registros, "EBX", "00000000");
+    dictionary_put(registros, "ECX", "00000000");
+    dictionary_put(registros, "EDX", "00000000"); 
+    dictionary_put(registros, "RAX", "0000000000000000"); 
+    dictionary_put(registros, "RBX", "0000000000000000");
+    dictionary_put(registros, "RCX", "0000000000000000");
+    dictionary_put(registros, "RDX", "0000000000000000"); 
+
+    return registros;
+
+}
 
 #endif
