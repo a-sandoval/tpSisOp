@@ -11,6 +11,7 @@
 #include "shared/include/global.h"
 #include <semaphore.h>
 #include <pthread.h>
+#include "conexionCPU.h"
 
 extern t_list* pcbsNEW; 
 extern t_list* pcbsREADY;

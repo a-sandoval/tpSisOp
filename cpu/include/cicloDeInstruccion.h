@@ -15,6 +15,7 @@
 #include "shared/include/utilsServidor.h"
 #include<commons/temporal.h>
 
+
 char *listaComandos[] = {
     [SET] = "SET",
     [MOV_IN] = "MOV_IN",
@@ -34,6 +35,7 @@ char *listaComandos[] = {
     [EXIT] = "EXIT"
 };
 
+
 typedef enum estadoProceso{
     NEW, 
     READY,
@@ -41,15 +43,20 @@ typedef enum estadoProceso{
     BLOCK,
     SALIDA
 } estadoProceso;  
-typedef struct { 
+typedef struct {
+
     uint32_t pid; 
+    estadoProceso estado; 
+    int programCounter; 
+    uint32_t registrosSize;  
+    t_dictionary* registrosCPU;  
     uint32_t instruccionesLength;
     t_list* instrucciones; 
-    estadoProceso estado; 
-    int programCounter;   
-    t_dictionary* registrosCPU;
+    uint32_t tablaDeSegmentosSize;
     t_list* tablaDeSegmentos; 
+    uint32_t tablaDeArchivosSize;
     t_list* tablaDeArchivos; 
+
 } t_contexto; 
 
 void cicloDeInstruccion(t_contexto* contextoActual);
@@ -68,38 +75,7 @@ int obtenerTiempoEspera();
 // Las ioguientes funciones están encanutadas de conexionesCPU, lit lo mismo
 
 // FUNCIONES PARA ENVIO DE CONTEXTO DE EJECUCION
-void* serializar_contextoEjecucion(t_paquete* paquete, int bytes){
-	void * magic = malloc(bytes);
-	int desplazamiento = 0;
-
-	memcpy(magic + desplazamiento, &(paquete->codigo_operacion), sizeof(int));
-	desplazamiento+= sizeof(int);
-	memcpy(magic + desplazamiento, &(paquete->buffer->size), sizeof(int));
-	desplazamiento+= sizeof(int);
-	memcpy(magic + desplazamiento, paquete->buffer->stream, paquete->buffer->size);
-	desplazamiento+= paquete->buffer->size;
-
-	return magic;
-}
-
-void enviar_contexto(){ 
-    t_paquete* paquete = malloc(sizeof(t_paquete));
-    t_contexto* contextoEjecucion;
-    
-    paquete->codigo_operacion = CONTEXTOEJECUCION;
-	paquete->buffer = malloc(sizeof(t_buffer));
-   
-    // cargo todos los valores en el paquete
-    agregarAPaquete(paquete,(void *)&contextoEjecucion->pid, sizeof(contextoEjecucion->pid));
-    agregarAPaquete(paquete,(void *)&contextoEjecucion->programCounter, sizeof(contextoEjecucion->programCounter));
-    agregarAPaquete(paquete,&contextoEjecucion->registrosCPU, sizeof(contextoEjecucion->registrosCPU)); // a chequear ese ampersand
-    agregarAPaquete(paquete,(void *)&contextoEjecucion->instruccionesLength, sizeof(contextoEjecucion->instruccionesLength));
-    agregarAPaquete(paquete,contextoEjecucion->instrucciones, contextoEjecucion->instruccionesLength);
-    agregarAPaquete(paquete,(void *)contextoEjecucion->estado, sizeof(estadoProceso));
-
-    enviarPaquete(paquete,socketCliente);
-
-	eliminarPaquete(paquete);
-}
+void* serializar_contextoEjecucion(t_paquete* paquete, int bytes);
+void enviar_contexto();
 
 #endif 

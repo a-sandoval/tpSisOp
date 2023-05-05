@@ -62,14 +62,11 @@ void destruirInstruccion(t_instruccion* instruccion) {
 }
 
 void destruirRegistro(char* registro) {
-
     free(registro); 
 }
 
 int obtenerEstimacionInicial() {
-
     return config_get_int_value(config,"ESTIMACION_INICIAL"); 
-    
 }
 
 int obtenerGradoMultiprogramacion(){
@@ -127,6 +124,7 @@ void planificarACortoPlazo(t_pcb* (*proximoAEjecutar)()) {
         sem_wait(&hayProcesosReady); 
         t_pcb* aEjecutar = proximoAEjecutar();
         aEjecutar->estado = EXEC; 
+        conexionCPU(aEjecutar);
         // ESTO ES ALGO DEL MOMENTO, NO LO HACE EL KERNEL!!!
         sleep (2);
         aEjecutar->estado = SALIDA;

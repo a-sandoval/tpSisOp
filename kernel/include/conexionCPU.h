@@ -8,20 +8,27 @@
 #include "pcb.h"
 
 typedef struct {
-//ver tipos de datos para hacer el sizeof mas legible
+
     uint32_t pid; 
-    t_list* instrucciones; 
-    uint32_t instruccionesLength;
     estadoProceso estado; 
-    int programCounter;   
-    t_reg* registrosCPU;   
+    int programCounter;  
+    uint32_t registrosSize;
+    t_dictionary* registrosCPU;  
+    uint32_t instruccionesLength;
+    t_list* instrucciones; 
+    uint32_t tablaDeSegmentosSize;
     t_list* tablaDeSegmentos; 
+    uint32_t tablaDeArchivosSize;
     t_list* tablaDeArchivos; 
 
 } t_contexto; 
 
 
-int conexionCPU();
+int conexionCPU(t_pcb* procesoAEjecutar);
+
+void agregarInstruccionesAPaquete(t_paquete* paquete, t_list* instrucciones);
+void actualizarPCB(t_pcb* proceso);
+void asignarPCBAContexto(t_pcb*  proceso);
 
 void* serializar_contextoEjecucion(t_paquete* paquete, int bytes);
 void enviar_contexto();
@@ -29,7 +36,7 @@ void enviar_contexto();
 
 //FUNCIONES PARA RECIBIR NUEVO CONTEXTO POR PARTE DE LA CPU
 
-t_contexto* recibir_contexto();
+void recibir_contexto();
 
 
 
