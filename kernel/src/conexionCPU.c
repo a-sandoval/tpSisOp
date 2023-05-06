@@ -4,34 +4,41 @@
 
 t_buffer bufferContexto;
 t_contexto* contextoEjecucion;
+int conexionACPU;
 
+void conexionCPU() {
+    while(1) {
+        conexionACPU = conexion("CPU");
+        if(conexionACPU != -1)
+            return;
+        else {
+            log_error(logger, "No se pudo conectar al servidor, socket %d, esperando 5 segundos y reintentando.", conexionACPU);
+            sleep(5);
+        }
+    }
+}
 
-int conexionCPU(t_pcb* procesoEnEjecucion) {
+int procesarPCB(t_pcb* procesoEnEjecucion) {
 
     contextoEjecucion = malloc(sizeof(t_contexto));
 
     logger = cambiarNombre("Kernel-CPU");
-    int conexionACPU = conexion("CPU");
-    if(!(conexionACPU + 1))
-        log_error(logger, "No se pudo conectar al servidor.");
-    else{
-        asignarPCBAContexto(procesoEnEjecucion);
-        enviar_contexto();
+    asignarPCBAContexto(procesoEnEjecucion);
+    enviar_contexto();
 
-        // aca a su vez hay que recibir el contexto actualizado que mande la cpu, deserializarlo y cambiarlo en el PCB
-        //Noc si esto iria aca porque en realidad seria como un case compartido con las cosas
-        //que tiene que recibir de memoria y fs tm no?
-        int operacion=recibir_operacion();
+    // aca a su vez hay que recibir el contexto actualizado que mande la cpu, deserializarlo y cambiarlo en el PCB
+    //Noc si esto iria aca porque en realidad seria como un case compartido con las cosas
+    //que tiene que recibir de memoria y fs tm no?
+    /*
+    int operacion=recibir_operacion();
 
-        switch(operacion){
-            case CONTEXTOEJECUCION:
-                recibir_contexto(); //me carga el contexto actualizado en el mismo contextoEjecucion;
-                actualizarPCB(procesoEnEjecucion);
-
-        }
-        close(conexionACPU);
-
+    switch(operacion){
+        case CONTEXTOEJECUCION:
+            recibir_contexto(); //me carga el contexto actualizado en el mismo contextoEjecucion;
+            actualizarPCB(procesoEnEjecucion);
     }
+*/
+    //close(conexionACPU);
     
     return 0;
  
@@ -52,15 +59,15 @@ void asignarPCBAContexto(t_pcb*  proceso){
 }
 
 void enviar_contexto(){ 
-    t_paquete* paquete = malloc(sizeof(t_paquete));
+    t_paquete* paquete = crearPaquete();
     
     paquete->codigo_operacion = CONTEXTOEJECUCION;
-	paquete->buffer = malloc(sizeof(t_buffer));
+	//paquete->buffer = malloc(sizeof(t_buffer));
    
     // cargo todos los valores en el paquete
     agregarAPaquete(paquete,(void *)&contextoEjecucion->pid, sizeof(contextoEjecucion->pid));
     agregarAPaquete(paquete,(void *)&contextoEjecucion->programCounter, sizeof(contextoEjecucion->programCounter));
-    agregarAPaquete(paquete,(void *)contextoEjecucion->estado, sizeof(estadoProceso));
+    agregarAPaquete(paquete,(void *)&contextoEjecucion->estado, sizeof(estadoProceso));
 
     //agregarAPaquete(paquete,&contextoEjecucion->registrosCPU, sizeof(contextoEjecucion->registrosCPU)); // a chequear ese ampersand
 
@@ -78,7 +85,7 @@ void enviar_contexto(){
   
     
 
-    enviarPaquete(paquete,socketCliente);
+    enviarPaquete(paquete, conexionACPU);
 
 	eliminarPaquete(paquete);
 }
@@ -87,7 +94,7 @@ void agregarInstruccionesAPaquete(t_paquete* paquete, t_list* instrucciones){
 
     contextoEjecucion->instruccionesLength = list_size(instrucciones);
     
-    agregarAPaquete(paquete,(void *)contextoEjecucion->instruccionesLength, sizeof(uint32_t)); //primero envio la cantidad de elementos
+    agregarAPaquete(paquete, &contextoEjecucion->instruccionesLength, sizeof(uint32_t)); //primero envio la cantidad de elementos
     uint32_t i;
     for(i=0;i<contextoEjecucion->instruccionesLength;i++){
         agregarAPaquete (paquete, list_get(instrucciones, i), sizeof(char) * strlen(list_get(instrucciones, i)) + 1 );

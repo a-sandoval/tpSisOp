@@ -23,8 +23,10 @@ typedef struct {
 
 } t_contexto; 
 
+extern int conexionACPU;
 
-int conexionCPU(t_pcb* procesoAEjecutar);
+void conexionCPU();
+int  procesarPCB(t_pcb* procesoAEjecutar);
 
 void agregarInstruccionesAPaquete(t_paquete* paquete, t_list* instrucciones);
 void actualizarPCB(t_pcb* proceso);

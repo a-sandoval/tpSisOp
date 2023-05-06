@@ -13,15 +13,8 @@
 #include "planificacion.h"
 #include <pthread.h>
 
-
-int servirAConsola();
+void recibirConsolas(char *puerto); 
 void iterator(void* value);
-void recibirConsolas(); 
 void ejecutarServidorKernel(); 
-
-/**
-* @brief Inicializa todos los semaforos necesarios para que el kernel sirva a la consola
-*/
-void inicializarSemaforos();
 
 #endif /* SERVER_H_ */

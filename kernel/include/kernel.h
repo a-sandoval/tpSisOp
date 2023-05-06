@@ -3,9 +3,8 @@
 #define KERNEL_H_
 
 // Generales
-#include <commons/string.h>
+#include <pthread.h>
 #include <commons/log.h>
-#include <commons/collections/list.h>
 #include <commons/config.h>
 
 // Conexiones propias del kernel
@@ -17,8 +16,6 @@
 
 // Utils y funciones del shared
 #include "shared/include/configuraciones.h"
-//#include "shared/include/utilsServidor.h"
-//#include "shared/include/utilsCliente.h"
 
 int socketCliente;
 t_log* logger;

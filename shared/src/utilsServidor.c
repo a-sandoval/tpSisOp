@@ -95,7 +95,7 @@ int alistarServidor(char *puerto){
 
 	return esperar_cliente(server_fd);
 }
-
+/*
 int ejecutarServidor(){
 	t_list* lista;
 	while (1) {
@@ -118,7 +118,7 @@ int ejecutarServidor(){
 		}
 	}
 }
-
+*/
 void element_destroyer(void *palabra){
 	free(palabra);
 }

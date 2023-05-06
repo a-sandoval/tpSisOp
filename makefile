@@ -29,6 +29,9 @@ ARCHIVOS_KERNEL  := kernel/src/kernel.c kernel/src/conexionMemoria.c  kernel/src
 ARCHIVOS_MEMORIA := memoria/src/memoria.c \
                     $(CONFIG)                  $(UTILS_SERVIDOR) 
 
+ARCHIVOS_TEST := test/src/test.c \
+                    $(CONFIG) $(UTILS_CLIENTE) $(UTILS_SERVIDOR) 
+
 CC := gcc
 CFLAGS := -g -I ./ -lcommons -Wall -Wextra
 
@@ -54,6 +57,10 @@ Kernel:
 Memoria:
 	@echo "Compilando Memoria... "
 	@$(CC) $(ARCHIVOS_MEMORIA) -o memoria/memoria$(FILE_EXT)     $(CFLAGS) -lpthread
+
+Test:
+	@echo "Compilando Servidor Prueba... "
+	@$(CC) $(ARCHIVOS_TEST) -o test/test$(FILE_EXT)     $(CFLAGS)
 
 clean:
 	rm cpu/cpu.o
