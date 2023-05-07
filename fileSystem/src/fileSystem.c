@@ -3,6 +3,7 @@
 int main(void) {
     logger = iniciarLogger("fileSys.log","file-system");
     config = iniciarConfiguracion("filesys.config");
+    loggerError = iniciarLogger("errores.log", "File-System"); 
     socketMemoria = conexion("MEMORIA"); 
     escucharAlKernel();
     close(socketMemoria);

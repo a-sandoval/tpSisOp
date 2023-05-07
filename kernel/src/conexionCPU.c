@@ -1,4 +1,4 @@
-/* KERNEL- cliente | CPU - sevidor*/
+/* KERNEL- cliente | CPU - servidor*/
 #include "kernel/include/conexionCPU.h"
 
 
@@ -12,7 +12,7 @@ void conexionCPU() {
         if(conexionACPU != -1)
             return;
         else {
-            log_error(logger, "No se pudo conectar al servidor, socket %d, esperando 5 segundos y reintentando.", conexionACPU);
+            log_error(loggerError, "No se pudo conectar al servidor, socket %d, esperando 5 segundos y reintentando.", conexionACPU);
             sleep(5);
         }
     }

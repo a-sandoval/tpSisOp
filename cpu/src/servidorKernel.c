@@ -19,14 +19,14 @@ int ejecutarServidorCPU(){
 		int codOP = recibir_operacion();
 		switch (codOP) {
 			case -1:
-				log_info(logger, "El cliente se desconecto");
+				//log_info(logger, "El cliente se desconecto");
 				return EXIT_FAILURE;
 			case PAQUETE:
 				contexto = recibirPCB();
 				list_iterate(contexto->instrucciones, iterator);
 				break;
 			default:
-				log_warning(logger,"Operacion desconocida. No quieras meter la pata");
+				log_warning(loggerError,"Operacion desconocida. No quieras meter la pata");
 				break;
 		}
 	}

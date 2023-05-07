@@ -16,32 +16,12 @@
     #include <commons/config.h>
     #include <signal.h>
 
-    /**
-     * @ingroup variablesGlobales
-     * @{
-     * 
-     */
-
-    /**
-     * @var logger 
-     * Logger global para documentar todo evento que ocurra.
-     */
- 
-    /**
-     * @var config 
-     * Archivo de configuracion utilizado para sacar informacion variada para su uso.
-     */
-   
-
-    /**
-     * 
-     * @}
-     * Fin de variables globales.
-     * 
+    /*
      * @ingroup enumsGlobales
      * @{
      * 
      */
+
 
     /**
      * @enum t_comando

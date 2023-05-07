@@ -14,23 +14,30 @@ char* estadosProcesos[5] = {"NEW","READY","EXEC","BLOCK","SALIDA"};
 
 // Planificacion en si
 
+void loggearCambioDeEstado(uint32_t pid, estadoProceso anterior, estadoProceso actual) {
+
+    log_info(logger, "PID: %d - Estado Anterior: %s - Estado Actual: %s", pid , estadosProcesos[anterior], estadosProcesos[actual]);
+
+}
+
 void planificarALargoPlazo(){
 
     while (1) {
         sem_wait(&hayProcesosNuevos); 
+        
         sem_wait(&semGradoMultiprogramacion);
 
         t_pcb* pcb = obtenerSiguienteAReady();
         estadoProceso estadoAnterior= pcb->estado;
         pcb->estado=READY;
 
-    	log_info(logger, "PID: %d - Estado Anterior: %s - Estado Actual: %s", pcb->pid, estadosProcesos[estadoAnterior], estadosProcesos[pcb->estado]);
+        loggearCambioDeEstado(pcb->pid, estadoAnterior,pcb->estado); 
 
         //list_iterate(pcb->instrucciones, instruct_print);
         encolar(pcbsREADY, pcb);
         
-        //pthread_mutex_unlock(&mutexListaNew);
         sem_post(&hayProcesosReady);
+        sem_post(&semGradoMultiprogramacion);
     }
 }
 
@@ -39,13 +46,18 @@ void planificarACortoPlazo(t_pcb* (*proximoAEjecutar)()) {
     while (1) {
         sem_wait(&hayProcesosReady); 
         t_pcb* aEjecutar = proximoAEjecutar();
+
+        estadoProceso estadoAnterior= aEjecutar->estado;
         aEjecutar->estado = EXEC; 
+
+        loggearCambioDeEstado(aEjecutar->pid, estadoAnterior,aEjecutar->estado);
+
         procesarPCB(aEjecutar);
         // ESTO ES ALGO DEL MOMENTO, NO LO HACE EL KERNEL!!!
         sleep (2);
         aEjecutar->estado = SALIDA;
         enviarMensaje("Terminado", aEjecutar->socketPCB);
-        sem_post(&semGradoMultiprogramacion);
+        
     }
 }
 
@@ -59,7 +71,7 @@ void planificarACortoPlazoSegunAlgoritmo(){
         planificarACortoPlazo(proximoAEjecutarHRRN);
     }
     else{
-        log_error(logger,"Algoritmo invalido. Debe ingresar FIFO o HRRN");
+        log_error(loggerError,"Algoritmo invalido. Debe ingresar FIFO o HRRN");
         abort();
     }
 }
@@ -79,6 +91,7 @@ void inicializarSemaforos(){
     pthread_mutex_init(&mutexListaNew,NULL);
     sem_init(&hayProcesosReady,0,0);
     sem_init(&hayProcesosNuevos,0,0);
+    gradoMultiprogramacion=obtenerGradoMultiprogramacion(); 
     sem_init(&semGradoMultiprogramacion,0,gradoMultiprogramacion);
 }
 

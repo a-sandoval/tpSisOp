@@ -4,9 +4,10 @@
 int main(){
     //Inicializar variables
     logger = iniciarLogger("kernel.log", "Kernel");
+	loggerError = iniciarLogger("errores.log", "Errores - Kernel"); 
     config = iniciarConfiguracion("kernel.config");
-	gradoMultiprogramacion = obtenerGradoMultiprogramacion();
 	char* puertoDeEscucha = confGet("PUERTO_ESCUCHA"); 
+
 	inicializarSemaforos();
 	inicializarListasPCBS(); 
 	
@@ -18,7 +19,7 @@ int main(){
     	if(!pthread_create(&planificadorLargoPlazo_h, NULL,(void *) planificarALargoPlazo, NULL))
     	    pthread_detach(planificadorLargoPlazo_h);
     	else{
-    	    log_error(logger, "Error al inciar servidor Kernel, Abort");
+    	    log_error(loggerError, "Error al iniciar servidor Kernel, Abort");
     	    return EXIT_FAILURE;
 		}
 
@@ -26,7 +27,7 @@ int main(){
 		if(!pthread_create(&planificadorCortoPlazo_h, NULL, (void*) planificarACortoPlazoSegunAlgoritmo, NULL))
     	    pthread_detach(planificadorCortoPlazo_h);
     	else{
-    	    log_error(logger, "Error al inciar servidor Kernel, Abort");
+    	    log_error(loggerError, "Error al iniciar servidor Kernel, Abort");
     	    return EXIT_FAILURE;
 		}
 
@@ -34,7 +35,7 @@ int main(){
     	if(!pthread_create(&recibirConsolas_h, NULL,(void *) recibirConsolas, puertoDeEscucha)) 
             pthread_join(recibirConsolas_h, NULL);
     	else{
-    	    log_error(logger, "Error al iniciar servidor Kernel, Abort");
+    	    log_error(loggerError, "Error al iniciar servidor Kernel, Abort");
     	    return EXIT_FAILURE;
     	}
 

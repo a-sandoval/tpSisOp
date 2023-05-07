@@ -7,6 +7,7 @@
 
 
 int conexionFileSystem();
+extern t_log* loggerError;
 
 
 #endif /* CONEXION_FILESYSTEM_H */

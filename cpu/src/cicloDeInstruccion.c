@@ -124,8 +124,8 @@ void agregarInstruccionesAPaquete(t_paquete* paquete, t_list* instrucciones){
 
     contextoEjecucion->instruccionesLength = list_size(instrucciones);
     
-    agregarAPaquete(paquete,(void *)contextoEjecucion->instruccionesLength, sizeof(uint32_t)); //primero envio la cantidad de elementos
-    int i;
+    agregarAPaquete(paquete,(void*)&contextoEjecucion->instruccionesLength, sizeof(uint32_t)); //primero envio la cantidad de elementos
+    uint32_t i;
     for(i=0;i<contextoEjecucion->instruccionesLength;i++){
         agregarAPaquete (paquete, list_get(instrucciones, i), sizeof(char) * strlen(list_get(instrucciones, i)) + 1 );
     }

@@ -77,5 +77,6 @@ int obtenerTiempoEspera();
 // FUNCIONES PARA ENVIO DE CONTEXTO DE EJECUCION
 void* serializar_contextoEjecucion(t_paquete* paquete, int bytes);
 void enviar_contexto();
+void enviarContextoActualizado(); 
 
 #endif 

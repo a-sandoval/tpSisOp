@@ -11,6 +11,7 @@
 #include "shared/include/utilsCliente.h"
 #include "cpu/include/cicloDeInstruccion.h"
 
+extern t_log* loggerError; 
 
 void escucharAlKernel(); 
 void iterator(void *value);

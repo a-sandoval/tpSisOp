@@ -2,6 +2,8 @@
 
 int main(void){
 	logger = iniciarLogger("cpu.log", "CPU-Memoria");
+	loggerError = iniciarLogger("errores.log", "Errores CPU");
+	
 	config = iniciarConfiguracion("cpu.config");
 	int conexionAMemoria = conexion("MEMORIA");
 
@@ -10,12 +12,14 @@ int main(void){
 
 	close(conexionAMemoria);
 	terminarPrograma(); 
-    return EXIT_SUCCESS;
+    
 
 	t_contexto *contextoActual = recibir_contexto();
 	if(contextoActual != NULL){
 		cicloDeInstruccion(contextoActual);
 	}else{
-		log_error(logger,"No se recibió bien el contexto try again o deal with it");
+		log_error(loggerError,"No se recibió bien el contexto try again o deal with it");
 	}
-}
+
+	return EXIT_SUCCESS;
+}	

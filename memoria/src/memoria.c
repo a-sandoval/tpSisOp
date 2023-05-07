@@ -2,7 +2,9 @@
 
 int main(){
     logger = iniciarLogger("memoria.log", "Memoria");
+	loggerError = iniciarLogger("errores.log","Memoria"); 
 	config = iniciarConfiguracion("memoria.config");
+	
 
 	//inicio servidor y queda a la espera de clientes
 	socketCliente = alistarServidor(confGet("PUERTO_ESCUCHA"));

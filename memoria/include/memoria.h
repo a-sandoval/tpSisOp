@@ -41,11 +41,15 @@ int socketCliente;
  * 
  * @param value El valor que recibe del paquete sera recibido como parametro y utilizado como se desee.
  */
+
 void iterator(void* value);
+t_log* logger; 
+t_log* loggerError; 
+t_config* config; 
 
 /**
  * Fin.
  * @}
  */
-#endif 
 
+#endif

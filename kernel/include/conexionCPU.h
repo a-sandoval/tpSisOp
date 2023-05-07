@@ -40,6 +40,7 @@ void enviar_contexto();
 
 void recibir_contexto();
 
+extern t_log* loggerError; 
 
 
 #endif /* CONEXION_CPU_H */

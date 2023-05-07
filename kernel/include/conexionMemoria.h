@@ -8,5 +8,6 @@
 
 
 int conexionMemoria();
+extern t_log* loggerError; 
 
 #endif /* CONEXION_MEMORIA_H */

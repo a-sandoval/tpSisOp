@@ -5,7 +5,7 @@ int conexionFileSystem(){
    logger = cambiarNombre("Kernel-FS");
     int conexionAFS = conexion("FILESYSTEM");
     if(!(conexionAFS + 1))
-        log_error(logger, "No se pudo conectar al servidor.");
+        log_error(loggerError, "No se pudo conectar al servidor.");
     else
         close(conexionAFS);
 
