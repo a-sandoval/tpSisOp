@@ -16,38 +16,9 @@ int socketCliente;
 t_log* logger;
 t_log* loggerError; 
 t_config* config;
+t_contexto* contextoEjecucion;
 
 int conexionMemoria();
-
-//FUNCION PARA RECIBIR NUEVO CONTEXTO POR PARTE DEL KERNEL
-t_contexto* recibir_contexto(){
-    t_contexto* nuevoContexto = malloc(sizeof(t_contexto));
-	int size;
-	int desplazamiento = 0;
-	void * buffer;
-
-	buffer = recibir_buffer(&size);
-	while(desplazamiento < size){ 
-        memcpy(&(nuevoContexto->pid), buffer+desplazamiento, sizeof(nuevoContexto->pid));
-        desplazamiento+=sizeof(nuevoContexto->pid);
-        memcpy(&(nuevoContexto->programCounter), buffer+desplazamiento, sizeof(nuevoContexto->programCounter));
-        desplazamiento+=sizeof(nuevoContexto->programCounter);
-        memcpy(&(nuevoContexto->registrosCPU), buffer+desplazamiento, sizeof(nuevoContexto->registrosCPU));
-        desplazamiento+=sizeof(nuevoContexto->registrosCPU);
-    
-        memcpy(&(nuevoContexto->instruccionesLength), buffer+desplazamiento, sizeof(nuevoContexto->instruccionesLength));
-        desplazamiento += sizeof(nuevoContexto->instruccionesLength);
-        nuevoContexto->instrucciones = malloc(nuevoContexto->instruccionesLength);
-        memcpy(nuevoContexto->instrucciones , buffer+desplazamiento, nuevoContexto->instruccionesLength);
-		
-        memcpy(&(nuevoContexto->estado), buffer+desplazamiento, sizeof(estadoProceso));
-        desplazamiento+=sizeof(estadoProceso);
-		
-	}
-	free(buffer);
-	return nuevoContexto;
-}
-
 
 
 #endif 

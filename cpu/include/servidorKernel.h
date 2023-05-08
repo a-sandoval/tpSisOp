@@ -15,5 +15,9 @@ extern t_log* loggerError;
 
 void escucharAlKernel(); 
 void iterator(void *value);
+void recibirContextoActualizado();
+
+
+extern t_contexto* contextoEjecucion;
 
 #endif

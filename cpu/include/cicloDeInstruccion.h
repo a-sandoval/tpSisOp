@@ -59,7 +59,14 @@ typedef struct {
 
 } t_contexto; 
 
-void cicloDeInstruccion(t_contexto* contextoActual);
+char* instruccionAEjecutar; 
+char** elementosInstruccion; 
+int instruccionActual; 
+int cantParametros;
+
+
+
+void cicloDeInstruccion();
 void fetch();
 void decode();
 void execute();

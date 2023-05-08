@@ -1,15 +1,9 @@
 #include "cpu/include/cicloDeInstruccion.h"
 
-char* instruccionAEjecutar; 
-char** elementosInstruccion; 
-int instruccionActual; 
-int cantParametros;
-t_contexto* contextoEjecucion; 
+t_contexto* contextoEjecucion;
 
-void cicloDeInstruccion(t_contexto* contextoRecibido){
+void cicloDeInstruccion(){
 
-    contextoEjecucion = contextoRecibido; 
-    
     fetch();//busca la próxima instruccion a ejecutar. Lista en pcb
 
     decode();//interpreta que instruccion va a ejecutar y si requiere traduccion logica o fisica
@@ -87,55 +81,94 @@ void exit_c(){
     enviarContextoActualizado();
 }
 
-//Funciones necesarias
-
-void enviar_contexto(){ 
-    t_paquete* paquete = malloc(sizeof(t_paquete));
+void enviarCOntextoActualizado(){ 
+    t_paquete* paquete = crearPaquete();
     
     paquete->codigo_operacion = CONTEXTOEJECUCION;
-	paquete->buffer = malloc(sizeof(t_buffer));
    
     // cargo todos los valores en el paquete
     agregarAPaquete(paquete,(void *)&contextoEjecucion->pid, sizeof(contextoEjecucion->pid));
     agregarAPaquete(paquete,(void *)&contextoEjecucion->programCounter, sizeof(contextoEjecucion->programCounter));
-    //agregarAPaquete(paquete,&contextoEjecucion->registrosCPU, sizeof(contextoEjecucion->registrosCPU)); // a chequear ese ampersand
+    agregarAPaquete(paquete,(void *)&contextoEjecucion->estado, sizeof(estadoProceso));
 
-    agregarListaAPaquete(paquete, contextoEjecucion->instrucciones);
 
-    //hay que ver si dejamos el dictionary, si es asi se serializa como las instrucciones porque tmb seria de char*
-    //agregarAPaquete(paquete,(void *)&contextoEjecucion->registrosSize, sizeof(contextoEjecucion->registrosSize));
-    //agregarAPaquete(paquete,contextoEjecucion->registrosCPU, contextoEjecucion->registrosSize);
+    agregarRegistrosAPaquete(paquete, contextoEjecucion->registrosCPU);
 
-    //no sabemos listas de que son estas tablas entonces aun no podemos serializar
+    //no sabemos listas de que son estas tablas entonces aun no podemos serializar o hay que serializarlo como listas y ver si dsps cambia
     //agregarAPaquete(paquete,(void *)&contextoEjecucion->tablaDeArchivosSize, sizeof(contextoEjecucion->tablaDeArchivosSize));
     //agregarAPaquete(paquete,contextoEjecucion->tablaDeArchivos, contextoEjecucion->tablaDeArchivosSize);
     //agregarAPaquete(paquete,(void *)&contextoEjecucion->tablaDeSegmentosSize, sizeof(contextoEjecucion->tablaDeSegmentosSize));
     //agregarAPaquete(paquete,contextoEjecucion->tablaDeSegmentos, contextoEjecucion->tablaDeSegmentosSize);
-  
-    agregarAPaquete(paquete,(void *)contextoEjecucion->estado, sizeof(estadoProceso));
-
-    enviarPaquete(paquete,socketCliente);
+    
+    enviarPaquete(paquete, socketCliente);
 
 	eliminarPaquete(paquete);
 }
 
 void agregarInstruccionesAPaquete(t_paquete* paquete, t_list* instrucciones){
-    //necesitaria agregar un /0 al final de cada instruccion
 
     contextoEjecucion->instruccionesLength = list_size(instrucciones);
     
-    agregarAPaquete(paquete,(void*)&contextoEjecucion->instruccionesLength, sizeof(uint32_t)); //primero envio la cantidad de elementos
+    agregarAPaquete(paquete, &contextoEjecucion->instruccionesLength, sizeof(uint32_t)); //primero envio la cantidad de elementos
     uint32_t i;
     for(i=0;i<contextoEjecucion->instruccionesLength;i++){
         agregarAPaquete (paquete, list_get(instrucciones, i), sizeof(char) * strlen(list_get(instrucciones, i)) + 1 );
     }
 }
 
+void agregarRegistrosAPaquete(t_paquete* paquete, t_dictionary* registrosCPU){
+     
+     // no terminaran en /0???
+    char* AX = dictionary_get(registrosCPU,"AX"); 
+    agregarAPaquete(paquete, AX, sizeof(char) * 4);
+    free(AX);
 
-void enviarContextoActualizado(){
-    // serializar_contextoEjecucion(t_paquete* paquete, int bytes);
-    enviar_contexto();
+    char* BX = dictionary_get(registrosCPU,"BX");
+    agregarAPaquete(paquete, BX, sizeof(char) * 4 );
+    free(BX);
+
+    char* CX = dictionary_get(registrosCPU,"CX");
+    agregarAPaquete(paquete, CX, sizeof(char) * 4 );
+    free(CX);
+
+    char* DX = dictionary_get(registrosCPU,"DX");
+    agregarAPaquete(paquete, DX, sizeof(char) * 4 );
+    free(DX);
+
+    char* EAX = dictionary_get(registrosCPU,"EAX");
+    agregarAPaquete(paquete, EAX, sizeof(char) * 8 );
+    free(EAX);
+
+    char* EBX = dictionary_get(registrosCPU,"EBX");
+    agregarAPaquete(paquete, EBX, sizeof(char) * 8 );
+    free(EBX);
+
+    char* ECX = dictionary_get(registrosCPU,"ECX");
+    agregarAPaquete(paquete, ECX, sizeof(char) * 8 );
+    free(ECX);
+
+    char* EDX = dictionary_get(registrosCPU,"EDX");
+    agregarAPaquete(paquete, EDX, sizeof(char) * 8 );
+    free(EDX);
+
+    char* RAX = dictionary_get(registrosCPU,"RAX");
+    agregarAPaquete(paquete, RAX, sizeof(char) * 16 );
+    free(RAX);
+
+    char* RBX = dictionary_get(registrosCPU,"RBX");
+    agregarAPaquete(paquete, RBX, sizeof(char) * 16 );
+    free(RBX);
+
+    char* RCX = dictionary_get(registrosCPU,"RCX");
+    agregarAPaquete(paquete, RCX, sizeof(char) * 16 );
+    free(RCX);
+
+    char* RDX = dictionary_get(registrosCPU,"RDX");
+    agregarAPaquete(paquete, RDX, sizeof(char) * 16 );
+    free(RDX);
 }
+
+
 
 int buscar(char *elemento, char **lista) {
     int i = 0;
