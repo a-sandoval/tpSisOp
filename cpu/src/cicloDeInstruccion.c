@@ -1,5 +1,28 @@
 #include "cpu/include/cicloDeInstruccion.h"
 
+char *listaComandos[] = {
+    [SET] = "SET",
+    [MOV_IN] = "MOV_IN",
+    [MOV_OUT] = "MOV_OUT", 
+    [IO] = "I/O",
+    [F_OPEN] = "F_OPEN",
+    [F_CLOSE] = "F_CLOSE", 
+    [F_SEEK] = "F_SEEK",
+    [F_READ] = "F_READ",
+    [F_WRITE] = "F_WRITE", 
+    [F_TRUNCATE] = "F_TRUNCATE",
+    [WAIT] = "WAIT",
+    [SIGNAL] = "SIGNAL",
+    [CREATE_SEGMENT] = "CREATE_SEGMENT",
+    [DELETE_SEGMENT] = "DELETE_SEGMENT",
+    [YIELD] = "YIELD",
+    [EXIT] = "EXIT"
+};
+char* instruccionAEjecutar; 
+char** elementosInstruccion; 
+int instruccionActual; 
+int cantParametros;
+
 t_contexto* contextoEjecucion;
 
 void cicloDeInstruccion(){
@@ -15,7 +38,7 @@ void cicloDeInstruccion(){
 void fetch() { 
     int numInstruccionABuscar = contextoEjecucion->programCounter;
     instruccionAEjecutar = list_get(contextoEjecucion->instrucciones,numInstruccionABuscar); 
-    contextoEjecucion->programCounter=+1;
+    contextoEjecucion->programCounter += 1;
 }
 
 void decode(){
@@ -28,16 +51,16 @@ void decode(){
 void execute() {
     switch(cantParametros) {
         case 0:
-            log_info(logger, "PID: %d - Ejecutando: %s ", contextoEjecucion->pid, elementosInstruccion[0]);
+            log_info(logger, "PID: %d - Ejecutando: %s ", contextoEjecucion->pid, listaComandos[instruccionActual]);
             break;
         case 1:
-            log_info(logger, "PID: %d - Ejecutando: %s -  %s", contextoEjecucion->pid, elementosInstruccion[0], elementosInstruccion[1]);
+            log_info(logger, "PID: %d - Ejecutando: %s -  %s", contextoEjecucion->pid, listaComandos[instruccionActual], elementosInstruccion[1]);
             break;
         case 2:   
-            log_info(logger, "PID: %d - Ejecutando: %s -  %s, %s", contextoEjecucion->pid, elementosInstruccion[0], elementosInstruccion[1], elementosInstruccion[2]);
+            log_info(logger, "PID: %d - Ejecutando: %s -  %s, %s", contextoEjecucion->pid, listaComandos[instruccionActual], elementosInstruccion[1], elementosInstruccion[2]);
             break; 
         case 3:
-            log_info(logger, "PID: %d - Ejecutando: %s -  %s, %s, %s", contextoEjecucion->pid, elementosInstruccion[0], elementosInstruccion[1], elementosInstruccion[2], elementosInstruccion[3]);
+            log_info(logger, "PID: %d - Ejecutando: %s -  %s, %s, %s", contextoEjecucion->pid, listaComandos[instruccionActual], elementosInstruccion[1], elementosInstruccion[2], elementosInstruccion[3]);
             break; 
     }
     switch(instruccionActual){
@@ -51,6 +74,7 @@ void execute() {
             exit_c();
             break;
         default:
+            //sleep(1);
             break;
     }
 }
@@ -81,7 +105,7 @@ void exit_c(){
     enviarContextoActualizado();
 }
 
-void enviarCOntextoActualizado(){ 
+void enviarContextoActualizado(){ 
     t_paquete* paquete = crearPaquete();
     
     paquete->codigo_operacion = CONTEXTOEJECUCION;
@@ -91,6 +115,7 @@ void enviarCOntextoActualizado(){
     agregarAPaquete(paquete,(void *)&contextoEjecucion->programCounter, sizeof(contextoEjecucion->programCounter));
     agregarAPaquete(paquete,(void *)&contextoEjecucion->estado, sizeof(estadoProceso));
 
+    //agregarInstruccionesAPaquete(paquete, contextoEjecucion->instrucciones);
 
     agregarRegistrosAPaquete(paquete, contextoEjecucion->registrosCPU);
 
@@ -100,6 +125,7 @@ void enviarCOntextoActualizado(){
     //agregarAPaquete(paquete,(void *)&contextoEjecucion->tablaDeSegmentosSize, sizeof(contextoEjecucion->tablaDeSegmentosSize));
     //agregarAPaquete(paquete,contextoEjecucion->tablaDeSegmentos, contextoEjecucion->tablaDeSegmentosSize);
     
+
     enviarPaquete(paquete, socketCliente);
 
 	eliminarPaquete(paquete);
@@ -112,60 +138,60 @@ void agregarInstruccionesAPaquete(t_paquete* paquete, t_list* instrucciones){
     agregarAPaquete(paquete, &contextoEjecucion->instruccionesLength, sizeof(uint32_t)); //primero envio la cantidad de elementos
     uint32_t i;
     for(i=0;i<contextoEjecucion->instruccionesLength;i++){
-        agregarAPaquete (paquete, list_get(instrucciones, i), sizeof(char) * strlen(list_get(instrucciones, i)) + 1 );
+        agregarAPaquete (paquete, list_get(instrucciones, i), sizeof(char) * (strlen(list_get(instrucciones, i)) + 1 ));
     }
 }
 
 void agregarRegistrosAPaquete(t_paquete* paquete, t_dictionary* registrosCPU){
      
      // no terminaran en /0???
-    char* AX = dictionary_get(registrosCPU,"AX"); 
-    agregarAPaquete(paquete, AX, sizeof(char) * 4);
-    free(AX);
+    char *AX = dictionary_get(registrosCPU,"AX"); 
+    agregarAPaquete(paquete, AX, sizeof(char) * (4 + 1));
+    //free(AX);
 
     char* BX = dictionary_get(registrosCPU,"BX");
-    agregarAPaquete(paquete, BX, sizeof(char) * 4 );
-    free(BX);
+    agregarAPaquete(paquete, BX, sizeof(char) * (4 + 1));
+    //free(BX);
 
     char* CX = dictionary_get(registrosCPU,"CX");
-    agregarAPaquete(paquete, CX, sizeof(char) * 4 );
-    free(CX);
+    agregarAPaquete(paquete, CX, sizeof(char) * (4 + 1));
+    //free(CX);
 
     char* DX = dictionary_get(registrosCPU,"DX");
-    agregarAPaquete(paquete, DX, sizeof(char) * 4 );
-    free(DX);
+    agregarAPaquete(paquete, DX, sizeof(char) * (4 + 1));
+    //free(DX);
 
     char* EAX = dictionary_get(registrosCPU,"EAX");
-    agregarAPaquete(paquete, EAX, sizeof(char) * 8 );
-    free(EAX);
+    agregarAPaquete(paquete, EAX, sizeof(char) * (8 + 1));
+    //free(EAX);
 
     char* EBX = dictionary_get(registrosCPU,"EBX");
-    agregarAPaquete(paquete, EBX, sizeof(char) * 8 );
-    free(EBX);
+    agregarAPaquete(paquete, EBX, sizeof(char) * (8 + 1));
+    //free(EBX);
 
     char* ECX = dictionary_get(registrosCPU,"ECX");
-    agregarAPaquete(paquete, ECX, sizeof(char) * 8 );
-    free(ECX);
+    agregarAPaquete(paquete, ECX, sizeof(char) * (8 + 1));
+    //free(ECX);
 
     char* EDX = dictionary_get(registrosCPU,"EDX");
-    agregarAPaquete(paquete, EDX, sizeof(char) * 8 );
-    free(EDX);
+    agregarAPaquete(paquete, EDX, sizeof(char) * (8 + 1));
+    //free(EDX);
 
     char* RAX = dictionary_get(registrosCPU,"RAX");
-    agregarAPaquete(paquete, RAX, sizeof(char) * 16 );
-    free(RAX);
+    agregarAPaquete(paquete, RAX, sizeof(char) * (16 + 1));
+    //free(RAX);
 
     char* RBX = dictionary_get(registrosCPU,"RBX");
-    agregarAPaquete(paquete, RBX, sizeof(char) * 16 );
-    free(RBX);
+    agregarAPaquete(paquete, RBX, sizeof(char) * (16 + 1));
+    //free(RBX);
 
     char* RCX = dictionary_get(registrosCPU,"RCX");
-    agregarAPaquete(paquete, RCX, sizeof(char) * 16 );
-    free(RCX);
+    agregarAPaquete(paquete, RCX, sizeof(char) * (16 + 1));
+    //free(RCX);
 
     char* RDX = dictionary_get(registrosCPU,"RDX");
-    agregarAPaquete(paquete, RDX, sizeof(char) * 16 );
-    free(RDX);
+    agregarAPaquete(paquete, RDX, sizeof(char) * (16 + 1));
+    //free(RDX);
 }
 
 

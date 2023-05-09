@@ -3,6 +3,7 @@
 
 void recibirConsolas(char *puerto){ 
 	int server_fd = iniciarServidor(puerto);
+	log_info(logger, "Se genero el servidor en el socket %d.", server_fd);
 	while(1){
 		socketCliente = esperar_cliente(server_fd);	
 		ejecutarServidorKernel(); 

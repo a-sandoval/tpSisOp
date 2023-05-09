@@ -7,6 +7,7 @@ t_contexto* contextoEjecucion;
 int conexionACPU;
 
 void conexionCPU() {
+    logger = cambiarNombre("Kernel-CPU");
     while(1) {
         conexionACPU = conexion("CPU");
         if(conexionACPU != -1)
@@ -18,28 +19,50 @@ void conexionCPU() {
     }
 }
 
+int recibirOperacionDeCPU(){ //Hay que ver esto en el utils.
+	int cod_op;
+	if(recv(conexionACPU, &cod_op, sizeof(int), MSG_WAITALL) > 0)
+		return cod_op;
+	else
+	{
+		close(conexionACPU);
+		return -1;
+	}
+}
+
+void* recibirBufferDeCPU(int* size){
+	void * buffer;
+
+	recv(conexionACPU, size, sizeof(int), MSG_WAITALL);
+	buffer = malloc(*size);
+	recv(conexionACPU, buffer, *size, MSG_WAITALL);
+
+	return buffer;
+}
+
 int procesarPCB(t_pcb* procesoEnEjecucion) {
 
     iniciarContexto();
     bufferContexto = malloc(sizeof(t_buffer));
 
-    logger = cambiarNombre("Kernel-CPU");
     asignarPCBAContexto(procesoEnEjecucion);
+    imprimirRegistros(procesoEnEjecucion->registrosCPU);
     enviar_contexto();
 
     // aca a su vez hay que recibir el contexto actualizado que mande la cpu, deserializarlo y cambiarlo en el PCB
     //Noc si esto iria aca porque en realidad seria como un case compartido con las cosas
     //que tiene que recibir de memoria y fs tm no?
-    /*
-    int operacion=recibir_operacion();
-
+    
+    int operacion = recibirOperacionDeCPU();
+    log_info(logger, "Recibido el contexto.");
     switch(operacion){
         case CONTEXTOEJECUCION:
             recibirContextoActualizado(); //me carga el contexto actualizado en el mismo contextoEjecucion;
             actualizarPCB(procesoEnEjecucion);
-            destroyContexto();
+            //destroyContexto();
+            break;
     }
-*/
+
     //close(conexionACPU);
     
     return 0;
@@ -107,60 +130,60 @@ void agregarInstruccionesAPaquete(t_paquete* paquete, t_list* instrucciones){
     agregarAPaquete(paquete, &contextoEjecucion->instruccionesLength, sizeof(uint32_t)); //primero envio la cantidad de elementos
     uint32_t i;
     for(i=0;i<contextoEjecucion->instruccionesLength;i++){
-        agregarAPaquete (paquete, list_get(instrucciones, i), sizeof(char) * strlen(list_get(instrucciones, i)) + 1 );
+        agregarAPaquete (paquete, list_get(instrucciones, i), sizeof(char) * (strlen(list_get(instrucciones, i)) + 1 ));
     }
 }
 
 void agregarRegistrosAPaquete(t_paquete* paquete, t_dictionary* registrosCPU){
      
-     // no terminaran en /0???
-    char* AX = dictionary_get(registrosCPU,"AX"); 
-    agregarAPaquete(paquete, AX, sizeof(char) * 4);
-    free(AX);
+     // no terminaran en /0??? si, terminan en \0
+    char *AX = dictionary_get(registrosCPU,"AX"); 
+    agregarAPaquete(paquete, AX, sizeof(char) * (4 + 1));
+    //free(AX);
 
     char* BX = dictionary_get(registrosCPU,"BX");
-    agregarAPaquete(paquete, BX, sizeof(char) * 4 );
-    free(BX);
+    agregarAPaquete(paquete, BX, sizeof(char) * (4 + 1));
+    //free(BX);
 
     char* CX = dictionary_get(registrosCPU,"CX");
-    agregarAPaquete(paquete, CX, sizeof(char) * 4 );
-    free(CX);
+    agregarAPaquete(paquete, CX, sizeof(char) * (4 + 1));
+    //free(CX);
 
     char* DX = dictionary_get(registrosCPU,"DX");
-    agregarAPaquete(paquete, DX, sizeof(char) * 4 );
-    free(DX);
+    agregarAPaquete(paquete, DX, sizeof(char) * (4 + 1));
+    //free(DX);
 
     char* EAX = dictionary_get(registrosCPU,"EAX");
-    agregarAPaquete(paquete, EAX, sizeof(char) * 8 );
-    free(EAX);
+    agregarAPaquete(paquete, EAX, sizeof(char) * (8 + 1));
+    //free(EAX);
 
     char* EBX = dictionary_get(registrosCPU,"EBX");
-    agregarAPaquete(paquete, EBX, sizeof(char) * 8 );
-    free(EBX);
+    agregarAPaquete(paquete, EBX, sizeof(char) * (8 + 1));
+    //free(EBX);
 
     char* ECX = dictionary_get(registrosCPU,"ECX");
-    agregarAPaquete(paquete, ECX, sizeof(char) * 8 );
-    free(ECX);
+    agregarAPaquete(paquete, ECX, sizeof(char) * (8 + 1));
+    //free(ECX);
 
     char* EDX = dictionary_get(registrosCPU,"EDX");
-    agregarAPaquete(paquete, EDX, sizeof(char) * 8 );
-    free(EDX);
+    agregarAPaquete(paquete, EDX, sizeof(char) * (8 + 1));
+    //free(EDX);
 
     char* RAX = dictionary_get(registrosCPU,"RAX");
-    agregarAPaquete(paquete, RAX, sizeof(char) * 16 );
-    free(RAX);
+    agregarAPaquete(paquete, RAX, sizeof(char) * (16 + 1));
+    //free(RAX);
 
     char* RBX = dictionary_get(registrosCPU,"RBX");
-    agregarAPaquete(paquete, RBX, sizeof(char) * 16 );
-    free(RBX);
+    agregarAPaquete(paquete, RBX, sizeof(char) * (16 + 1));
+    //free(RBX);
 
     char* RCX = dictionary_get(registrosCPU,"RCX");
-    agregarAPaquete(paquete, RCX, sizeof(char) * 16 );
-    free(RCX);
+    agregarAPaquete(paquete, RCX, sizeof(char) * (16 + 1));
+    //free(RCX);
 
     char* RDX = dictionary_get(registrosCPU,"RDX");
-    agregarAPaquete(paquete, RDX, sizeof(char) * 16 );
-    free(RDX);
+    agregarAPaquete(paquete, RDX, sizeof(char) * (16 + 1));
+    //free(RDX);
 }
 
 
@@ -172,95 +195,98 @@ void recibirContextoActualizado(){
 	int desplazamiento = 0;
 	void * buffer;
 
-	buffer = recibir_buffer(&size);
-	while(desplazamiento < size){ //segun entiendo el while hace que se quede esperando a recbibir absoulamente todos los datos
+	buffer = recibirBufferDeCPU(&size);
+	//while(desplazamiento < size){ //segun entiendo el while hace que se quede esperando a recbibir absoulamente todos los datos
+        desplazamiento += sizeof(int);
         memcpy(&(contextoEjecucion->pid), buffer + desplazamiento, sizeof(uint32_t));
-        desplazamiento+=sizeof(contextoEjecucion->pid);
+        desplazamiento += sizeof(contextoEjecucion->pid) + sizeof(int);
         memcpy(&(contextoEjecucion->programCounter), buffer+desplazamiento, sizeof(uint32_t));
-        desplazamiento+=sizeof(contextoEjecucion->programCounter);
+        desplazamiento += sizeof(contextoEjecucion->programCounter) + sizeof(int);
         memcpy(&(contextoEjecucion->estado), buffer+desplazamiento, sizeof(estadoProceso));
-        desplazamiento+=sizeof(estadoProceso);
+        desplazamiento += sizeof(estadoProceso) + sizeof(int);
 
         //no haria falta volver a recibir las instrucciones porque no cambian
 
         //SE PODRIA LLEGAR A PONER EN UNA FUNCION APARTE PERO HAY QUE MANDAR ALGUNOS PARAMETROS
         //recibirRegistros();
 
-        char* AX;
-        memcpy(&(AX), buffer + desplazamiento, sizeof(char) * 4);
+        char* AX = malloc(sizeof(char) * (4 + 1));
+        memcpy(AX, buffer + desplazamiento, sizeof(char) * (4 + 1));
         dictionary_put(contextoEjecucion->registrosCPU, "AX", AX);
-        free(AX);
+        desplazamiento += sizeof(char) * (4 + 1) + sizeof(int);
 
-        char* BX;
-        memcpy(&(BX), buffer + desplazamiento, sizeof(char) * 4);
+        char* BX = malloc(sizeof(char) * (4 + 1));
+        memcpy(BX, buffer + desplazamiento, sizeof(char) * (4 + 1));
         dictionary_put(contextoEjecucion->registrosCPU, "BX", BX);
-        free(BX);
+        desplazamiento += sizeof(char) * (4 + 1) + sizeof(int);
 
-        char* CX;
-        memcpy(&(CX), buffer + desplazamiento, sizeof(char) * 4);
+        char* CX = malloc(sizeof(char) * (4 + 1));
+        memcpy(CX, buffer + desplazamiento, sizeof(char) * (4 + 1));
         dictionary_put(contextoEjecucion->registrosCPU, "CX", CX);
-        free(CX);
+        desplazamiento += sizeof(char) * (4 + 1) + sizeof(int);
 
-        char* DX;
-        memcpy(&(DX), buffer + desplazamiento, sizeof(char) * 4);
+        char* DX = malloc(sizeof(char) * (4 + 1));
+        memcpy(DX, buffer + desplazamiento, sizeof(char) * (4 + 1));
         dictionary_put(contextoEjecucion->registrosCPU, "DX", DX);
-        free(DX);
+        desplazamiento += sizeof(char) * (4 + 1) + sizeof(int);
 
-        char* EAX;
-        memcpy(&(EAX), buffer + desplazamiento, sizeof(char) * 8);
+        char* EAX = malloc(sizeof(char) * (8 + 1));
+        memcpy(EAX, buffer + desplazamiento, sizeof(char) * (8 + 1));
         dictionary_put(contextoEjecucion->registrosCPU, "EAX", EAX);
-        free(EAX);
+        desplazamiento += sizeof(char) * (8 + 1) + sizeof(int);
 
-        char* EBX;
-        memcpy(&(EBX), buffer + desplazamiento, sizeof(char) * 8);
+        char* EBX = malloc(sizeof(char) * (8 + 1));
+        memcpy(EBX, buffer + desplazamiento, sizeof(char) * (8 + 1));
         dictionary_put(contextoEjecucion->registrosCPU, "EBX", EBX);
-        free(EBX);
+        desplazamiento += sizeof(char) * (8 + 1) + sizeof(int);
 
-        char* ECX;
-        memcpy(&(ECX), buffer + desplazamiento, sizeof(char) * 8);
+        char* ECX = malloc(sizeof(char) * (8 + 1));
+        memcpy(ECX, buffer + desplazamiento, sizeof(char) * (8 + 1));
         dictionary_put(contextoEjecucion->registrosCPU, "ECX", ECX);
-        free(ECX);
+        desplazamiento += sizeof(char) * (8 + 1) + sizeof(int);
 
-        char* EDX;
-        memcpy(&(EDX), buffer + desplazamiento, sizeof(char) * 8);
+        char* EDX = malloc(sizeof(char) * (8 + 1));
+        memcpy(EDX, buffer + desplazamiento, sizeof(char) * (8 + 1));
         dictionary_put(contextoEjecucion->registrosCPU, "EDX", EDX);
-        free(EDX);
+        desplazamiento += sizeof(char) * (8 + 1) + sizeof(int);
 
-        char* RAX;
-        memcpy(&(RAX), buffer + desplazamiento, sizeof(char) * 16);
+        char* RAX = malloc(sizeof(char) * (16 + 1));
+        memcpy(RAX, buffer + desplazamiento, sizeof(char) * (16 + 1));
         dictionary_put(contextoEjecucion->registrosCPU, "RAX", RAX);
-        free(RAX);
+        desplazamiento += sizeof(char) * (16 + 1) + sizeof(int);
 
-        char* RBX;
-        memcpy(&(RBX), buffer + desplazamiento, sizeof(char) * 16);
+        char* RBX = malloc(sizeof(char) * (16 + 1));
+        memcpy(RBX, buffer + desplazamiento, sizeof(char) * (16 + 1));
         dictionary_put(contextoEjecucion->registrosCPU, "RBX", RBX);
-        free(RBX);
+        desplazamiento += sizeof(char) * (16 + 1) + sizeof(int);
 
-        char* RCX;
-        memcpy(&(RCX), buffer + desplazamiento, sizeof(char) * 16);
+        char* RCX = malloc(sizeof(char) * (16 + 1));
+        memcpy(RCX, buffer + desplazamiento, sizeof(char) * (16 + 1));
         dictionary_put(contextoEjecucion->registrosCPU, "RCX", RCX);
-        free(RCX);
+        desplazamiento += sizeof(char) * (16 + 1) + sizeof(int);
 
-        char* RDX;
-        memcpy(&(RDX), buffer + desplazamiento, sizeof(char) * 16);
+        char* RDX = malloc(sizeof(char) * (16 + 1));
+        memcpy(RDX, buffer + desplazamiento, sizeof(char) * (16 + 1));
         dictionary_put(contextoEjecucion->registrosCPU, "RDX", RDX);
-        free(RDX);
+        desplazamiento += sizeof(char) * (16 + 1) + sizeof(int);
 
         //recibirTablaDeArchivos();
 
         //recibirTablaDeSegmentos();
 		
-	}
+	//}
 
 	free(buffer);
 
 }
 
 void* recibirTablaDeArchivos(){
+    return NULL;
 
 }
 
 void* recibirTablaDeSegmentos(){
+    return NULL;
 
 }
 
@@ -276,9 +302,10 @@ void actualizarPCB(t_pcb* proceso){
 }
 
 
-void destroyContexto(t_contexto *contexto) {
-	list_destroy_and_destroy_elements(contexto->instrucciones, free);
-	list_destroy_and_destroy_elements(contexto->tablaDeArchivos, free);
-	list_destroy_and_destroy_elements(contexto->tablaDeSegmentos, free);
-	dictionary_destroy_and_destroy_elements(contexto->registrosCPU, free);
+void destroyContexto() {
+	list_destroy_and_destroy_elements(contextoEjecucion->instrucciones, free);
+	list_destroy_and_destroy_elements(contextoEjecucion->tablaDeArchivos, free);
+	list_destroy_and_destroy_elements(contextoEjecucion->tablaDeSegmentos, free);
+	dictionary_destroy_and_destroy_elements(contextoEjecucion->registrosCPU, free);
+    free(contextoEjecucion);
 }

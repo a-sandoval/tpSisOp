@@ -41,22 +41,38 @@ void planificarALargoPlazo(){
     }
 }
 
+void imprimirRegistros(t_dictionary *registros) {
+    log_info(logger, "AX: %s", (char *) dictionary_get(registros, "AX"));
+}
+
 void planificarACortoPlazo(t_pcb* (*proximoAEjecutar)()) {
 
     while (1) {
         sem_wait(&hayProcesosReady); 
         t_pcb* aEjecutar = proximoAEjecutar();
 
-        estadoProceso estadoAnterior= aEjecutar->estado;
+        estadoProceso estadoAnterior = aEjecutar->estado;
         aEjecutar->estado = EXEC; 
 
         loggearCambioDeEstado(aEjecutar->pid, estadoAnterior,aEjecutar->estado);
 
         procesarPCB(aEjecutar);
-        // ESTO ES ALGO DEL MOMENTO, NO LO HACE EL KERNEL!!!
-        sleep (2);
-        aEjecutar->estado = SALIDA;
-        enviarMensaje("Terminado", aEjecutar->socketPCB);
+        imprimirRegistros(aEjecutar->registrosCPU);
+        switch(aEjecutar->estado) {
+            case READY:
+                encolar(pcbsREADY, aEjecutar);
+                sem_post(&hayProcesosReady);
+                break;
+            case SALIDA:
+                enviarMensaje("Terminado", aEjecutar->socketPCB);
+                destruirPCB(aEjecutar);
+                break;
+            default:
+                enviarMensaje("Terminado", aEjecutar->socketPCB);
+                destruirPCB(aEjecutar);
+                break;
+
+        } 
         
     }
 }

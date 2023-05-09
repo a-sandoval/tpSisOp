@@ -146,5 +146,6 @@ char* obtenerAlgoritmoPlanificacion();
  */
 void destruirInstruccion(t_instruccion* instruccion);
 void destruirRegistro(char* registro); 
+void imprimirRegistros(t_dictionary *registros);
 
 #endif 

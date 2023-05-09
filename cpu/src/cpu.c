@@ -15,13 +15,13 @@ int main(void){
 	close(conexionAMemoria);
 	terminarPrograma(); 
     
-
+	/*
 	recibirContextoActualizado();
 	if(contextoEjecucion != NULL){
 		cicloDeInstruccion();
 	}else{
 		log_error(loggerError,"No se recibió bien el contexto try again o deal with it");
 	}
-
+	*/
 	return EXIT_SUCCESS;
 }	

@@ -45,7 +45,7 @@ void recibirContextoActualizado();
 
 
 void actualizarPCB(t_pcb* proceso);
-void destroyContexto(t_contexto *contexto);
+void destroyContexto();
 extern t_log* loggerError; 
 
 

@@ -12,6 +12,7 @@ typedef enum estadoProceso{
     BLOCK,
     SALIDA,
 } estadoProceso; 
+
 typedef struct {
     char AX[4], BX[4], CX[4], DX[4];
     char EAX[8], EBX[8], ECX[8], EDX[8];
