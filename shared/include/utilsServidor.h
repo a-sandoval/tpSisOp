@@ -25,13 +25,7 @@ int recibir_operacion();
 void element_destroyer(void* palabra);
 void iterator(void *value);
 int alistarServidor(char *puerto);
-int ejecutarServidor();
+//int ejecutarServidor();
 char *recibirMensaje();
-
-/*
-bool esClaveValida(void *clave);
-char* recibir_clave();
-
-*/
 
 #endif /* UTILS_SERVIDOR_H */ 

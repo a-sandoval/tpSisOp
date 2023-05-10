@@ -95,30 +95,7 @@ int alistarServidor(char *puerto){
 
 	return esperar_cliente(server_fd);
 }
-/*
-int ejecutarServidor(){
-	t_list* lista;
-	while (1) {
-		int codOP = recibir_operacion();
-		switch (codOP) {
-			case MENSAJE:
-				log_info(logger, "Se autoriza continuar");
-				break;
-			case PAQUETE:
-				lista = recibir_paquete();
-				list_iterate(lista, (void*) iterator); 
-				list_destroy_and_destroy_elements(lista, (void*)element_destroyer);
-				break;
-			case -1:
-				log_error(logger, "El cliente se desconecto");
-				return EXIT_FAILURE;
-			default:
-				log_warning(logger,"Operacion desconocida. No quieras meter la pata");
-				break;
-		}
-	}
-}
-*/
+
 void element_destroyer(void *palabra){
 	free(palabra);
 }
