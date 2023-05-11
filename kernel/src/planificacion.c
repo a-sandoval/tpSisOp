@@ -37,7 +37,9 @@ void planificarALargoPlazo(){
         encolar(pcbsREADY, pcb);
         
         sem_post(&hayProcesosReady);
-        sem_post(&semGradoMultiprogramacion);
+
+    
+        
     }
 }
 
@@ -61,11 +63,13 @@ void planificarACortoPlazo(t_pcb* (*proximoAEjecutar)()) {
         switch(aEjecutar->estado) {
             case READY:
                 encolar(pcbsREADY, aEjecutar);
-                sem_post(&hayProcesosReady);
+                sem_post(&hayProcesosReady); 
                 break;
             case SALIDA:
                 enviarMensaje("Terminado", aEjecutar->socketPCB);
                 destruirPCB(aEjecutar);
+                sem_post(&semGradoMultiprogramacion); //Esta bien ese sem post aca o seria antes?  
+
                 break;
             default:
                 enviarMensaje("Terminado", aEjecutar->socketPCB);
