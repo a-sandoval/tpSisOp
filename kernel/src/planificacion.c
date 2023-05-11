@@ -103,8 +103,17 @@ void planificarACortoPlazoSegunAlgoritmo(){
     return desencolar(pcbsREADY);
 }
 
+/*void* mayorRR(void* unPCB, void* otroPCB) {
+
+    t_pcb* pcb1 = (t_pcb*) unPCB; 
+    t_pcb* pcb2 = (t_pcb*) otroPCB; 
+
+    
+}*/ 
+
  t_pcb* proximoAEjecutarHRRN(){
     //TODO
+    //return list_get_maximum(pcbsREADY,mayorRR); 
     return NULL;
 }
 
