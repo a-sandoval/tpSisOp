@@ -62,15 +62,18 @@ void planificarACortoPlazo(t_pcb* (*proximoAEjecutar)()) {
         imprimirRegistros(aEjecutar->registrosCPU);
         switch(aEjecutar->estado) {
             case READY:
+                sem_wait(&semGradoMultiprogramacion); 
                 encolar(pcbsREADY, aEjecutar);
                 sem_post(&hayProcesosReady); 
                 break;
             case SALIDA:
                 enviarMensaje("Terminado", aEjecutar->socketPCB);
                 destruirPCB(aEjecutar);
-                sem_post(&semGradoMultiprogramacion); //Esta bien ese sem post aca o seria antes?  
-
+                sem_post(&semGradoMultiprogramacion); 
                 break;
+            case BLOCK:
+                sem_post(&semGradoMultiprogramacion);
+                break; 
             default:
                 enviarMensaje("Terminado", aEjecutar->socketPCB);
                 destruirPCB(aEjecutar);
