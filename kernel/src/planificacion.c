@@ -61,8 +61,7 @@ void planificarACortoPlazo(t_pcb* (*proximoAEjecutar)()) {
         procesarPCB(aEjecutar);
         imprimirRegistros(aEjecutar->registrosCPU);
         switch(aEjecutar->estado) {
-            case READY:
-                sem_wait(&semGradoMultiprogramacion); 
+            case READY: 
                 encolar(pcbsREADY, aEjecutar);
                 sem_post(&hayProcesosReady); 
                 break;
@@ -72,7 +71,6 @@ void planificarACortoPlazo(t_pcb* (*proximoAEjecutar)()) {
                 sem_post(&semGradoMultiprogramacion); 
                 break;
             case BLOCK:
-                sem_post(&semGradoMultiprogramacion);
                 break; 
             default:
                 enviarMensaje("Terminado", aEjecutar->socketPCB);
@@ -80,6 +78,8 @@ void planificarACortoPlazo(t_pcb* (*proximoAEjecutar)()) {
                 break;
 
         } 
+
+        //No hacerlo por estado de proceso, sino por el mensaje que envia (por Wait, Yield (por cada syscall)). Devolver MOTIVO de devolucion, puede tener params
         
     }
 }
