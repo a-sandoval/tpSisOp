@@ -148,4 +148,8 @@ void destruirInstruccion(t_instruccion* instruccion);
 void destruirRegistro(char* registro); 
 void imprimirRegistros(t_dictionary *registros);
 
+
+void* mayorRR(void* unPCB, void* otroPCB); 
+double calcularRR(void* pcb); 
+
 #endif 

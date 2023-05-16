@@ -47,7 +47,7 @@ int procesarPCB(t_pcb* procesoEnEjecucion) {
 
     asignarPCBAContexto(procesoEnEjecucion);
     imprimirRegistros(procesoEnEjecucion->registrosCPU);
-    enviar_contexto();
+    enviarContexto();
 
     // aca a su vez hay que recibir el contexto actualizado que mande la cpu, deserializarlo y cambiarlo en el PCB
     //Noc si esto iria aca porque en realidad seria como un case compartido con las cosas
@@ -59,12 +59,12 @@ int procesarPCB(t_pcb* procesoEnEjecucion) {
         case CONTEXTOEJECUCION:
             recibirContextoActualizado(); //me carga el contexto actualizado en el mismo contextoEjecucion;
             actualizarPCB(procesoEnEjecucion);
-            //destroyContexto();
+            destroyContexto();
             break;
     }
 
     //close(conexionACPU);
-    
+    free(bufferContexto);
     return 0;
  
 }
@@ -72,32 +72,77 @@ int procesarPCB(t_pcb* procesoEnEjecucion) {
 void iniciarContexto(){
     contextoEjecucion = malloc(sizeof(t_contexto));
     contextoEjecucion->estado = 0;
-	contextoEjecucion->instrucciones = list_create();
-	contextoEjecucion->instruccionesLength = list_size(contextoEjecucion->instrucciones);
+	contextoEjecucion->instrucciones = NULL;
+	contextoEjecucion->instruccionesLength = 0;
 	contextoEjecucion->pid = 0;
 	contextoEjecucion->programCounter = 0;
-	contextoEjecucion->registrosCPU = dictionary_create();
-	contextoEjecucion->tablaDeArchivos = list_create();
-	contextoEjecucion->tablaDeArchivosSize = list_size(contextoEjecucion->tablaDeArchivos);
-	contextoEjecucion->tablaDeSegmentos = list_create();
-	contextoEjecucion->tablaDeSegmentosSize = list_size(contextoEjecucion->tablaDeSegmentos);
+	contextoEjecucion->registrosCPU = NULL;
+	contextoEjecucion->tablaDeArchivos = NULL;
+	contextoEjecucion->tablaDeArchivosSize = 0;
+	contextoEjecucion->tablaDeSegmentos = NULL;
+	contextoEjecucion->tablaDeSegmentosSize = 0;
 }
 
 // FUNCIONES PARA ENVIO DE CONTEXTO DE EJECUCION
 
+t_dictionary *registrosDelCPU(t_dictionary *aCopiar) {
+    t_dictionary *copia = dictionary_create();
+    
+    char* AX = malloc(sizeof(char) * (4 + 1));
+    char* BX = malloc(sizeof(char) * (4 + 1));
+    char* CX = malloc(sizeof(char) * (4 + 1));
+    char* DX = malloc(sizeof(char) * (4 + 1));
+    char* EAX = malloc(sizeof(char) * (8 + 1));
+    char* EBX = malloc(sizeof(char) * (8 + 1));
+    char* ECX = malloc(sizeof(char) * (8 + 1));
+    char* EDX = malloc(sizeof(char) * (8 + 1));
+    char* RAX = malloc(sizeof(char) * (16 + 1));
+    char* RBX = malloc(sizeof(char) * (16 + 1));
+    char* RCX = malloc(sizeof(char) * (16 + 1));
+    char* RDX = malloc(sizeof(char) * (16 + 1));
+    strncpy(AX, dictionary_get(aCopiar, "AX"), 5);
+    strncpy(BX, dictionary_get(aCopiar, "BX"), 5);
+    strncpy(CX, dictionary_get(aCopiar, "CX"), 5);
+    strncpy(DX, dictionary_get(aCopiar, "DX"), 5);
+    strncpy(EAX, dictionary_get(aCopiar, "EAX"), 9);
+    strncpy(EBX, dictionary_get(aCopiar, "EBX"), 9);
+    strncpy(ECX, dictionary_get(aCopiar, "ECX"), 9);
+    strncpy(EDX, dictionary_get(aCopiar, "EDX"), 9);
+    strncpy(RAX, dictionary_get(aCopiar, "RAX"), 17);
+    strncpy(RBX, dictionary_get(aCopiar, "RBX"), 17);
+    strncpy(RCX, dictionary_get(aCopiar, "RCX"), 17);
+    strncpy(RDX, dictionary_get(aCopiar, "RDX"), 17);
+    dictionary_put(copia, "AX", AX);
+    dictionary_put(copia, "BX", BX);
+    dictionary_put(copia, "CX", CX);
+    dictionary_put(copia, "DX", DX);
+    dictionary_put(copia, "EAX", EAX);
+    dictionary_put(copia, "EBX", EBX);
+    dictionary_put(copia, "ECX", ECX);
+    dictionary_put(copia, "EDX", EDX);
+    dictionary_put(copia, "RAX", RAX);
+    dictionary_put(copia, "RBX", RBX);
+    dictionary_put(copia, "RCX", RCX);
+    dictionary_put(copia, "RDX", RDX);
+
+    return copia;
+}
+
 void asignarPCBAContexto(t_pcb*  proceso){
 
     contextoEjecucion->estado = proceso->estado;
-    contextoEjecucion->instrucciones = proceso->instrucciones;
+    contextoEjecucion->instrucciones = list_duplicate(proceso->instrucciones);
+    contextoEjecucion->instruccionesLength = list_size(contextoEjecucion->instrucciones);
     contextoEjecucion->pid = proceso->pid;
     contextoEjecucion->programCounter = proceso->programCounter;
-    contextoEjecucion->registrosCPU = proceso->registrosCPU;
-    contextoEjecucion->tablaDeArchivos = proceso->tablaDeArchivos;
-    contextoEjecucion->tablaDeSegmentos = proceso->tablaDeSegmentos;
-    contextoEjecucion->instruccionesLength = 0;
+    contextoEjecucion->registrosCPU = registrosDelCPU(proceso->registrosCPU);
+    contextoEjecucion->tablaDeArchivos = list_duplicate(proceso->tablaDeArchivos);
+    contextoEjecucion->tablaDeArchivosSize = list_size(proceso->tablaDeArchivos);
+    contextoEjecucion->tablaDeSegmentos = list_duplicate(proceso->tablaDeSegmentos);
+    contextoEjecucion->tablaDeSegmentosSize = list_size(proceso->tablaDeSegmentos);
 }
 
-void enviar_contexto(){ 
+void enviarContexto(){ 
     t_paquete* paquete = crearPaquete();
     
     paquete->codigo_operacion = CONTEXTOEJECUCION;
@@ -209,7 +254,7 @@ void recibirContextoActualizado(){
 
         //SE PODRIA LLEGAR A PONER EN UNA FUNCION APARTE PERO HAY QUE MANDAR ALGUNOS PARAMETROS
         //recibirRegistros();
-
+        dictionary_clean_and_destroy_elements(contextoEjecucion->registrosCPU, free);
         char* AX = malloc(sizeof(char) * (4 + 1));
         memcpy(AX, buffer + desplazamiento, sizeof(char) * (4 + 1));
         dictionary_put(contextoEjecucion->registrosCPU, "AX", AX);

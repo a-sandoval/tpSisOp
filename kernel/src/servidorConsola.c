@@ -39,9 +39,13 @@ void ejecutarServidorKernel(){
 				log_info(logger, "%s", mensaje);
 				if (!strcmp(mensaje, "Fin de instrucciones")) {
 					ingresarANew(PCB);
+					free(mensaje);
 					return;
 				}
-				else break;
+				else {
+					free(mensaje);
+					break;
+				}
 			default:
 				break;
 		}

@@ -33,11 +33,12 @@ void iniciarContexto();
 
 // FUNCIONES PARA ENVIO DE CONTEXTO DE EJECUCION
 
+t_dictionary *registrosDelCPU(t_dictionary *aCopiar);
 void asignarPCBAContexto(t_pcb*  proceso);
 
 void agregarInstruccionesAPaquete(t_paquete* paquete, t_list* instrucciones);
 void agregarRegistrosAPaquete(t_paquete* paquete, t_dictionary* registrosCPU);
-void enviar_contexto();
+void enviarContexto();
 
 
 //FUNCIONES PARA RECIBIR NUEVO CONTEXTO POR PARTE DE LA CPU

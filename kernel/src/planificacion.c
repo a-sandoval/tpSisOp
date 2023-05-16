@@ -103,18 +103,27 @@ void planificarACortoPlazoSegunAlgoritmo(){
     return desencolar(pcbsREADY);
 }
 
-/*void* mayorRR(void* unPCB, void* otroPCB) {
+void* mayorRR(void* unPCB, void* otroPCB) {
 
     t_pcb* pcb1 = (t_pcb*) unPCB; 
     t_pcb* pcb2 = (t_pcb*) otroPCB; 
 
-    
-}*/ 
+    return (calcularRR(unPCB) >=calcularRR(otroPCB)) ? unPCB : otroPCB; 
+
+}
+
+double calcularRR(void* elem) {
+
+    t_pcb* pcb = (t_pcb*) elem; 
+
+    return 0; // TO DO
+
+}
 
  t_pcb* proximoAEjecutarHRRN(){
-    //TODO
-    //return list_get_maximum(pcbsREADY,mayorRR); 
-    return NULL;
+    
+    return list_get_maximum(pcbsREADY,mayorRR); 
+    
 }
 
 // Semaforos
@@ -137,7 +146,7 @@ t_pcb* crearPCB() {
     nuevoPCB->programCounter = 0;
     nuevoPCB->instrucciones = list_create(); 
     nuevoPCB->estimadoProximaRafaga = obtenerEstimacionInicial(); 
-    nuevoPCB->llegadaAReady = temporal_create(); 
+    nuevoPCB->tiempoEnReady = temporal_create(); 
     nuevoPCB->tablaDeArchivos = list_create(); 
     nuevoPCB->tablaDeSegmentos=list_create(); 
     nuevoPCB->registrosCPU = crearDiccionarioDeRegistros(); 
@@ -150,7 +159,10 @@ t_pcb* crearPCB() {
 
 void destruirPCB(t_pcb* pcb){
     list_destroy_and_destroy_elements(pcb->instrucciones,(void*)destruirInstruccion); 
+    list_destroy_and_destroy_elements(pcb->tablaDeArchivos,(void*)destruirInstruccion); 
+    list_destroy_and_destroy_elements(pcb->tablaDeSegmentos,(void*)destruirInstruccion); 
     dictionary_destroy_and_destroy_elements(pcb->registrosCPU, (void*)destruirRegistro); 
+    temporal_destroy(pcb->tiempoEnReady);
     free(pcb);
 }
 

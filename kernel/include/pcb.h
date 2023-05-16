@@ -28,7 +28,7 @@ typedef struct {
     estadoProceso estado; 
     t_dictionary* registrosCPU;
     int estimadoProximaRafaga; 
-    t_temporal* llegadaAReady; 
+    t_temporal* tiempoEnReady; 
     t_list* tablaDeSegmentos; 
     t_list* tablaDeArchivos; 
 
