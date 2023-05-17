@@ -2,7 +2,7 @@
 
 int iniciarServidor(char *puerto){
 
-	int socket_servidor;
+	int socketServidor;
 
 	struct addrinfo hints, *servinfo;
 
@@ -14,23 +14,25 @@ int iniciarServidor(char *puerto){
 	getaddrinfo(NULL, puerto, &hints, &servinfo);
 
 	// Creamos el socket de escucha del servidor
-	socket_servidor = socket(servinfo->ai_family, servinfo->ai_socktype,servinfo->ai_protocol);
+	socketServidor = socket(servinfo->ai_family, servinfo->ai_socktype,servinfo->ai_protocol);
+	int temp = 1;
+	setsockopt(socketServidor, SOL_SOCKET, SO_REUSEADDR, &(temp), sizeof(int));
 
 	// Asociamos el socket a un puerto
-	bind(socket_servidor, servinfo->ai_addr, servinfo->ai_addrlen);
+	bind(socketServidor, servinfo->ai_addr, servinfo->ai_addrlen);
 
 	// Escuchamos las conexiones entrantes
-	listen(socket_servidor, SOMAXCONN);
+	listen(socketServidor, SOMAXCONN);
 
 	freeaddrinfo(servinfo);
 	log_trace(logger, "Listo para escuchar a mi cliente");
 
-	return socket_servidor;
+	return socketServidor;
 }
 
-int esperar_cliente(int socket_servidor){
+int esperar_cliente(int socketServidor){
 
-	int socketClienteFD = accept(socket_servidor, NULL, NULL);
+	int socketClienteFD = accept(socketServidor, NULL, NULL);
 	//log_info(logger, "Se conecto un cliente!");
 
 	return socketClienteFD;
