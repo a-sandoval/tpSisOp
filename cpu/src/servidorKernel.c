@@ -7,6 +7,7 @@ void escucharAlKernel() {
     char *puertoEscucha = confGet("PUERTO_ESCUCHA"); 
     socketCliente = alistarServidor(puertoEscucha);
     ejecutarServidorCPU();  
+    //close(socketCliente);
 }
 
 void iterator(void *value){
@@ -19,7 +20,7 @@ int ejecutarServidorCPU(){
 		int codOP = recibir_operacion();
 		switch (codOP) {
 			case -1:
-				//log_info(logger, "El cliente se desconecto");
+				log_info(logger, "La CPU se desconecto, esperando conexiones.");
 				return EXIT_FAILURE;
 			case CONTEXTOEJECUCION:
 				recibirContextoActualizado();

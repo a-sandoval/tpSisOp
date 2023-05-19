@@ -27,10 +27,16 @@ char *recibirMensaje()
 }
 
 int main(int, char *archivos[]) {
-    logger        = iniciarLogger("consola.log", "consola");
-    config        = iniciarConfiguracion(archivos[2]);
-    socketCliente = conexion("KERNEL");
-    if (!(socketCliente + 1)) error("No se pudo conectar a la Kernel");
+    logger = iniciarLogger("consola.log", "consola");
+    config = iniciarConfiguracion(archivos[2]);
+    socketCliente = -1;
+    while(!(socketCliente + 1)) {
+        socketCliente = conexion("KERNEL");
+        if (!(socketCliente + 1)) {
+            log_warning(logger, "No se pudo conectar a la Kernel, esperando 5 segundos.");
+            sleep(5);
+        }
+    }
     FILE *codigo = abrir(archivos[1], "r");
     size_t cantChars = MAX_CHARS;
 

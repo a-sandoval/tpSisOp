@@ -59,6 +59,7 @@ int procesarPCB(t_pcb* procesoEnEjecucion) {
         case CONTEXTOEJECUCION:
             recibirContextoActualizado(); //me carga el contexto actualizado en el mismo contextoEjecucion;
             actualizarPCB(procesoEnEjecucion);
+            imprimirRegistros(contextoEjecucion->registrosCPU);
             destroyContexto();
             break;
     }
@@ -100,18 +101,18 @@ t_dictionary *registrosDelCPU(t_dictionary *aCopiar) {
     char* RBX = malloc(sizeof(char) * (16 + 1));
     char* RCX = malloc(sizeof(char) * (16 + 1));
     char* RDX = malloc(sizeof(char) * (16 + 1));
-    strncpy(AX, dictionary_get(aCopiar, "AX"), 5);
-    strncpy(BX, dictionary_get(aCopiar, "BX"), 5);
-    strncpy(CX, dictionary_get(aCopiar, "CX"), 5);
-    strncpy(DX, dictionary_get(aCopiar, "DX"), 5);
-    strncpy(EAX, dictionary_get(aCopiar, "EAX"), 9);
-    strncpy(EBX, dictionary_get(aCopiar, "EBX"), 9);
-    strncpy(ECX, dictionary_get(aCopiar, "ECX"), 9);
-    strncpy(EDX, dictionary_get(aCopiar, "EDX"), 9);
-    strncpy(RAX, dictionary_get(aCopiar, "RAX"), 17);
-    strncpy(RBX, dictionary_get(aCopiar, "RBX"), 17);
-    strncpy(RCX, dictionary_get(aCopiar, "RCX"), 17);
-    strncpy(RDX, dictionary_get(aCopiar, "RDX"), 17);
+    strncpy(AX, (char *)dictionary_get(aCopiar, "AX"), 4 + 1);
+    strncpy(BX, (char *)dictionary_get(aCopiar, "BX"), 4 + 1);
+    strncpy(CX, (char *)dictionary_get(aCopiar, "CX"), 4 + 1);
+    strncpy(DX, (char *)dictionary_get(aCopiar, "DX"), 4 + 1);
+    strncpy(EAX, (char *)dictionary_get(aCopiar, "EAX"), 8 + 1);
+    strncpy(EBX, (char *)dictionary_get(aCopiar, "EBX"), 8 + 1);
+    strncpy(ECX, (char *)dictionary_get(aCopiar, "ECX"), 8 + 1);
+    strncpy(EDX, (char *)dictionary_get(aCopiar, "EDX"), 8 + 1);
+    strncpy(RAX, (char *)dictionary_get(aCopiar, "RAX"), 16 + 1);
+    strncpy(RBX, (char *)dictionary_get(aCopiar, "RBX"), 16 + 1);
+    strncpy(RCX, (char *)dictionary_get(aCopiar, "RCX"), 16 + 1);
+    strncpy(RDX, (char *)dictionary_get(aCopiar, "RDX"), 16 + 1);
     dictionary_put(copia, "AX", AX);
     dictionary_put(copia, "BX", BX);
     dictionary_put(copia, "CX", CX);
@@ -137,9 +138,10 @@ void asignarPCBAContexto(t_pcb*  proceso){
     contextoEjecucion->programCounter = proceso->programCounter;
     contextoEjecucion->registrosCPU = registrosDelCPU(proceso->registrosCPU);
     contextoEjecucion->tablaDeArchivos = list_duplicate(proceso->tablaDeArchivos);
-    contextoEjecucion->tablaDeArchivosSize = list_size(proceso->tablaDeArchivos);
+    contextoEjecucion->tablaDeArchivosSize = list_size(contextoEjecucion->tablaDeArchivos);
     contextoEjecucion->tablaDeSegmentos = list_duplicate(proceso->tablaDeSegmentos);
-    contextoEjecucion->tablaDeSegmentosSize = list_size(proceso->tablaDeSegmentos);
+    contextoEjecucion->tablaDeSegmentosSize = list_size(contextoEjecucion->tablaDeSegmentos);
+
 }
 
 void enviarContexto(){ 
@@ -179,56 +181,34 @@ void agregarInstruccionesAPaquete(t_paquete* paquete, t_list* instrucciones){
     }
 }
 
-void agregarRegistrosAPaquete(t_paquete* paquete, t_dictionary* registrosCPU){
-     
-     // no terminaran en /0??? si, terminan en \0
+void agregarRegistrosAPaquete(t_paquete* paquete, t_dictionary* registrosCPU) {
+
     char *AX = dictionary_get(registrosCPU,"AX"); 
-    agregarAPaquete(paquete, AX, sizeof(char) * (4 + 1));
-    //free(AX);
-
     char* BX = dictionary_get(registrosCPU,"BX");
-    agregarAPaquete(paquete, BX, sizeof(char) * (4 + 1));
-    //free(BX);
-
     char* CX = dictionary_get(registrosCPU,"CX");
-    agregarAPaquete(paquete, CX, sizeof(char) * (4 + 1));
-    //free(CX);
-
     char* DX = dictionary_get(registrosCPU,"DX");
-    agregarAPaquete(paquete, DX, sizeof(char) * (4 + 1));
-    //free(DX);
-
     char* EAX = dictionary_get(registrosCPU,"EAX");
-    agregarAPaquete(paquete, EAX, sizeof(char) * (8 + 1));
-    //free(EAX);
-
     char* EBX = dictionary_get(registrosCPU,"EBX");
-    agregarAPaquete(paquete, EBX, sizeof(char) * (8 + 1));
-    //free(EBX);
-
     char* ECX = dictionary_get(registrosCPU,"ECX");
-    agregarAPaquete(paquete, ECX, sizeof(char) * (8 + 1));
-    //free(ECX);
-
     char* EDX = dictionary_get(registrosCPU,"EDX");
-    agregarAPaquete(paquete, EDX, sizeof(char) * (8 + 1));
-    //free(EDX);
-
     char* RAX = dictionary_get(registrosCPU,"RAX");
-    agregarAPaquete(paquete, RAX, sizeof(char) * (16 + 1));
-    //free(RAX);
-
     char* RBX = dictionary_get(registrosCPU,"RBX");
-    agregarAPaquete(paquete, RBX, sizeof(char) * (16 + 1));
-    //free(RBX);
-
     char* RCX = dictionary_get(registrosCPU,"RCX");
-    agregarAPaquete(paquete, RCX, sizeof(char) * (16 + 1));
-    //free(RCX);
-
     char* RDX = dictionary_get(registrosCPU,"RDX");
-    agregarAPaquete(paquete, RDX, sizeof(char) * (16 + 1));
-    //free(RDX);
+    
+    agregarAPaquete(paquete, AX, sizeof(char) * (4 + 1));
+    agregarAPaquete(paquete, BX, sizeof(char) * (4 + 1));
+    agregarAPaquete(paquete, CX, sizeof(char) * (4 + 1));
+    agregarAPaquete(paquete, DX, sizeof(char) * (4 + 1));
+    agregarAPaquete(paquete, EAX, sizeof(char) * (8 + 1));
+    agregarAPaquete(paquete, EBX, sizeof(char) * (8 + 1));
+    agregarAPaquete(paquete, ECX, sizeof(char) * (8 + 1));
+    agregarAPaquete(paquete, EDX, sizeof(char) * (8 + 1));
+    agregarAPaquete(paquete, RAX, sizeof(char) * (16 + 1));
+    agregarAPaquete(paquete, RBX, sizeof(char) * (16 + 1));
+    agregarAPaquete(paquete, RCX, sizeof(char) * (16 + 1));
+    agregarAPaquete(paquete, RDX, sizeof(char) * (16 + 1));    
+
 }
 
 
@@ -335,22 +315,31 @@ void* recibirTablaDeSegmentos(){
 
 }
 
+void iteratore(void *test) {
+    log_info(logger, (char *)test);
+}
+
 void actualizarPCB(t_pcb* proceso){
     proceso->estado = contextoEjecucion->estado;
-    proceso->instrucciones = contextoEjecucion->instrucciones;
+	list_destroy(proceso->instrucciones);
+    proceso->instrucciones = list_duplicate(contextoEjecucion->instrucciones);
+    //list_iterate(proceso->instrucciones, iteratore);
     proceso->pid = contextoEjecucion->pid;
     proceso->programCounter = contextoEjecucion->programCounter;
-    proceso->registrosCPU = contextoEjecucion->registrosCPU;
-    proceso->tablaDeArchivos = contextoEjecucion->tablaDeArchivos;
-    proceso->tablaDeSegmentos = contextoEjecucion->tablaDeSegmentos;
+	dictionary_destroy_and_destroy_elements(proceso->registrosCPU, free);
+    proceso->registrosCPU = registrosDelCPU(contextoEjecucion->registrosCPU);
+	list_destroy(proceso->tablaDeArchivos);
+    proceso->tablaDeArchivos = list_duplicate(contextoEjecucion->tablaDeArchivos);
+	list_destroy(proceso->tablaDeSegmentos);
+    proceso->tablaDeSegmentos = list_duplicate(contextoEjecucion->tablaDeSegmentos);
 
 }
 
 
 void destroyContexto() {
-	list_destroy_and_destroy_elements(contextoEjecucion->instrucciones, free);
-	list_destroy_and_destroy_elements(contextoEjecucion->tablaDeArchivos, free);
-	list_destroy_and_destroy_elements(contextoEjecucion->tablaDeSegmentos, free);
+	list_destroy(contextoEjecucion->instrucciones);
+	list_destroy(contextoEjecucion->tablaDeArchivos);
+	list_destroy(contextoEjecucion->tablaDeSegmentos);
 	dictionary_destroy_and_destroy_elements(contextoEjecucion->registrosCPU, free);
     free(contextoEjecucion);
 }

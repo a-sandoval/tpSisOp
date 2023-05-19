@@ -59,7 +59,6 @@ void planificarACortoPlazo(t_pcb* (*proximoAEjecutar)()) {
         loggearCambioDeEstado(aEjecutar->pid, estadoAnterior,aEjecutar->estado);
 
         procesarPCB(aEjecutar);
-        imprimirRegistros(aEjecutar->registrosCPU);
         switch(aEjecutar->estado) {
             case READY: 
                 encolar(pcbsREADY, aEjecutar);
