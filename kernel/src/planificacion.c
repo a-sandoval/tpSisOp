@@ -168,19 +168,44 @@ void destruirPCB(t_pcb* pcb){
 t_dictionary* crearDiccionarioDeRegistros() {
 
     t_dictionary* registros = dictionary_create(); 
+    
+    char *AX = malloc(sizeof(char) * (4 + 1));
+    char *BX = malloc(sizeof(char) * (4 + 1));
+    char *CX = malloc(sizeof(char) * (4 + 1));
+    char *DX = malloc(sizeof(char) * (4 + 1));
+    char *EAX = malloc(sizeof(char) * (8 + 1));
+    char *EBX = malloc(sizeof(char) * (8 + 1));
+    char *ECX = malloc(sizeof(char) * (8 + 1));
+    char *EDX = malloc(sizeof(char) * (8 + 1));
+    char *RAX = malloc(sizeof(char) * (16 + 1));
+    char *RBX = malloc(sizeof(char) * (16 + 1));
+    char *RCX = malloc(sizeof(char) * (16 + 1));
+    char *RDX = malloc(sizeof(char) * (16 + 1));
 
-    dictionary_put(registros, "AX",  "0000"); 
-    dictionary_put(registros, "BX",  "0000"); 
-    dictionary_put(registros, "CX",  "0000"); 
-    dictionary_put(registros, "DX",  "0000"); 
-    dictionary_put(registros, "EAX", "00000000"); 
-    dictionary_put(registros, "EBX", "00000000");
-    dictionary_put(registros, "ECX", "00000000");
-    dictionary_put(registros, "EDX", "00000000"); 
-    dictionary_put(registros, "RAX", "0000000000000000"); 
-    dictionary_put(registros, "RBX", "0000000000000000");
-    dictionary_put(registros, "RCX", "0000000000000000");
-    dictionary_put(registros, "RDX", "0000000000000000"); 
+    strncpy(AX, "0000\0", 5);
+    strncpy(BX, "0000\0", 5);
+    strncpy(CX, "0000\0", 5);
+    strncpy(DX, "0000\0", 5);
+    strncpy(EAX, "00000000\0", 9);
+    strncpy(EBX, "00000000\0", 9);
+    strncpy(ECX, "00000000\0", 9);
+    strncpy(EDX, "00000000\0", 9);
+    strncpy(RAX, "0000000000000000\0", 17);
+    strncpy(RBX, "0000000000000000\0", 17);
+    strncpy(RCX, "0000000000000000\0", 17);
+    strncpy(RDX, "0000000000000000\0", 17);
+    dictionary_put(registros, "AX",  AX); 
+    dictionary_put(registros, "BX",  BX); 
+    dictionary_put(registros, "CX",  CX); 
+    dictionary_put(registros, "DX",  DX); 
+    dictionary_put(registros, "EAX", EAX); 
+    dictionary_put(registros, "EBX", EBX);
+    dictionary_put(registros, "ECX", ECX);
+    dictionary_put(registros, "EDX", EDX); 
+    dictionary_put(registros, "RAX", RAX); 
+    dictionary_put(registros, "RBX", RBX);
+    dictionary_put(registros, "RCX", RCX);
+    dictionary_put(registros, "RDX", RDX); 
 
     return registros;
 

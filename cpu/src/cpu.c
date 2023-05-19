@@ -13,6 +13,7 @@ int main(void){
     escucharAlKernel();
 
 	close(conexionAMemoria);
+	log_destroy(loggerError);
 	terminarPrograma(); 
     
 	/*

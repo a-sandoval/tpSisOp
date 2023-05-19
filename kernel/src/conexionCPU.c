@@ -315,15 +315,10 @@ void* recibirTablaDeSegmentos(){
 
 }
 
-void iteratore(void *test) {
-    log_info(logger, (char *)test);
-}
-
 void actualizarPCB(t_pcb* proceso){
     proceso->estado = contextoEjecucion->estado;
 	list_destroy(proceso->instrucciones);
     proceso->instrucciones = list_duplicate(contextoEjecucion->instrucciones);
-    //list_iterate(proceso->instrucciones, iteratore);
     proceso->pid = contextoEjecucion->pid;
     proceso->programCounter = contextoEjecucion->programCounter;
 	dictionary_destroy_and_destroy_elements(proceso->registrosCPU, free);

@@ -25,6 +25,11 @@ int cantParametros;
 
 t_contexto* contextoEjecucion;
 
+void liberarMemoria() {
+    for (int i = 0; i <= cantParametros; i++) free(elementosInstruccion[i]);
+    free(elementosInstruccion);
+}
+
 void cicloDeInstruccion(){
 
     fetch();//busca la próxima instruccion a ejecutar. Lista en pcb
@@ -32,6 +37,9 @@ void cicloDeInstruccion(){
     decode();//interpreta que instruccion va a ejecutar y si requiere traduccion logica o fisica
 
     execute();//ejecuta la instruccion 
+
+    
+    liberarMemoria();
 }
 
 // ------- Funciones del ciclo ------- //
@@ -42,9 +50,9 @@ void fetch() {
 }
 
 void decode(){
-    instruccionAEjecutar = string_replace(instruccionAEjecutar, "\0", "");
-    elementosInstruccion = string_split(instruccionAEjecutar, " ");
+    elementosInstruccion = string_n_split(instruccionAEjecutar, 4, " ");
     cantParametros = string_array_size(elementosInstruccion) - 1;
+    //instruccionAEjecutar = string_(elementosInstruccion[cantParametros], "\0", "");
     instruccionActual = buscar(elementosInstruccion[0], listaComandos);
 }
  
@@ -85,8 +93,8 @@ void execute() {
 void set_c(char* registro, char* valor){
     int tiempoEspera = obtenerTiempoEspera();
     sleep(tiempoEspera); 
-    free(dictionary_get(contextoEjecucion->registrosCPU,registro)); 
-    dictionary_put(contextoEjecucion->registrosCPU, registro, valor);
+    dictionary_remove_and_destroy(contextoEjecucion->registrosCPU, registro, free); 
+    dictionary_put(contextoEjecucion->registrosCPU, registro, string_duplicate(valor));
 }
 
 int obtenerTiempoEspera(){
