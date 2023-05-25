@@ -50,9 +50,9 @@
  * @var socketCliente 
  * Socket utilizado para conectarse y enviar informacion al Kernel.
  */
-int socketCliente;
-t_log *logger;
-t_config *config;
+extern int socketCliente;
+extern t_log *logger;
+extern t_config *config;
 
 /**
  * @fn int   main  (int, char *archivos[])
@@ -81,6 +81,12 @@ FILE *abrir (char *archivo, char *tipoDeArchivo);
  * @param ... Resto de los parametros en caso de mandarse.
  */
 void error (char *mensajeFormato, ...) __attribute__((format(printf, 1, 2)));
+
+/**
+ * @fn void esperarFinalizacion ()
+ * Funcion de espera para recibir el mensaje de finalizacion de la Kernel.
+ */
+void esperarFinalizacion ();
 
 /**
  * Fin de la consola. 

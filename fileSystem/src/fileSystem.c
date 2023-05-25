@@ -1,6 +1,12 @@
 #include "fileSystem/include/fileSystem.h"
 
-int main(void) {
+int socketCliente;
+int socketMemoria;
+t_log* logger; 
+t_log* loggerError; 
+t_config* config; 
+
+int main () {
     logger = iniciarLogger("fileSys.log","file-system");
     config = iniciarConfiguracion("filesys.config");
     loggerError = iniciarLogger("errores.log", "File-System"); 
@@ -8,15 +14,17 @@ int main(void) {
     escucharAlKernel();
     close(socketMemoria);
     terminarPrograma();
-    return 0;
+    exit(0);
 }
 
-void iterator(void *value) {
-    log_info(logger, "Se recibio esta data: %s; Se envia a la memoria.", (char *) value);
+void iterator (void *value) {
+    log_info(logger, "Se recibio esta data: %s.", (char *) value);
+    /*
     t_paquete *paquete = crearPaquete();
     agregarAPaquete ( paquete, value, sizeof(char) * strlen((char *) value) + 1 );
     enviarPaquete(paquete, socketMemoria);
     eliminarPaquete(paquete);
+    */
 }
 
 

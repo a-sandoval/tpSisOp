@@ -30,7 +30,7 @@ int iniciarServidor(char *puerto){
 	return socketServidor;
 }
 
-int esperar_cliente(int socketServidor){
+int esperarCliente(int socketServidor){
 
 	int socketClienteFD = accept(socketServidor, NULL, NULL);
 	//log_info(logger, "Se conecto un cliente!");
@@ -38,7 +38,7 @@ int esperar_cliente(int socketServidor){
 	return socketClienteFD;
 }
 
-int recibir_operacion(){
+int recibirOperacion(){
 	int cod_op;
 	if(recv(socketCliente, &cod_op, sizeof(int), MSG_WAITALL) > 0)
 		return cod_op;
@@ -49,7 +49,7 @@ int recibir_operacion(){
 	}
 }
 
-void* recibir_buffer(int* size){
+void* recibirBuffer(int* size){
 	void * buffer;
 
 	recv(socketCliente, size, sizeof(int), MSG_WAITALL);
@@ -62,19 +62,19 @@ void* recibir_buffer(int* size){
 char *recibirMensaje()
 {
 	int size;
-	char *buffer = recibir_buffer(&size);
+	char *buffer = recibirBuffer(&size);
 	return buffer;
 }
 
 
-t_list* recibir_paquete(){
+t_list* recibirPaquete(){
 	int size;
 	int desplazamiento = 0;
 	void * buffer;
 	t_list* valores = list_create();
 	int tamanio;
 
-	buffer = recibir_buffer(&size);
+	buffer = recibirBuffer(&size);
 	while(desplazamiento < size){
 		memcpy(&tamanio, buffer + desplazamiento, sizeof(int));
 		desplazamiento+=sizeof(int);
@@ -91,14 +91,14 @@ t_list* recibir_paquete(){
 //FUNCIONES DE USO COLECTIVO PARA EL SERVIDOR:
 int alistarServidor(char *puerto){
 
-	int server_fd = iniciarServidor(puerto);
+	int serverFD = iniciarServidor(puerto);
 
 	log_info(logger, "Servidor listo para recibir al cliente");
 
-	return esperar_cliente(server_fd);
+	return esperarCliente(serverFD);
 }
 
-void element_destroyer(void *palabra){
+void elementDestroyer(void *palabra){
 	free(palabra);
 }
 
@@ -109,7 +109,7 @@ void element_destroyer(void *palabra){
 
 char* recibir_clave(){
 	int size;
-	char* buffer = recibir_buffer(&size);
+	char* buffer = recibirBuffer(&size);
 	return buffer;
 }
 

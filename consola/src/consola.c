@@ -1,30 +1,8 @@
 #include "consola/include/consola.h"
 
-int recibir_operacion(){
-	int cod_op;
-	if(recv(socketCliente, &cod_op, sizeof(int), MSG_WAITALL) > 0)
-		return cod_op;
-	else
-	{
-		close(socketCliente);
-		return -1;
-	}
-}
-
-void* recibir_buffer(int* size){
-	void * buffer;
-	recv(socketCliente, size, sizeof(int), MSG_WAITALL);
-	buffer = malloc(*size);
-	recv(socketCliente, buffer, *size, MSG_WAITALL);
-	return buffer;
-}
-
-char *recibirMensaje()
-{
-	int size;
-	char *buffer = recibir_buffer(&size);
-	return buffer;
-}
+int socketCliente;
+t_log *logger;
+t_config *config;
 
 int main(int, char *archivos[]) {
     logger = iniciarLogger("consola.log", "consola");
@@ -55,10 +33,7 @@ int main(int, char *archivos[]) {
         free(linea);
     }
     enviarMensaje("Fin de instrucciones", socketCliente);
-    recibir_operacion();
-    char *buffer = recibirMensaje();
-    log_info(logger, buffer);
-    free(buffer);
+    esperarFinalizacion();
 
     close(socketCliente);
     fclose(codigo);
@@ -85,4 +60,16 @@ void error (char *mensajeFormato, ...) {
     close(socketCliente);
     terminarPrograma();
     exit(1);
+}
+
+void esperarFinalizacion () {
+	int cod_op;
+	recv(socketCliente, &cod_op, sizeof(int), MSG_WAITALL);
+	int size;
+	recv(socketCliente, &size, sizeof(int), MSG_WAITALL);
+	char * mensaje = malloc(size);
+	recv(socketCliente, mensaje, size, MSG_WAITALL);
+    log_info(logger, mensaje);
+    free(mensaje);
+    return;
 }

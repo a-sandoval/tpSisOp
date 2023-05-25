@@ -117,7 +117,7 @@ void execute() {
             f_truncate(nombreArchivo, tamanio);
             break;
         case WAIT://IMPLEMENTAR
-            wait(recurso);
+            wait_c(recurso);
             //un recurso puede ser un archivo, memoria reservada, semáforos, sockets, etc
             break;
         case SIGNAL://IMPLEMENTAR
@@ -162,15 +162,20 @@ void io(int tiempo){
     rafagaCPUEjecutada = temporal_gettime(rafagaCPU);  
 
     enviarContextoActualizado();
+    //enviarCantidadDeTiempoABloquearse(cantidad);
 }
 
 //WAIT (Recurso) --> Solicita al Kernel que se asigne una instancia del recurso indicado por parámetro.
-void wait(char* recurso){
+void wait_c(char* recurso){
     
     //Si hay un bloqueo, hay que detener la rafaga de CPU
     //temporal_stop(rafagaCPU); 
+    enviarContextoActualizado();
+    solicitarInstancia(recurso);
+}
 
-
+void solicitarInstancia(char* recurso){
+    //flor está en proceso de pensar esto
 }
 
 //SIGNAL (Recurso) --> Solicita al Kernel que se libere una instancia del recurso indicado por parámetro.
@@ -179,7 +184,12 @@ void signal_c(char* recurso){
     //Si hay un bloqueo, hay que detener la rafaga de CPU
 
     //temporal_stop(rafagaCPU); 
+    enviarContextoActualizado();
+    liberarInstancia(recurso);
+}
 
+void liberarInstancia(char* recurso){
+    //flor está en proceso de pensar esto tmb
 }
 
 //YIELD --> Desaloja voluntariamente el proceso de la CPU. Devuelve el Contexto de Ejecución actualizado al Kernel.

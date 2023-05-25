@@ -68,8 +68,7 @@ int buscar(char *elemento, char **lista);
 void set_c(char* , char* );
 void yield_c(); 
 void exit_c(); 
-//nuevos
-//Declaración de funciones para que no me rompa las bolas vs
+//Declaración de nuevas funciones
 void mov_in(char* , char* );
 void mov_out(char* , char* );
 void io(int );
@@ -79,14 +78,15 @@ void f_seek(char* , uint32_t );
 void f_read(char* , char* , int );
 void f_write(char* , char* , int );
 void f_truncate(char* , int );
-void wait(char* );
-void signal_c(char* );//se llama signal1 pq signal ya existe
+void wait_c(char* );
+void signal_c(char* );
 void create_segment(uint32_t , int );
 void delete_segment(uint32_t );
+//new new ones
+void solicitarInstancia(char*);
+void liberarInstancia(char*);
 
 int obtenerTiempoEspera();
-
-// Las siguientes funciones están encanutadas de conexionesCPU, lit lo mismo
 
 // FUNCIONES PARA ENVIO DE CONTEXTO DE EJECUCION
 void* serializar_contextoEjecucion(t_paquete* paquete, int bytes);
