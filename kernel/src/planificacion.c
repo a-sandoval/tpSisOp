@@ -8,6 +8,7 @@ int32_t procesosCreados = 0;
 pthread_mutex_t mutexListaNew; 
 sem_t semGradoMultiprogramacion;
 char* pidsInvolucrados; 
+int64_t rafagaCPU;
 
 int gradoMultiprogramacion; 
 
@@ -51,11 +52,11 @@ void agregarPID(void *value) {
 	
 
     t_pcb* pcb = (t_pcb*) value; 
-    void* id = pcb->pid;  
+    void* id = &(pcb->pid);  
     char* pid = (char*)id; 
 
-    string_append(*(pidsInvolucrados), pid); 
-    string_append(*(pidsInvolucrados)," , "); 
+    string_append(&pidsInvolucrados, pid); 
+    string_append(&pidsInvolucrados, " , "); 
 }
 
 void listarPIDS(t_list* pcbs) {
@@ -76,6 +77,7 @@ void planificarACortoPlazo(t_pcb* (*proximoAEjecutar)()) {
         sem_wait(&hayProcesosReady); 
         t_pcb* aEjecutar = proximoAEjecutar();
 
+        temporal_stop(aEjecutar->tiempoEnReady); 
         estadoProceso estadoAnterior = aEjecutar->estado;
         aEjecutar->estado = EXEC; 
 
@@ -86,6 +88,9 @@ void planificarACortoPlazo(t_pcb* (*proximoAEjecutar)()) {
             case READY: 
                 encolar(pcbsREADY, aEjecutar);
                 sem_post(&hayProcesosReady); 
+                aEjecutar->tiempoEnReady = ; 
+                aEjecutar->rafagaAnterior = rafagaCPU; 
+                calcularRafaga(aEjecutar); 
                 break;
             case SALIDA:
                 enviarMensaje("Terminado", aEjecutar->socketPCB);
@@ -104,6 +109,12 @@ void planificarACortoPlazo(t_pcb* (*proximoAEjecutar)()) {
         //No hacerlo por estado de proceso, sino por el mensaje que envia (por Wait, Yield (por cada syscall)). Devolver MOTIVO de devolucion, puede tener params
         
     }
+}
+
+void detenerYDestruirCronometro(t_temporal* cronometroReady) {
+
+    temporal_stop(cronometroReady); 
+    temporal_destroy(cronometroReady); 
 }
 
 void planificarACortoPlazoSegunAlgoritmo(){
@@ -127,10 +138,15 @@ void planificarACortoPlazoSegunAlgoritmo(){
 
 void* mayorRR(void* unPCB, void* otroPCB) {
 
-    t_pcb* pcb1 = (t_pcb*) unPCB; 
-    t_pcb* pcb2 = (t_pcb*) otroPCB; 
-
     return (calcularRR(unPCB) >=calcularRR(otroPCB)) ? unPCB : otroPCB; 
+
+}
+
+double calcularRafaga(t_pcb* pcb) { 
+
+    double alfa = obtenerAlfaEstimacion(); 
+
+    double estimadoRafaga = alfa*
 
 }
 
@@ -138,11 +154,16 @@ double calcularRR(void* elem) {
 
     t_pcb* pcb = (t_pcb*) elem; 
 
-    double waitTime; 
+    temporal_stop(pcb->tiempoEnReady); 
 
-    double estimatedServiceTime; 
+    double waitTime = temporal_gettime(pcb->tiempoEnReady); 
+
+    temporal_resume(pcb->tiempoEnReady); 
+
+    double estimatedServiceTime = calcularRafaga(pcb); 
 
     return (waitTime + estimatedServiceTime)/estimatedServiceTime; 
+
 
 }
 
@@ -171,7 +192,7 @@ t_pcb* crearPCB() {
     nuevoPCB->pid = procesosCreados; 
     nuevoPCB->programCounter = 0;
     nuevoPCB->instrucciones = list_create(); 
-    nuevoPCB->estimadoProximaRafaga = obtenerEstimacionInicial(); 
+    nuevoPCB->estimadoRafagaAnterior = obtenerEstimacionInicial(); 
     nuevoPCB->tablaDeArchivos = list_create(); 
     nuevoPCB->tablaDeSegmentos=list_create(); 
     nuevoPCB->registrosCPU = crearDiccionarioDeRegistros(); 
@@ -283,8 +304,8 @@ void destruirRegistro(char* registro) {
 
 // Configuracion
 
-int obtenerEstimacionInicial() {
-    return config_get_int_value(config,"ESTIMACION_INICIAL"); 
+double obtenerEstimacionInicial() {
+    return config_get_double_value(config,"ESTIMACION_INICIAL"); 
 }
 
 int obtenerGradoMultiprogramacion(){
@@ -295,6 +316,9 @@ char* obtenerAlgoritmoPlanificacion(){
     return confGet("ALGORITMO_PLANIFICACION");
 }
 
+double obtenerAlfaEstimacion() {
+    return config_get_double_value(config, "HRRN_ALFA"); 
+}
 
 void instruct_print(void *value) {
     log_info(logger, "Que linda mi instruccion: %s", (char *)value);

@@ -31,6 +31,8 @@ int cantBytes;
 int tamanio;
 char* recurso;
 uint32_t* idSegmento;
+t_temporal* rafagaCPU; 
+int64_t rafagaCPUEjecutada; 
 
 
 t_contexto* contextoEjecucion;
@@ -66,6 +68,9 @@ void decode(){
 }
  
 void execute() {
+
+   rafagaCPU= temporal_create(); 
+
     switch(cantParametros) {
         case 0:
             log_info(logger, "PID: %d - Ejecutando: %s ", contextoEjecucion->pid, listaComandos[instruccionActual]);
@@ -152,16 +157,28 @@ int obtenerTiempoEspera(){
 
 //IO (Tiempo) --> Representa una syscall de I/O bloqueante. Devuelve el Contexto de Ejecución actualizado al Kernel junto a la cantidad de unidades de tiempo que va a bloquearse el proceso.
 void io(int tiempo){
+    temporal_stop(rafagaCPU); 
+    
+    rafagaCPUEjecutada = temporal_gettime(rafagaCPU);  
+
     enviarContextoActualizado();
 }
 
 //WAIT (Recurso) --> Solicita al Kernel que se asigne una instancia del recurso indicado por parámetro.
 void wait(char* recurso){
+    
+    //Si hay un bloqueo, hay que detener la rafaga de CPU
+    //temporal_stop(rafagaCPU); 
+
 
 }
 
 //SIGNAL (Recurso) --> Solicita al Kernel que se libere una instancia del recurso indicado por parámetro.
 void signal1(char* recurso){
+
+    //Si hay un bloqueo, hay que detener la rafaga de CPU
+
+    //temporal_stop(rafagaCPU); 
 
 }
 
@@ -170,12 +187,16 @@ void signal1(char* recurso){
 //YIELD --> Desaloja voluntariamente el proceso de la CPU. Devuelve el Contexto de Ejecución actualizado al Kernel.
 void yield_c(){ 
     contextoEjecucion->estado = READY;
+    temporal_stop(rafagaCPU);
+    int64_t rafagaCPUEjecutada = temporal_gettime(rafagaCPU);  
     enviarContextoActualizado();
 }
 
 //EXIT --> Representa la syscall de finalización del proceso. Devuelve el Contexto de Ejecución actualizado al Kernel para su finalización.
 void exit_c(){
     contextoEjecucion->estado = SALIDA;
+    temporal_stop(rafagaCPU); 
+    temporal_destroy(rafagaCPU); 
     enviarContextoActualizado();
 }
 

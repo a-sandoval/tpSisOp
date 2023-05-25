@@ -123,7 +123,7 @@ t_pcb* desencolar(t_list* pcbs);
  * @param
  * @return el valor de la estimacion inicial de la rafaga
  */
-int obtenerEstimacionInicial();
+double  obtenerEstimacionInicial();
 
 /**
  * @brief obtiene el grado multiprogramacion del archivo de configuraciones
@@ -152,5 +152,7 @@ void imprimirRegistros(t_dictionary *registros);
 void* mayorRR(void* unPCB, void* otroPCB); 
 double calcularRR(void* pcb); 
 void listarPIDS(t_list* pcbs); 
+void detenerYDestruirCronometro(t_temporal* ); 
+
 
 #endif 
