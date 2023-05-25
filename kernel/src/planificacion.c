@@ -7,6 +7,7 @@ t_list* pcbsREADY;
 int32_t procesosCreados = 0; 
 pthread_mutex_t mutexListaNew; 
 sem_t semGradoMultiprogramacion;
+char* pidsInvolucrados; 
 
 int gradoMultiprogramacion; 
 
@@ -28,24 +29,46 @@ void planificarALargoPlazo(){
         sem_wait(&semGradoMultiprogramacion);
 
         t_pcb* pcb = obtenerSiguienteAReady();
+        pcb->tiempoEnReady = temporal_create(); 
         estadoProceso estadoAnterior= pcb->estado;
         pcb->estado=READY;
 
         loggearCambioDeEstado(pcb->pid, estadoAnterior,pcb->estado); 
 
-        //list_iterate(pcb->instrucciones, instruct_print);
+        listarPIDS(pcbsREADY); 
+
+        log_info(logger,"Cola Ready <%s>: [%s]", obtenerAlgoritmoPlanificacion(),pidsInvolucrados); 
+
         encolar(pcbsREADY, pcb);
         
         sem_post(&hayProcesosReady);
 
-    
         
     }
+}
+
+void agregarPID(void *value) { 
+	
+
+    t_pcb* pcb = (t_pcb*) value; 
+    void* id = pcb->pid;  
+    char* pid = (char*)id; 
+
+    string_append(*(pidsInvolucrados), pid); 
+    string_append(*(pidsInvolucrados)," , "); 
+}
+
+void listarPIDS(t_list* pcbs) {
+
+    list_iterate(pcbs,agregarPID);
 }
 
 void imprimirRegistros(t_dictionary *registros) {
     log_info(logger, "AX: %s", (char *) dictionary_get(registros, "AX"));
 }
+
+
+
 
 void planificarACortoPlazo(t_pcb* (*proximoAEjecutar)()) {
 
@@ -115,7 +138,11 @@ double calcularRR(void* elem) {
 
     t_pcb* pcb = (t_pcb*) elem; 
 
-    return 0; // TO DO
+    double waitTime; 
+
+    double estimatedServiceTime; 
+
+    return (waitTime + estimatedServiceTime)/estimatedServiceTime; 
 
 }
 
@@ -145,7 +172,6 @@ t_pcb* crearPCB() {
     nuevoPCB->programCounter = 0;
     nuevoPCB->instrucciones = list_create(); 
     nuevoPCB->estimadoProximaRafaga = obtenerEstimacionInicial(); 
-    nuevoPCB->tiempoEnReady = temporal_create(); 
     nuevoPCB->tablaDeArchivos = list_create(); 
     nuevoPCB->tablaDeSegmentos=list_create(); 
     nuevoPCB->registrosCPU = crearDiccionarioDeRegistros(); 

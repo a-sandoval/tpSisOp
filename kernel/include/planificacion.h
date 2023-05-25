@@ -151,5 +151,6 @@ void imprimirRegistros(t_dictionary *registros);
 
 void* mayorRR(void* unPCB, void* otroPCB); 
 double calcularRR(void* pcb); 
+void listarPIDS(t_list* pcbs); 
 
 #endif 

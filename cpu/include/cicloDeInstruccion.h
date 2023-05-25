@@ -20,6 +20,15 @@ extern char* instruccionAEjecutar;
 extern char** elementosInstruccion; 
 extern int instruccionActual; 
 extern int cantParametros;
+//nuevos
+extern char* direccionLogica;
+extern int tiempo;//miedo
+extern char* nombreArchivo;
+extern uint32_t posicion;
+extern int cantBytes;
+extern int tamanio;
+extern char* recurso;
+extern uint32_t* idSegmento;
 
 
 typedef enum estadoProceso{
@@ -59,6 +68,21 @@ int buscar(char *elemento, char **lista);
 void set_c(char* , char* );
 void yield_c(); 
 void exit_c(); 
+//nuevos
+//Declaración de funciones para que no me rompa las bolas vs
+void mov_in(char* , char* );
+void mov_out(char* , char* );
+void io(int );
+void f_open(char* );
+void f_close(char* );
+void f_seek(char* , uint32_t );
+void f_read(char* , char* , int );
+void f_write(char* , char* , int );
+void f_truncate(char* , int );
+void wait(char* );
+void signal1(char* );//se llama signal1 pq signal ya existe
+void create_segment(uint32_t , int );
+void delete_segment(uint32_t );
 
 int obtenerTiempoEspera();
 

@@ -22,6 +22,16 @@ char* instruccionAEjecutar;
 char** elementosInstruccion; 
 int instruccionActual; 
 int cantParametros;
+//nuevos
+char* direccionLogica;
+int tiempo;//miedo
+char* nombreArchivo;
+uint32_t posicion;
+int cantBytes;
+int tamanio;
+char* recurso;
+uint32_t* idSegmento;
+
 
 t_contexto* contextoEjecucion;
 
@@ -37,7 +47,6 @@ void cicloDeInstruccion(){
     decode();//interpreta que instruccion va a ejecutar y si requiere traduccion logica o fisica
 
     execute();//ejecuta la instruccion 
-
     
     liberarMemoria();
 }
@@ -75,10 +84,50 @@ void execute() {
         case SET:
             set_c(elementosInstruccion[1], elementosInstruccion[2]);
             break;
-        case YIELD:
+        case MOV_IN://falta
+            mov_in(elementosInstruccion[1], direccionLogica);
+            break;
+        case MOV_OUT://falta
+            mov_out(direccionLogica, elementosInstruccion[1]);
+            break;
+        case IO://IMPLEMENTAR
+            io(tiempo);
+            break;
+        case F_OPEN://falta
+            f_open(nombreArchivo);
+            break;
+        case F_CLOSE://falta
+            f_close(nombreArchivo);
+            break;
+        case F_SEEK://falta
+            f_seek(nombreArchivo, posicion);
+            break;
+        case F_READ://falta
+            f_read(nombreArchivo, direccionLogica, cantBytes);
+            break;
+        case F_WRITE://falta
+            f_write(nombreArchivo, direccionLogica, cantBytes);
+            break;
+        case F_TRUNCATE://falta
+            f_truncate(nombreArchivo, tamanio);
+            break;
+        case WAIT://IMPLEMENTAR
+            wait(recurso);
+            //un recurso puede ser un archivo, memoria reservada, semáforos, sockets, etc
+            break;
+        case SIGNAL://IMPLEMENTAR
+            signal1(recurso);
+            break;
+        case CREATE_SEGMENT://falta
+            create_segment(idSegmento, tamanio);
+            break;
+        case DELETE_SEGMENT://falta
+            delete_segment(idSegmento);
+            break;
+        case YIELD: //IMPLEMENTADA
             yield_c();
             break;
-        case EXIT:
+        case EXIT: //IMPLEMENTADA
             exit_c();
             break;
         default:
@@ -100,6 +149,23 @@ void set_c(char* registro, char* valor){
 int obtenerTiempoEspera(){
     return config_get_int_value(config,"RETARDO_INSTRUCCION"); 
 }
+
+//IO (Tiempo) --> Representa una syscall de I/O bloqueante. Devuelve el Contexto de Ejecución actualizado al Kernel junto a la cantidad de unidades de tiempo que va a bloquearse el proceso.
+void io(int tiempo){
+    enviarContextoActualizado();
+}
+
+//WAIT (Recurso) --> Solicita al Kernel que se asigne una instancia del recurso indicado por parámetro.
+void wait(char* recurso){
+
+}
+
+//SIGNAL (Recurso) --> Solicita al Kernel que se libere una instancia del recurso indicado por parámetro.
+void signal1(char* recurso){
+
+}
+
+
 
 //YIELD --> Desaloja voluntariamente el proceso de la CPU. Devuelve el Contexto de Ejecución actualizado al Kernel.
 void yield_c(){ 
