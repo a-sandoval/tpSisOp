@@ -12,12 +12,12 @@ typedef enum estadoProceso{
     BLOCK,
     SALIDA,
 } estadoProceso; 
-
 typedef struct {
     char AX[4], BX[4], CX[4], DX[4];
     char EAX[8], EBX[8], ECX[8], EDX[8];
     char RAX[16], RBX[16], RCX[16], RDX[16];
 }t_reg;
+
 
 typedef struct {
 
@@ -28,7 +28,8 @@ typedef struct {
     estadoProceso estado; 
     t_dictionary* registrosCPU;
     double estimadoRafagaAnterior; 
-    double rafagaAnterior; 
+    double rafagaRealAnterior; 
+    double estimadoNuevaRafaga; 
     t_temporal* tiempoEnReady; 
     t_list* tablaDeSegmentos; 
     t_list* tablaDeArchivos; 

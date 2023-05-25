@@ -30,7 +30,7 @@ void planificarALargoPlazo(){
         sem_wait(&semGradoMultiprogramacion);
 
         t_pcb* pcb = obtenerSiguienteAReady();
-        pcb->tiempoEnReady = temporal_create(); 
+        pcb->tiempoEnReady= temporal_create(); 
         estadoProceso estadoAnterior= pcb->estado;
         pcb->estado=READY;
 
@@ -69,15 +69,13 @@ void imprimirRegistros(t_dictionary *registros) {
 }
 
 
-
-
 void planificarACortoPlazo(t_pcb* (*proximoAEjecutar)()) {
 
     while (1) {
         sem_wait(&hayProcesosReady); 
         t_pcb* aEjecutar = proximoAEjecutar();
 
-        temporal_stop(aEjecutar->tiempoEnReady); 
+        detenerYDestruirCronometro(aEjecutar->tiempoEnReady); 
         estadoProceso estadoAnterior = aEjecutar->estado;
         aEjecutar->estado = EXEC; 
 
@@ -88,9 +86,8 @@ void planificarACortoPlazo(t_pcb* (*proximoAEjecutar)()) {
             case READY: 
                 encolar(pcbsREADY, aEjecutar);
                 sem_post(&hayProcesosReady); 
-                aEjecutar->tiempoEnReady = ; 
-                aEjecutar->rafagaAnterior = rafagaCPU; 
-                calcularRafaga(aEjecutar); 
+                aEjecutar->rafagaRealAnterior = rafagaCPU; 
+                calcularNuevaRafagaCPU(aEjecutar);
                 break;
             case SALIDA:
                 enviarMensaje("Terminado", aEjecutar->socketPCB);
@@ -98,6 +95,7 @@ void planificarACortoPlazo(t_pcb* (*proximoAEjecutar)()) {
                 sem_post(&semGradoMultiprogramacion); 
                 break;
             case BLOCK:
+            //Luego de moverse del estado de Block a nuevamente Ready, recordar calcular rafaga con funcion calcular Rafaga. 
                 break; 
             default:
                 enviarMensaje("Terminado", aEjecutar->socketPCB);
@@ -142,11 +140,15 @@ void* mayorRR(void* unPCB, void* otroPCB) {
 
 }
 
-double calcularRafaga(t_pcb* pcb) { 
+void calcularNuevaRafagaCPU(t_pcb* pcb) { 
 
     double alfa = obtenerAlfaEstimacion(); 
 
-    double estimadoRafaga = alfa*
+    pcb->estimadoRafagaAnterior = pcb->estimadoNuevaRafaga; // Lo que antes estaba como estimado de la nueva rafaga, ahora es la anterior
+
+    double estimadoRafaga = alfa*pcb->rafagaRealAnterior + (1-alfa) * pcb->estimadoRafagaAnterior; 
+
+    pcb->estimadoNuevaRafaga = estimadoRafaga; 
 
 }
 
@@ -160,7 +162,7 @@ double calcularRR(void* elem) {
 
     temporal_resume(pcb->tiempoEnReady); 
 
-    double estimatedServiceTime = calcularRafaga(pcb); 
+    double estimatedServiceTime = pcb->estimadoNuevaRafaga; 
 
     return (waitTime + estimatedServiceTime)/estimatedServiceTime; 
 

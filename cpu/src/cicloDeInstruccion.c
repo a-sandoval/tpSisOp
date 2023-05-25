@@ -30,7 +30,7 @@ uint32_t posicion;
 int cantBytes;
 int tamanio;
 char* recurso;
-uint32_t* idSegmento;
+uint32_t idSegmento;
 t_temporal* rafagaCPU; 
 int64_t rafagaCPUEjecutada; 
 
@@ -121,7 +121,7 @@ void execute() {
             //un recurso puede ser un archivo, memoria reservada, semáforos, sockets, etc
             break;
         case SIGNAL://IMPLEMENTAR
-            signal1(recurso);
+            signal_c(recurso);
             break;
         case CREATE_SEGMENT://falta
             create_segment(idSegmento, tamanio);
@@ -174,15 +174,13 @@ void wait(char* recurso){
 }
 
 //SIGNAL (Recurso) --> Solicita al Kernel que se libere una instancia del recurso indicado por parámetro.
-void signal1(char* recurso){
+void signal_c(char* recurso){
 
     //Si hay un bloqueo, hay que detener la rafaga de CPU
 
     //temporal_stop(rafagaCPU); 
 
 }
-
-
 
 //YIELD --> Desaloja voluntariamente el proceso de la CPU. Devuelve el Contexto de Ejecución actualizado al Kernel.
 void yield_c(){ 
@@ -289,10 +287,40 @@ void agregarRegistrosAPaquete(t_paquete* paquete, t_dictionary* registrosCPU){
     //free(RDX);
 }
 
-
-
 int buscar(char *elemento, char **lista) {
     int i = 0;
     for (; strcmp(lista[i], elemento) && i <= string_array_size(lista); i++);
     return (i > string_array_size(lista)) ? -1 : i;
 }
+
+//A continuación serán declaradas las operaciones que faltan, falta desarrollarlas 
+//pero serán puestas para que la consola no nos hinche los huevos
+void mov_in(char* registro, char* direccionLogica){
+};
+
+void mov_out(char* direccionLogica, char* registro){
+};  
+
+void f_open(char* nombre){
+};
+
+void f_close(char* nombre){
+};
+
+void f_seek(char* nombre, uint32_t puntero){
+};
+
+void f_read(char* nombre, char* direccionLogica, int cantBytes){
+};
+
+void f_write(char* nombre, char* direccionLogica, int cantBytes){
+};
+
+void f_truncate(char* nombre, int tamanio){
+};
+
+void create_segment(uint32_t idSegmento, int tamanio){
+};
+
+void delete_segment(uint32_t idSegmento){
+};

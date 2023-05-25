@@ -28,7 +28,7 @@ extern uint32_t posicion;
 extern int cantBytes;
 extern int tamanio;
 extern char* recurso;
-extern uint32_t* idSegmento;
+extern uint32_t idSegmento;
 
 
 typedef enum estadoProceso{
@@ -80,7 +80,7 @@ void f_read(char* , char* , int );
 void f_write(char* , char* , int );
 void f_truncate(char* , int );
 void wait(char* );
-void signal1(char* );//se llama signal1 pq signal ya existe
+void signal_c(char* );//se llama signal1 pq signal ya existe
 void create_segment(uint32_t , int );
 void delete_segment(uint32_t );
 

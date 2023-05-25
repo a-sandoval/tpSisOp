@@ -137,6 +137,8 @@ int obtenerGradoMultiprogramacion();
  * */
 char* obtenerAlgoritmoPlanificacion();
 
+double obtenerAlfaEstimacion(); 
+
 // frees
 
 /**
@@ -153,6 +155,7 @@ void* mayorRR(void* unPCB, void* otroPCB);
 double calcularRR(void* pcb); 
 void listarPIDS(t_list* pcbs); 
 void detenerYDestruirCronometro(t_temporal* ); 
+void calcularNuevaRafagaCPU(t_pcb* ); 
 
 
 #endif 
