@@ -17,7 +17,7 @@ void iterator(void *value){
 int ejecutarServidorCPU(){
 	while (1) {
         instruccionActual = -1;
-		int codOP = recibir_operacion();
+		int codOP = recibirOperacion();
 		switch (codOP) {
 			case -1:
 				log_info(logger, "La CPU se desconecto, esperando conexiones.");
@@ -45,7 +45,7 @@ void recibirContextoActualizado(){
     int tamanio;
 	void * buffer;
 
-	buffer = recibir_buffer(&size);
+	buffer = recibirBuffer(&size);
 	//while(desplazamiento < size){ //segun entiendo el while hace que se quede esperando a recbibir absoulamente todos los datos
     // El while no es necesario ya que (en un mundo ideal!) todos los datos que se mandan son atrapados aca, 
     // sino se esta enviando incorrectamente algo. Ademas el ciclo empezaria a agarrar cosas sin saber, como el PID.

@@ -66,7 +66,6 @@ char *recibirMensaje()
 	return buffer;
 }
 
-
 t_list* recibirPaquete(){
 	int size;
 	int desplazamiento = 0;
@@ -101,17 +100,3 @@ int alistarServidor(char *puerto){
 void elementDestroyer(void *palabra){
 	free(palabra);
 }
-
-// █▀▀ █░█ █▄░█ █▀▀ █ █▀█ █▄░█ █▀▀ █▀   █▀▄ █▀▀ █▀█ █▀█ █▀▀ █▀▀ ▄▀█ █▀▄ ▄▀█ █▀
-// █▀░ █▄█ █░▀█ █▄▄ █ █▄█ █░▀█ ██▄ ▄█   █▄▀ ██▄ █▀▀ █▀▄ ██▄ █▄▄ █▀█ █▄▀ █▀█ ▄█
-
-/*
-
-char* recibir_clave(){
-	int size;
-	char* buffer = recibirBuffer(&size);
-	return buffer;
-}
-
-
-*/

@@ -13,10 +13,15 @@
  */
 
 #include <stdlib.h>
+#include <stdarg.h>
 #include <string.h>
+#include <unistd.h>
+#include <sys/socket.h>
 #include <commons/log.h>
 #include <commons/config.h>
+#include <commons/string.h>
 
+extern int socketCliente;
 extern t_log *logger;
 extern t_config *config;
 
@@ -104,6 +109,25 @@ t_log *cambiarNombre(char *nuevoNombre);
  * 
  */
 void terminarPrograma();
+
+/**
+ * @fn FILE *abrir (char *archivo, char *tipoDeArchivo)
+ * Funcion hecha para abrir archivos y comprobar su apertura.
+ * 
+ * @param archivo Nombre del archivo a recibir, tiene que estar en la carpeta directa donde se corre el programa.
+ * @param tipoDeArchivo Linea de texto del tipo de archivo para abrir, para referencia ver fopen(3).
+ * @return FILE* Retorna el archivo abierto.
+ */
+FILE *abrir (char *archivo, char *tipoDeArchivo);
+
+/**
+ * @fn void error (char *mensajeFormato, ...)
+ * Funcion de error para terminar el programa en caso de fallo.
+ *  
+ * @param mensajeFormato Formato del mensaje como un printf para mandarlo por log_error().
+ * @param ... Resto de los parametros en caso de mandarse.
+ */
+void error (char *mensajeFormato, ...) __attribute__((format(printf, 1, 2)));
 
 /**
  * @}

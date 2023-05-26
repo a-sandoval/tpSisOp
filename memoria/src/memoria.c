@@ -65,7 +65,7 @@ int ejecutarServidor(int socket){
 			case PAQUETE:
 				lista = recibir_paquete();
 				list_iterate(lista, (void*) iterator); 
-				list_destroy_and_destroy_elements(lista, (void*)element_destroyer);
+				list_destroy_and_destroy_elements(lista, (void*)elementDestroyer);
 				break;
 			case -1:
 				log_error(logger, "El cliente se desconecto");

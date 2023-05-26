@@ -1,16 +1,6 @@
 #include "shared/include/utilsCliente.h"
 
-/**
- * @brief Dado un paquete y la cantidad de bytes que contiene, se empaqueta la cantidad de bytes en un void,
- *        serializandolo y preparandolo para enviar a un servidor con el formato:
- *        1. codigo de operación del paquete
- *        2. tamaño del paquete
- *        3. el contenido del paquete en sí
- * @param paquete El paquete a serializar.
- * @param bytes La cantidad de bytes a serializar (usualmente sizeof(paquete)).
- * @return Se retorna el formato serializado como un void*.
- */
-void *serializar_paquete(t_paquete *paquete, int bytes)
+void *serializarPaquete(t_paquete *paquete, int bytes)
 {
 	void *magic = malloc(bytes);
 	int desplazamiento = 0;
@@ -65,7 +55,7 @@ void enviarMensaje(char *mensaje, int socketCliente)
 
 	int bytes = paquete->buffer->size + 2 * sizeof(int);
 
-	void *a_enviar = serializar_paquete(paquete, bytes);
+	void *a_enviar = serializarPaquete(paquete, bytes);
 
 	send(socketCliente, a_enviar, bytes, 0);
 
@@ -74,11 +64,7 @@ void enviarMensaje(char *mensaje, int socketCliente)
 }
 
 //lo que hacen las funciones crear buffer y crear paquete ya lo hace la funcion enviar mensaje
-/**
- * @brief Se aloca el buffer del paquete recibido.
- * @param paquete Paquete que aun no tiene el buffer inicializado.
- */
-void crear_buffer(t_paquete *paquete)
+void crearBuffer(t_paquete *paquete)
 {
 	paquete->buffer = malloc(sizeof(t_buffer));
 	paquete->buffer->size = 0;
@@ -89,7 +75,7 @@ t_paquete *crearPaquete(void)
 {
 	t_paquete *paquete = malloc(sizeof(t_paquete));
 	paquete->codigo_operacion = PAQUETE;
-	crear_buffer(paquete);
+	crearBuffer(paquete);
 	return paquete;
 }
 
@@ -106,7 +92,7 @@ void agregarAPaquete(t_paquete *paquete, void *valor, int tamanio)
 void enviarPaquete(t_paquete *paquete, int socketCliente)
 {
 	int bytes = paquete->buffer->size + 2 * sizeof(int);
-	void *a_enviar = serializar_paquete(paquete, bytes);
+	void *a_enviar = serializarPaquete(paquete, bytes);
 
 	send(socketCliente, a_enviar, bytes, 0);
 

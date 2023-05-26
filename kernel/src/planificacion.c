@@ -23,7 +23,6 @@ void loggearCambioDeEstado(uint32_t pid, estadoProceso anterior, estadoProceso a
 }
 
 void planificarALargoPlazo(){
-
     while (1) {
         sem_wait(&hayProcesosNuevos); 
         
@@ -36,32 +35,27 @@ void planificarALargoPlazo(){
 
         loggearCambioDeEstado(pcb->pid, estadoAnterior,pcb->estado); 
 
-        listarPIDS(pcbsREADY); 
-
-        log_info(logger,"Cola Ready <%s>: [%s]", obtenerAlgoritmoPlanificacion(),pidsInvolucrados); 
 
         encolar(pcbsREADY, pcb);
+
+        pidsInvolucrados = string_new();
+        listarPIDS(pcbsREADY); 
+        log_info(logger,"Cola Ready <%s>: [%s]", obtenerAlgoritmoPlanificacion(), pidsInvolucrados); 
+        free(pidsInvolucrados);
         
         sem_post(&hayProcesosReady);
 
-        
     }
 }
 
 void agregarPID(void *value) { 
-	
-
     t_pcb* pcb = (t_pcb*) value; 
-    void* id = &(pcb->pid);  
-    char* pid = (char*)id; 
-
+    char* pid = string_itoa(pcb->pid); 
     string_append(&pidsInvolucrados, pid); 
-    string_append(&pidsInvolucrados, " , "); 
 }
 
 void listarPIDS(t_list* pcbs) {
-
-    list_iterate(pcbs,agregarPID);
+    list_iterate(pcbs, agregarPID);
 }
 
 void imprimirRegistros(t_dictionary *registros) {
@@ -83,6 +77,9 @@ void planificarACortoPlazo(t_pcb* (*proximoAEjecutar)()) {
 
         procesarPCB(aEjecutar);
         switch(aEjecutar->estado) {
+            case EXEC:
+            // 返却されたステータスが「実行中」であった場合のことを考慮してください。
+                break;
             case READY: 
                 encolar(pcbsREADY, aEjecutar);
                 sem_post(&hayProcesosReady); 
@@ -210,7 +207,6 @@ void destruirPCB(t_pcb* pcb){
     list_destroy_and_destroy_elements(pcb->tablaDeArchivos,(void*)destruirInstruccion); 
     list_destroy_and_destroy_elements(pcb->tablaDeSegmentos,(void*)destruirInstruccion); 
     dictionary_destroy_and_destroy_elements(pcb->registrosCPU, (void*)destruirRegistro); 
-    temporal_destroy(pcb->tiempoEnReady);
     free(pcb);
 }
 

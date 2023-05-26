@@ -97,4 +97,24 @@ void eliminarPaquete(t_paquete* paquete);
  */
 int conexion(char *SERVIDOR);
 
+/* Funciones Privadas */
+
+/**
+ * @brief Se aloca el buffer del paquete recibido.
+ * @param paquete Paquete que aun no tiene el buffer inicializado.
+ */
+void crearBuffer(t_paquete *paquete);
+
+/**
+ * @brief Dado un paquete y la cantidad de bytes que contiene, se empaqueta la cantidad de bytes en un void,
+ *        serializandolo y preparandolo para enviar a un servidor con el formato:
+ *        1. codigo de operación del paquete
+ *        2. tamaño del paquete
+ *        3. el contenido del paquete en sí
+ * @param paquete El paquete a serializar.
+ * @param bytes La cantidad de bytes a serializar (usualmente sizeof(paquete)).
+ * @return Se retorna el formato serializado como un void*.
+ */
+void *serializarPaquete(t_paquete *paquete, int bytes);
+
 #endif /* UTILS_H_ */

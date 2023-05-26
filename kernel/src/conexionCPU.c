@@ -46,7 +46,6 @@ int procesarPCB(t_pcb* procesoEnEjecucion) {
     bufferContexto = malloc(sizeof(t_buffer));
 
     asignarPCBAContexto(procesoEnEjecucion);
-    imprimirRegistros(procesoEnEjecucion->registrosCPU);
     enviarContexto();
 
     // aca a su vez hay que recibir el contexto actualizado que mande la cpu, deserializarlo y cambiarlo en el PCB
@@ -59,7 +58,6 @@ int procesarPCB(t_pcb* procesoEnEjecucion) {
         case CONTEXTOEJECUCION:
             recibirContextoActualizado(); //me carga el contexto actualizado en el mismo contextoEjecucion;
             actualizarPCB(procesoEnEjecucion);
-            imprimirRegistros(contextoEjecucion->registrosCPU);
             destroyContexto();
             break;
     }

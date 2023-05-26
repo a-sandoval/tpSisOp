@@ -42,26 +42,6 @@ int main(int, char *archivos[]) {
     return 0;
 }
 
-FILE *abrir(char *archivo, char *tipoDeArchivo) {
-    FILE *codigo = fopen(archivo, tipoDeArchivo);
-    if (codigo == NULL) error("No se pudo abrir el archivo %s", archivo);
-    return codigo;
-}
-
-void error (char *mensajeFormato, ...) {
-    va_list argumentos;
-    va_start(argumentos, mensajeFormato);
-
-    char *mensajeCompleto = string_from_vformat(mensajeFormato, argumentos);
-
-    log_error(logger, "%s", mensajeCompleto);
-
-    va_end(argumentos);
-    close(socketCliente);
-    terminarPrograma();
-    exit(1);
-}
-
 void esperarFinalizacion () {
 	int cod_op;
 	recv(socketCliente, &cod_op, sizeof(int), MSG_WAITALL);

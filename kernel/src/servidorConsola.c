@@ -5,7 +5,7 @@ void recibirConsolas(char *puerto){
 	int server_fd = iniciarServidor(puerto);
 	log_info(logger, "Se genero el servidor en el socket %d.", server_fd);
 	while(1){
-		socketCliente = esperar_cliente(server_fd);	
+		socketCliente = esperarCliente(server_fd);	
 		ejecutarServidorKernel(); 
 		sem_post(&hayProcesosNuevos);
 	}
@@ -26,10 +26,10 @@ void ejecutarServidorKernel(){
 	PCB->socketPCB=socketCliente; 
 	
 	while (1) {
-		int cod_op = recibir_operacion(socketCliente); 
+		int cod_op = recibirOperacion(socketCliente); 
 		switch (cod_op) {
 			case PAQUETE:
-				lista = recibir_paquete(socketCliente);
+				lista = recibirPaquete(socketCliente);
 				list_iterate(lista, (void*) iterator); 
 				//list_destroy_and_destroy_elements(lista, (void*)element_destroyer);
 				list_destroy(lista);
