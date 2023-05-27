@@ -50,16 +50,16 @@ typedef struct {
 typedef struct {
 
     uint32_t pid; 
-    int programCounter; 
-    uint32_t registrosSize;  
-    t_dictionary* registrosCPU;  
+    int programCounter;
     uint32_t instruccionesLength;
     t_list* instrucciones; 
-    uint32_t tablaDeSegmentosSize;
-    t_list* tablaDeSegmentos; 
+    t_dictionary* registrosCPU;  
     uint32_t tablaDeArchivosSize;
     t_list* tablaDeArchivos; 
+    uint32_t tablaDeSegmentosSize;
+    t_list* tablaDeSegmentos; 
     t_motivoDeDesalojo motivoDesalojo;
+    int64_t rafagaCPUEjecutada;
 
 } t_contexto; 
 

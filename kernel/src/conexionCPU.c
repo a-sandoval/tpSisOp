@@ -53,10 +53,6 @@ int procesarPCB(t_pcb* procesoEnEjecucion) {
 
     enviarContexto();
 
-    // aca a su vez hay que recibir el contexto actualizado que mande la cpu, deserializarlo y cambiarlo en el PCB
-    //Noc si esto iria aca porque en realidad seria como un case compartido con las cosas
-    //que tiene que recibir de memoria y fs tm no?
-    
     int operacion = recibirOperacionDeCPU();
 
     log_info(logger, "Recibido el contexto.");
@@ -86,10 +82,24 @@ void iniciarContexto(){
 	contextoEjecucion->tablaDeArchivosSize = 0;
 	contextoEjecucion->tablaDeSegmentos = NULL;
 	contextoEjecucion->tablaDeSegmentosSize = 0;
+    contextoEjecucion->rafagaCPUEjecutada = 0;
+    contextoEjecucion->motivoDesalojo = (t_motivoDeDesalojo *)malloc(sizeof(t_motivoDeDesalojo));
 }
 
-// FUNCIONES PARA ENVIO DE CONTEXTO DE EJECUCION
+void asignarPCBAContexto(t_pcb* proceso){
 
+    contextoEjecucion->instrucciones = list_duplicate(proceso->instrucciones);
+    contextoEjecucion->instruccionesLength = list_size(contextoEjecucion->instrucciones);
+    contextoEjecucion->pid = proceso->pid;
+    contextoEjecucion->programCounter = proceso->programCounter;
+    contextoEjecucion->registrosCPU = registrosDelCPU(proceso->registrosCPU);
+    contextoEjecucion->tablaDeArchivos = list_duplicate(proceso->tablaDeArchivos);
+    contextoEjecucion->tablaDeArchivosSize = list_size(contextoEjecucion->tablaDeArchivos);
+    contextoEjecucion->tablaDeSegmentos = list_duplicate(proceso->tablaDeSegmentos);
+    contextoEjecucion->tablaDeSegmentosSize = list_size(contextoEjecucion->tablaDeSegmentos);
+    motivoDesalojo->parametrosLength = strlen(motivoDesalojo->parametros) + 1;
+
+}
 t_dictionary *registrosDelCPU(t_dictionary *aCopiar) {
     t_dictionary *copia = dictionary_create();
     
@@ -133,26 +143,13 @@ t_dictionary *registrosDelCPU(t_dictionary *aCopiar) {
     return copia;
 }
 
-void asignarPCBAContexto(t_pcb*  proceso){
-
-    contextoEjecucion->instrucciones = list_duplicate(proceso->instrucciones);
-    contextoEjecucion->instruccionesLength = list_size(contextoEjecucion->instrucciones);
-    contextoEjecucion->pid = proceso->pid;
-    contextoEjecucion->programCounter = proceso->programCounter;
-    contextoEjecucion->registrosCPU = registrosDelCPU(proceso->registrosCPU);
-    contextoEjecucion->tablaDeArchivos = list_duplicate(proceso->tablaDeArchivos);
-    contextoEjecucion->tablaDeArchivosSize = list_size(contextoEjecucion->tablaDeArchivos);
-    contextoEjecucion->tablaDeSegmentos = list_duplicate(proceso->tablaDeSegmentos);
-    contextoEjecucion->tablaDeSegmentosSize = list_size(contextoEjecucion->tablaDeSegmentos);
-
-}
+// FUNCIONES PARA ENVIO DE CONTEXTO DE EJECUCION
 
 void enviarContexto(){ 
     t_paquete* paquete = crearPaquete();
     
     paquete->codigo_operacion = CONTEXTOEJECUCION;
    
-    // cargo todos los valores en el paquete
     agregarAPaquete(paquete,(void *)&contextoEjecucion->pid, sizeof(contextoEjecucion->pid));
     agregarAPaquete(paquete,(void *)&contextoEjecucion->programCounter, sizeof(contextoEjecucion->programCounter));
 
@@ -167,14 +164,14 @@ void enviarContexto(){
     //agregarAPaquete(paquete,contextoEjecucion->tablaDeSegmentos, contextoEjecucion->tablaDeSegmentosSize);
     
     agregarMotivoAPaquete(paquete, &contextoEjecucion->motivoDesalojo);
+    agregarAPaquete(paquete, (void *)&contextoEjecucion->rafagaCPUEjecutada, sizeof(contextoEjecucion->rafagaCPUEjecutada));
+
     enviarPaquete(paquete, conexionACPU);
 
 	eliminarPaquete(paquete);
 }
 
 void agregarInstruccionesAPaquete(t_paquete* paquete, t_list* instrucciones){
-
-    contextoEjecucion->instruccionesLength = list_size(instrucciones);
     
     agregarAPaquete(paquete, &contextoEjecucion->instruccionesLength, sizeof(uint32_t)); //primero envio la cantidad de elementos
     uint32_t i;

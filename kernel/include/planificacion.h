@@ -157,5 +157,9 @@ void listarPIDS(t_list* pcbs);
 void detenerYDestruirCronometro(t_temporal* ); 
 void calcularNuevaRafagaCPU(t_pcb* ); 
 
+int indiceRecurso(char* recurso);
+void crearColasBloqueo(t_list* recursosUso,t_list* instanciasUso);
+void bloqueoIO(t_pcb* pcb);
+void bloquearIO(t_pcb* pcb);
 
 #endif 

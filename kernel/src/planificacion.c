@@ -10,6 +10,12 @@ sem_t semGradoMultiprogramacion;
 char* pidsInvolucrados; 
 int64_t rafagaCPU;
 
+
+t_list* instanciasRecursos;
+t_list* recursos;
+char** nombresRecursos;
+
+
 int gradoMultiprogramacion; 
 
 char* estadosProcesos[5] = {"NEW","READY","EXEC","BLOCK","SALIDA"};
@@ -65,6 +71,9 @@ void imprimirRegistros(t_dictionary *registros) {
 
 void planificarACortoPlazo(t_pcb* (*proximoAEjecutar)()) {
 
+    //cambiosBrisa
+    crearColasBloqueo(recursos,instanciasRecursos);
+
     while (1) {
         sem_wait(&hayProcesosReady); 
         t_pcb* aEjecutar = proximoAEjecutar();
@@ -94,19 +103,68 @@ void planificarACortoPlazo(t_pcb* (*proximoAEjecutar)()) {
                 break;
             case BLOCK:
             //Luego de moverse del estado de Block a nuevamente Ready, recordar calcular rafaga con funcion calcular Rafaga. 
+
                 //Cambios Brisa:
                 bloqueoIO(aEjecutar);
+                estadoProceso estadoAnterior = aEjecutar->estado;
                 aEjecutar->estado=READY;
+                loggearCambioDeEstado(aEjecutar->pid, estadoAnterior,aEjecutar->estado);
                 break;
             case WAIT:
+                //Cambios Brisa:
+                char* recurso; //viene del motivo
+                int indexRecurso= indiceRecurso(recurso);
+                
+                if(indexRecurso == -1){
+                    enviarMensaje("Terminado", aEjecutar->socketPCB);
+                    destruirPCB(aEjecutar);
+                }
+
+                int instancRecurso= (int*)list_get(instanciasRecursos,indexRecurso);
+                instancRecurso--;
+                list_replace(instanciasRecursos,indexRecurso, (void*)&instancRecurso);
+
+                if( instancRecurso < 0){
+                    t_list* colaBloqueadosRecurso = (t_list*)list_get(recursos,indexRecurso);
+                    list_add(colaBloqueadosRecurso,(void*)aEjecutar);
+                    aEjecutar->estado=BLOCK;
+                }               
+                /*
+                A la hora de recibir de la CPU un Contexto de Ejecución desplazado por WAIT, el Kernel deberá verificar primero que exista el recurso solicitado
+                y en caso de que exista restarle 1 a la cantidad de instancias del mismo. En caso de que el número sea estrictamente menor a 0, el proceso que
+                realizó WAIT se bloqueará en la cola de bloqueados correspondiente al recurso.
+                */
                 break;
             case SIGNAL:
+                //Cambios Brisa:
+                char* recurso; //viene del motivo
+                int indexRecurso= indiceRecurso(recurso);
+                
+                if(indexRecurso == -1){
+                    enviarMensaje("Terminado", aEjecutar->socketPCB);
+                    destruirPCB(aEjecutar);
+                }
+
+                instancRecurso++;
+                list_replace(instanciasRecursos,indexRecurso, (void*)&instancRecurso);
+
+                if( instancRecurso >=0){
+                    t_list* colaBloqueadosRecurso = (t_list*)list_get(recursos,indexRecurso);
+                    list_add(colaBloqueadosRecurso,(void*)aEjecutar);
+                    t_pcb* hizoSignal = (t_pcb*) list_remove(colaBloqueadosRecurso, indexRecurso);
+                    hizoSignal->estado=EXEC;
+                    procesarPCB(hizoSignal);
+                }     
+                /*A la hora de recibir de la CPU un Contexto de Ejecución desplazado por SIGNAL, el Kernel deberá verificar primero que
+                exista el recurso solicitado y luego sumarle 1 a la cantidad de instancias del mismo. En caso de que corresponda,
+                desbloquea al primer proceso de la cola de bloqueados de ese recurso. Una vez hecho esto, se devuelve la ejecución
+                al proceso que peticionó el SIGNAL. */
                 break;
             default:
                 enviarMensaje("Terminado", aEjecutar->socketPCB);
                 destruirPCB(aEjecutar);
                 break;
-                //BMotivo de finalizacion hay que liberar los recursos asociados
+                //Bri: Motivo de finalizacion hay que liberar los recursos asociados
 
         } 
 
@@ -114,6 +172,53 @@ void planificarACortoPlazo(t_pcb* (*proximoAEjecutar)()) {
         
     }
 }
+
+
+/* Ejemplos:
+CONFIG:
+INSTANCIAS_RECURSOS=[1, 2];
+
+t_list* instanciasRecursos=[1,2];
+t_list* recursos = [LISTA,LISTA];
+char** nombresRecursos = ["DISCO","RECURSO_1"];
+*/
+
+
+//Devuelve el indice que se corresponde al recurso correspondiente, -1 si no lo encuentra
+int indiceRecurso(char* recurso){
+    int tamanio = length(nombresRecursos);
+
+    for(int i=0;i<tamanio;i++){
+        if(!strcmp(recurso,nombresRecursos[i])){
+            return i;
+        }
+    }
+
+    return -1;
+}
+
+//crear colas de bloqueo
+void crearColasBloqueo(t_list* recursosUso,t_list* instanciasUso){
+
+    nombresRecursos = obtenerRecursos();
+
+    char** instancias = obtenerInstanciasRecursos();
+
+    int tamanio=length(instancias);
+    
+    for(int i=0;i< tamanio;i++){
+
+        int cantInstanConvert = atoi(instancias[i]);
+
+        list_add(instanciasUso,(void *) &cantInstanConvert);
+
+        t_list* colaBloqueo = list_create();
+
+        list_add(recursosUso,(void *) colaBloqueo);
+    }
+
+}
+
 
 //caso bloqueo es por I/O
 void bloqueoIO(t_pcb* pcb){
@@ -130,8 +235,10 @@ void bloqueoIO(t_pcb* pcb){
 }
 
 void bloquearIO(t_pcb* pcb){
-    pthread_sleep();//sleep por la cantidad indicada en el motivo
+    pthread_sleep(20);//sleep por la cantidad indicada en el motivo
 }
+
+
 
 void detenerYDestruirCronometro(t_temporal* cronometroReady) {
 
@@ -343,6 +450,14 @@ char* obtenerAlgoritmoPlanificacion(){
 
 double obtenerAlfaEstimacion() {
     return config_get_double_value(config, "HRRN_ALFA"); 
+}
+
+char** obtenerRecursos(){
+    return config_get_array_value(config,"RECURSOS");
+}
+
+char** obtenerInstanciaRecursos(){
+    return config_get_array_value(config,"INSTANCIAS_RECURSOS");
 }
 
 void instruct_print(void *value) {
