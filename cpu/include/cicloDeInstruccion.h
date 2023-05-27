@@ -38,10 +38,18 @@ typedef enum estadoProceso{
     BLOCK,
     SALIDA
 } estadoProceso;  
+
+typedef struct {
+
+        t_comando comando; 
+        int parametrosLength;
+        char* parametros[3]; 
+
+}t_motivoDeDesalojo; 
+
 typedef struct {
 
     uint32_t pid; 
-    estadoProceso estado; 
     int programCounter; 
     uint32_t registrosSize;  
     t_dictionary* registrosCPU;  
@@ -51,6 +59,7 @@ typedef struct {
     t_list* tablaDeSegmentos; 
     uint32_t tablaDeArchivosSize;
     t_list* tablaDeArchivos; 
+    t_motivoDeDesalojo motivoDesalojo;
 
 } t_contexto; 
 

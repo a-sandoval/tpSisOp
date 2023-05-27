@@ -70,7 +70,6 @@ int procesarPCB(t_pcb* procesoEnEjecucion) {
 
 void iniciarContexto(){
     contextoEjecucion = malloc(sizeof(t_contexto));
-    contextoEjecucion->estado = 0;
 	contextoEjecucion->instrucciones = NULL;
 	contextoEjecucion->instruccionesLength = 0;
 	contextoEjecucion->pid = 0;
@@ -129,7 +128,6 @@ t_dictionary *registrosDelCPU(t_dictionary *aCopiar) {
 
 void asignarPCBAContexto(t_pcb*  proceso){
 
-    contextoEjecucion->estado = proceso->estado;
     contextoEjecucion->instrucciones = list_duplicate(proceso->instrucciones);
     contextoEjecucion->instruccionesLength = list_size(contextoEjecucion->instrucciones);
     contextoEjecucion->pid = proceso->pid;
@@ -150,7 +148,6 @@ void enviarContexto(){
     // cargo todos los valores en el paquete
     agregarAPaquete(paquete,(void *)&contextoEjecucion->pid, sizeof(contextoEjecucion->pid));
     agregarAPaquete(paquete,(void *)&contextoEjecucion->programCounter, sizeof(contextoEjecucion->programCounter));
-    agregarAPaquete(paquete,(void *)&contextoEjecucion->estado, sizeof(estadoProceso));
 
     agregarInstruccionesAPaquete(paquete, contextoEjecucion->instrucciones);
 
@@ -162,7 +159,7 @@ void enviarContexto(){
     //agregarAPaquete(paquete,(void *)&contextoEjecucion->tablaDeSegmentosSize, sizeof(contextoEjecucion->tablaDeSegmentosSize));
     //agregarAPaquete(paquete,contextoEjecucion->tablaDeSegmentos, contextoEjecucion->tablaDeSegmentosSize);
     
-
+    agregarMotivoAPaquete(paquete, &contextoEjecucion->motivoDesalojo);
     enviarPaquete(paquete, conexionACPU);
 
 	eliminarPaquete(paquete);
@@ -209,6 +206,13 @@ void agregarRegistrosAPaquete(t_paquete* paquete, t_dictionary* registrosCPU) {
 
 }
 
+void agregarMotivoAPaquete(t_paquete* paquete, t_motivoDeDesalojo* motivoDesalojo){
+
+    agregarAPaquete(paquete,(void *)&motivoDesalojo->comando, sizeof(motivoDesalojo->comando));
+
+    agregarAPaquete(paquete,(void *)&motivoDesalojo->parametrosLength, sizeof(motivoDesalojo->parametrosLength));
+    agregarAPaquete(paquete,(void *)motivoDesalojo->parametros, strlen(motivoDesalojo->parametros) + 1);
+}
 
 //FUNCIONES PARA RECIBIR NUEVO CONTEXTO POR PARTE DE LA CPU
 void recibirContextoActualizado(){
@@ -219,19 +223,12 @@ void recibirContextoActualizado(){
 	void * buffer;
 
 	buffer = recibirBufferDeCPU(&size);
-	//while(desplazamiento < size){ //segun entiendo el while hace que se quede esperando a recbibir absoulamente todos los datos
         desplazamiento += sizeof(int);
         memcpy(&(contextoEjecucion->pid), buffer + desplazamiento, sizeof(uint32_t));
         desplazamiento += sizeof(contextoEjecucion->pid) + sizeof(int);
         memcpy(&(contextoEjecucion->programCounter), buffer+desplazamiento, sizeof(uint32_t));
         desplazamiento += sizeof(contextoEjecucion->programCounter) + sizeof(int);
-        memcpy(&(contextoEjecucion->estado), buffer+desplazamiento, sizeof(estadoProceso));
-        desplazamiento += sizeof(estadoProceso) + sizeof(int);
 
-        //no haria falta volver a recibir las instrucciones porque no cambian
-
-        //SE PODRIA LLEGAR A PONER EN UNA FUNCION APARTE PERO HAY QUE MANDAR ALGUNOS PARAMETROS
-        //recibirRegistros();
         dictionary_clean_and_destroy_elements(contextoEjecucion->registrosCPU, free);
         char* AX = malloc(sizeof(char) * (4 + 1));
         memcpy(AX, buffer + desplazamiento, sizeof(char) * (4 + 1));
@@ -296,10 +293,15 @@ void recibirContextoActualizado(){
         //recibirTablaDeArchivos();
 
         //recibirTablaDeSegmentos();
+
+        recibirMotivoDeDesalojo();
 		
-	//}
 
 	free(buffer);
+
+}
+
+void* recibirMotivoDeDesalojo(){
 
 }
 
@@ -314,7 +316,6 @@ void* recibirTablaDeSegmentos(){
 }
 
 void actualizarPCB(t_pcb* proceso){
-    proceso->estado = contextoEjecucion->estado;
 	list_destroy(proceso->instrucciones);
     proceso->instrucciones = list_duplicate(contextoEjecucion->instrucciones);
     proceso->pid = contextoEjecucion->pid;

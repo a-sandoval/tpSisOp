@@ -54,9 +54,6 @@ void recibirContextoActualizado(){
         desplazamiento += sizeof(contextoEjecucion->pid) + sizeof(int);
         memcpy(&(contextoEjecucion->programCounter), buffer+desplazamiento, sizeof(uint32_t));
         desplazamiento += sizeof(contextoEjecucion->programCounter) + sizeof(int);
-        memcpy(&(contextoEjecucion->estado), buffer+desplazamiento, sizeof(estadoProceso));
-        desplazamiento += sizeof(estadoProceso) + sizeof(int);
-
 
         // Cantidad de instrucciones
 	    memcpy(&(contextoEjecucion->instruccionesLength), buffer + desplazamiento, sizeof(uint32_t));
@@ -187,7 +184,6 @@ void recibirContextoActualizado(){
 void iniciarContexto(){
 
     contextoEjecucion = malloc(sizeof(t_contexto));
-    contextoEjecucion->estado = 0;
 	contextoEjecucion->instrucciones = list_create();
 	contextoEjecucion->instruccionesLength = list_size(contextoEjecucion->instrucciones);
 	contextoEjecucion->pid = 0;
@@ -197,6 +193,7 @@ void iniciarContexto(){
 	contextoEjecucion->tablaDeArchivosSize = list_size(contextoEjecucion->tablaDeArchivos);
 	contextoEjecucion->tablaDeSegmentos = list_create();
 	contextoEjecucion->tablaDeSegmentosSize = list_size(contextoEjecucion->tablaDeSegmentos);
+    contextoEjecucion->motivoDesalojo = malloc(sizeof(t_motivoDeDesalojo));
 	
 }
 

@@ -6,12 +6,18 @@
 #include "shared/include/utilsCliente.h"
 #include "shared/include/utilsServidor.h"
 #include "pcb.h"
+#include "shared/include/global.h"
+typedef struct {
 
+        t_comando comando; 
+        int parametrosLength;
+        char* parametros[3]; 
+
+}t_motivoDeDesalojo; 
 typedef struct {
 
     uint32_t pid; 
     int programCounter;
-    estadoProceso estado; 
     uint32_t instruccionesLength;
     t_list* instrucciones; 
     t_dictionary* registrosCPU;  
@@ -19,7 +25,7 @@ typedef struct {
     t_list* tablaDeArchivos; 
     uint32_t tablaDeSegmentosSize;
     t_list* tablaDeSegmentos; 
-
+    t_motivoDeDesalojo motivoDesalojo;
 } t_contexto; 
 
 extern int conexionACPU;
