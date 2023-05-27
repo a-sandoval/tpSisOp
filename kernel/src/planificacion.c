@@ -76,6 +76,7 @@ void planificarACortoPlazo(t_pcb* (*proximoAEjecutar)()) {
         loggearCambioDeEstado(aEjecutar->pid, estadoAnterior,aEjecutar->estado);
 
         procesarPCB(aEjecutar);
+
         switch(aEjecutar->estado) {
             case EXEC:
             // 返却されたステータスが「実行中」であった場合のことを考慮してください。
@@ -93,17 +94,43 @@ void planificarACortoPlazo(t_pcb* (*proximoAEjecutar)()) {
                 break;
             case BLOCK:
             //Luego de moverse del estado de Block a nuevamente Ready, recordar calcular rafaga con funcion calcular Rafaga. 
-                break; 
+                //Cambios Brisa:
+                bloqueoIO(aEjecutar);
+                aEjecutar->estado=READY;
+                break;
+            case WAIT:
+                break;
+            case SIGNAL:
+                break;
             default:
                 enviarMensaje("Terminado", aEjecutar->socketPCB);
                 destruirPCB(aEjecutar);
                 break;
+                //BMotivo de finalizacion hay que liberar los recursos asociados
 
         } 
 
         //No hacerlo por estado de proceso, sino por el mensaje que envia (por Wait, Yield (por cada syscall)). Devolver MOTIVO de devolucion, puede tener params
         
     }
+}
+
+//caso bloqueo es por I/O
+void bloqueoIO(t_pcb* pcb){
+    
+	pthread_t pcb_bloqueado;  
+
+		if(!pthread_create(&pcb_bloqueado, NULL, (void*) bloquearIO, NULL))
+            pthread_join(pcb_bloqueado, NULL);
+
+    	else{
+    	    log_error(loggerError, "Error en la creacion de hilo para realizar I/O, Abort");
+    	    abort();
+		}
+}
+
+void bloquearIO(t_pcb* pcb){
+    pthread_sleep();//sleep por la cantidad indicada en el motivo
 }
 
 void detenerYDestruirCronometro(t_temporal* cronometroReady) {

@@ -8,8 +8,10 @@ int conexionACPU;
 
 void conexionCPU() {
     logger = cambiarNombre("Kernel-CPU");
+
     while(1) {
         conexionACPU = conexion("CPU");
+
         if(conexionACPU != -1)
             return;
         else {
@@ -21,6 +23,7 @@ void conexionCPU() {
 
 int recibirOperacionDeCPU(){ //Hay que ver esto en el utils.
 	int cod_op;
+    
 	if(recv(conexionACPU, &cod_op, sizeof(int), MSG_WAITALL) > 0)
 		return cod_op;
 	else
@@ -43,9 +46,11 @@ void* recibirBufferDeCPU(int* size){
 int procesarPCB(t_pcb* procesoEnEjecucion) {
 
     iniciarContexto();
+
     bufferContexto = malloc(sizeof(t_buffer));
 
     asignarPCBAContexto(procesoEnEjecucion);
+
     enviarContexto();
 
     // aca a su vez hay que recibir el contexto actualizado que mande la cpu, deserializarlo y cambiarlo en el PCB
@@ -53,7 +58,9 @@ int procesarPCB(t_pcb* procesoEnEjecucion) {
     //que tiene que recibir de memoria y fs tm no?
     
     int operacion = recibirOperacionDeCPU();
+
     log_info(logger, "Recibido el contexto.");
+
     switch(operacion){
         case CONTEXTOEJECUCION:
             recibirContextoActualizado(); //me carga el contexto actualizado en el mismo contextoEjecucion;
