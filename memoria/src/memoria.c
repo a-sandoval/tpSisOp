@@ -2,10 +2,12 @@
 
 int sockets[3];
 
-int main(){
+int main() {
+
     logger = iniciarLogger("memoria.log", "Memoria");
 	loggerError = iniciarLogger("errores.log","Memoria"); 
 	config = iniciarConfiguracion("memoria.config");
+	espacioDeUsuario = malloc(config_get_int_value(config,"TAM_MEMORIA")); 
 
 	//Inicio servidor y queda a la espera de las conexiones de CPU, Kernel y File System
 	

@@ -59,15 +59,13 @@ int procesarPCB(t_pcb* procesoEnEjecucion) {
 
     switch(operacion){
         case CONTEXTOEJECUCION:
-            recibirContextoActualizado(); //me carga el contexto actualizado en el mismo contextoEjecucion;
-            actualizarPCB(procesoEnEjecucion);
-            destroyContexto();
+            recibirContextoActualizado(); 
             break;
     }
 
     //close(conexionACPU);
     free(bufferContexto);
-    return 0;
+    return contextoEjecucion;
  
 }
 
@@ -97,7 +95,7 @@ void asignarPCBAContexto(t_pcb* proceso){
     contextoEjecucion->tablaDeArchivosSize = list_size(contextoEjecucion->tablaDeArchivos);
     contextoEjecucion->tablaDeSegmentos = list_duplicate(proceso->tablaDeSegmentos);
     contextoEjecucion->tablaDeSegmentosSize = list_size(contextoEjecucion->tablaDeSegmentos);
-    motivoDesalojo->parametrosLength = strlen(motivoDesalojo->parametros) + 1;
+    contextoEjecucion->motivoDesalojo->parametrosLength = strlen(contextoEjecucion->motivoDesalojo->parametros) + 1;
 
 }
 t_dictionary *registrosDelCPU(t_dictionary *aCopiar) {
@@ -298,16 +296,25 @@ void recibirContextoActualizado(){
 
         //recibirTablaDeSegmentos();
 
-        recibirMotivoDeDesalojo();
-		
+        //recibirMotivoDeDesalojo
+
+         memcpy(&(contextoEjecucion->motivoDesalojo->comando), buffer + desplazamiento, sizeof(t_comando));
+        desplazamiento += sizeof(t_comando) + sizeof(int);
+
+        memcpy(&(contextoEjecucion->motivoDesalojo->parametrosLength), buffer + desplazamiento, sizeof(uint32_t));
+        desplazamiento += sizeof(contextoEjecucion->motivoDesalojo->parametrosLength) + sizeof(int);
+
+        memcpy(&(contextoEjecucion->motivoDesalojo->parametros), buffer + desplazamiento, strlen(contextoEjecucion->motivoDesalojo->parametros)+1);
+        desplazamiento +=  strlen(contextoEjecucion->motivoDesalojo->parametros) + 1 + sizeof(int);
+
+
+		memcpy(&(contextoEjecucion->rafagaCPUEjecutada), buffer + desplazamiento, sizeof(uint64_t));
 
 	free(buffer);
 
 }
 
-void* recibirMotivoDeDesalojo(){
 
-}
 
 void* recibirTablaDeArchivos(){
     return NULL;

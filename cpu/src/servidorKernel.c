@@ -46,9 +46,6 @@ void recibirContextoActualizado(){
 	void * buffer;
 
 	buffer = recibirBuffer(&size);
-	//while(desplazamiento < size){ //segun entiendo el while hace que se quede esperando a recbibir absoulamente todos los datos
-    // El while no es necesario ya que (en un mundo ideal!) todos los datos que se mandan son atrapados aca, 
-    // sino se esta enviando incorrectamente algo. Ademas el ciclo empezaria a agarrar cosas sin saber, como el PID.
         desplazamiento += sizeof(int);
         memcpy(&(contextoEjecucion->pid), buffer + desplazamiento, sizeof(uint32_t));
         desplazamiento += sizeof(contextoEjecucion->pid) + sizeof(int);
@@ -60,7 +57,6 @@ void recibirContextoActualizado(){
 	    desplazamiento+=sizeof(uint32_t);
 
 	    // Lista de instrucciones
-        log_info(logger, "PID = %d | Estado = %d | Program Counter = %d", contextoEjecucion->pid, contextoEjecucion->estado, contextoEjecucion->programCounter);
 	    log_info(logger, "Se recibieron %d instrucciones", contextoEjecucion->instruccionesLength);
 
 	    for(uint32_t i = 0; i < contextoEjecucion->instruccionesLength; i++) {
@@ -176,6 +172,17 @@ void recibirContextoActualizado(){
         //recibirTablaDeArchivos();
 
         //recibirTablaDeSegmentos();
+
+         memcpy(&(contextoEjecucion->motivoDesalojo->comando), buffer + desplazamiento, sizeof(t_comando));
+        desplazamiento += sizeof(t_comando) + sizeof(int);
+
+        memcpy(&(contextoEjecucion->motivoDesalojo->parametrosLength), buffer + desplazamiento, sizeof(uint32_t));
+        desplazamiento += sizeof(contextoEjecucion->motivoDesalojo->parametrosLength) + sizeof(int);
+
+        memcpy(&(contextoEjecucion->motivoDesalojo->parametros), buffer + desplazamiento, strlen(contextoEjecucion->motivoDesalojo->parametros)+1);
+        desplazamiento +=  strlen(contextoEjecucion->motivoDesalojo->parametros) + 1 + sizeof(int);
+
+		memcpy(&(contextoEjecucion->rafagaCPUEjecutada), buffer + desplazamiento, sizeof(uint64_t));
 		
 	free(buffer);
 
@@ -194,6 +201,8 @@ void iniciarContexto(){
 	contextoEjecucion->tablaDeSegmentos = list_create();
 	contextoEjecucion->tablaDeSegmentosSize = list_size(contextoEjecucion->tablaDeSegmentos);
     contextoEjecucion->motivoDesalojo = malloc(sizeof(t_motivoDeDesalojo));
+    contextoEjecucion->motivoDesalojo->parametros[0] = '\0';
+    contextoEjecucion->motivoDesalojo->parametrosLength = 0;
 	
 }
 
@@ -202,5 +211,6 @@ void liberarContexto() {
     dictionary_destroy_and_destroy_elements(contextoEjecucion->registrosCPU, iterator);
     list_destroy_and_destroy_elements(contextoEjecucion->tablaDeArchivos, iterator);
     list_destroy_and_destroy_elements(contextoEjecucion->tablaDeSegmentos, iterator);
+    free(contextoEjecucion->motivoDesalojo->parametros);
     free(contextoEjecucion);
 }

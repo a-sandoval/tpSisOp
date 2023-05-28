@@ -70,6 +70,7 @@ void decode(){
 void execute() {
 
    rafagaCPU= temporal_create(); 
+  
 
     switch(cantParametros) {
         case 0:
@@ -141,9 +142,7 @@ void execute() {
     }
 }
 
-// ------- Funciones del execute SET - YIELD - EXIT ------- //
 
-//SET (Registro, Valor) --> Asigna al registro el valor pasado como parámetro.
 void set_c(char* registro, char* valor){
     int tiempoEspera = obtenerTiempoEspera();
     sleep(tiempoEspera); 
@@ -155,68 +154,148 @@ int obtenerTiempoEspera(){
     return config_get_int_value(config,"RETARDO_INSTRUCCION"); 
 }
 
-//IO (Tiempo) --> Representa una syscall de I/O bloqueante. Devuelve el Contexto de Ejecución actualizado al Kernel junto a la cantidad de unidades de tiempo que va a bloquearse el proceso.
 void io(int tiempo){
     temporal_stop(rafagaCPU); 
     
     rafagaCPUEjecutada = temporal_gettime(rafagaCPU);  
 
+    contextoEjecucion->motivoDesalojo->comando = IO;
+    contextoEjecucion->motivoDesalojo->parametros[0]= tiempo;
+    contextoEjecucion->motivoDesalojo->parametrosLength = 1;
+
     enviarContextoActualizado();
-    //enviarCantidadDeTiempoABloquearse(cantidad);
+
+
 }
 
-//WAIT (Recurso) --> Solicita al Kernel que se asigne una instancia del recurso indicado por parámetro.
 void wait_c(char* recurso){
     
     //Si hay un bloqueo, hay que detener la rafaga de CPU
     //temporal_stop(rafagaCPU); 
+    contextoEjecucion->motivoDesalojo->comando = WAIT;
+    contextoEjecucion->motivoDesalojo->parametros[0] = recurso;
+    contextoEjecucion->motivoDesalojo->parametrosLength = 1;
+
     enviarContextoActualizado();
-    solicitarInstancia(recurso);
 }
 
-void solicitarInstancia(char* recurso){
-    //flor está en proceso de pensar esto
-}
-
-//SIGNAL (Recurso) --> Solicita al Kernel que se libere una instancia del recurso indicado por parámetro.
 void signal_c(char* recurso){
 
     //Si hay un bloqueo, hay que detener la rafaga de CPU
 
     //temporal_stop(rafagaCPU); 
+    contextoEjecucion->motivoDesalojo->comando = SIGNAL;
+    contextoEjecucion->motivoDesalojo->parametros[0] = recurso;
+    contextoEjecucion->motivoDesalojo->parametrosLength = 1;
+
     enviarContextoActualizado();
-    liberarInstancia(recurso);
 }
 
-void liberarInstancia(char* recurso){
-    //flor está en proceso de pensar esto tmb
-}
-
-//YIELD --> Desaloja voluntariamente el proceso de la CPU. Devuelve el Contexto de Ejecución actualizado al Kernel.
 void yield_c(){ 
-    contextoEjecucion->estado = READY;
     temporal_stop(rafagaCPU);
     int64_t rafagaCPUEjecutada = temporal_gettime(rafagaCPU);  
+
+    contextoEjecucion->motivoDesalojo->comando = YIELD;
+    contextoEjecucion->motivoDesalojo->parametros[0]= NULL;
+    contextoEjecucion->motivoDesalojo->parametrosLength = 0;
+
     enviarContextoActualizado();
+
+    temporal_destroy(rafagaCPU); 
 }
 
-//EXIT --> Representa la syscall de finalización del proceso. Devuelve el Contexto de Ejecución actualizado al Kernel para su finalización.
 void exit_c(){
-    contextoEjecucion->estado = SALIDA;
+
     temporal_stop(rafagaCPU); 
     temporal_destroy(rafagaCPU); 
+
+    contextoEjecucion->motivoDesalojo->comando = EXIT;
+    contextoEjecucion->motivoDesalojo->parametros[0]= NULL;
+    contextoEjecucion->motivoDesalojo->parametrosLength = 0;
     enviarContextoActualizado();
 }
 
+void f_open(char* nombre){
+
+    contextoEjecucion->motivoDesalojo->comando = F_OPEN;
+    contextoEjecucion->motivoDesalojo->parametros[0] = nombre;
+    contextoEjecucion->motivoDesalojo->parametrosLength = 1;
+
+    enviarContextoActualizado();
+};
+
+void f_close(char* nombre){
+
+    contextoEjecucion->motivoDesalojo->comando = F_CLOSE;
+    contextoEjecucion->motivoDesalojo->parametros[0] = nombre;
+    contextoEjecucion->motivoDesalojo->parametrosLength = 1;
+
+    enviarContextoActualizado();
+};
+
+void f_seek(char* nombre, uint32_t puntero){
+
+    contextoEjecucion->motivoDesalojo->comando = F_SEEK;
+    contextoEjecucion->motivoDesalojo->parametros[0] = nombre + " " + puntero;
+    contextoEjecucion->motivoDesalojo->parametrosLength = 2;
+
+    enviarContextoActualizado();
+};
+
+void f_read(char* nombre, char* direccionLogica, int cantBytes){
+
+    contextoEjecucion->motivoDesalojo->comando = F_READ;
+    contextoEjecucion->motivoDesalojo->parametros[0] = nombre + " " + direccionLogica + " " + cantBytes;
+    contextoEjecucion->motivoDesalojo->parametrosLength = 3;
+
+    enviarContextoActualizado();
+};
+
+void f_write(char* nombre, char* direccionLogica, int cantBytes){
+
+    contextoEjecucion->motivoDesalojo->comando = F_WRITE;
+    contextoEjecucion->motivoDesalojo->parametros[0] = nombre + " " + direccionLogica + " " + cantBytes;
+    contextoEjecucion->motivoDesalojo->parametrosLength = 3;
+
+    enviarContextoActualizado();
+};
+
+void f_truncate(char* nombre, int tamanio){
+
+    contextoEjecucion->motivoDesalojo->comando = F_TRUNCATE;
+    contextoEjecucion->motivoDesalojo->parametros[0] = nombre + " " + tamanio;
+    contextoEjecucion->motivoDesalojo->parametrosLength = 2;
+
+    enviarContextoActualizado();
+};
+
+void create_segment(uint32_t idSegmento, int tamanio){
+
+    contextoEjecucion->motivoDesalojo->comando = CREATE_SEGMENT;
+    contextoEjecucion->motivoDesalojo->parametros[0] = idSegment + " " + tamanio;
+    contextoEjecucion->motivoDesalojo->parametrosLength = 2;
+
+    enviarContextoActualizado();
+};
+
+void delete_segment(uint32_t idSegmento){
+
+    contextoEjecucion->motivoDesalojo->comando = DELETE_SEGMENT;
+    contextoEjecucion->motivoDesalojo->parametros[0] = idSegment 
+    contextoEjecucion->motivoDesalojo->parametrosLength = 1;
+
+    enviarContextoActualizado();
+};
+
+
+// MANEJO DE CONTEXTO
 void enviarContextoActualizado(){ 
     t_paquete* paquete = crearPaquete();
     
     paquete->codigo_operacion = CONTEXTOEJECUCION;
    
-    // cargo todos los valores en el paquete
     agregarAPaquete(paquete,(void *)&contextoEjecucion->pid, sizeof(contextoEjecucion->pid));
     agregarAPaquete(paquete,(void *)&contextoEjecucion->programCounter, sizeof(contextoEjecucion->programCounter));
-    agregarAPaquete(paquete,(void *)&contextoEjecucion->estado, sizeof(estadoProceso));
 
     //agregarInstruccionesAPaquete(paquete, contextoEjecucion->instrucciones);
 
@@ -228,10 +307,20 @@ void enviarContextoActualizado(){
     //agregarAPaquete(paquete,(void *)&contextoEjecucion->tablaDeSegmentosSize, sizeof(contextoEjecucion->tablaDeSegmentosSize));
     //agregarAPaquete(paquete,contextoEjecucion->tablaDeSegmentos, contextoEjecucion->tablaDeSegmentosSize);
     
+    agregarMotivoAPaquete(paquete,contextoEjecucion->motivoDesalojo);
+    agregarAPaquete(paquete, (void *)&contextoEjecucion->rafagaCPUEjecutada, sizeof(contextoEjecucion->rafagaCPUEjecutada));
 
     enviarPaquete(paquete, socketCliente);
 
 	eliminarPaquete(paquete);
+}
+
+void agregarMotivoAPaquete(t_paquete* paquete, t_motivoDeDesalojo* motivoDesalojo){
+
+    agregarAPaquete(paquete,(void *)&motivoDesalojo->comando, sizeof(motivoDesalojo->comando));
+
+    agregarAPaquete(paquete,(void *)&motivoDesalojo->parametrosLength, sizeof(motivoDesalojo->parametrosLength));
+    agregarAPaquete(paquete,(void *)motivoDesalojo->parametros, strlen(motivoDesalojo->parametros) + 1);
 }
 
 void agregarInstruccionesAPaquete(t_paquete* paquete, t_list* instrucciones){
@@ -247,54 +336,32 @@ void agregarInstruccionesAPaquete(t_paquete* paquete, t_list* instrucciones){
 
 void agregarRegistrosAPaquete(t_paquete* paquete, t_dictionary* registrosCPU){
      
-     // no terminaran en /0???
     char *AX = dictionary_get(registrosCPU,"AX"); 
-    agregarAPaquete(paquete, AX, sizeof(char) * (4 + 1));
-    //free(AX);
-
     char* BX = dictionary_get(registrosCPU,"BX");
-    agregarAPaquete(paquete, BX, sizeof(char) * (4 + 1));
-    //free(BX);
-
     char* CX = dictionary_get(registrosCPU,"CX");
-    agregarAPaquete(paquete, CX, sizeof(char) * (4 + 1));
-    //free(CX);
-
     char* DX = dictionary_get(registrosCPU,"DX");
-    agregarAPaquete(paquete, DX, sizeof(char) * (4 + 1));
-    //free(DX);
-
     char* EAX = dictionary_get(registrosCPU,"EAX");
-    agregarAPaquete(paquete, EAX, sizeof(char) * (8 + 1));
-    //free(EAX);
-
     char* EBX = dictionary_get(registrosCPU,"EBX");
-    agregarAPaquete(paquete, EBX, sizeof(char) * (8 + 1));
-    //free(EBX);
-
     char* ECX = dictionary_get(registrosCPU,"ECX");
-    agregarAPaquete(paquete, ECX, sizeof(char) * (8 + 1));
-    //free(ECX);
-
     char* EDX = dictionary_get(registrosCPU,"EDX");
-    agregarAPaquete(paquete, EDX, sizeof(char) * (8 + 1));
-    //free(EDX);
-
     char* RAX = dictionary_get(registrosCPU,"RAX");
-    agregarAPaquete(paquete, RAX, sizeof(char) * (16 + 1));
-    //free(RAX);
-
     char* RBX = dictionary_get(registrosCPU,"RBX");
-    agregarAPaquete(paquete, RBX, sizeof(char) * (16 + 1));
-    //free(RBX);
-
     char* RCX = dictionary_get(registrosCPU,"RCX");
-    agregarAPaquete(paquete, RCX, sizeof(char) * (16 + 1));
-    //free(RCX);
-
     char* RDX = dictionary_get(registrosCPU,"RDX");
+
+    agregarAPaquete(paquete, AX, sizeof(char) * (4 + 1));
+    agregarAPaquete(paquete, BX, sizeof(char) * (4 + 1));
+    agregarAPaquete(paquete, CX, sizeof(char) * (4 + 1));
+    agregarAPaquete(paquete, DX, sizeof(char) * (4 + 1));
+    agregarAPaquete(paquete, EAX, sizeof(char) * (8 + 1));
+    agregarAPaquete(paquete, EBX, sizeof(char) * (8 + 1));
+    agregarAPaquete(paquete, ECX, sizeof(char) * (8 + 1));
+    agregarAPaquete(paquete, EDX, sizeof(char) * (8 + 1));
+    agregarAPaquete(paquete, RAX, sizeof(char) * (16 + 1));
+    agregarAPaquete(paquete, RBX, sizeof(char) * (16 + 1));
+    agregarAPaquete(paquete, RCX, sizeof(char) * (16 + 1));
     agregarAPaquete(paquete, RDX, sizeof(char) * (16 + 1));
-    //free(RDX);
+
 }
 
 int buscar(char *elemento, char **lista) {
@@ -303,34 +370,10 @@ int buscar(char *elemento, char **lista) {
     return (i > string_array_size(lista)) ? -1 : i;
 }
 
-//A continuación serán declaradas las operaciones que faltan, falta desarrollarlas 
-//pero serán puestas para que la consola no nos hinche los huevos
+
 void mov_in(char* registro, char* direccionLogica){
 };
 
 void mov_out(char* direccionLogica, char* registro){
 };  
 
-void f_open(char* nombre){
-};
-
-void f_close(char* nombre){
-};
-
-void f_seek(char* nombre, uint32_t puntero){
-};
-
-void f_read(char* nombre, char* direccionLogica, int cantBytes){
-};
-
-void f_write(char* nombre, char* direccionLogica, int cantBytes){
-};
-
-void f_truncate(char* nombre, int tamanio){
-};
-
-void create_segment(uint32_t idSegmento, int tamanio){
-};
-
-void delete_segment(uint32_t idSegmento){
-};

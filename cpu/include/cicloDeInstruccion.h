@@ -58,13 +58,14 @@ typedef struct {
     t_list* tablaDeArchivos; 
     uint32_t tablaDeSegmentosSize;
     t_list* tablaDeSegmentos; 
-    t_motivoDeDesalojo motivoDesalojo;
+    t_motivoDeDesalojo* motivoDesalojo;
     int64_t rafagaCPUEjecutada;
 
 } t_contexto; 
 
 extern t_contexto* contextoEjecucion;
 
+void agregarMotivoAPaquete(t_paquete* paquete, t_motivoDeDesalojo* motivoDesalojo)
 void agregarRegistrosAPaquete(t_paquete* paquete, t_dictionary* registrosCPU);
 
 void cicloDeInstruccion();
@@ -77,7 +78,6 @@ int buscar(char *elemento, char **lista);
 void set_c(char* , char* );
 void yield_c(); 
 void exit_c(); 
-//Declaración de nuevas funciones
 void mov_in(char* , char* );
 void mov_out(char* , char* );
 void io(int );
@@ -91,9 +91,7 @@ void wait_c(char* );
 void signal_c(char* );
 void create_segment(uint32_t , int );
 void delete_segment(uint32_t );
-//new new ones
-void solicitarInstancia(char*);
-void liberarInstancia(char*);
+
 
 int obtenerTiempoEspera();
 

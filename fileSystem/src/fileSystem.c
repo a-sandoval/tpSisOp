@@ -14,8 +14,14 @@ int main () {
     loggerError = iniciarLogger("errores.log", "File-System"); 
     socketMemoria = conexion("MEMORIA"); 
 
+    // Se abre el archivo de super-bloque y se agarra la cantidad de bloques y el tamaño de cada bloque.
+
     superbloque = config_create("superbloque.dat");
     int cantBloques = config_get_int_value(superbloque, "BLOCK_COUNT");
+    int tamanioBloques = config_get_int_value(superbloque, "BLOCK_SIZE");
+
+    // Se abre el archivo del bitmap de bloques, con las flags para crearla si no existe y escribir y leer en caso de ser necesario.
+    // A su vez se crea con permisos para que el usuario pueda leerlas y modificarlas por si las dudas.
 
     int fD = open("bitmap.dat", O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
     struct stat statFD;
@@ -25,6 +31,16 @@ int main () {
     }
     fstat(fD, &statFD);
 
+    // Si el archivo no existe, procedo a llenarlo con la cantidad que necesita, ¿no deberiamos hacer esto con todos los archivos?
+
+    // Explicación tecnica: El fstat crea un struct llamado stat que contiene información del archivo, por eso se abrio el archivo con 
+    // el syscall open(), este stat tiene un parametro que es el tamaño.
+    // El bitmap de bloques va a tener un bitmap por cada bloque, por lo que va a tener un octavo de la cantidad de bloques.
+    // Por lo tanto, si el tamaño de  este archivo es 0, es porque aun no se creo, y en cuyo caso, como mmap (explicado más adelante) no
+    // funciona si el archivo no esta completo, lleno el archivo con el tamaño requerido, con 0s en todo el archivo.
+    
+    // Nota: Tal vez deberia modularizarlo a una función, y globalizar el archivo.
+
     if (statFD.st_size == 0) {
         char *filler = malloc (sizeof(char) * cantBloques/8);
         for (int i = 0; i < cantBloques/8; i++) 
@@ -32,23 +48,40 @@ int main () {
         write (fD, filler, cantBloques/8);
     }
 
+    // mmap es un asco, es lo peor de la galaxia.
+    // Se genera un mmap, vinculado directamente al archivo de bitmap, para poder modificarlo directamente.
+
+    // Explicación tecnica: AAAAAAAAAAAAAAAAAAAAAAA
+    // Mentira, el mmap, por lo que entiendo, es una función que aloca una cantidad de memoria, según el segundo parametro, y la puede vincular
+    // a un archivo, en este caso el del bitmap, para poder modificarlo activamente en memoria.
+    // Para hacerlo funcionar creo un bitarray que es una forma de manejar una cantidad de bits especificos, y lo vinculo con el string que 
+    // maneja el archivo de bitmap.
+
     char *ptrBitMap = mmap(0, cantBloques/8, PROT_WRITE | PROT_READ, MAP_SHARED, fD, 0);
     if (ptrBitMap == MAP_FAILED) {
         log_error(loggerError, "No se mapeo correctamente");
         exit(1);
     }
     bitmap = bitarray_create_with_mode(ptrBitMap, cantBloques, LSB_FIRST);
+
+    // Para comprobar que anda, relleno el archivo con datos basura.
+    // Se puede probar con el comando "od -t x1 ./bitmap.dat".
+    // Se utiliza el comando msync para sincronizar el archivo con el bitarray.
+
     for (int i = 0; i < cantBloques; i++)
         ((rand() % 2) - 1) ? bitarray_clean_bit(bitmap, i) : bitarray_set_bit(bitmap, i); 
     msync(ptrBitMap, cantBloques/8, MS_SYNC);
+
+    // Para probar hago un print del p
     for (int i = 0; i < 256; i++) {
         log_info(logger, "%d", bitarray_test_bit(bitmap, i));
     }
-    munmap(ptrBitMap, cantBloques/8);
-    close(fD);
+    
 
     //escucharAlKernel();
 
+    munmap(ptrBitMap, cantBloques/8);
+    close(fD);
     close(socketMemoria);
     config_destroy(superbloque);
     bitarray_destroy(bitmap);

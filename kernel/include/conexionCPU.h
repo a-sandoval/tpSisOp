@@ -59,7 +59,6 @@ void recibirContextoActualizado();
 
 void actualizarPCB(t_pcb* proceso);
 void destroyContexto();
-extern t_log* loggerError; 
 
 
 #endif /* CONEXION_CPU_H */

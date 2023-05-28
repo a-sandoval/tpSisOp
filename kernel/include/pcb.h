@@ -27,9 +27,7 @@ typedef struct {
     uint32_t programCounter;   
     estadoProceso estado; 
     t_dictionary* registrosCPU;
-    double estimadoRafagaAnterior; 
-    double rafagaRealAnterior; 
-    double estimadoNuevaRafaga; 
+    double estimadoProximaRafaga; 
     t_temporal* tiempoEnReady; 
     t_list* tablaDeSegmentos; 
     t_list* tablaDeArchivos; 

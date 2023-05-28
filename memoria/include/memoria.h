@@ -23,6 +23,7 @@
 #include "shared/include/global.h"
 #include "shared/include/utilsServidor.h"
 #include "shared/include/configuraciones.h"
+#include "include/conexionKernel.h"
 
 /**
  * @var socketCliente
@@ -46,6 +47,7 @@ void iterator(void* value);
 t_log* logger; 
 t_log* loggerError; 
 t_config* config; 
+void* espacioDeUsuario; 
 
 /**
  * Fin.

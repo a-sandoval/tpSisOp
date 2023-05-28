@@ -15,7 +15,6 @@ t_list* instanciasRecursos;
 t_list* recursos;
 char** nombresRecursos;
 
-
 int gradoMultiprogramacion; 
 
 char* estadosProcesos[5] = {"NEW","READY","EXEC","BLOCK","SALIDA"};
@@ -41,7 +40,6 @@ void planificarALargoPlazo(){
 
         loggearCambioDeEstado(pcb->pid, estadoAnterior,pcb->estado); 
 
-
         encolar(pcbsREADY, pcb);
 
         pidsInvolucrados = string_new();
@@ -57,7 +55,7 @@ void planificarALargoPlazo(){
 void agregarPID(void *value) { 
     t_pcb* pcb = (t_pcb*) value; 
     char* pid = string_itoa(pcb->pid); 
-    string_append(&pidsInvolucrados, pid); 
+    string_append_with_format(&pidsInvolucrados, " %s ", pid); 
 }
 
 void listarPIDS(t_list* pcbs) {
@@ -71,12 +69,13 @@ void imprimirRegistros(t_dictionary *registros) {
 
 void planificarACortoPlazo(t_pcb* (*proximoAEjecutar)()) {
 
-    //cambiosBrisa
     crearColasBloqueo(recursos,instanciasRecursos);
 
     while (1) {
         sem_wait(&hayProcesosReady); 
         t_pcb* aEjecutar = proximoAEjecutar();
+        t_contexto* contextoEjecucion = malloc(sizeof(t_contexto));
+        iniciarContexto(contextoEjecucion);
 
         detenerYDestruirCronometro(aEjecutar->tiempoEnReady); 
         estadoProceso estadoAnterior = aEjecutar->estado;
@@ -84,43 +83,71 @@ void planificarACortoPlazo(t_pcb* (*proximoAEjecutar)()) {
 
         loggearCambioDeEstado(aEjecutar->pid, estadoAnterior,aEjecutar->estado);
 
-        procesarPCB(aEjecutar);
+         contextoEjecucion = procesarPCB(aEjecutar);
+        char* parametros[3];
+        parametros[0] = string_split(contextoEjecucion->motivoDesalojo->parametros, " ");
 
-        switch(aEjecutar->estado) {
-            case EXEC:
-            // 返却されたステータスが「実行中」であった場合のことを考慮してください。
-                break;
-            case READY: 
-                encolar(pcbsREADY, aEjecutar);
-                sem_post(&hayProcesosReady); 
-                aEjecutar->rafagaRealAnterior = rafagaCPU; 
-                calcularNuevaRafagaCPU(aEjecutar);
-                break;
-            case SALIDA:
-                enviarMensaje("Terminado", aEjecutar->socketPCB);
-                destruirPCB(aEjecutar);
-                sem_post(&semGradoMultiprogramacion); 
-                break;
-            case BLOCK:
-            //Luego de moverse del estado de Block a nuevamente Ready, recordar calcular rafaga con funcion calcular Rafaga. 
-
-                //Cambios Brisa:
-                bloqueoIO(aEjecutar);
-                estadoProceso estadoAnterior = aEjecutar->estado;
-                aEjecutar->estado=READY;
-                loggearCambioDeEstado(aEjecutar->pid, estadoAnterior,aEjecutar->estado);
+        switch(contextoEjecucion->motivoDesalojo->comando){
+            case IO:
+                io_s(aEjecutar, parametros);
                 break;
             case WAIT:
-                //Cambios Brisa:
-                char* recurso; //viene del motivo
-                int indexRecurso= indiceRecurso(recurso);
+                wait_s(aEjecutar, parametros);          
+                break;
+            case SIGNAL:
+                signal_s(aEjecutar, parametros);
+                break;
+            case F_OPEN:
+                break;
+            case F_CLOSE:
+                break;
+            case F_SEEK:
+                break;
+            case F_READ:
+                break;
+            case F_WRITE:
+                break;
+            case F_TRUNCATE:
+                break;
+            case CREATE_SEGMENT:
+                break;
+            case DELETE_SEGMENT:
+                break;
+            case YIELD:
+                break;
+            case EXIT:
+                break;
+            default:
+                enviarMensaje("Terminado", aEjecutar->socketPCB);
+                destruirPCB(aEjecutar);
+                break;
+                //Bri: Motivo de finalizacion hay que liberar los recursos asociados
+
+        } 
+        
+    }
+}
+
+void io_s(t_pcb* aEjecutar, char* parametros){
+
+    int tiempo = parametros[0];
+    bloqueoIO(aEjecutar, tiempo);
+    estadoProceso estadoAnterior = aEjecutar->estado;
+    aEjecutar->estado=READY;
+    loggearCambioDeEstado(aEjecutar->pid, estadoAnterior,aEjecutar->estado);
+}
+
+void wait_s(t_pcb* aEjecutar, char* parametros){
+
+    char* recurso = parametros[0];
+    int indexRecurso= indiceRecurso(recurso);
                 
                 if(indexRecurso == -1){
                     enviarMensaje("Terminado", aEjecutar->socketPCB);
                     destruirPCB(aEjecutar);
                 }
 
-                int instancRecurso= (int*)list_get(instanciasRecursos,indexRecurso);
+                int instancRecurso = (int*)list_get(instanciasRecursos,indexRecurso);
                 instancRecurso--;
                 list_replace(instanciasRecursos,indexRecurso, (void*)&instancRecurso);
 
@@ -128,16 +155,11 @@ void planificarACortoPlazo(t_pcb* (*proximoAEjecutar)()) {
                     t_list* colaBloqueadosRecurso = (t_list*)list_get(recursos,indexRecurso);
                     list_add(colaBloqueadosRecurso,(void*)aEjecutar);
                     aEjecutar->estado=BLOCK;
-                }               
-                /*
-                A la hora de recibir de la CPU un Contexto de Ejecución desplazado por WAIT, el Kernel deberá verificar primero que exista el recurso solicitado
-                y en caso de que exista restarle 1 a la cantidad de instancias del mismo. En caso de que el número sea estrictamente menor a 0, el proceso que
-                realizó WAIT se bloqueará en la cola de bloqueados correspondiente al recurso.
-                */
-                break;
-            case SIGNAL:
-                //Cambios Brisa:
-                char* recurso; //viene del motivo
+                } 
+}
+
+void signal_s(t_pcb* aEjecutar, char* parametros){
+    char* recurso = parametros[0]; 
                 int indexRecurso= indiceRecurso(recurso);
                 
                 if(indexRecurso == -1){
@@ -145,6 +167,7 @@ void planificarACortoPlazo(t_pcb* (*proximoAEjecutar)()) {
                     destruirPCB(aEjecutar);
                 }
 
+                int instancRecurso = (int*)list_get(instanciasRecursos,indexRecurso);
                 instancRecurso++;
                 list_replace(instanciasRecursos,indexRecurso, (void*)&instancRecurso);
 
@@ -154,35 +177,8 @@ void planificarACortoPlazo(t_pcb* (*proximoAEjecutar)()) {
                     t_pcb* hizoSignal = (t_pcb*) list_remove(colaBloqueadosRecurso, indexRecurso);
                     hizoSignal->estado=EXEC;
                     procesarPCB(hizoSignal);
-                }     
-                /*A la hora de recibir de la CPU un Contexto de Ejecución desplazado por SIGNAL, el Kernel deberá verificar primero que
-                exista el recurso solicitado y luego sumarle 1 a la cantidad de instancias del mismo. En caso de que corresponda,
-                desbloquea al primer proceso de la cola de bloqueados de ese recurso. Una vez hecho esto, se devuelve la ejecución
-                al proceso que peticionó el SIGNAL. */
-                break;
-            default:
-                enviarMensaje("Terminado", aEjecutar->socketPCB);
-                destruirPCB(aEjecutar);
-                break;
-                //Bri: Motivo de finalizacion hay que liberar los recursos asociados
-
-        } 
-
-        //No hacerlo por estado de proceso, sino por el mensaje que envia (por Wait, Yield (por cada syscall)). Devolver MOTIVO de devolucion, puede tener params
-        
-    }
+                }    
 }
-
-
-/* Ejemplos:
-CONFIG:
-INSTANCIAS_RECURSOS=[1, 2];
-
-t_list* instanciasRecursos=[1,2];
-t_list* recursos = [LISTA,LISTA];
-char** nombresRecursos = ["DISCO","RECURSO_1"];
-*/
-
 
 //Devuelve el indice que se corresponde al recurso correspondiente, -1 si no lo encuentra
 int indiceRecurso(char* recurso){
@@ -219,13 +215,12 @@ void crearColasBloqueo(t_list* recursosUso,t_list* instanciasUso){
 
 }
 
-
 //caso bloqueo es por I/O
-void bloqueoIO(t_pcb* pcb){
+void bloqueoIO(t_pcb* pcb, int tiempo){
     
 	pthread_t pcb_bloqueado;  
 
-		if(!pthread_create(&pcb_bloqueado, NULL, (void*) bloquearIO, NULL))
+		if(!pthread_create(&pcb_bloqueado, NULL, (void*) bloquearIO, tiempo))
             pthread_join(pcb_bloqueado, NULL);
 
     	else{
@@ -234,8 +229,8 @@ void bloqueoIO(t_pcb* pcb){
 		}
 }
 
-void bloquearIO(t_pcb* pcb){
-    pthread_sleep(20);//sleep por la cantidad indicada en el motivo
+void bloquearIO(int tiempo){
+    pthread_sleep(tiempo);//sleep por la cantidad indicada en el motivo
 }
 
 
@@ -271,15 +266,21 @@ void* mayorRR(void* unPCB, void* otroPCB) {
 
 }
 
-void calcularNuevaRafagaCPU(t_pcb* pcb) { 
+void estimacionNuevaRafaga(t_pcb* pcb) {
+
+    if (strcmp(obtenerAlgoritmoPlanificacion(),"HRRN")) {
+        calcularEstimadoProximaRafaga(pcb, rafagaCPU); 
+    }
+} 
+
+
+void calcularEstimadoProximaRafaga(t_pcb* pcb, int64_t rafagaReal) { 
 
     double alfa = obtenerAlfaEstimacion(); 
 
-    pcb->estimadoRafagaAnterior = pcb->estimadoNuevaRafaga; // Lo que antes estaba como estimado de la nueva rafaga, ahora es la anterior
+    double estimadoRafaga = alfa*rafagaReal + (1-alfa) * pcb->estimadoProximaRafaga; 
 
-    double estimadoRafaga = alfa*pcb->rafagaRealAnterior + (1-alfa) * pcb->estimadoRafagaAnterior; 
-
-    pcb->estimadoNuevaRafaga = estimadoRafaga; 
+    pcb->estimadoProximaRafaga = estimadoRafaga; 
 
 }
 
@@ -293,14 +294,14 @@ double calcularRR(void* elem) {
 
     temporal_resume(pcb->tiempoEnReady); 
 
-    double estimatedServiceTime = pcb->estimadoNuevaRafaga; 
+    double estimatedServiceTime = pcb->estimadoProximaRafaga; 
 
     return (waitTime + estimatedServiceTime)/estimatedServiceTime; 
 
 
 }
 
- t_pcb* proximoAEjecutarHRRN(){
+t_pcb* proximoAEjecutarHRRN(){
     
     return list_get_maximum(pcbsREADY,mayorRR); 
     
@@ -325,7 +326,7 @@ t_pcb* crearPCB() {
     nuevoPCB->pid = procesosCreados; 
     nuevoPCB->programCounter = 0;
     nuevoPCB->instrucciones = list_create(); 
-    nuevoPCB->estimadoRafagaAnterior = obtenerEstimacionInicial(); 
+    nuevoPCB->estimadoProximaRafaga = obtenerEstimacionInicial(); 
     nuevoPCB->tablaDeArchivos = list_create(); 
     nuevoPCB->tablaDeSegmentos=list_create(); 
     nuevoPCB->registrosCPU = crearDiccionarioDeRegistros(); 

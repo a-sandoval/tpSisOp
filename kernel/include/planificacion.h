@@ -139,6 +139,9 @@ char* obtenerAlgoritmoPlanificacion();
 
 double obtenerAlfaEstimacion(); 
 
+char** obtenerRecursos();
+
+
 // frees
 
 /**
@@ -155,11 +158,13 @@ void* mayorRR(void* unPCB, void* otroPCB);
 double calcularRR(void* pcb); 
 void listarPIDS(t_list* pcbs); 
 void detenerYDestruirCronometro(t_temporal* ); 
-void calcularNuevaRafagaCPU(t_pcb* ); 
+void calcularEstimadoProximaRafaga(t_pcb* , int64_t );
+void estimacionNuevaRafaga(t_pcb*); 
 
 int indiceRecurso(char* recurso);
 void crearColasBloqueo(t_list* recursosUso,t_list* instanciasUso);
-void bloqueoIO(t_pcb* pcb);
-void bloquearIO(t_pcb* pcb);
+void bloqueoIO(t_pcb* pcb, int tiempo);
+void bloquearIO(int tiempo);
+
 
 #endif 
