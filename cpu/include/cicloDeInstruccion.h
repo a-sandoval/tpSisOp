@@ -65,7 +65,7 @@ typedef struct {
 
 extern t_contexto* contextoEjecucion;
 
-void agregarMotivoAPaquete(t_paquete* paquete, t_motivoDeDesalojo* motivoDesalojo)
+void agregarMotivoAPaquete(t_paquete* paquete, t_motivoDeDesalojo* motivoDesalojo);
 void agregarRegistrosAPaquete(t_paquete* paquete, t_dictionary* registrosCPU);
 
 void cicloDeInstruccion();
