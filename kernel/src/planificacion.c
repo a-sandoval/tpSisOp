@@ -131,14 +131,15 @@ void planificarACortoPlazo(t_pcb *(*proximoAEjecutar)())
     }
 }
 
-void io_s(t_pcb *aEjecutar, char *parametros)
-{
+void io_s(t_pcb *aEjecutar, char **parametros){
 
-    int tiempo = parametros[0];
-    bloqueoIO(aEjecutar, tiempo);
-    estadoProceso estadoAnterior = aEjecutar->estado;
-    aEjecutar->estado = READY;
-    loggearCambioDeEstado(aEjecutar->pid, estadoAnterior, aEjecutar->estado);
+	int tiempo = atoi(parametros[0]);
+	bloqueoIO(aEjecutar, tiempo);
+	estadoProceso estadoAnterior = aEjecutar->estado;
+	aEjecutar->estado = READY;
+	loggearCambioDeEstado(aEjecutar->pid, estadoAnterior, aEjecutar->estado);
+	encolar(pcbsREADY, aEjecutar);
+
 }
 
 void wait_s(t_pcb *aEjecutar, char *parametros)
@@ -241,9 +242,10 @@ void bloqueoIO(t_pcb *pcb, int tiempo)
 
     pthread_t pcb_bloqueado;
 
-    if (!pthread_create(&pcb_bloqueado, NULL, (void *)bloquearIO, tiempo))
-        pthread_join(pcb_bloqueado, NULL);
-
+    if (!pthread_create(&pcb_bloqueado, NULL, (void *)bloquearIO, (void *)&tiempo))
+    {
+        pthread_detach(pcb_bloqueado);
+    }
     else
     {
         log_error(loggerError, "Error en la creacion de hilo para realizar I/O, Abort");
@@ -253,7 +255,7 @@ void bloqueoIO(t_pcb *pcb, int tiempo)
 
 void bloquearIO(int tiempo)
 {
-    pthread_sleep(tiempo); // sleep por la cantidad indicada en el motivo
+    sleep(tiempo); // sleep por la cantidad indicada en el motivo
 }
 
 void detenerYDestruirCronometro(t_temporal *cronometroReady)
