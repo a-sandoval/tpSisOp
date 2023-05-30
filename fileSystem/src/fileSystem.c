@@ -72,7 +72,7 @@ int main () {
         ((rand() % 2) - 1) ? bitarray_clean_bit(bitmap, i) : bitarray_set_bit(bitmap, i); 
     msync(ptrBitMap, cantBloques/8, MS_SYNC);
 
-    // Para probar hago un print del p
+    // Para probar hago un print de los primeros 256 bits.
     for (int i = 0; i < 256; i++) {
         log_info(logger, "%d", bitarray_test_bit(bitmap, i));
     }

@@ -13,6 +13,9 @@
 #include "kernel/include/conexionFileSystem.h"
 #include "kernel/include/servidorConsola.h"
 #include "kernel/include/planificacion.h"
+#include "kernel/include/pcb.h"
+#include "kernel/include/algoritmosCortoPlazo.h"
+#include "kernel/include/configuraciones.h"
 
 // Utils y funciones del shared
 #include "shared/include/configuraciones.h"

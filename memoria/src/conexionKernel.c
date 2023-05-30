@@ -7,4 +7,10 @@ t_list* crearTablaDeSegmentosInicial() {
     segmento0.direccionBase=0; 
     segmento0.tamanio = config_get_int_value(config,"TAM_SEGMENTO_0"); 
 
+
+    t_list* tablaDeSegmentos = list_create(); 
+    list_add(tablaDeSegmentos,(void*)&segmento0);
+
+    return tablaDeSegmentos;  
+
 }

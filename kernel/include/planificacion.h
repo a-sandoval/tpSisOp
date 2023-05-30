@@ -7,13 +7,14 @@
 #include <commons/collections/list.h>
 #include <commons/temporal.h>
 #include "shared/include/utilsCliente.h"
-#include "pcb.h"
 #include "shared/include/global.h"
 #include <semaphore.h>
+#include "pcb.h"
 #include <pthread.h>
+#include "configuraciones.h"
 #include "conexionCPU.h"
 #include "syscalls.h"
-
+#include "algoritmosCortoPlazo.h"
 
 extern t_list* pcbsNEW; 
 extern t_list* pcbsREADY;
@@ -37,22 +38,6 @@ void planificarALargoPlazo();
 */
 void planificarACortoPlazo(t_pcb* (*proximoAEjecutar)());
 
-/** 
- * @brief planificador a corto plazo segun algoritmo de planificacion extraido del archivo de configuraciones
-*/
-void planificarACortoPlazoSegunAlgoritmo();
-
-/**
- * @brief Selecciona el proximo pcb a ejecutar segun el algoritmo FIFO
- * @param
- * @return el proximo puntero a t_pcb a ejecutar
- */
-t_pcb* proximoAEjecutarFIFO();
-
-/**
- * @brief indica el proximo elemento de la lista ready a ejecutar siguiendo el algoritmo HRRN
-*/
- t_pcb* proximoAEjecutarHRRN();
 
 
 // Semaforos
@@ -68,35 +53,7 @@ void inicializarSemaforos();
  * @param
  * @return un puntero a t_pcb listo para usar
  */
-t_pcb* crearPCB();
 
-/**
- * @brief Libera la memoria asociada a un pcb
- * @param pcb puntero a una estructura de tipo pcb
- * @return
- */
-void destruirPCB(t_pcb* pcb);
-t_dictionary* crearDiccionarioDeRegistros(); 
-
-// Lista de PCBs
-
-/**
- * @brief Crea todas las listas de PCBs en los distintos estados
- * @param
- * @return
- */
-void inicializarListasPCBS(); 
-
-/**
- * @brief Libera la memoria de una lista de pcbs
- * @param pcbs lista de pcbs
- * @return
- */
-void destruirListaPCB(t_list* pcbs);
-
-/**
- * @brief se agrega un nuevo pcb al final de la lista de news 
- */
 void ingresarANew(t_pcb *pcb); 
 
 /**
@@ -104,67 +61,9 @@ void ingresarANew(t_pcb *pcb);
  */
 t_pcb *obtenerSiguienteAReady();
 
-/**
- * @brief Selecciona el proximo pcb a ejecutar segun el algoritmo FIFO
- * @param pcbs lista de pcbs donde se encola el pcb
- * @param pcb el puntero a t_pcb a encolar en la lista de pcbs
- */
-void encolar(t_list* pcbs,t_pcb* pcb);
 
-/**
- * @brief Selecciona el proximo pcb a ejecutar segun el algoritmo FIFO
- * @param pcbs lista de pcbs de la cual se va a extraer el primer elemento
- * @return el proximo puntero a t_pcb a ejecutar
- */
-t_pcb* desencolar(t_list* pcbs);
+void loggearCambioDeEstado(uint32_t pid, estadoProceso anterior, estadoProceso actual); 
 
-// Configuracion
-
-/**
- * @brief Obtiene la estimacion inicial de rafaga del archivo de configuraciones del kernel
- * @param
- * @return el valor de la estimacion inicial de la rafaga
- */
-double  obtenerEstimacionInicial();
-
-/**
- * @brief obtiene el grado multiprogramacion del archivo de configuraciones
- * @param
- * @return el grado de multiprogramacion de la cpu
- */
-int obtenerGradoMultiprogramacion();
-
-/**
- * @brief obtiene del archivo de configuracion el algoritmo con que se va a realizar la planificacion a corto plazo
- * */
-char* obtenerAlgoritmoPlanificacion();
-
-double obtenerAlfaEstimacion(); 
-
-char** obtenerRecursos();
-
-char **obtenerInstanciasRecursos(); 
-
-
-// frees
-
-/**
- * @brief Libera la memoria de una instruccion
- * @param instruccion instruccion de tipo t_instruccion
- * @return
- */
-
-void destruirInstruccion(t_instruccion* instruccion);
-void destruirRegistro(char* registro); 
-void imprimirRegistros(t_dictionary *registros);
-
-
-void* mayorRR(void* unPCB, void* otroPCB); 
-double calcularRR(void* pcb); 
-void listarPIDS(t_list* pcbs); 
-void detenerYDestruirCronometro(t_temporal* ); 
-void calcularEstimadoProximaRafaga(t_pcb* , int64_t );
-void estimacionNuevaRafaga(t_pcb*); 
 
 int indiceRecurso(char* recurso);
 void crearColasBloqueo(t_list* recursosUso,t_list* instanciasUso);
