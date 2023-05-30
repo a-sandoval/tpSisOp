@@ -66,7 +66,7 @@ void loggearCambioDeEstado(uint32_t pid, estadoProceso anterior, estadoProceso a
 
 
 int indiceRecurso(char* recurso);
-void crearColasBloqueo(t_list* recursosUso,t_list* instanciasUso);
+void crearColasBloqueo();
 void bloqueoIO(t_pcb* pcb, int tiempo);
 void bloquearIO(int tiempo);
 

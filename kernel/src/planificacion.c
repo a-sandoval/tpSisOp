@@ -10,9 +10,11 @@ sem_t semGradoMultiprogramacion;
 char *pidsInvolucrados;
 int64_t rafagaCPU;
 
-t_list *instanciasRecursos;
+
+int *instanciasRecursos;
 t_list *recursos;
 char **nombresRecursos;
+
 
 int gradoMultiprogramacion;
 
@@ -65,6 +67,7 @@ void listarPIDS(t_list *pcbs)
 }
 
 
+
 void planificarACortoPlazo(t_pcb *(*proximoAEjecutar)())
 {
 
@@ -107,28 +110,140 @@ int indiceRecurso(char *recurso)
     return -1;
 }
 
+
+
+//Funciones auxiliares de colas de bloqueo para iterar e imprimir
+
+//Calcula el tamanio de un array char doble que vienen de los config y termina en NULL
+int tamanioArrayCharDoble(char**arreglo){
+
+	    int tamano = 0;
+
+	    while (arreglo[tamano] != NULL) {
+	        tamano++;
+	    }
+
+	    return tamano;
+
+}
+
+void imprimirVectorEnteros(int* vector, int tamanio){
+
+	for(int i=0;i<tamanio;i++){
+		printf("%d \t",vector[i]);
+	}
+
+}
+
+
+void closurePCB(void* pcbActual){
+
+	t_pcb* pcb = (t_pcb*) pcbActual;
+
+	printf("Estado del PCB: %s \t",estadosProcesos[pcb->estado]);
+
+	printf("PID del PCB: %d",pcb->pid);
+
+	putchar('\n');
+
+}
+
+
+void closureMatriz(void* colaBloqueados){
+
+	t_list* cola = (t_list*)colaBloqueados;
+
+	list_iterate(cola, closurePCB);
+
+	putchar('\n');
+
+}
+
+void imprimirMatrizRecursosColaBloqueados(t_list* matriz,int tamanio){
+
+    list_iterate(matriz, closureMatriz);
+
+    putchar('\n');
+
+}
+
+void imprimirArrayStrings(char** array,int tamanio){
+
+	for(int i =0;i<tamanio;i++){
+		printf("Elemento %d: %s \t ",i,array[i]);
+	}
+	putchar('\n');
+}
+
+
+
+
+//Destruccion de colas de bloqueo
+void destruirInstanciasRecursos(){
+	free(instanciasRecursos);
+}
+
+void destruirArrayCharDoble(char**array){
+
+	int tamanio=tamanioArrayCharDoble(array);
+
+	for(int i=0;i<tamanio;i++){
+		free(array[i]);
+	}
+	free(array);
+}
+
+void colaBloqueadosDestroyer(void* colaBloqueados){
+	list_destroy_and_destroy_elements(colaBloqueados,(void*)destruirPCB);
+}
+
+void destruirRecursos(){
+	list_destroy_and_destroy_elements(recursos, colaBloqueadosDestroyer);
+}
+
+void liberarColasBloqueo(){
+	destruirInstanciasRecursos();
+	destruirArrayCharDoble(nombresRecursos);
+	destruirRecursos();
+}
+
 // crear colas de bloqueo
-void crearColasBloqueo(t_list *recursosUso, t_list *instanciasUso)
+void crearColasBloqueo()
 {
+	instanciasRecursos=NULL;
+
+	recursos = list_create();
 
     nombresRecursos = obtenerRecursos();
 
     char **instancias = obtenerInstanciasRecursos();
 
-    int tamanio = length(instancias);
+    int tamanio = tamanioArrayCharDoble(instancias);
 
     for (int i = 0; i < tamanio; i++)
     {
 
-        int cantInstanConvert = atoi(instancias[i]);
+        int instanciasConvertEntero = atoi(instancias[i]);
 
-        list_add(instanciasUso, (void *)&cantInstanConvert);
+        instanciasRecursos=realloc(instanciasRecursos,(i+1)*sizeof(int));
+
+        instanciasRecursos[i]=instanciasConvertEntero;
+
+        /*
+        imprimirVectorEnteros(instanciasRecursos,i+1);
+        putchar('\n');
+        */
+
 
         t_list *colaBloqueo = list_create();
 
-        list_add(recursosUso, (void *)colaBloqueo);
+        list_add(recursos, (void *)colaBloqueo);
     }
+
+    destruirArrayCharDoble(instancias);
 }
+
+
 
 // caso bloqueo es por I/O
 void bloqueoIO(t_pcb *pcb, int tiempo)
