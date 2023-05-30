@@ -88,114 +88,59 @@ void planificarACortoPlazo(t_pcb *(*proximoAEjecutar)())
         loggearCambioDeEstado(aEjecutar->pid, estadoAnterior, aEjecutar->estado);
 
         contextoEjecucion = procesarPCB(aEjecutar);
-        char *parametros[3];
-        parametros[0] = string_split(contextoEjecucion->motivoDesalojo->parametros, " ");
-
-        switch (contextoEjecucion->motivoDesalojo->comando)
+        
+        switch(contextoEjecucion->motivoDesalojo->comando)
         {
         case IO:
-            io_s(aEjecutar, parametros);
+            io_s(aEjecutar, contextoEjecucion->motivoDesalojo->parametros);
             break;
         case WAIT:
-            wait_s(aEjecutar, parametros);
+            wait_s(aEjecutar, contextoEjecucion->motivoDesalojo->parametros);
             break;
         case SIGNAL:
-            signal_s(aEjecutar, parametros);
+            signal_s(aEjecutar, contextoEjecucion->motivoDesalojo->parametros);
             break;
         case F_OPEN:
+            fopen_s(aEjecutar, contextoEjecucion->motivoDesalojo->parametros);
             break;
         case F_CLOSE:
+            fclose_s(aEjecutar, contextoEjecucion->motivoDesalojo->parametros);
             break;
         case F_SEEK:
+            fseek_s(aEjecutar, contextoEjecucion->motivoDesalojo->parametros);
             break;
         case F_READ:
+            fread_s(aEjecutar, contextoEjecucion->motivoDesalojo->parametros);
             break;
         case F_WRITE:
+            fwrite_s(aEjecutar, contextoEjecucion->motivoDesalojo->parametros);
             break;
         case F_TRUNCATE:
+            ftruncate_s(aEjecutar, contextoEjecucion->motivoDesalojo->parametros);
             break;
         case CREATE_SEGMENT:
+            createSegment_s(aEjecutar, contextoEjecucion->motivoDesalojo->parametros);
             break;
         case DELETE_SEGMENT:
+            deleteSegment_s(aEjecutar, contextoEjecucion->motivoDesalojo->parametros);
             break;
         case YIELD:
+            yield_s(aEjecutar, contextoEjecucion->motivoDesalojo->parametros);
             break;
         case EXIT:
+            exit_s(aEjecutar, contextoEjecucion->motivoDesalojo->parametros);
             break;
         default:
             enviarMensaje("Terminado", aEjecutar->socketPCB);
             destruirPCB(aEjecutar);
             break;
-            // Bri: Motivo de finalizacion hay que liberar los recursos asociados
         }
     }
 }
 
-void io_s(t_pcb *aEjecutar, char **parametros){
 
-	int tiempo = atoi(parametros[0]);
-	bloqueoIO(aEjecutar, tiempo);
-	estadoProceso estadoAnterior = aEjecutar->estado;
-	aEjecutar->estado = READY;
-	loggearCambioDeEstado(aEjecutar->pid, estadoAnterior, aEjecutar->estado);
-	encolar(pcbsREADY, aEjecutar);
 
-}
 
-void wait_s(t_pcb *aEjecutar, char *parametros)
-{
-
-    char *recurso = parametros[0];
-    int indexRecurso = indiceRecurso(recurso);
-
-    if (indexRecurso == -1)
-    {
-        enviarMensaje("Terminado", aEjecutar->socketPCB);
-        destruirPCB(aEjecutar);
-    }
-
-    int instancRecurso = (int *)list_get(instanciasRecursos, indexRecurso);
-    instancRecurso--;
-    list_replace(instanciasRecursos, indexRecurso, (void *)&instancRecurso);
-
-    if (instancRecurso < 0)
-    {
-        t_list *colaBloqueadosRecurso = (t_list *)list_get(recursos, indexRecurso);
-
-        list_add(colaBloqueadosRecurso, (void *)aEjecutar);
-
-        aEjecutar->estado = BLOCK;
-    }
-}
-
-void signal_s(t_pcb *aEjecutar, char *parametros)
-{
-    char *recurso = parametros[0];
-    int indexRecurso = indiceRecurso(recurso);
-
-    if (indexRecurso == -1)
-    {
-        enviarMensaje("Terminado", aEjecutar->socketPCB);
-        destruirPCB(aEjecutar);
-    }
-
-    int instancRecurso = (int *)list_get(instanciasRecursos, indexRecurso);
-    instancRecurso++;
-    list_replace(instanciasRecursos, indexRecurso, (void *)&instancRecurso);
-
-    if (instancRecurso >= 0)
-    {
-        t_list *colaBloqueadosRecurso = (t_list *)list_get(recursos, indexRecurso);
-
-        list_add(colaBloqueadosRecurso, (void *)aEjecutar);
-
-        t_pcb *hizoSignal = (t_pcb *)list_remove(colaBloqueadosRecurso, indexRecurso);
-
-        hizoSignal->estado = EXEC;
-
-        procesarPCB(hizoSignal);
-    }
-}
 
 // Devuelve el indice que se corresponde al recurso correspondiente, -1 si no lo encuentra
 int indiceRecurso(char *recurso)
@@ -495,13 +440,12 @@ double obtenerAlfaEstimacion()
     return config_get_double_value(config, "HRRN_ALFA");
 }
 
-char **obtenerRecursos()
-{
+char **obtenerRecursos() {
+
     return config_get_array_value(config, "RECURSOS");
 }
 
-char **obtenerInstanciaRecursos()
-{
+char **obtenerInstanciasRecursos(){
     return config_get_array_value(config, "INSTANCIAS_RECURSOS");
 }
 

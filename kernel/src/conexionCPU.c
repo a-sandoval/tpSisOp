@@ -43,7 +43,7 @@ void* recibirBufferDeCPU(int* size){
 	return buffer;
 }
 
-int procesarPCB(t_pcb* procesoEnEjecucion) {
+t_contexto* procesarPCB(t_pcb* procesoEnEjecucion) {
 
     iniciarContexto();
 
@@ -82,6 +82,9 @@ void iniciarContexto(){
 	contextoEjecucion->tablaDeSegmentosSize = 0;
     contextoEjecucion->rafagaCPUEjecutada = 0;
     contextoEjecucion->motivoDesalojo = (t_motivoDeDesalojo *)malloc(sizeof(t_motivoDeDesalojo));
+    contextoEjecucion->motivoDesalojo->parametros[0] = NULL;
+    contextoEjecucion->motivoDesalojo->parametros[1] = NULL;
+    contextoEjecucion->motivoDesalojo->parametros[2] = NULL;
 }
 
 void asignarPCBAContexto(t_pcb* proceso){
@@ -95,7 +98,9 @@ void asignarPCBAContexto(t_pcb* proceso){
     contextoEjecucion->tablaDeArchivosSize = list_size(contextoEjecucion->tablaDeArchivos);
     contextoEjecucion->tablaDeSegmentos = list_duplicate(proceso->tablaDeSegmentos);
     contextoEjecucion->tablaDeSegmentosSize = list_size(contextoEjecucion->tablaDeSegmentos);
-    contextoEjecucion->motivoDesalojo->parametrosLength = strlen(contextoEjecucion->motivoDesalojo->parametros) + 1;
+    contextoEjecucion->motivoDesalojo->parametrosLength = (strlen(contextoEjecucion->motivoDesalojo->parametros[0]) +
+                                                          strlen(contextoEjecucion->motivoDesalojo->parametros[1]) + 
+                                                          strlen(contextoEjecucion->motivoDesalojo->parametros[2])) * sizeof(char) + 1;
 
 }
 t_dictionary *registrosDelCPU(t_dictionary *aCopiar) {
@@ -161,7 +166,7 @@ void enviarContexto(){
     //agregarAPaquete(paquete,(void *)&contextoEjecucion->tablaDeSegmentosSize, sizeof(contextoEjecucion->tablaDeSegmentosSize));
     //agregarAPaquete(paquete,contextoEjecucion->tablaDeSegmentos, contextoEjecucion->tablaDeSegmentosSize);
     
-    agregarMotivoAPaquete(paquete, &contextoEjecucion->motivoDesalojo);
+    agregarMotivoAPaquete(paquete, contextoEjecucion->motivoDesalojo);
     agregarAPaquete(paquete, (void *)&contextoEjecucion->rafagaCPUEjecutada, sizeof(contextoEjecucion->rafagaCPUEjecutada));
 
     enviarPaquete(paquete, conexionACPU);
@@ -213,7 +218,7 @@ void agregarMotivoAPaquete(t_paquete* paquete, t_motivoDeDesalojo* motivoDesaloj
     agregarAPaquete(paquete,(void *)&motivoDesalojo->comando, sizeof(motivoDesalojo->comando));
 
     agregarAPaquete(paquete,(void *)&motivoDesalojo->parametrosLength, sizeof(motivoDesalojo->parametrosLength));
-    agregarAPaquete(paquete,(void *)motivoDesalojo->parametros, strlen(motivoDesalojo->parametros) + 1);
+    agregarAPaquete(paquete,(void *)motivoDesalojo->parametros,(strlen(motivoDesalojo->parametros[0]) + strlen(motivoDesalojo->parametros[1]) + strlen(motivoDesalojo->parametros[2])) * sizeof(char)+ 1);
 }
 
 //FUNCIONES PARA RECIBIR NUEVO CONTEXTO POR PARTE DE LA CPU
@@ -304,8 +309,8 @@ void recibirContextoActualizado(){
         memcpy(&(contextoEjecucion->motivoDesalojo->parametrosLength), buffer + desplazamiento, sizeof(uint32_t));
         desplazamiento += sizeof(contextoEjecucion->motivoDesalojo->parametrosLength) + sizeof(int);
 
-        memcpy(&(contextoEjecucion->motivoDesalojo->parametros), buffer + desplazamiento, strlen(contextoEjecucion->motivoDesalojo->parametros)+1);
-        desplazamiento +=  strlen(contextoEjecucion->motivoDesalojo->parametros) + 1 + sizeof(int);
+        memcpy(&(contextoEjecucion->motivoDesalojo->parametros), buffer + desplazamiento, (strlen(contextoEjecucion->motivoDesalojo->parametros[0]) + strlen(contextoEjecucion->motivoDesalojo->parametros[1] + strlen(contextoEjecucion->motivoDesalojo->parametros[2]))) * sizeof(char) + 1);
+        desplazamiento += (strlen(contextoEjecucion->motivoDesalojo->parametros[0]) + strlen(contextoEjecucion->motivoDesalojo->parametros[1] + strlen(contextoEjecucion->motivoDesalojo->parametros[2]))) * sizeof(char) + 1 + sizeof(int);
 
 
 		memcpy(&(contextoEjecucion->rafagaCPUEjecutada), buffer + desplazamiento, sizeof(uint64_t));

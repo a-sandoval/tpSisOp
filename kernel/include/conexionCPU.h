@@ -13,7 +13,7 @@ typedef struct {
 
         t_comando comando; 
         int parametrosLength;
-        char* parametros[3]; 
+        char  *parametros[3]; 
 
 } t_motivoDeDesalojo; 
 
@@ -38,7 +38,7 @@ extern t_log* loggerError;
 
 void conexionCPU();
 
-int procesarPCB(t_pcb* procesoEnEjecucion);
+t_contexto* procesarPCB(t_pcb* procesoEnEjecucion);
 
 void iniciarContexto();
 

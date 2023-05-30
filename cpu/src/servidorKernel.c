@@ -148,27 +148,7 @@ void recibirContextoActualizado(){
         log_info(logger, "AX = %s | BX = %s | CX = %s | DX = %s", AX, BX, CX, DX);
         log_info(logger, "EAX = %s | EBX = %s | ECX = %s | EDX = %s", EAX, EBX, ECX, EDX);
         log_info(logger, "RAX = %s | RBX = %s | RCX = %s | RDX = %s", RAX, RBX, RCX, RDX);
-/*      
-        for(int i = 0; i < 4; j++) {
-            char nombre[2] = {'A', 'X'};
-            nombre[0] += i;
-            char *buffer2 = malloc(sizeof(char) * (4 + 1));
-            memcpy(buffer2, buffer + desplazamiento, sizeof(char) * (4 + 1));
-            dictionary_put(contextoEjecucion->registrosCPU, nombre, buffer2);
-            desplazamiento += sizeof(char) * (4 + 1) + sizeof(int);
-        }
-        for(int i = 1; i < 3; i++) {
-            for(int j = 0; j < 4; j++) {
-                char nombre[3] = {'E', 'A', 'X'};
-                nombre[1] += j;
-                nombre[0] = (i == 1) ? 'E' : 'R';
-                char *buffer2 = malloc(sizeof(char) * (4 * i + 1));
-                memcpy(buffer2, buffer + desplazamiento, sizeof(char) * (4 * i + 1));
-                dictionary_put(contextoEjecucion->registrosCPU, nombre, buffer2);
-                desplazamiento += sizeof(char) * (4 + 1) + sizeof(int);
-            }
-        }
-*/
+
         //recibirTablaDeArchivos();
 
         //recibirTablaDeSegmentos();

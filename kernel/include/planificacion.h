@@ -12,6 +12,8 @@
 #include <semaphore.h>
 #include <pthread.h>
 #include "conexionCPU.h"
+#include "syscalls.h"
+
 
 extern t_list* pcbsNEW; 
 extern t_list* pcbsREADY;
@@ -141,6 +143,8 @@ double obtenerAlfaEstimacion();
 
 char** obtenerRecursos();
 
+char **obtenerInstanciasRecursos(); 
+
 
 // frees
 
@@ -149,6 +153,7 @@ char** obtenerRecursos();
  * @param instruccion instruccion de tipo t_instruccion
  * @return
  */
+
 void destruirInstruccion(t_instruccion* instruccion);
 void destruirRegistro(char* registro); 
 void imprimirRegistros(t_dictionary *registros);
