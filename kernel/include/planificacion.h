@@ -16,6 +16,7 @@
 #include "syscalls.h"
 #include "algoritmosCortoPlazo.h"
 #include "manejoRecursos.h"
+#include "conexionMemoria.h"
 
 
 extern t_list* pcbsNEW; 

@@ -19,13 +19,12 @@ int conexionMemoria() {
     }
 }
 
-void recibirEstructurasIniciales() {
+void recibirEstructurasInicialesMemoria(t_pcb* pcb) {
 
 
     enviarMensaje("Estructuras iniciales",conexionAMemoria); 
 
     
-
     
 }
 

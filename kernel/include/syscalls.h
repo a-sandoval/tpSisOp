@@ -6,6 +6,7 @@
 #include "semaphore.h"
 #include "planificacion.h"
 #include "manejoRecursos.h"
+#include "algoritmosCortoPlazo.h"
 
 extern t_list *recursos;
 extern char **nombresRecursos;

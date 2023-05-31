@@ -205,8 +205,8 @@ void exit_c(){
     temporal_destroy(rafagaCPU); 
 
     contextoEjecucion->motivoDesalojo->comando = EXIT;
-    contextoEjecucion->motivoDesalojo->parametros[0]= NULL;
-    contextoEjecucion->motivoDesalojo->parametrosLength = 0;
+    contextoEjecucion->motivoDesalojo->parametros[0]= "SUCCESS";
+    contextoEjecucion->motivoDesalojo->parametrosLength = 1;
     enviarContextoActualizado();
 }
 

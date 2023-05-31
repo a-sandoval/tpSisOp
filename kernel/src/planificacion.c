@@ -53,6 +53,8 @@ void planificarACortoPlazo(t_pcb *(*proximoAEjecutar)()){
 
         contextoEjecucion = procesarPCB(aEjecutar);
 
+        rafagaCPU=contextoEjecucion->rafagaCPUEjecutada; 
+
         retornoContexto(aEjecutar, contextoEjecucion);
         
     }
@@ -92,7 +94,10 @@ void ingresarAReady(t_pcb *pcb) {
     pthread_mutex_lock(&mutexListaReady);
     encolar(pcbsREADY, pcb);
     pcb->tiempoEnReady = temporal_create();
+    
     pthread_mutex_unlock(&mutexListaReady);
+
+    recibirEstructurasInicialesMemoria(pcb); 
 
     sem_post(&hayProcesosReady);
 
@@ -101,9 +106,7 @@ void ingresarAReady(t_pcb *pcb) {
     listarPIDS(pcbsREADY);
     log_info(logger, "Cola Ready <%s>: [%s]", obtenerAlgoritmoPlanificacion(), pidsInvolucrados);
     free(pidsInvolucrados);
-
    
-
 
 }
 
