@@ -1,6 +1,7 @@
 #ifndef PLANIFICACION_PROCESOS_H
 #define PLANIFICACION_PROCESOS_H
 
+#include "configuraciones.h"
 #include <commons/config.h>
 #include <commons/log.h>
 #include <commons/string.h>
@@ -11,10 +12,11 @@
 #include <semaphore.h>
 #include "pcb.h"
 #include <pthread.h>
-#include "configuraciones.h"
 #include "conexionCPU.h"
 #include "syscalls.h"
 #include "algoritmosCortoPlazo.h"
+#include "manejoRecursos.h"
+
 
 extern t_list* pcbsNEW; 
 extern t_list* pcbsREADY;
@@ -22,15 +24,12 @@ extern t_list* pcbsREADY;
 extern sem_t hayProcesosReady;
 extern sem_t hayProcesosNuevos;
 extern pthread_mutex_t mutexListaNew;
+extern pthread_mutex_t mutexListaReady; 
 extern sem_t semGradoMultiprogramacion; 
 extern int gradoMultiprogramacion; 
-
-//Variables de manejo de recursos
 extern int *instanciasRecursos;
-extern t_list *recursos;
-extern char **nombresRecursos;
-extern int cantidadRecursos;
 
+extern char *estadosProcesos[5];
 
 // Planificacion
 
@@ -44,7 +43,6 @@ void planificarALargoPlazo();
  * @param proximoAEjecutar puntero a funcion que devuelve el proximo proceso a ejecutar siguiendo el algoritmo correspondiente
 */
 void planificarACortoPlazo(t_pcb* (*proximoAEjecutar)());
-
 
 
 // Semaforos
@@ -68,41 +66,8 @@ void ingresarANew(t_pcb *pcb);
  */
 t_pcb *obtenerSiguienteAReady();
 
+void ingresarAReady(t_pcb *pcb);
 
 void loggearCambioDeEstado(uint32_t pid, estadoProceso anterior, estadoProceso actual); 
-
-
-int indiceRecurso(char *recurso);
-
-int tamanioArrayCharDoble(char**arreglo);
-
-void imprimirVectorEnteros(int* vector, int tamanio);
-
-void closurePCB(void* pcbActual);
-
-void closureMatriz(void* colaBloqueados);
-
-void imprimirMatrizRecursosColaBloqueados(t_list* matriz,int tamanio);
-
-void imprimirArrayStrings(char** array,int tamanio);
-
-void destruirInstanciasRecursos();
-
-void destruirArrayCharDoble(char**array);
-
-void colaBloqueadosDestroyer(void* colaBloqueados);
-
-void destruirRecursos();
-
-void liberarColasBloqueo();
-
-void crearColasBloqueo();
-
-void bloqueoIO(t_pcb *pcb, int tiempo);
-
-void bloquearIO(int tiempo);
-
-
-
 
 #endif 

@@ -23,14 +23,7 @@ char** elementosInstruccion;
 int instruccionActual; 
 int cantParametros;
 //nuevos
-char* direccionLogica;
-int tiempo;//miedo
-char* nombreArchivo;
-uint32_t posicion;
-int cantBytes;
-int tamanio;
-char* recurso;
-uint32_t idSegmento;
+
 t_temporal* rafagaCPU; 
 int64_t rafagaCPUEjecutada; 
 
@@ -69,8 +62,8 @@ void decode(){
  
 void execute() {
 
-   rafagaCPU= temporal_create(); 
-  
+   rafagaCPU = temporal_create(); 
+
 
     switch(cantParametros) {
         case 0:
@@ -88,52 +81,54 @@ void execute() {
     }
     switch(instruccionActual){
         case SET:
-            set_c(elementosInstruccion[1], elementosInstruccion[2]);
+            set_c(elementosInstruccion[0], elementosInstruccion[1]);
             break;
-        case MOV_IN://falta
-            mov_in(elementosInstruccion[1], direccionLogica);
+        /*
+        case MOV_IN:
+            mov_in(elementosInstruccion[0], elementosInstruccion[1]);
             break;
-        case MOV_OUT://falta
-            mov_out(direccionLogica, elementosInstruccion[1]);
+        case MOV_OUT:
+            mov_out(elementosInstruccion[0], elementosInstruccion[1]);
             break;
-        case IO://IMPLEMENTAR
-            io(tiempo);
+        */
+        case IO:
+            io(elementosInstruccion[0]);
             break;
-        case F_OPEN://falta
-            f_open(nombreArchivo);
+        case F_OPEN:
+            f_open(elementosInstruccion[0]);
             break;
-        case F_CLOSE://falta
-            f_close(nombreArchivo);
+        case F_CLOSE:
+            f_close(elementosInstruccion[0]);
             break;
-        case F_SEEK://falta
-            f_seek(nombreArchivo, posicion);
+        case F_SEEK:
+            f_seek(elementosInstruccion[0], elementosInstruccion[1]);
             break;
-        case F_READ://falta
-            f_read(nombreArchivo, direccionLogica, cantBytes);
+        case F_READ:
+            f_read(elementosInstruccion[0], elementosInstruccion[1], elementosInstruccion[2]);
             break;
-        case F_WRITE://falta
-            f_write(nombreArchivo, direccionLogica, cantBytes);
+        case F_WRITE:
+            f_write(elementosInstruccion[0], elementosInstruccion[1], elementosInstruccion[2]);
             break;
-        case F_TRUNCATE://falta
-            f_truncate(nombreArchivo, tamanio);
+        case F_TRUNCATE:
+            f_truncate(elementosInstruccion[0], elementosInstruccion[1]);
             break;
-        case WAIT://IMPLEMENTAR
-            wait_c(recurso);
+        case WAIT:
+            wait_c(elementosInstruccion[0]);
             //un recurso puede ser un archivo, memoria reservada, semáforos, sockets, etc
             break;
-        case SIGNAL://IMPLEMENTAR
-            signal_c(recurso);
+        case SIGNAL:
+            signal_c(elementosInstruccion[0]);
             break;
-        case CREATE_SEGMENT://falta
-            create_segment(idSegmento, tamanio);
+        case CREATE_SEGMENT:
+            create_segment(elementosInstruccion[0], elementosInstruccion[1]);
             break;
-        case DELETE_SEGMENT://falta
-            delete_segment(idSegmento);
+        case DELETE_SEGMENT:
+            delete_segment(elementosInstruccion[0]);
             break;
-        case YIELD: //IMPLEMENTADA
+        case YIELD: 
             yield_c();
             break;
-        case EXIT: //IMPLEMENTADA
+        case EXIT:
             exit_c();
             break;
         default:
@@ -154,7 +149,7 @@ int obtenerTiempoEspera(){
     return config_get_int_value(config,"RETARDO_INSTRUCCION"); 
 }
 
-void io(int tiempo){
+void io(char* tiempo){
     temporal_stop(rafagaCPU); 
     
     rafagaCPUEjecutada = temporal_gettime(rafagaCPU);  
@@ -193,7 +188,7 @@ void signal_c(char* recurso){
 
 void yield_c(){ 
     temporal_stop(rafagaCPU);
-    int64_t rafagaCPUEjecutada = temporal_gettime(rafagaCPU);  
+    contextoEjecucion->rafagaCPUEjecutada = temporal_gettime(rafagaCPU);  
 
     contextoEjecucion->motivoDesalojo->comando = YIELD;
     contextoEjecucion->motivoDesalojo->parametros[0]= NULL;
@@ -233,147 +228,71 @@ void f_close(char* nombre){
     enviarContextoActualizado();
 };
 
-void f_seek(char* nombre, uint32_t puntero){
+void f_seek(char* nombre, char* puntero){
 
     contextoEjecucion->motivoDesalojo->comando = F_SEEK;
-    contextoEjecucion->motivoDesalojo->parametros[0] = nombre + " " + puntero;
+    contextoEjecucion->motivoDesalojo->parametros[0] = nombre;
+    contextoEjecucion->motivoDesalojo->parametros[1] = puntero;
     contextoEjecucion->motivoDesalojo->parametrosLength = 2;
 
     enviarContextoActualizado();
 };
 
-void f_read(char* nombre, char* direccionLogica, int cantBytes){
+void f_read(char* nombre, char* direccionLogica, char* cantBytes){
 
     contextoEjecucion->motivoDesalojo->comando = F_READ;
-    contextoEjecucion->motivoDesalojo->parametros[0] = nombre + " " + direccionLogica + " " + cantBytes;
+    contextoEjecucion->motivoDesalojo->parametros[0] = nombre;
+    contextoEjecucion->motivoDesalojo->parametros[1] = direccionLogica;
+    contextoEjecucion->motivoDesalojo->parametros[2] = cantBytes;
     contextoEjecucion->motivoDesalojo->parametrosLength = 3;
 
     enviarContextoActualizado();
 };
 
-void f_write(char* nombre, char* direccionLogica, int cantBytes){
+void f_write(char* nombre, char* direccionLogica, char* cantBytes){
 
     contextoEjecucion->motivoDesalojo->comando = F_WRITE;
-    contextoEjecucion->motivoDesalojo->parametros[0] = nombre + " " + direccionLogica + " " + cantBytes;
+    contextoEjecucion->motivoDesalojo->parametros[0] = nombre;
+    contextoEjecucion->motivoDesalojo->parametros[1] = direccionLogica;
+    contextoEjecucion->motivoDesalojo->parametros[2] = cantBytes;
     contextoEjecucion->motivoDesalojo->parametrosLength = 3;
 
     enviarContextoActualizado();
 };
 
-void f_truncate(char* nombre, int tamanio){
+void f_truncate(char* nombre, char* tamanio){
 
     contextoEjecucion->motivoDesalojo->comando = F_TRUNCATE;
-    contextoEjecucion->motivoDesalojo->parametros[0] = nombre + " " + tamanio;
+    contextoEjecucion->motivoDesalojo->parametros[0] = nombre;
+    contextoEjecucion->motivoDesalojo->parametros[1] = tamanio;
     contextoEjecucion->motivoDesalojo->parametrosLength = 2;
 
     enviarContextoActualizado();
 };
 
-void create_segment(uint32_t idSegmento, int tamanio){
+void create_segment(char* idSegmento, char* tamanio){
 
     contextoEjecucion->motivoDesalojo->comando = CREATE_SEGMENT;
-    contextoEjecucion->motivoDesalojo->parametros[0] = idSegment + " " + tamanio;
+    contextoEjecucion->motivoDesalojo->parametros[0] = idSegmento;
+    contextoEjecucion->motivoDesalojo->parametros[1] = tamanio;
     contextoEjecucion->motivoDesalojo->parametrosLength = 2;
 
     enviarContextoActualizado();
 };
 
-void delete_segment(uint32_t idSegmento){
+void delete_segment(char* idSegmento){
 
     contextoEjecucion->motivoDesalojo->comando = DELETE_SEGMENT;
-    contextoEjecucion->motivoDesalojo->parametros[0] = idSegment 
+    contextoEjecucion->motivoDesalojo->parametros[0] = idSegmento; 
     contextoEjecucion->motivoDesalojo->parametrosLength = 1;
 
     enviarContextoActualizado();
 };
-
-
-// MANEJO DE CONTEXTO
-void enviarContextoActualizado(){ 
-    t_paquete* paquete = crearPaquete();
-    
-    paquete->codigo_operacion = CONTEXTOEJECUCION;
-   
-    agregarAPaquete(paquete,(void *)&contextoEjecucion->pid, sizeof(contextoEjecucion->pid));
-    agregarAPaquete(paquete,(void *)&contextoEjecucion->programCounter, sizeof(contextoEjecucion->programCounter));
-
-    //agregarInstruccionesAPaquete(paquete, contextoEjecucion->instrucciones);
-
-    agregarRegistrosAPaquete(paquete, contextoEjecucion->registrosCPU);
-
-    //no sabemos listas de que son estas tablas entonces aun no podemos serializar o hay que serializarlo como listas y ver si dsps cambia
-    //agregarAPaquete(paquete,(void *)&contextoEjecucion->tablaDeArchivosSize, sizeof(contextoEjecucion->tablaDeArchivosSize));
-    //agregarAPaquete(paquete,contextoEjecucion->tablaDeArchivos, contextoEjecucion->tablaDeArchivosSize);
-    //agregarAPaquete(paquete,(void *)&contextoEjecucion->tablaDeSegmentosSize, sizeof(contextoEjecucion->tablaDeSegmentosSize));
-    //agregarAPaquete(paquete,contextoEjecucion->tablaDeSegmentos, contextoEjecucion->tablaDeSegmentosSize);
-    
-    agregarMotivoAPaquete(paquete,contextoEjecucion->motivoDesalojo);
-    agregarAPaquete(paquete, (void *)&contextoEjecucion->rafagaCPUEjecutada, sizeof(contextoEjecucion->rafagaCPUEjecutada));
-
-    enviarPaquete(paquete, socketCliente);
-
-	eliminarPaquete(paquete);
-}
-
-void agregarMotivoAPaquete(t_paquete* paquete, t_motivoDeDesalojo* motivoDesalojo){
-
-    agregarAPaquete(paquete,(void *)&motivoDesalojo->comando, sizeof(motivoDesalojo->comando));
-
-    agregarAPaquete(paquete,(void *)&motivoDesalojo->parametrosLength, sizeof(motivoDesalojo->parametrosLength));
-    agregarAPaquete(paquete,(void *)motivoDesalojo->parametros, strlen(motivoDesalojo->parametros) + 1);
-}
-
-void agregarInstruccionesAPaquete(t_paquete* paquete, t_list* instrucciones){
-
-    contextoEjecucion->instruccionesLength = list_size(instrucciones);
-    
-    agregarAPaquete(paquete, &contextoEjecucion->instruccionesLength, sizeof(uint32_t)); //primero envio la cantidad de elementos
-    uint32_t i;
-    for(i=0;i<contextoEjecucion->instruccionesLength;i++){
-        agregarAPaquete (paquete, list_get(instrucciones, i), sizeof(char) * (strlen(list_get(instrucciones, i)) + 1 ));
-    }
-}
-
-void agregarRegistrosAPaquete(t_paquete* paquete, t_dictionary* registrosCPU){
-     
-    char *AX = dictionary_get(registrosCPU,"AX"); 
-    char* BX = dictionary_get(registrosCPU,"BX");
-    char* CX = dictionary_get(registrosCPU,"CX");
-    char* DX = dictionary_get(registrosCPU,"DX");
-    char* EAX = dictionary_get(registrosCPU,"EAX");
-    char* EBX = dictionary_get(registrosCPU,"EBX");
-    char* ECX = dictionary_get(registrosCPU,"ECX");
-    char* EDX = dictionary_get(registrosCPU,"EDX");
-    char* RAX = dictionary_get(registrosCPU,"RAX");
-    char* RBX = dictionary_get(registrosCPU,"RBX");
-    char* RCX = dictionary_get(registrosCPU,"RCX");
-    char* RDX = dictionary_get(registrosCPU,"RDX");
-
-    agregarAPaquete(paquete, AX, sizeof(char) * (4 + 1));
-    agregarAPaquete(paquete, BX, sizeof(char) * (4 + 1));
-    agregarAPaquete(paquete, CX, sizeof(char) * (4 + 1));
-    agregarAPaquete(paquete, DX, sizeof(char) * (4 + 1));
-    agregarAPaquete(paquete, EAX, sizeof(char) * (8 + 1));
-    agregarAPaquete(paquete, EBX, sizeof(char) * (8 + 1));
-    agregarAPaquete(paquete, ECX, sizeof(char) * (8 + 1));
-    agregarAPaquete(paquete, EDX, sizeof(char) * (8 + 1));
-    agregarAPaquete(paquete, RAX, sizeof(char) * (16 + 1));
-    agregarAPaquete(paquete, RBX, sizeof(char) * (16 + 1));
-    agregarAPaquete(paquete, RCX, sizeof(char) * (16 + 1));
-    agregarAPaquete(paquete, RDX, sizeof(char) * (16 + 1));
-
-}
-
-int buscar(char *elemento, char **lista) {
-    int i = 0;
-    for (; strcmp(lista[i], elemento) && i <= string_array_size(lista); i++);
-    return (i > string_array_size(lista)) ? -1 : i;
-}
-
+/*
 
 void mov_in(char* registro, char* direccionLogica){
 };
 
 void mov_out(char* direccionLogica, char* registro){
 };  
-
+*/

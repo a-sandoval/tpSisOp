@@ -1,5 +1,8 @@
 #include "kernel/include/syscalls.h"
 
+t_list *recursos;
+char **nombresRecursos;
+
 void retornoContexto(t_pcb *proceso, t_contexto *contextoEjecucion){
 
     switch (contextoEjecucion->motivoDesalojo->comando)
@@ -12,6 +15,12 @@ void retornoContexto(t_pcb *proceso, t_contexto *contextoEjecucion){
         break;
     case SIGNAL:
         signal_s(proceso, contextoEjecucion->motivoDesalojo->parametros);
+        break;
+     case YIELD:
+        yield_s(proceso, contextoEjecucion->motivoDesalojo->parametros);
+        break;
+    case EXIT:
+        exit_s(proceso, contextoEjecucion->motivoDesalojo->parametros);
         break;
     /*
     case F_OPEN:
@@ -38,12 +47,8 @@ void retornoContexto(t_pcb *proceso, t_contexto *contextoEjecucion){
     case DELETE_SEGMENT:
         deleteSegment_s(proceso, contextoEjecucion->motivoDesalojo->parametros);
         break;
-    case YIELD:
-        yield_s(proceso, contextoEjecucion->motivoDesalojo->parametros);
-        break;
-    case EXIT:
-        exit_s(proceso, contextoEjecucion->motivoDesalojo->parametros);
-        break;
+    
+   
      */   
     default:
         enviarMensaje("Terminado", proceso->socketPCB);
@@ -128,9 +133,8 @@ void signal_s(t_pcb *aEjecutar, char **parametros)
 
         estadoProceso estadoAnterior = pcbDesbloqueado->estado;
         pcbDesbloqueado->estado = READY;
-        loggearCambioDeEstado(pcbDesbloqueado->pid, estadoAnterior, pcbDesbloqueado->estado);
-        encolar(pcbsREADY, pcbDesbloqueado);
-        sem_post(&hayProcesosReady);
+        
+        ingresarAReady(pcbDesbloqueado); 
         //printf("Se puso en ready el pcb de pid: %d\n",pcbDesbloqueado->pid);
 
         //printf("Despues de sacar un desbloqueado \n");
@@ -148,15 +152,70 @@ void signal_s(t_pcb *aEjecutar, char **parametros)
 }
 
 void io_s(t_pcb *proceso, char **parametros)
-{
+{   
+    estadoProceso anterior = proceso->estado;
+    proceso->estado = BLOCK; 
+
+    loggearBloqueoDeProcesos(proceso,"IO"); 
+    loggearCambioDeEstado(proceso->pid, anterior, proceso->estado);
+    
 
     int tiempo = atoi(parametros[0]);
-    bloqueoIO(proceso, tiempo);
+    log_info(logger,"I/O:  'PID: <%d> - Ejecuta IO: <%d>'",proceso->pid,tiempo); 
+    bloqueoIO(tiempo);
+
+    anterior = proceso->estado;
+    proceso->estado = READY;
+
+    ingresarAReady(proceso); 
+
+    loggearCambioDeEstado(proceso->pid, anterior, proceso->estado);
+
+
+}
+
+// caso bloqueo es por I/O
+void bloqueoIO(int tiempo)
+{
+
+    pthread_t pcb_bloqueado;
+
+    if (!pthread_create(&pcb_bloqueado, NULL, (void *)bloquearIO, (void *)&tiempo))
+    {
+        pthread_detach(pcb_bloqueado);
+    }
+    else
+    {
+        log_error(loggerError, "Error en la creacion de hilo para realizar I/O, Abort");
+        abort();
+    }
+}
+
+void bloquearIO(int tiempo)
+{   
+    sleep(tiempo); // sleep por la cantidad indicada en el motivo
+}
+
+void yield_s(t_pcb *proceso, char **parametros)
+{   
+
+    ingresarAReady(proceso); 
+
     estadoProceso estadoAnterior = proceso->estado;
     proceso->estado = READY;
     loggearCambioDeEstado(proceso->pid, estadoAnterior, proceso->estado);
-    encolar(pcbsREADY, proceso);
-    sem_post(&hayProcesosReady);
+
+}
+
+void exit_s(t_pcb *proceso, char **parametros){   
+    
+    estadoProceso anterior = proceso->estado; 
+    proceso->estado = SALIDA; 
+    loggearSalidaDeProceso(proceso,parametros[0]); 
+    loggearCambioDeEstado(proceso->pid, anterior, proceso->estado); 
+    enviarMensaje("Terminado", proceso->socketPCB);
+    destruirPCB(proceso);
+    sem_post(&semGradoMultiprogramacion); 
 }
 
 /*
@@ -188,12 +247,16 @@ void deleteSegment_s(t_pcb *proceso, char **parametros)
 {
 }
 
-void yield_s(t_pcb *proceso, char **parametros)
-{
-}
 
-void exit_s(t_pcb *proceso, char **parametros)
-{
-}
 
 */
+
+void loggearBloqueoDeProcesos(t_pcb* pcb, char* motivo) {
+
+    log_info(logger,"PID: <%d> - Bloqueado por: %s", pcb->pid, motivo); 
+}
+
+void loggearSalidaDeProceso(t_pcb* pcb, char* motivo) {
+
+    log_info(logger,"Finaliza el proceso <%d> - Motivo: <%s>", pcb->pid, motivo); 
+}

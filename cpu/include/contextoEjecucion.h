@@ -6,15 +6,14 @@
 #include "shared/include/utilsServidor.h"
 #include "stdlib.h"
 #include "stdint.h"
-#include "pcb.h"
 
 typedef struct {
 
         t_comando comando; 
         int parametrosLength;
-        char  *parametros[3]; 
+        char* parametros[3]; 
 
-} t_motivoDeDesalojo; 
+}t_motivoDeDesalojo; 
 
 typedef struct {
 
@@ -27,28 +26,27 @@ typedef struct {
     t_list* tablaDeArchivos; 
     uint32_t tablaDeSegmentosSize;
     t_list* tablaDeSegmentos; 
-    t_motivoDeDesalojo *motivoDesalojo;
+    t_motivoDeDesalojo* motivoDesalojo;
     int64_t rafagaCPUEjecutada;
 
-} t_contexto; 
+} t_contexto;
 
-extern int conexionACPU;
-
-void iniciarContexto();
-void asignarPCBAContexto(t_pcb* proceso);
-//void iterator(void *value);
-void destroyContexto();
+extern t_contexto* contextoEjecucion;
 
 
-//Serializacion y deserializion del contexto
-void enviarContexto();
-void agregarInstruccionesAPaquete(t_paquete* paquete, t_list* instrucciones);
-void agregarRegistrosAPaquete(t_paquete* paquete, t_dictionary* registrosCPU);
 void agregarMotivoAPaquete(t_paquete* paquete, t_motivoDeDesalojo* motivoDesalojo);
+void agregarRegistrosAPaquete(t_paquete* paquete, t_dictionary* registrosCPU);
 
+// FUNCIONES PARA ENVIO DE CONTEXTO DE EJECUCION
+void* serializar_contextoEjecucion(t_paquete* paquete, int bytes);
+void enviar_contexto();
+void enviarContextoActualizado();
+
+//FUNCIONES PARA RECIBIR CONTEXTO DE EJECUCION
 void recibirContextoActualizado();
-void* recibirTablaDeArchivos();
-void* recibirTablaDeSegmentos();
+void iniciarContexto();
+void iterator(void*);
+void destroyContexto();
 
 
 #endif

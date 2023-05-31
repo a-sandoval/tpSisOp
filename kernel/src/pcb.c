@@ -1,5 +1,7 @@
 #include "kernel/include/pcb.h"
 
+char* pidsInvolucrados; 
+
 //Básicos PCB
 
 t_pcb *crearPCB(){
@@ -89,12 +91,26 @@ void destruirListaPCB(t_list *pcbs){
 }
 
 void encolar(t_list *pcbs, t_pcb *pcb){
+   
     list_add(pcbs, (void *)pcb);
+
+
 }
 
 t_pcb *desencolar(t_list *pcbs){
     return (t_pcb *)list_remove(pcbs, 0);
 }
+
+void agregarPID(void *value){
+    t_pcb *pcb = (t_pcb *)value;
+    char *pid = string_itoa(pcb->pid);
+    string_append_with_format(&pidsInvolucrados, " %s ", pid);
+}
+
+void listarPIDS(t_list *pcbs){
+    list_iterate(pcbs, agregarPID);
+}
+
 
 // frees
 

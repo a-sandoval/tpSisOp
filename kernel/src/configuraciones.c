@@ -2,19 +2,20 @@
 
 // Configuracion
 
-double obtenerEstimacionInicial()
-{
-    return config_get_double_value(config, "ESTIMACION_INICIAL");
-}
-
 int obtenerGradoMultiprogramacion()
 {
     return config_get_int_value(config, "GRADO_MAX_MULTIPROGRAMACION");
 }
 
+double obtenerEstimacionInicial()
+{
+    return config_get_double_value(config, "ESTIMACION_INICIAL");
+}
+
+
 char *obtenerAlgoritmoPlanificacion()
 {
-    return confGet("ALGORITMO_PLANIFICACION");
+    return config_get_string_value(config,"ALGORITMO_PLANIFICACION");
 }
 
 double obtenerAlfaEstimacion()

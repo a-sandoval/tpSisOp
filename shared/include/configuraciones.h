@@ -31,23 +31,6 @@ extern t_config *config;
  */
 
 
-/**
- * @enum op_code
- * Codigo de operacion utilizado para dar a conocer que se esta enviando. Esto puede ser:
- * 
- * - Un mensaje simple de texto.
- * - Un paquete con uno o mas elementos.
- * - Un contexto de ejecucion.
- * 
- * @brief Código de operación utilizado para enviar al servidor para informarle que tipo de paquete se utiliza.
- *        Actualmente los únicos dos códigos que se utilizan son MENSAJE, para realizar Handshakes, y PAQUETE, para enviar información.
- */
-typedef enum
-{	
-	MENSAJE,
-	PAQUETE, 
-	CONTEXTOEJECUCION
-}op_code;
 
 /**
  * @fn t_config* iniciarConfiguracion(char* ruta)

@@ -60,7 +60,6 @@ t_contexto* procesarPCB(t_pcb* procesoEnEjecucion) {
  
 }
 
-
 void actualizarPCB(t_pcb* proceso){
 	list_destroy(proceso->instrucciones);
     proceso->instrucciones = list_duplicate(contextoEjecucion->instrucciones);

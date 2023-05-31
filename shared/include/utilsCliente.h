@@ -33,6 +33,26 @@ typedef struct
 } t_buffer;
 
 /**
+ * @enum op_code
+ * Codigo de operacion utilizado para dar a conocer que se esta enviando. Esto puede ser:
+ * 
+ * - Un mensaje simple de texto.
+ * - Un paquete con uno o mas elementos.
+ * - Un contexto de ejecucion.
+ * 
+ * @brief Código de operación utilizado para enviar al servidor para informarle que tipo de paquete se utiliza.
+ *        Actualmente los únicos dos códigos que se utilizan son MENSAJE, para realizar Handshakes, y PAQUETE, para enviar información.
+ */
+typedef enum
+{	
+	MENSAJE,
+	PAQUETE, 
+	CONTEXTOEJECUCION
+	
+}op_code;
+
+
+/**
  * @struct t_paquete
  * @var t_paquete.codigoOperacion
  * El codigo de la informacion que se envia para que el servidor sepa que se le esta enviando.
@@ -43,6 +63,7 @@ typedef struct
 {
 	op_code codigo_operacion;
 	t_buffer* buffer;
+
 } t_paquete;
 
 /**

@@ -16,14 +16,14 @@ ARCHIVOS_CONSOLA := consola/src/consola.c \
                     $(CONFIG) $(UTILS_CLIENTE) 
 
 CPU_SRC := cpu/src/
-ARCHIVOS_CPU     := $(CPU_SRC)cpu.c	$(CPU_SRC)servidorKernel.c $(CPU_SRC)cicloDeInstruccion.c $(CPU_SRC)conexionMemoria.c \
+ARCHIVOS_CPU     := $(CPU_SRC)cpu.c	$(CPU_SRC)servidorKernel.c $(CPU_SRC)cicloDeInstruccion.c $(CPU_SRC)conexionMemoria.c $(CPU_SRC)contextoEjecucion.c  \
 				    $(CONFIG) $(UTILS_CLIENTE) $(UTILS_SERVIDOR) 
 
 FILESYS_SRC := fileSystem/src/
 ARCHIVOS_FILESYS := $(FILESYS_SRC)fileSystem.c $(FILESYS_SRC)servidorKernel.c \
 				    $(CONFIG) $(UTILS_CLIENTE) $(UTILS_SERVIDOR) 
 
-ARCHIVOS_KERNEL  := kernel/src/kernel.c kernel/src/conexionMemoria.c  kernel/src/conexionCPU.c  kernel/src/conexionFileSystem.c  kernel/src/servidorConsola.c kernel/src/planificacion.c kernel/src/contextoEjecucion.c kernel/src/algoritmosCortoPlazo.c kernel/src/syscalls.c kernel/src/configuraciones.c kernel/src/pcb.c \
+ARCHIVOS_KERNEL  := kernel/src/kernel.c kernel/src/conexionMemoria.c  kernel/src/conexionCPU.c  kernel/src/conexionFileSystem.c  kernel/src/servidorConsola.c kernel/src/planificacion.c kernel/src/contextoEjecucion.c kernel/src/algoritmosCortoPlazo.c kernel/src/syscalls.c kernel/src/configuraciones.c kernel/src/pcb.c kernel/src/manejoRecursos.c\
                     $(CONFIG) $(UTILS_CLIENTE) $(UTILS_SERVIDOR) 
 
 ARCHIVOS_MEMORIA := memoria/src/memoria.c \

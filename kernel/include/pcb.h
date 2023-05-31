@@ -2,7 +2,8 @@
 #define PCB_H_
 
 #include<commons/collections/list.h>
-#include <string.h>
+#include <commons/string.h>
+#include <string.h> 
 #include<commons/collections/dictionary.h>
 #include<commons/temporal.h>
 #include "shared/include/global.h"
@@ -45,6 +46,7 @@ extern t_list *pcbsNEW;
 extern t_list *pcbsREADY;
 extern t_log* logger;
 extern int32_t procesosCreados;
+extern char* pidsInvolucrados; 
 
 t_pcb* crearPCB();
 
@@ -92,6 +94,9 @@ void encolar(t_list* pcbs,t_pcb* pcb);
 t_pcb* desencolar(t_list* pcbs);
 
 void imprimirRegistros(t_dictionary *registros);
+
+void agregarPID(void *value); 
+void listarPIDS(t_list *pcbs); 
 
 // frees
 

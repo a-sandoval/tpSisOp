@@ -5,6 +5,13 @@
 #include "contextoEjecucion.h"
 #include "semaphore.h"
 #include "planificacion.h"
+#include "manejoRecursos.h"
+
+extern t_list *recursos;
+extern char **nombresRecursos;
+extern t_contexto* contextoEjecucion;
+extern sem_t hayProcesosReady;
+extern int *instanciasRecursos;
 
 void retornoContexto(t_pcb *proceso, t_contexto *contextoEjecucion);
 
@@ -21,10 +28,12 @@ void deleteSegment_s(t_pcb *aEjecutar, char **parametros);
 void yield_s(t_pcb *aEjecutar, char **parametros);
 void exit_s(t_pcb *aEjecutar, char **parametros);
 
-extern t_list *instanciasRecursos;
-extern t_list *recursos;
-extern char **nombresRecursos;
-extern t_contexto* contextoEjecucion;
-extern sem_t hayProcesosReady;
+void bloqueoIO(int tiempo);
+
+void bloquearIO(int tiempo);
+
+void loggearBloqueoDeProcesos(t_pcb* pcb, char* motivo); 
+
+void loggearSalidaDeProceso(t_pcb* pcb, char* motivo); 
 
 #endif /* SYSCALLS_H_ */
