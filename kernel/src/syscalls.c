@@ -90,33 +90,61 @@ void wait_s(t_pcb *aEjecutar, char **parametros)
     }
 }
 
-void signal_s(t_pcb *proceso, char **parametros)
+void signal_s(t_pcb *aEjecutar, char **parametros)
 {
+	//printf("SIGNAL \n \n");
+
     char *recurso = parametros[0];
+
     int indexRecurso = indiceRecurso(recurso);
+
+    //printf("Indice recurso: %d \n",indexRecurso);
 
     if (indexRecurso == -1)
     {
-        enviarMensaje("Terminado", proceso->socketPCB);
-        destruirPCB(proceso);
+        enviarMensaje("Terminado", aEjecutar->socketPCB);
+        destruirPCB(aEjecutar);
     }
 
-    int instancRecurso = (int *)list_get(instanciasRecursos, indexRecurso);
-    instancRecurso++;
-    list_replace(instanciasRecursos, indexRecurso, (void *)&instancRecurso);
+    int instancRecurso = instanciasRecursos[indexRecurso];
 
-    if (instancRecurso >= 0)
+    //printf("Instancia actual del recurso: %d \n",instancRecurso);
+
+    instancRecurso++;
+
+    instanciasRecursos[indexRecurso]=instancRecurso;
+
+    //printf("Instancia actualizada: %d \n",instanciasRecursos[indexRecurso]);
+
+
+    if (instancRecurso <= 0)
     {
         t_list *colaBloqueadosRecurso = (t_list *)list_get(recursos, indexRecurso);
 
-        list_add(colaBloqueadosRecurso, (void *)proceso);
+        //printf("Antes de sacar un desbloqueado \n");
+        //imprimirMatrizRecursosColaBloqueados(recursos,cantidadRecursos);
 
-        t_pcb *hizoSignal = (t_pcb *)list_remove(colaBloqueadosRecurso, indexRecurso);
+        t_pcb* pcbDesbloqueado = desencolar(colaBloqueadosRecurso);
+
+        estadoProceso estadoAnterior = pcbDesbloqueado->estado;
+        pcbDesbloqueado->estado = READY;
+        loggearCambioDeEstado(pcbDesbloqueado->pid, estadoAnterior, pcbDesbloqueado->estado);
+        encolar(pcbsREADY, pcbDesbloqueado);
+        sem_post(&hayProcesosReady);
+        //printf("Se puso en ready el pcb de pid: %d\n",pcbDesbloqueado->pid);
+
+        //printf("Despues de sacar un desbloqueado \n");
+        //imprimirMatrizRecursosColaBloqueados(recursos,cantidadRecursos);
+
+        t_pcb *hizoSignal = aEjecutar;
 
         hizoSignal->estado = EXEC;
 
-        procesarPCB(hizoSignal);
+        procesarPCB(hizoSignal);//Ponerlo en ejecucion el que hizo el signal
     }
+
+    //putchar('\n');
+    //printf("SIGNAL \n \n");
 }
 
 void io_s(t_pcb *proceso, char **parametros)
