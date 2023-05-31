@@ -10,7 +10,6 @@
 #include <stdlib.h>
 #include "configuraciones.h"
 
-
 typedef enum estadoProceso{
     NEW, 
     READY,

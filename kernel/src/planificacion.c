@@ -91,13 +91,13 @@ t_pcb *obtenerSiguienteAReady()
 
 void ingresarAReady(t_pcb *pcb) {
 
+    recibirEstructurasInicialesMemoria(pcb); 
+
     pthread_mutex_lock(&mutexListaReady);
     encolar(pcbsREADY, pcb);
     pcb->tiempoEnReady = temporal_create();
     
     pthread_mutex_unlock(&mutexListaReady);
-
-    recibirEstructurasInicialesMemoria(pcb); 
 
     sem_post(&hayProcesosReady);
 
