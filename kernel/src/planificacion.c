@@ -14,6 +14,7 @@ int64_t rafagaCPU;
 int *instanciasRecursos;
 t_list *recursos;
 char **nombresRecursos;
+int cantidadRecursos;
 
 
 int gradoMultiprogramacion;
@@ -97,7 +98,7 @@ void planificarACortoPlazo(t_pcb *(*proximoAEjecutar)())
 // Devuelve el indice que se corresponde al recurso correspondiente, -1 si no lo encuentra
 int indiceRecurso(char *recurso)
 {
-    int tamanio = length(nombresRecursos);
+    int tamanio = tamanioArrayCharDoble(nombresRecursos);
 
     for (int i = 0; i < tamanio; i++)
     {
@@ -109,7 +110,6 @@ int indiceRecurso(char *recurso)
 
     return -1;
 }
-
 
 
 //Funciones auxiliares de colas de bloqueo para iterar e imprimir
@@ -219,6 +219,8 @@ void crearColasBloqueo()
     char **instancias = obtenerInstanciasRecursos();
 
     int tamanio = tamanioArrayCharDoble(instancias);
+
+    cantidadRecursos=tamanio;
 
     for (int i = 0; i < tamanio; i++)
     {

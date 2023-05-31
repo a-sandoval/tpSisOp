@@ -52,29 +52,41 @@ void retornoContexto(t_pcb *proceso, t_contexto *contextoEjecucion){
     }
 }
 
-void wait_s(t_pcb *proceso, char **parametros)
+void wait_s(t_pcb *aEjecutar, char **parametros)
 {
 
     char *recurso = parametros[0];
+
     int indexRecurso = indiceRecurso(recurso);
+    //printf("Indice recurso: %d \n",indexRecurso);
 
     if (indexRecurso == -1)
     {
-        enviarMensaje("Terminado", proceso->socketPCB);
-        destruirPCB(proceso);
+        enviarMensaje("Terminado", aEjecutar->socketPCB);
+        destruirPCB(aEjecutar);
     }
 
-    int instancRecurso = (int *)list_get(instanciasRecursos, indexRecurso);
+    int instancRecurso = instanciasRecursos[indexRecurso];
+
+    //printf("Instancia actual del recurso: %d \n",instancRecurso);
+
     instancRecurso--;
-    list_replace(instanciasRecursos, indexRecurso, (void *)&instancRecurso);
+
+    instanciasRecursos[indexRecurso]=instancRecurso;
+
+    //printf("Instancia actualizada: %d \n",instanciasRecursos[indexRecurso]);
 
     if (instancRecurso < 0)
     {
         t_list *colaBloqueadosRecurso = (t_list *)list_get(recursos, indexRecurso);
 
-        list_add(colaBloqueadosRecurso, (void *)proceso);
+        //imprimirMatrizRecursosColaBloqueados(recursos,cantidadRecursos);
 
-        proceso->estado = BLOCK;
+        list_add(colaBloqueadosRecurso, (void *)aEjecutar);
+
+        //imprimirMatrizRecursosColaBloqueados(recursos,cantidadRecursos);
+
+        aEjecutar->estado = BLOCK;
     }
 }
 
