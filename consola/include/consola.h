@@ -62,6 +62,8 @@ extern t_config *config;
  */
 int   main  (int, char *archivos[]);
 
+void esperarPID(char * archivo);
+
 /**
  * @fn void esperarFinalizacion ()
  * Funcion de espera para recibir el mensaje de finalizacion de la Kernel.

@@ -35,7 +35,7 @@ void *mayorRR(void *unPCB, void *otroPCB){
 
 void estimacionNuevaRafaga(t_pcb *pcb){
 
-    if (strcmp(obtenerAlgoritmoPlanificacion(), "HRRN"))
+    if (!strcmp(obtenerAlgoritmoPlanificacion(), "HRRN"))
     {
         calcularEstimadoProximaRafaga(pcb, rafagaCPU);
     }
@@ -61,11 +61,14 @@ double calcularRR(void *elem){
     temporal_resume(pcb->tiempoEnReady);
 
     double estimatedServiceTime = pcb->estimadoProximaRafaga;
-
+    
     return (waitTime + estimatedServiceTime) / estimatedServiceTime;
 }
 
 t_pcb *proximoAEjecutarHRRN(){
-
-    return list_get_maximum(pcbsREADY, mayorRR);
+    t_pcb * pcbMaximo = list_get_maximum(pcbsREADY, mayorRR);
+    for (int i = 0; i < list_size(pcbsREADY); i++)
+        if (pcbMaximo->pid == ((t_pcb *)(list_get(pcbsREADY, i)))->pid) 
+            return list_remove(pcbsREADY, i);
+    return list_remove(pcbsREADY, 0);
 }

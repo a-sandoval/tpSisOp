@@ -33,6 +33,7 @@ int main(int, char *archivos[]) {
         free(linea);
     }
     enviarMensaje("Fin de instrucciones", socketCliente);
+    esperarPID(archivos[1]);
     esperarFinalizacion();
 
     close(socketCliente);
@@ -40,6 +41,18 @@ int main(int, char *archivos[]) {
     terminarPrograma();
 
     return 0;
+}
+
+void esperarPID(char * archivo) {
+	int cod_op;
+	recv(socketCliente, &cod_op, sizeof(int), MSG_WAITALL);
+	int size;
+	recv(socketCliente, &size, sizeof(int), MSG_WAITALL);
+    char * pidString = malloc(size * sizeof (char));
+	recv(socketCliente, pidString, size, MSG_WAITALL);
+    cambiarNombre(string_from_format("Consola - <%s> - <%s>", archivo, pidString));
+    return;
+
 }
 
 void esperarFinalizacion () {

@@ -92,8 +92,6 @@ void encolar(t_list* pcbs,t_pcb* pcb);
  */
 t_pcb* desencolar(t_list* pcbs);
 
-void imprimirRegistros(t_dictionary *registros);
-
 void agregarPID(void *value); 
 void listarPIDS(t_list *pcbs); 
 

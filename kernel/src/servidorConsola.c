@@ -38,6 +38,7 @@ void ejecutarServidorKernel(){
 				char *mensaje = recibirMensaje();
 				log_info(logger, "%s", mensaje);
 				if (!strcmp(mensaje, "Fin de instrucciones")) {
+					enviarMensaje(string_from_format("%d", PCB->pid), socketCliente);
 					ingresarANew(PCB);
 					free(mensaje);
 					return;

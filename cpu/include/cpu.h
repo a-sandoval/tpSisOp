@@ -19,5 +19,4 @@ t_config* config;
 
 int conexionMemoria();
 
-
 #endif 

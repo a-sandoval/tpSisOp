@@ -18,5 +18,6 @@ void escucharAlKernel();
 
 
 extern t_contexto* contextoEjecucion;
+extern t_temporal * rafagaCPU;
 
 #endif

@@ -34,6 +34,7 @@ int ejecutarServidorCPU(){
 				return EXIT_FAILURE;
 			case CONTEXTOEJECUCION:
 				recibirContextoActualizado();
+    			rafagaCPU = temporal_create(); 
                 while(contextoEjecucion->programCounter != (int) contextoEjecucion->instruccionesLength 
 					  && (noEsBloqueante(instruccionActual))) {
                     cicloDeInstruccion();

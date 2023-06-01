@@ -13,7 +13,7 @@ void crearColasBloqueo()
 	recursos = list_create();
 
     nombresRecursos = obtenerRecursos();
-
+	
     char **cantInstanciasRecursos = obtenerInstanciasRecursos();
 
     int tamanio = tamanioArrayCharDoble(cantInstanciasRecursos);
@@ -47,7 +47,7 @@ int indiceRecurso(char *recurso){
     int tamanio = tamanioArrayCharDoble(nombresRecursos);
 
     for (int i = 0; i < tamanio; i++)
-    {
+    {	
         if (!strcmp(recurso, nombresRecursos[i]))
         {
             return i;

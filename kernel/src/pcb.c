@@ -74,10 +74,6 @@ t_dictionary *crearDiccionarioDeRegistros(){
     return registros;
 }
 
-void imprimirRegistros(t_dictionary *registros){
-    log_info(logger, "AX: %s", (char *)dictionary_get(registros, "AX"));
-}
-
 
 // Lista de PCBs
 

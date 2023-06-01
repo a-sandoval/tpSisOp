@@ -29,7 +29,7 @@ void deleteSegment_s(t_pcb *aEjecutar, char **parametros);
 void yield_s(t_pcb *aEjecutar, char **parametros);
 void exit_s(t_pcb *aEjecutar, char **parametros);
 
-void bloqueoIO(int tiempo);
+void bloqueoIO(int tiempo, t_pcb * pcb);
 
 void bloquearIO(int tiempo);
 

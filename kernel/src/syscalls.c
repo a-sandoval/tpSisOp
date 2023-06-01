@@ -61,10 +61,8 @@ void retornoContexto(t_pcb *proceso, t_contexto *contextoEjecucion){
    
      */   
     default:
-        estadoProceso anterior = proceso->estado;
-        proceso->estado = READY;
-        ingresarAReady(proceso);
-        loggearCambioDeEstado(proceso->pid, anterior, proceso->estado);
+        log_error(loggerError, "Comando incorrecto");
+        exit(1);
         break;
     }
 }
@@ -80,6 +78,7 @@ void wait_s(t_pcb *proceso, char **parametros)
     if (indexRecurso == -1)
     {
         exit_s(proceso,&segFault); 
+        return;
     }
 
     int instancRecurso = instanciasRecursos[indexRecurso];
@@ -129,7 +128,7 @@ void signal_s(t_pcb *proceso, char **parametros)
     if (indexRecurso == -1)
     {
         exit_s(proceso,&segFault); 
-
+        return;
     }
 
     int instancRecurso = instanciasRecursos[indexRecurso];
@@ -195,23 +194,26 @@ void io_s(t_pcb *proceso, char **parametros)
 
     int tiempo = atoi(parametros[0]);
     log_info(logger,"PID: <%d> - Ejecuta IO: <%d>",proceso->pid,tiempo); 
-    bloqueoIO(tiempo);
-
-    estimacionNuevaRafaga(proceso); 
-
-    anterior = proceso->estado;
-    proceso->estado = READY;
-    loggearCambioDeEstado(proceso->pid, anterior, proceso->estado);
-
-    ingresarAReady(proceso); 
-
-
+    bloqueoIO(tiempo, proceso); 
 
 }
 
 // caso bloqueo es por I/O
-void bloqueoIO(int tiempo)
+void bloqueoIO(int tiempo, t_pcb * pcb)
 {
+
+    void bloquearIO(int tiempo)
+    {   
+        sleep(tiempo); // sleep por la cantidad indicada en el motivo
+
+        estimacionNuevaRafaga(pcb); 
+
+        estadoProceso anterior = pcb->estado;
+        pcb->estado = READY;
+        loggearCambioDeEstado(pcb->pid, anterior, pcb->estado);
+
+        ingresarAReady(pcb);
+    }
 
     pthread_t pcb_bloqueado;
 
@@ -226,11 +228,6 @@ void bloqueoIO(int tiempo)
         log_error(loggerError, "Error en la creacion de hilo para realizar I/O, Abort");
         abort();
     }
-}
-
-void bloquearIO(int tiempo)
-{   
-    sleep(tiempo); // sleep por la cantidad indicada en el motivo
 }
 
 void yield_s(t_pcb *proceso, char **parametros)

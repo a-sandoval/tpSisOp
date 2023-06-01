@@ -62,9 +62,6 @@ void decode(){
  
 void execute() {
 
-   rafagaCPU = temporal_create(); 
-
-
     switch(cantParametros) {
         case 0:
             log_info(logger, "PID: %d - Ejecutando: %s ", contextoEjecucion->pid, listaComandos[instruccionActual]);
