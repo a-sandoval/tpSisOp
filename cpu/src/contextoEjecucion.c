@@ -19,7 +19,8 @@ void enviarContextoActualizado(){
     //agregarAPaquete(paquete,(void *)&contextoEjecucion->tablaDeSegmentosSize, sizeof(contextoEjecucion->tablaDeSegmentosSize));
     //agregarAPaquete(paquete,contextoEjecucion->tablaDeSegmentos, contextoEjecucion->tablaDeSegmentosSize);
     
-    agregarMotivoAPaquete(paquete,contextoEjecucion->motivoDesalojo);
+    agregarMotivoAPaquete(paquete, contextoEjecucion->motivoDesalojo);
+    
     agregarAPaquete(paquete, (void *)&contextoEjecucion->rafagaCPUEjecutada, sizeof(contextoEjecucion->rafagaCPUEjecutada));
 
     enviarPaquete(paquete, socketCliente);
@@ -32,7 +33,9 @@ void agregarMotivoAPaquete(t_paquete* paquete, t_motivoDeDesalojo* motivoDesaloj
     agregarAPaquete(paquete,(void *)&motivoDesalojo->comando, sizeof(motivoDesalojo->comando));
 
     agregarAPaquete(paquete,(void *)&motivoDesalojo->parametrosLength, sizeof(motivoDesalojo->parametrosLength));
-    agregarAPaquete(paquete,(void *)motivoDesalojo->parametros,(strlen(motivoDesalojo->parametros[0]) + strlen(motivoDesalojo->parametros[1]) + strlen(motivoDesalojo->parametros[2])) * sizeof(char)+ 1);
+    
+    for (int i = 0; i < contextoEjecucion->motivoDesalojo->parametrosLength; i++)
+        agregarAPaquete(paquete,(void *)motivoDesalojo->parametros[i], (strlen(motivoDesalojo->parametros[i]) + 1) * sizeof(char));
 }
 
 void agregarInstruccionesAPaquete(t_paquete* paquete, t_list* instrucciones){
@@ -91,7 +94,7 @@ void recibirContextoActualizado(){
     int tamanio;
 	void * buffer;
 
-	buffer = recibirBuffer(&size);
+	buffer = recibirBuffer(socketCliente, &size);
         desplazamiento += sizeof(int);
         memcpy(&(contextoEjecucion->pid), buffer + desplazamiento, sizeof(uint32_t));
         desplazamiento += sizeof(contextoEjecucion->pid) + sizeof(int);
@@ -118,96 +121,90 @@ void recibirContextoActualizado(){
         //SE PODRIA LLEGAR A PONER EN UNA FUNCION APARTE PERO HAY QUE MANDAR ALGUNOS PARAMETROS
         //recibirRegistros();
 
+        dictionary_clean_and_destroy_elements(contextoEjecucion->registrosCPU, free);
         char* AX = malloc(sizeof(char) * (4 + 1));
         memcpy(AX, buffer + desplazamiento, sizeof(char) * (4 + 1));
         dictionary_put(contextoEjecucion->registrosCPU, "AX", AX);
-        //free(AX);
         desplazamiento += sizeof(char) * (4 + 1) + sizeof(int);
-        
+
         char* BX = malloc(sizeof(char) * (4 + 1));
         memcpy(BX, buffer + desplazamiento, sizeof(char) * (4 + 1));
         dictionary_put(contextoEjecucion->registrosCPU, "BX", BX);
-        //free(BX);
         desplazamiento += sizeof(char) * (4 + 1) + sizeof(int);
 
         char* CX = malloc(sizeof(char) * (4 + 1));
         memcpy(CX, buffer + desplazamiento, sizeof(char) * (4 + 1));
         dictionary_put(contextoEjecucion->registrosCPU, "CX", CX);
-        //free(CX);
         desplazamiento += sizeof(char) * (4 + 1) + sizeof(int);
 
         char* DX = malloc(sizeof(char) * (4 + 1));
         memcpy(DX, buffer + desplazamiento, sizeof(char) * (4 + 1));
         dictionary_put(contextoEjecucion->registrosCPU, "DX", DX);
-        //free(DX);
         desplazamiento += sizeof(char) * (4 + 1) + sizeof(int);
 
         char* EAX = malloc(sizeof(char) * (8 + 1));
         memcpy(EAX, buffer + desplazamiento, sizeof(char) * (8 + 1));
         dictionary_put(contextoEjecucion->registrosCPU, "EAX", EAX);
-        //free(EAX);
         desplazamiento += sizeof(char) * (8 + 1) + sizeof(int);
 
         char* EBX = malloc(sizeof(char) * (8 + 1));
         memcpy(EBX, buffer + desplazamiento, sizeof(char) * (8 + 1));
         dictionary_put(contextoEjecucion->registrosCPU, "EBX", EBX);
-        //free(EBX);
         desplazamiento += sizeof(char) * (8 + 1) + sizeof(int);
 
         char* ECX = malloc(sizeof(char) * (8 + 1));
         memcpy(ECX, buffer + desplazamiento, sizeof(char) * (8 + 1));
         dictionary_put(contextoEjecucion->registrosCPU, "ECX", ECX);
-        //free(ECX);
         desplazamiento += sizeof(char) * (8 + 1) + sizeof(int);
 
         char* EDX = malloc(sizeof(char) * (8 + 1));
         memcpy(EDX, buffer + desplazamiento, sizeof(char) * (8 + 1));
         dictionary_put(contextoEjecucion->registrosCPU, "EDX", EDX);
-        //free(EDX);
         desplazamiento += sizeof(char) * (8 + 1) + sizeof(int);
 
         char* RAX = malloc(sizeof(char) * (16 + 1));
         memcpy(RAX, buffer + desplazamiento, sizeof(char) * (16 + 1));
         dictionary_put(contextoEjecucion->registrosCPU, "RAX", RAX);
-        //free(RAX);
         desplazamiento += sizeof(char) * (16 + 1) + sizeof(int);
 
         char* RBX = malloc(sizeof(char) * (16 + 1));
         memcpy(RBX, buffer + desplazamiento, sizeof(char) * (16 + 1));
         dictionary_put(contextoEjecucion->registrosCPU, "RBX", RBX);
-        //free(RBX);
         desplazamiento += sizeof(char) * (16 + 1) + sizeof(int);
 
         char* RCX = malloc(sizeof(char) * (16 + 1));
         memcpy(RCX, buffer + desplazamiento, sizeof(char) * (16 + 1));
         dictionary_put(contextoEjecucion->registrosCPU, "RCX", RCX);
-        //free(RCX);
         desplazamiento += sizeof(char) * (16 + 1) + sizeof(int);
 
         char* RDX = malloc(sizeof(char) * (16 + 1));
         memcpy(RDX, buffer + desplazamiento, sizeof(char) * (16 + 1));
         dictionary_put(contextoEjecucion->registrosCPU, "RDX", RDX);
-        //free(RDX);
         desplazamiento += sizeof(char) * (16 + 1) + sizeof(int);
-
-        log_info(logger, "Se recibieron los siguientes registros: ");
-        log_info(logger, "AX = %s | BX = %s | CX = %s | DX = %s", AX, BX, CX, DX);
-        log_info(logger, "EAX = %s | EBX = %s | ECX = %s | EDX = %s", EAX, EBX, ECX, EDX);
-        log_info(logger, "RAX = %s | RBX = %s | RCX = %s | RDX = %s", RAX, RBX, RCX, RDX);
 
         //recibirTablaDeArchivos();
 
         //recibirTablaDeSegmentos();
 
-         memcpy(&(contextoEjecucion->motivoDesalojo->comando), buffer + desplazamiento, sizeof(t_comando));
+        //recibirMotivoDeDesalojo();
+
+        
+
+        memcpy(&(contextoEjecucion->motivoDesalojo->comando), buffer + desplazamiento, sizeof(t_comando));
         desplazamiento += sizeof(t_comando) + sizeof(int);
 
-         memcpy(&(contextoEjecucion->motivoDesalojo->parametrosLength), buffer + desplazamiento, sizeof(uint32_t));
-        desplazamiento += sizeof(contextoEjecucion->motivoDesalojo->parametrosLength) + sizeof(int);
+        memcpy(&(contextoEjecucion->motivoDesalojo->parametrosLength), buffer + desplazamiento, sizeof(uint32_t));
+        desplazamiento += sizeof(contextoEjecucion->motivoDesalojo->parametrosLength);
 
-        memcpy(&(contextoEjecucion->motivoDesalojo->parametros), buffer + desplazamiento, (strlen(contextoEjecucion->motivoDesalojo->parametros[0]) + strlen(contextoEjecucion->motivoDesalojo->parametros[1] + strlen(contextoEjecucion->motivoDesalojo->parametros[2]))) * sizeof(char) + 1);
-        desplazamiento += (strlen(contextoEjecucion->motivoDesalojo->parametros[0]) + strlen(contextoEjecucion->motivoDesalojo->parametros[1] + strlen(contextoEjecucion->motivoDesalojo->parametros[2]))) * sizeof(char) + 1 + sizeof(int);
-
+        for (int i = 0; i < contextoEjecucion->motivoDesalojo->parametrosLength; i++) {
+            int tamanioParametro;
+            memcpy(&tamanioParametro, buffer + desplazamiento, sizeof(int));
+            desplazamiento += sizeof(int);
+            contextoEjecucion->motivoDesalojo->parametros[i] = malloc(sizeof(char) * tamanioParametro);
+            memcpy(&(contextoEjecucion->motivoDesalojo->parametros[i]), buffer + desplazamiento, tamanioParametro);
+            desplazamiento += tamanioParametro;
+        }
+        
 		memcpy(&(contextoEjecucion->rafagaCPUEjecutada), buffer + desplazamiento, sizeof(uint64_t));
 		
 	free(buffer);
@@ -227,9 +224,9 @@ void iniciarContexto(){
 	contextoEjecucion->tablaDeSegmentos = list_create();
 	contextoEjecucion->tablaDeSegmentosSize = list_size(contextoEjecucion->tablaDeSegmentos);
     contextoEjecucion->motivoDesalojo = (t_motivoDeDesalojo *)malloc(sizeof(t_motivoDeDesalojo));
-    contextoEjecucion->motivoDesalojo->parametros[0] = NULL;
-    contextoEjecucion->motivoDesalojo->parametros[1] = NULL;
-    contextoEjecucion->motivoDesalojo->parametros[2] = NULL;
+    contextoEjecucion->motivoDesalojo->parametros[0] = "";
+    contextoEjecucion->motivoDesalojo->parametros[1] = "";
+    contextoEjecucion->motivoDesalojo->parametros[2] = "";
     contextoEjecucion->motivoDesalojo->parametrosLength = 0;
 	
 }
@@ -243,9 +240,6 @@ void destroyContexto() {
     dictionary_destroy_and_destroy_elements(contextoEjecucion->registrosCPU, iterator);
     list_destroy_and_destroy_elements(contextoEjecucion->tablaDeArchivos, iterator);
     list_destroy_and_destroy_elements(contextoEjecucion->tablaDeSegmentos, iterator);
-    free(contextoEjecucion->motivoDesalojo->parametros[0]);
-    free(contextoEjecucion->motivoDesalojo->parametros[1]);
-    free(contextoEjecucion->motivoDesalojo->parametros[2]);
     free(contextoEjecucion->motivoDesalojo);
     free(contextoEjecucion);
 }

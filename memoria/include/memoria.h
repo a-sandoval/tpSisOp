@@ -24,6 +24,8 @@
 #include "shared/include/utilsServidor.h"
 #include "shared/include/configuraciones.h"
 #include "include/conexionKernel.h"
+#include "include/conexionCPU.h"
+#include "include/conexionFS.h"
 
 /**
  * @var socketCliente
@@ -48,6 +50,8 @@ t_log* logger;
 t_log* loggerError; 
 t_config* config; 
 void* espacioDeUsuario; 
+
+extern int sockets[0];
 
 /**
  * Fin.

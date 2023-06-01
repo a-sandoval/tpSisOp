@@ -6,6 +6,15 @@ char* segFault = "SEG_FAULT";
 
 void retornoContexto(t_pcb *proceso, t_contexto *contextoEjecucion){
 
+    char *temp = string_duplicate(", parametros");
+
+    for (int i = 0; i < contextoEjecucion->motivoDesalojo->parametrosLength; i++) 
+        string_append_with_format(&temp, " %s ", contextoEjecucion->motivoDesalojo->parametros[i]);
+
+    log_info (logger, "Contexto retornado con motivo: comando %d%s", contextoEjecucion->motivoDesalojo->comando, temp);
+
+    free (temp);
+
     switch (contextoEjecucion->motivoDesalojo->comando)
     {
     case IO:
@@ -52,13 +61,15 @@ void retornoContexto(t_pcb *proceso, t_contexto *contextoEjecucion){
    
      */   
     default:
-        enviarMensaje("Terminado", proceso->socketPCB);
-        destruirPCB(proceso);
+        estadoProceso anterior = proceso->estado;
+        proceso->estado = READY;
+        ingresarAReady(proceso);
+        loggearCambioDeEstado(proceso->pid, anterior, proceso->estado);
         break;
     }
 }
 
-void wait_s(t_pcb *aEjecutar, char **parametros)
+void wait_s(t_pcb *proceso, char **parametros)
 {
 
     char *recurso = parametros[0];
@@ -68,8 +79,7 @@ void wait_s(t_pcb *aEjecutar, char **parametros)
 
     if (indexRecurso == -1)
     {
-        exit_s(aEjecutar,&segFault); 
-
+        exit_s(proceso,&segFault); 
     }
 
     int instancRecurso = instanciasRecursos[indexRecurso];
@@ -80,7 +90,7 @@ void wait_s(t_pcb *aEjecutar, char **parametros)
 
     instanciasRecursos[indexRecurso]=instancRecurso;
 
-    log_info(logger,"PID: <%d> - Wait: <%s> - Instancias: <%d>",aEjecutar->pid,recurso,instancRecurso); 
+    log_info(logger,"PID: <%d> - Wait: <%s> - Instancias: <%d>",proceso->pid,recurso,instancRecurso); 
 
     //printf("Instancia actualizada: %d \n",instanciasRecursos[indexRecurso]);
 
@@ -90,17 +100,23 @@ void wait_s(t_pcb *aEjecutar, char **parametros)
 
         //imprimirMatrizRecursosColaBloqueados(recursos,cantidadRecursos);
 
-        loggearBloqueoDeProcesos(aEjecutar,recurso); 
+        loggearBloqueoDeProcesos(proceso,recurso); 
 
-        list_add(colaBloqueadosRecurso, (void *)aEjecutar);
+        list_add(colaBloqueadosRecurso, (void *)proceso);
 
         //imprimirMatrizRecursosColaBloqueados(recursos,cantidadRecursos);
 
-        aEjecutar->estado = BLOCK;
+        proceso->estado = BLOCK;
+    }
+    else {
+        estadoProceso anterior = proceso->estado;
+        proceso->estado = READY;
+        loggearCambioDeEstado(proceso->pid, anterior, proceso->estado);
+        ingresarAReady(proceso);
     }
 }
 
-void signal_s(t_pcb *aEjecutar, char **parametros)
+void signal_s(t_pcb *proceso, char **parametros)
 {
 	//printf("SIGNAL \n \n");
 
@@ -112,7 +128,7 @@ void signal_s(t_pcb *aEjecutar, char **parametros)
 
     if (indexRecurso == -1)
     {
-        exit_s(aEjecutar,&segFault); 
+        exit_s(proceso,&segFault); 
 
     }
 
@@ -122,7 +138,7 @@ void signal_s(t_pcb *aEjecutar, char **parametros)
 
     instancRecurso++;
 
-    log_info(logger,"PID: <%d> - Signal: <%s> - Instancias: <%d>",aEjecutar->pid,recurso,instancRecurso); 
+    log_info(logger,"PID: <%d> - Signal: <%s> - Instancias: <%d>",proceso->pid,recurso,instancRecurso); 
 
     instanciasRecursos[indexRecurso]=instancRecurso;
 
@@ -131,6 +147,13 @@ void signal_s(t_pcb *aEjecutar, char **parametros)
 
     if (instancRecurso <= 0)
     {
+        estadoProceso anterior = proceso->estado;
+        proceso->estado = READY;
+        loggearCambioDeEstado(proceso->pid, anterior, proceso->estado);
+        ingresarAReady(proceso);
+
+        // Se devuelve el proceso primero para seguir operando
+
         t_list *colaBloqueadosRecurso = (t_list *)list_get(recursos, indexRecurso);
 
         //printf("Antes de sacar un desbloqueado \n");
@@ -149,12 +172,13 @@ void signal_s(t_pcb *aEjecutar, char **parametros)
 
         //printf("Despues de sacar un desbloqueado \n");
         //imprimirMatrizRecursosColaBloqueados(recursos,cantidadRecursos);
-
-        t_pcb *hizoSignal = aEjecutar;
-
-        hizoSignal->estado = EXEC;
-
-        procesarPCB(hizoSignal);//Ponerlo en ejecucion el que hizo el signal
+        // Porque estaba procesarPCB aca?????????
+    }
+    else {
+        estadoProceso anterior = proceso->estado;
+        proceso->estado = READY;
+        loggearCambioDeEstado(proceso->pid, anterior, proceso->estado);
+        ingresarAReady(proceso);
     }
 
    
@@ -177,10 +201,10 @@ void io_s(t_pcb *proceso, char **parametros)
 
     anterior = proceso->estado;
     proceso->estado = READY;
+    loggearCambioDeEstado(proceso->pid, anterior, proceso->estado);
 
     ingresarAReady(proceso); 
 
-    loggearCambioDeEstado(proceso->pid, anterior, proceso->estado);
 
 
 }
@@ -190,6 +214,8 @@ void bloqueoIO(int tiempo)
 {
 
     pthread_t pcb_bloqueado;
+
+    // Esto no bloquea el PCB, no hace nada en absoluto, tendrian que mover todo lo que esta en io_s() al hilo, porque sino no funciona, no bloquea nada.
 
     if (!pthread_create(&pcb_bloqueado, NULL, (void *)bloquearIO, (void *)&tiempo))
     {
@@ -210,10 +236,10 @@ void bloquearIO(int tiempo)
 void yield_s(t_pcb *proceso, char **parametros)
 {   
     estimacionNuevaRafaga(proceso); 
-    ingresarAReady(proceso); 
     estadoProceso estadoAnterior = proceso->estado;
     proceso->estado = READY;
     loggearCambioDeEstado(proceso->pid, estadoAnterior, proceso->estado);
+    ingresarAReady(proceso); 
 
 }
 

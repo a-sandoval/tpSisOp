@@ -42,6 +42,7 @@
 *.idb
 *.pdb
 *.log
+*.gdb_history
 
 # Kernel Module Compile Results
 *.mod*

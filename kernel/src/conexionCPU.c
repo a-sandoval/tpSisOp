@@ -46,7 +46,6 @@ t_contexto* procesarPCB(t_pcb* procesoEnEjecucion) {
 
     int operacion = recibirOperacionDeCPU();
 
-    log_info(logger, "Recibido el contexto.");
 
     switch(operacion){
         case CONTEXTOEJECUCION:
@@ -54,7 +53,8 @@ t_contexto* procesarPCB(t_pcb* procesoEnEjecucion) {
             break;
     }
 
-    //close(conexionACPU);
+    actualizarPCB(procesoEnEjecucion);
+
     free(bufferContexto);
     return contextoEjecucion;
  
@@ -67,10 +67,10 @@ void actualizarPCB(t_pcb* proceso){
     proceso->programCounter = contextoEjecucion->programCounter;
 	dictionary_destroy_and_destroy_elements(proceso->registrosCPU, free);
     proceso->registrosCPU = registrosDelCPU(contextoEjecucion->registrosCPU);
-	list_destroy(proceso->tablaDeArchivos);
-    proceso->tablaDeArchivos = list_duplicate(contextoEjecucion->tablaDeArchivos);
-	list_destroy(proceso->tablaDeSegmentos);
-    proceso->tablaDeSegmentos = list_duplicate(contextoEjecucion->tablaDeSegmentos);
+	//list_destroy(proceso->tablaDeArchivos);
+    //proceso->tablaDeArchivos = list_duplicate(contextoEjecucion->tablaDeArchivos);
+	//list_destroy(proceso->tablaDeSegmentos);
+    //proceso->tablaDeSegmentos = list_duplicate(contextoEjecucion->tablaDeSegmentos);
 
 }
 
@@ -81,13 +81,10 @@ void asignarPCBAContexto(t_pcb* proceso){
     contextoEjecucion->pid = proceso->pid;
     contextoEjecucion->programCounter = proceso->programCounter;
     contextoEjecucion->registrosCPU = registrosDelCPU(proceso->registrosCPU);
-    contextoEjecucion->tablaDeArchivos = list_duplicate(proceso->tablaDeArchivos);
-    contextoEjecucion->tablaDeArchivosSize = list_size(contextoEjecucion->tablaDeArchivos);
-    contextoEjecucion->tablaDeSegmentos = list_duplicate(proceso->tablaDeSegmentos);
-    contextoEjecucion->tablaDeSegmentosSize = list_size(contextoEjecucion->tablaDeSegmentos);
-    contextoEjecucion->motivoDesalojo->parametrosLength = (strlen(contextoEjecucion->motivoDesalojo->parametros[0]) +
-                                                          strlen(contextoEjecucion->motivoDesalojo->parametros[1]) + 
-                                                          strlen(contextoEjecucion->motivoDesalojo->parametros[2])) * sizeof(char) + 1;
+    //contextoEjecucion->tablaDeArchivos = proceso->tablaDeArchivos;
+    //contextoEjecucion->tablaDeArchivosSize = list_size(contextoEjecucion->tablaDeArchivos);
+    //contextoEjecucion->tablaDeSegmentos = proceso->tablaDeSegmentos;
+    //contextoEjecucion->tablaDeSegmentosSize = list_size(contextoEjecucion->tablaDeSegmentos);
 
 }
 

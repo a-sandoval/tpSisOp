@@ -81,49 +81,49 @@ void execute() {
     }
     switch(instruccionActual){
         case SET:
-            set_c(elementosInstruccion[0], elementosInstruccion[1]);
+            set_c(elementosInstruccion[1], elementosInstruccion[2]);
             break;
         /*
         case MOV_IN:
-            mov_in(elementosInstruccion[0], elementosInstruccion[1]);
+            mov_in(elementosInstruccion[1], elementosInstruccion[2]);
             break;
         case MOV_OUT:
-            mov_out(elementosInstruccion[0], elementosInstruccion[1]);
+            mov_out(elementosInstruccion[1], elementosInstruccion[2]);
             break;
         */
         case IO:
-            io(elementosInstruccion[0]);
+            io(elementosInstruccion[1]);
             break;
         case F_OPEN:
-            f_open(elementosInstruccion[0]);
+            f_open(elementosInstruccion[1]);
             break;
         case F_CLOSE:
-            f_close(elementosInstruccion[0]);
+            f_close(elementosInstruccion[1]);
             break;
         case F_SEEK:
-            f_seek(elementosInstruccion[0], elementosInstruccion[1]);
+            f_seek(elementosInstruccion[1], elementosInstruccion[2]);
             break;
         case F_READ:
-            f_read(elementosInstruccion[0], elementosInstruccion[1], elementosInstruccion[2]);
+            f_read(elementosInstruccion[1], elementosInstruccion[2], elementosInstruccion[3]);
             break;
         case F_WRITE:
-            f_write(elementosInstruccion[0], elementosInstruccion[1], elementosInstruccion[2]);
+            f_write(elementosInstruccion[1], elementosInstruccion[2], elementosInstruccion[3]);
             break;
         case F_TRUNCATE:
-            f_truncate(elementosInstruccion[0], elementosInstruccion[1]);
+            f_truncate(elementosInstruccion[1], elementosInstruccion[2]);
             break;
         case WAIT:
-            wait_c(elementosInstruccion[0]);
+            wait_c(elementosInstruccion[1]);
             //un recurso puede ser un archivo, memoria reservada, semáforos, sockets, etc
             break;
         case SIGNAL:
-            signal_c(elementosInstruccion[0]);
+            signal_c(elementosInstruccion[1]);
             break;
         case CREATE_SEGMENT:
-            create_segment(elementosInstruccion[0], elementosInstruccion[1]);
+            create_segment(elementosInstruccion[1], elementosInstruccion[2]);
             break;
         case DELETE_SEGMENT:
-            delete_segment(elementosInstruccion[0]);
+            delete_segment(elementosInstruccion[1]);
             break;
         case YIELD: 
             yield_c();
@@ -140,7 +140,7 @@ void execute() {
 
 void set_c(char* registro, char* valor){
     int tiempoEspera = obtenerTiempoEspera();
-    sleep(tiempoEspera); 
+    usleep(tiempoEspera * 1000); 
     dictionary_remove_and_destroy(contextoEjecucion->registrosCPU, registro, free); 
     dictionary_put(contextoEjecucion->registrosCPU, registro, string_duplicate(valor));
 }
@@ -170,7 +170,6 @@ void wait_c(char* recurso){
     contextoEjecucion->motivoDesalojo->comando = WAIT;
     contextoEjecucion->motivoDesalojo->parametros[0] = recurso;
     contextoEjecucion->motivoDesalojo->parametrosLength = 1;
-
     enviarContextoActualizado();
 }
 
@@ -191,7 +190,7 @@ void yield_c(){
     contextoEjecucion->rafagaCPUEjecutada = temporal_gettime(rafagaCPU);  
 
     contextoEjecucion->motivoDesalojo->comando = YIELD;
-    contextoEjecucion->motivoDesalojo->parametros[0]= NULL;
+    contextoEjecucion->motivoDesalojo->parametros[0]= "";
     contextoEjecucion->motivoDesalojo->parametrosLength = 0;
 
     enviarContextoActualizado();

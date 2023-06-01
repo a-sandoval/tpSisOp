@@ -23,8 +23,8 @@ t_pcb *crearPCB(){
 
 void destruirPCB(t_pcb *pcb){
     list_destroy_and_destroy_elements(pcb->instrucciones, (void *)destruirInstruccion);
-    list_destroy_and_destroy_elements(pcb->tablaDeArchivos, (void *)destruirInstruccion);
-    list_destroy_and_destroy_elements(pcb->tablaDeSegmentos, (void *)destruirInstruccion);
+    //list_destroy_and_destroy_elements(pcb->tablaDeArchivos, (void *)destruirInstruccion);
+    //list_destroy_and_destroy_elements(pcb->tablaDeSegmentos, (void *)destruirInstruccion);
     dictionary_destroy_and_destroy_elements(pcb->registrosCPU, (void *)destruirRegistro);
     free(pcb);
 }
@@ -91,10 +91,7 @@ void destruirListaPCB(t_list *pcbs){
 }
 
 void encolar(t_list *pcbs, t_pcb *pcb){
-   
     list_add(pcbs, (void *)pcb);
-
-
 }
 
 t_pcb *desencolar(t_list *pcbs){

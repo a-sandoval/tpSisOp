@@ -49,12 +49,12 @@ int recibirOperacion(){
 	}
 }
 
-void* recibirBuffer(int* size){
+void* recibirBuffer(int socket, int  * size){
 	void * buffer;
 
-	recv(socketCliente, size, sizeof(int), MSG_WAITALL);
+	recv(socket, size, sizeof(int), MSG_WAITALL);
 	buffer = malloc(*size);
-	recv(socketCliente, buffer, *size, MSG_WAITALL);
+	recv(socket, buffer, *size, MSG_WAITALL);
 
 	return buffer;
 }
@@ -62,7 +62,7 @@ void* recibirBuffer(int* size){
 char *recibirMensaje()
 {
 	int size;
-	char *buffer = recibirBuffer(&size);
+	char *buffer = recibirBuffer(socketCliente, &size);
 	return buffer;
 }
 
@@ -73,7 +73,7 @@ t_list* recibirPaquete(){
 	t_list* valores = list_create();
 	int tamanio;
 
-	buffer = recibirBuffer(&size);
+	buffer = recibirBuffer(socketCliente, &size);
 	while(desplazamiento < size){
 		memcpy(&tamanio, buffer + desplazamiento, sizeof(int));
 		desplazamiento+=sizeof(int);

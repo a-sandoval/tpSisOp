@@ -12,7 +12,7 @@ typedef struct {
 
         t_comando comando; 
         int parametrosLength;
-        char  *parametros[3]; 
+        char *parametros[3]; 
 
 } t_motivoDeDesalojo; 
 

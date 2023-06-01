@@ -15,9 +15,9 @@ void iniciarContexto(){
 	contextoEjecucion->tablaDeSegmentosSize = 0;
     contextoEjecucion->rafagaCPUEjecutada = 0;
     contextoEjecucion->motivoDesalojo = (t_motivoDeDesalojo *)malloc(sizeof(t_motivoDeDesalojo));
-    contextoEjecucion->motivoDesalojo->parametros[0] = NULL;
-    contextoEjecucion->motivoDesalojo->parametros[1] = NULL;
-    contextoEjecucion->motivoDesalojo->parametros[2] = NULL;
+    contextoEjecucion->motivoDesalojo->parametros[0] = "";
+    contextoEjecucion->motivoDesalojo->parametros[1] = "";
+    contextoEjecucion->motivoDesalojo->parametros[2] = "";
     contextoEjecucion->motivoDesalojo->parametrosLength = 0;
 }
 
@@ -54,6 +54,7 @@ void agregarInstruccionesAPaquete(t_paquete* paquete, t_list* instrucciones){
     
     agregarAPaquete(paquete, &contextoEjecucion->instruccionesLength, sizeof(uint32_t)); //primero envio la cantidad de elementos
     uint32_t i;
+    
     for(i=0;i<contextoEjecucion->instruccionesLength;i++){
         agregarAPaquete (paquete, list_get(instrucciones, i), sizeof(char) * (strlen(list_get(instrucciones, i)) + 1 ));
     }
@@ -94,7 +95,9 @@ void agregarMotivoAPaquete(t_paquete* paquete, t_motivoDeDesalojo* motivoDesaloj
     agregarAPaquete(paquete,(void *)&motivoDesalojo->comando, sizeof(motivoDesalojo->comando));
 
     agregarAPaquete(paquete,(void *)&motivoDesalojo->parametrosLength, sizeof(motivoDesalojo->parametrosLength));
-    agregarAPaquete(paquete,(void *)motivoDesalojo->parametros,(strlen(motivoDesalojo->parametros[0]) + strlen(motivoDesalojo->parametros[1]) + strlen(motivoDesalojo->parametros[2])) * sizeof(char)+ 1);
+
+    for (int i = 0; i < motivoDesalojo->parametrosLength; i++)
+        agregarAPaquete(paquete,(void *)&(motivoDesalojo->parametros[i]), (strlen(motivoDesalojo->parametros[i]) + 1) * sizeof(char));
 }
 
 //FUNCIONES PARA RECIBIR NUEVO CONTEXTO POR PARTE DE LA CPU
@@ -103,9 +106,10 @@ void recibirContextoActualizado(){
 
 	int size;
 	int desplazamiento = 0;
+    int tamanio;
 	void * buffer;
 
-	buffer = recibirBuffer(&size);
+	buffer = recibirBuffer(conexionACPU, &size);
         desplazamiento += sizeof(int);
         memcpy(&(contextoEjecucion->pid), buffer + desplazamiento, sizeof(uint32_t));
         desplazamiento += sizeof(contextoEjecucion->pid) + sizeof(int);
@@ -179,16 +183,21 @@ void recibirContextoActualizado(){
 
         //recibirMotivoDeDesalojo
 
-         memcpy(&(contextoEjecucion->motivoDesalojo->comando), buffer + desplazamiento, sizeof(t_comando));
+        memcpy(&(contextoEjecucion->motivoDesalojo->comando), buffer + desplazamiento, sizeof(t_comando));
         desplazamiento += sizeof(t_comando) + sizeof(int);
 
         memcpy(&(contextoEjecucion->motivoDesalojo->parametrosLength), buffer + desplazamiento, sizeof(uint32_t));
-        desplazamiento += sizeof(contextoEjecucion->motivoDesalojo->parametrosLength) + sizeof(int);
+        desplazamiento += sizeof(contextoEjecucion->motivoDesalojo->parametrosLength);
 
-        memcpy(&(contextoEjecucion->motivoDesalojo->parametros), buffer + desplazamiento, (strlen(contextoEjecucion->motivoDesalojo->parametros[0]) + strlen(contextoEjecucion->motivoDesalojo->parametros[1] + strlen(contextoEjecucion->motivoDesalojo->parametros[2]))) * sizeof(char) + 1);
-        desplazamiento += (strlen(contextoEjecucion->motivoDesalojo->parametros[0]) + strlen(contextoEjecucion->motivoDesalojo->parametros[1] + strlen(contextoEjecucion->motivoDesalojo->parametros[2]))) * sizeof(char) + 1 + sizeof(int);
-
-
+        for (int i = 0; i < contextoEjecucion->motivoDesalojo->parametrosLength; i++) {
+            memcpy(&tamanio, buffer + desplazamiento, sizeof(int));
+            desplazamiento += sizeof(int);
+            char *temp = malloc (tamanio);
+            contextoEjecucion->motivoDesalojo->parametros[i] = temp;
+            memcpy(temp, buffer + desplazamiento, tamanio);
+            desplazamiento += tamanio;
+        }
+        desplazamiento += sizeof(int);
 		memcpy(&(contextoEjecucion->rafagaCPUEjecutada), buffer + desplazamiento, sizeof(uint64_t));
 
 	free(buffer);

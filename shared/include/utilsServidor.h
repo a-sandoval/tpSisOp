@@ -20,7 +20,7 @@ extern t_config *config;
 int iniciarServidor(char * puerto);
 int esperarCliente(int socketServidor);
 int recibirOperacion();
-void * recibirBuffer(int * size);
+void * recibirBuffer(int socket, int  * size);
 t_list * recibirPaquete();
 char * recibirMensaje();
 int alistarServidor(char * puerto);

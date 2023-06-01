@@ -27,6 +27,9 @@ void planificarALargoPlazo(){
         t_pcb *pcb = obtenerSiguienteAReady();
     
 
+        estadoProceso anterior = pcb->estado;
+        pcb->estado = READY;
+        loggearCambioDeEstado(pcb->pid, anterior, pcb->estado);
         ingresarAReady(pcb); 
         
      
@@ -53,7 +56,7 @@ void planificarACortoPlazo(t_pcb *(*proximoAEjecutar)()){
 
         contextoEjecucion = procesarPCB(aEjecutar);
 
-        rafagaCPU=contextoEjecucion->rafagaCPUEjecutada; 
+        rafagaCPU = contextoEjecucion->rafagaCPUEjecutada; 
 
         retornoContexto(aEjecutar, contextoEjecucion);
         
@@ -121,6 +124,6 @@ void instruct_print(void *value)
 
 void loggearCambioDeEstado(uint32_t pid, estadoProceso anterior, estadoProceso actual){
 
-    log_info(logger, "PID: %d - Estado Anterior: %s - Estado Actual: %s", pid, estadosProcesos[anterior], estadosProcesos[actual]);
+    log_info(logger, "PID: <%d> - Estado Anterior: <%s> - Estado Actual: <%s>", pid, estadosProcesos[anterior], estadosProcesos[actual]);
 }
 

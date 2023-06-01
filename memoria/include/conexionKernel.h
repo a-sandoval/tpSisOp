@@ -15,5 +15,6 @@ typedef struct {
 
 }t_segmento; 
 
+
 extern t_config* config; 
 #endif
