@@ -6,12 +6,19 @@ int ejecutarServidorKernel(int socket){
 	
 	log_info(logger, "Entre a servidor kernel");
 	while (1) {
-		int codOP = recibirOperacion(socketCliente);
-		switch (codOP) {
-			case MENSAJE:
-				log_info(logger, "Se autoriza continuar :)");
+		int peticion = recibirOperacion(socketCliente);
+		switch (peticion) {
+			case NEWPCB:
+				log_info(logger, "Creo tabla de Segmentos y envio segmento 0");
 				break;
-			case PAQUETE:
+            case ENDPCB:
+				log_info(logger, "Creo tabla de Segmentos y envio segmento 0");
+				break;
+			case CREATE_SEGMENT:
+                log_info(logger, "Creo nuevo segmento de memoria");
+				break;
+            case DELETE_SEGMENT:
+                log_info(logger, "Borro segmento dado");
 				break;
 			case -1:
 				log_info(logger, "soyservidor kernel");

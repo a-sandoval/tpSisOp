@@ -7,17 +7,19 @@ int ejecutarServidorFS(int socket){
 
 	log_info(logger, "Entre a servidor fs");
 	while (1) {
-		int codOP = recibirOperacion(socketCliente);
-		switch (codOP) {
-			case MENSAJE:
-				log_info(logger, "Se autoriza continuar :)");
+		int peticion = recibirOperacion(socketCliente);
+		switch (peticion) {
+			case READ:
+				log_info(logger, "Solicitud de lectura");
 				break;
-			case PAQUETE:
+			case WRITE:
+                log_info(logger, "Solicitud de escritura");
 				break;
 			case -1:
-				log_info(logger, "Soy servidor fs");
+				log_info(logger, "soyservidor kernel");
 				log_error(logger, "El cliente se desconecto");
-				return EXIT_FAILURE; 
+				return EXIT_FAILURE;
+				break; 
 			default:
 				log_warning(logger,"Operacion desconocida. No quieras meter la pata");
 				break;
