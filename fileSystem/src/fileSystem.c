@@ -74,7 +74,10 @@ int main () {
     for (int i = 0; i < cantBloques; i++)
         ((rand() % 2) - 1) ? bitarray_clean_bit(bitmap, i) : bitarray_set_bit(bitmap, i); 
     msync(ptrBitMap, tamanioBitmap, MS_SYNC);
+
+    FILE *bloques = fopen("bloques.dat","r+w");
     
+    /*
     int bloques = open("bloques.dat", O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
     struct stat statBloques;
     if (bloques < 0) {
@@ -82,6 +85,7 @@ int main () {
         exit(1);
     }
     fstat(bloques, &statBloques);
+    
 
     if (statBloques.st_size != tamanioBloques * cantBloques) {
         char *filler = malloc (sizeof(char) * (tamanioBloques * cantBloques));
@@ -91,7 +95,7 @@ int main () {
         log_info(logger, "El archivo no existio previamente, se genera vacio.");
         free(filler);
     }
-
+    
     char *(ptrBloques)[cantBloques];
     ptrBloques = mmap(0, tamanioBloques * cantBloques, PROT_WRITE | PROT_READ, MAP_SHARED, bloques, 0);
     if (ptrBloques[i] == MAP_FAILED) {
@@ -100,14 +104,15 @@ int main () {
     }
     ptrBloques[3] = string_duplicate("Prueba \n");
     msync(ptrBloques, 4096, MS_SYNC);
+    */
 
-    //escucharAlKernel();
+    escucharAlKernel();
 
     munmap(ptrBitMap, tamanioBitmap);
-    munmap(ptrBloques, tamanioBloques);
+    //munmap(ptrBloques, tamanioBloques);
     close(fD);
-    close(bloques);
     close(socketMemoria);
+    fclose(bloques);
     config_destroy(superbloque);
     bitarray_destroy(bitmap);
     terminarPrograma();

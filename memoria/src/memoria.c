@@ -14,7 +14,7 @@ int main() {
 	int server_fd = iniciarServidor(confGet("PUERTO_ESCUCHA"));
 
 	for(int i = 0; i < 3; i++) {
-		sockets[i] = esperar_cliente(server_fd);
+		sockets[i] = esperarCliente(server_fd);
 	}
 	
 	pthread_t threadCPU;
@@ -59,13 +59,13 @@ void iterator(void* value) {
 int ejecutarServidor(int socket){
 	t_list* lista;
 	while (1) {
-		int codOP = recibir_operacion();
+		int codOP = recibirOperacion();
 		switch (codOP) {
 			case MENSAJE:
 				log_info(logger, "Se autoriza continuar :)");
 				break;
 			case PAQUETE:
-				lista = recibir_paquete();
+				lista = recibirPaquete();
 				list_iterate(lista, (void*) iterator); 
 				list_destroy_and_destroy_elements(lista, (void*)elementDestroyer);
 				break;

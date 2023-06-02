@@ -105,9 +105,6 @@ void recibirContextoActualizado(){
 	    memcpy(&(contextoEjecucion->instruccionesLength), buffer + desplazamiento, sizeof(uint32_t));
 	    desplazamiento+=sizeof(uint32_t);
 
-	    // Lista de instrucciones
-	    log_info(logger, "Se recibieron %d instrucciones", contextoEjecucion->instruccionesLength);
-
 	    for(uint32_t i = 0; i < contextoEjecucion->instruccionesLength; i++) {
 		    memcpy(&tamanio, buffer + desplazamiento, sizeof(int));
 		    desplazamiento+=sizeof(int);

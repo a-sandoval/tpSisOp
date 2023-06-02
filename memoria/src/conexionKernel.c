@@ -16,6 +16,7 @@ t_list* crearTablaDeSegmentosInicial() {
 
 //serializar tabla de Segmentos
 
+/*
 void enviarTablaDeSegmentos(t_list* tablaDeSegmentos){ 
     t_paquete* paquete = crearPaquete();
     
@@ -37,3 +38,5 @@ void enviarTablaDeSegmentos(t_list* tablaDeSegmentos){
 uint32_t obtenerTablaDeSegmentosSize(t_list* tablaDeSegmentos){
 
 }
+
+*/

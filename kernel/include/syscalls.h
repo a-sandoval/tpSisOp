@@ -14,27 +14,27 @@ extern t_contexto* contextoEjecucion;
 extern sem_t hayProcesosReady;
 extern int *instanciasRecursos;
 
-void retornoContexto(t_pcb *proceso, t_contexto *contextoEjecucion);
+void retornoContexto(t_pcb*, t_contexto*);
 
-void signal_s(t_pcb *aEjecutar, char **parametros);
-void wait_s(t_pcb *aEjecutar, char **parametros);
-void io_s(t_pcb *aEjecutar, char **parametros);
-void fopen_s(t_pcb *aEjecutar, char **parametros);
-void fclose_s(t_pcb *aEjecutar, char **parametros);
-void fseek_s(t_pcb *aEjecutar, char **parametros);
-void fread_s(t_pcb *aEjecutar, char **parametros);
-void fwrite_s(t_pcb *aEjecutar, char **parametros);
-void createSegment_s(t_pcb *aEjecutar, char **parametros);
-void deleteSegment_s(t_pcb *aEjecutar, char **parametros);
-void yield_s(t_pcb *aEjecutar, char **parametros);
-void exit_s(t_pcb *aEjecutar, char **parametros);
+void signal_s(char **parametros);
+void wait_s(char **parametros);
+void io_s(char **parametros);
+void fopen_s(char **parametros);
+void fclose_s(char **parametros);
+void fseek_s(char **parametros);
+void fread_s(char **parametros);
+void fwrite_s(char **parametros);
+void createSegment_s(char **parametros);
+void deleteSegment_s(char **parametros);
+void yield_s();
+void exit_s(char **parametros);
 
-void bloqueoIO(int tiempo, t_pcb * pcb);
+void bloqueoIO(int tiempo);
 
 void bloquearIO(int tiempo);
 
-void loggearBloqueoDeProcesos(t_pcb* pcb, char* motivo); 
+void loggearBloqueoDeProcesos(char* motivo); 
 
-void loggearSalidaDeProceso(t_pcb* pcb, char* motivo); 
+void loggearSalidaDeProceso(char* motivo); 
 
 #endif /* SYSCALLS_H_ */

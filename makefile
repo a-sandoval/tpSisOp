@@ -26,7 +26,7 @@ ARCHIVOS_FILESYS := $(FILESYS_SRC)fileSystem.c $(FILESYS_SRC)servidorKernel.c \
 ARCHIVOS_KERNEL  := kernel/src/kernel.c kernel/src/conexionMemoria.c  kernel/src/conexionCPU.c  kernel/src/conexionFileSystem.c  kernel/src/servidorConsola.c kernel/src/planificacion.c kernel/src/contextoEjecucion.c kernel/src/algoritmosCortoPlazo.c kernel/src/syscalls.c kernel/src/configuraciones.c kernel/src/pcb.c kernel/src/manejoRecursos.c\
                     $(CONFIG) $(UTILS_CLIENTE) $(UTILS_SERVIDOR) 
 
-ARCHIVOS_MEMORIA := memoria/src/memoria.c \
+ARCHIVOS_MEMORIA := memoria/src/memoria.c  \
                     $(CONFIG)                  $(UTILS_SERVIDOR) 
 
 ARCHIVOS_TEST := test/src/test.c \

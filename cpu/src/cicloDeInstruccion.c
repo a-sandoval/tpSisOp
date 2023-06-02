@@ -162,8 +162,7 @@ void io(char* tiempo){
 
 void wait_c(char* recurso){
     
-    //Si hay un bloqueo, hay que detener la rafaga de CPU
-    //temporal_stop(rafagaCPU); 
+   
     contextoEjecucion->motivoDesalojo->comando = WAIT;
     contextoEjecucion->motivoDesalojo->parametros[0] = recurso;
     contextoEjecucion->motivoDesalojo->parametrosLength = 1;
@@ -172,9 +171,6 @@ void wait_c(char* recurso){
 
 void signal_c(char* recurso){
 
-    //Si hay un bloqueo, hay que detener la rafaga de CPU
-
-    //temporal_stop(rafagaCPU); 
     contextoEjecucion->motivoDesalojo->comando = SIGNAL;
     contextoEjecucion->motivoDesalojo->parametros[0] = recurso;
     contextoEjecucion->motivoDesalojo->parametrosLength = 1;

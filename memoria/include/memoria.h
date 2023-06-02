@@ -19,13 +19,15 @@
 
 #include<commons/log.h>
 #include<commons/config.h>
+#include <pthread.h>
 
 #include "shared/include/global.h"
 #include "shared/include/utilsServidor.h"
 #include "shared/include/configuraciones.h"
-#include "include/conexionKernel.h"
-#include "include/conexionCPU.h"
-#include "include/conexionFS.h"
+#include "shared/include/utilsCliente.h"
+#include "conexionKernel.h"
+#include "conexionCPU.h"
+#include "conexionFS.h"
 
 /**
  * @var socketCliente
@@ -51,7 +53,9 @@ t_log* loggerError;
 t_config* config; 
 void* espacioDeUsuario; 
 
-extern int sockets[0];
+extern int sockets[3];
+
+int ejecutarServidor(int socket); 
 
 /**
  * Fin.
