@@ -3,7 +3,7 @@
 
 int conexionAFS; 
 
-int conexionFileSystem(){
+ void conexionFileSystem(){
    logger = cambiarNombre(logger,"Kernel-FS");
    loggerError = cambiarNombre(loggerError,"Errores Kernel-FS");
     
@@ -14,7 +14,7 @@ int conexionFileSystem(){
         conexionAFS = conexion("FILESYSTEM");
 
         if(conexionAFS != -1)
-            return 0;
+            return;
         else {
             log_error(loggerError, "No se pudo conectar al servidor, socket %d, esperando 5 segundos y reintentando.", conexionAFS);
             sleep(5);

@@ -93,8 +93,7 @@ t_pcb *obtenerSiguienteAReady()
     return pcb;
 }
 
-void ingresarAReady(t_pcb *pcb) {
-
+void ingresarAReady(t_pcb *pcb){
 
     pthread_mutex_lock(&mutexListaReady);
     encolar(pcbsREADY, pcb);

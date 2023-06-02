@@ -6,7 +6,7 @@
 #include "shared/include/utilsCliente.h"
 
 
-int conexionFileSystem();
+void conexionFileSystem();
 extern t_log* loggerError;
 
 

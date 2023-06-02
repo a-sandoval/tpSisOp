@@ -3,7 +3,7 @@
 
 int conexionAMemoria;
 
-int conexionMemoria() {
+void conexionMemoria() {
     
     logger = cambiarNombre(logger,"Kernel-Memoria");
     loggerError = cambiarNombre(loggerError, "Errores Kernel-Memoria");
@@ -12,7 +12,7 @@ int conexionMemoria() {
         conexionAMemoria = conexion("MEMORIA");
 
         if(conexionAMemoria != -1){
-            return 0;
+            return;
         }
         else {
             log_error(loggerError, "No se pudo conectar al servidor, socket %d, esperando 5 segundos y reintentando.", conexionAMemoria);

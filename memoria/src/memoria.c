@@ -28,7 +28,7 @@ int main() {
 	sockets[1] = esperarCliente(server_fd);
 
 	pthread_t threadFS;
-    if(!pthread_create(&threadFS, NULL, (void*) ejecutarServidorFS, (void*) &sockets[1])){
+    if(!pthread_create(&threadFS, NULL, (void*)ejecutarServidorFS, (void*) &sockets[1])){
 	}	
     else {
         log_error(loggerError, "Error en iniciar el servidor a FS");

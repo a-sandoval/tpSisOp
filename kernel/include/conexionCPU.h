@@ -9,8 +9,6 @@
 #include "shared/include/global.h"
 #include "contextoEjecucion.h"
 
-
-
 extern int conexionACPU;
 extern t_log* loggerError; 
 

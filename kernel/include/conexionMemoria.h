@@ -8,7 +8,7 @@
 #include "pcb.h"
 
 
-int conexionMemoria();
+void conexionMemoria();
 void recibirEstructurasInicialesMemoria(t_pcb*); 
 extern t_log* loggerError; 
 
