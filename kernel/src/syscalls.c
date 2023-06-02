@@ -157,7 +157,7 @@ void io_s(t_pcb *proceso, char **parametros){
   
      pthread_t pcb_bloqueado;
 
-    if (!pthread_create(&pcb_bloqueado, NULL, (void *)bloquearIO, (void *)tiempo)){
+    if (!pthread_create(&pcb_bloqueado, NULL, (void *)bloquearIO, (void *)&tiempo)){
         pthread_join(pcb_bloqueado,NULL);
         estimacionNuevaRafaga(proceso); 
         estadoAnterior = proceso->estado;
@@ -171,9 +171,9 @@ void io_s(t_pcb *proceso, char **parametros){
      
 }
 
-void bloquearIO(int tiempo){  
+void bloquearIO(int *tiempo){  
        
-    sleep(tiempo);
+    sleep(*tiempo);
         
 }
 

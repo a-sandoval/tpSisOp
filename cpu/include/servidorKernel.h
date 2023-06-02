@@ -3,9 +3,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <commons/log.h>
 #include <commons/config.h>
-#include <stdbool.h>
 
 #include "shared/include/utilsServidor.h"
 #include "shared/include/utilsCliente.h"

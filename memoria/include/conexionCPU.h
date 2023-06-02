@@ -9,7 +9,7 @@
 #include "shared/include/global.h"
 
 
-int ejecutarServidorCPU(int); 
+int ejecutarServidorCPU(int * socket); 
 
 
 extern int socketCliente;

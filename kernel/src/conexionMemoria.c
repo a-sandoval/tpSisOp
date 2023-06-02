@@ -23,6 +23,7 @@ int conexionMemoria() {
 
 
 void recibirEstructurasInicialesMemoria(t_pcb* pcb) {
+    log_debug(logger, "PID <%d>: Se esta solicitando estructuras iniciales de memoria.", pcb->pid);
     enviarMensaje("Estructuras iniciales",conexionAMemoria); 
 }
 

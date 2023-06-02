@@ -2,7 +2,7 @@
 
 int socketCliente; 
 
-int ejecutarServidorCPU(int socket){
+int ejecutarServidorCPU(int * socket){
 
     socketCliente = socket; 
 

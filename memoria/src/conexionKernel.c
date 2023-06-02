@@ -14,10 +14,10 @@ int ejecutarServidorKernel(int socket){
             case ENDPCB:
 				log_info(logger, "Creo tabla de Segmentos y envio segmento 0");
 				break;
-			case CREATE_SEGMENT:
+			case CREATE_SEGMENT_OP:
                 log_info(logger, "Creo nuevo segmento de memoria");
 				break;
-            case DELETE_SEGMENT:
+            case DELETE_SEGMENT_OP:
                 log_info(logger, "Borro segmento dado");
 				break;
 			case -1:

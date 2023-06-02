@@ -18,7 +18,7 @@ int main() {
 	sockets[0] = esperarCliente(server_fd);
 	
 	pthread_t threadCPU;
-    if(!pthread_create(&threadCPU, NULL, (void*) ejecutarServidorCPU, (void*)sockets[0])){
+    if(!pthread_create(&threadCPU, NULL, (void*) ejecutarServidorCPU, (void*) &sockets[0])){
 	}	
     else {
         log_error(loggerError, "Error en iniciar el servidor a CPU");
@@ -28,7 +28,7 @@ int main() {
 	sockets[1] = esperarCliente(server_fd);
 
 	pthread_t threadFS;
-    if(!pthread_create(&threadFS, NULL, (void*) ejecutarServidorFS, (void*) sockets[1])){
+    if(!pthread_create(&threadFS, NULL, (void*) ejecutarServidorFS, (void*) &sockets[1])){
 	}	
     else {
         log_error(loggerError, "Error en iniciar el servidor a FS");
@@ -39,7 +39,7 @@ int main() {
 	sockets[2] = esperarCliente(server_fd);
 
 	pthread_t threadKernel;
-    if(!pthread_create(&threadKernel, NULL, (void*) ejecutarServidorKernel, (void*)sockets[2])){
+    if(!pthread_create(&threadKernel, NULL, (void*) ejecutarServidorKernel, (void*) &sockets[2])){
 	}	
     else {
         log_error(loggerError, "Error en iniciar el servidor a Kernel");

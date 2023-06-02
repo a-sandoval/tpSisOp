@@ -50,7 +50,7 @@ void esperarPID(char * archivo) {
 	recv(socketCliente, &size, sizeof(int), MSG_WAITALL);
     char * pidString = malloc(size * sizeof (char));
 	recv(socketCliente, pidString, size, MSG_WAITALL);
-    cambiarNombre(string_from_format("Consola - <%s> - <%s>", archivo, pidString));
+    logger = cambiarNombre(logger, string_from_format("Consola - <%s> - <%s>", archivo, pidString));
     return;
 
 }
