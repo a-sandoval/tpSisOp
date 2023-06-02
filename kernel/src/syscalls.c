@@ -3,10 +3,9 @@
 t_list *recursos;
 char **nombresRecursos;
 char* segFault = "SEG_FAULT"; 
-t_pcb* proceso;
 estadoProceso estadoAnterior; 
 
-void retornoContexto(t_pcb *pcb, t_contexto *contextoEjecucion){
+void retornoContexto(t_pcb *proceso, t_contexto *contextoEjecucion){
 
     /*char *temp = string_duplicate(", parametros");
 
@@ -15,50 +14,49 @@ void retornoContexto(t_pcb *pcb, t_contexto *contextoEjecucion){
 
     log_info (logger, "Contexto retornado con motivo: comando %d%s", contextoEjecucion->motivoDesalojo->comando, temp);
 
-    free (temp); */ 
-
-    proceso = pcb; 
-
+    free (temp); */  
+     log_info(logger,"switch syscalls"); 
     switch (contextoEjecucion->motivoDesalojo->comando){
         case IO:
-            io_s(contextoEjecucion->motivoDesalojo->parametros);
+             log_info(logger,"vine a io"); 
+            io_s(proceso, contextoEjecucion->motivoDesalojo->parametros);
             break;
         case WAIT:
-            wait_s(contextoEjecucion->motivoDesalojo->parametros);
+            wait_s(proceso, contextoEjecucion->motivoDesalojo->parametros);
             break;
         case SIGNAL:
-            signal_s(contextoEjecucion->motivoDesalojo->parametros);
+            signal_s(proceso, contextoEjecucion->motivoDesalojo->parametros);
             break;
         case YIELD:
-            yield_s();
+            yield_s(proceso);
             break;
         case EXIT:
-            exit_s(contextoEjecucion->motivoDesalojo->parametros);
+            exit_s(proceso, contextoEjecucion->motivoDesalojo->parametros);
             break;
     /*
         case F_OPEN:
-            fopen_s(contextoEjecucion->motivoDesalojo->parametros);
+            fopen_s(proceso, contextoEjecucion->motivoDesalojo->parametros);
             break;
         case F_CLOSE:
             fclose_s(proceso, contextoEjecucion->motivoDesalojo->parametros);
             break;
         case F_SEEK:
-            fseek_s(contextoEjecucion->motivoDesalojo->parametros);
+            fseek_s(proceso, contextoEjecucion->motivoDesalojo->parametros);
             break;
         case F_READ:
-            fread_s(contextoEjecucion->motivoDesalojo->parametros);
+            fread_s(proceso, contextoEjecucion->motivoDesalojo->parametros);
             break;
         case F_WRITE:
-            fwrite_s(contextoEjecucion->motivoDesalojo->parametros);
+            fwrite_s(proceso, contextoEjecucion->motivoDesalojo->parametros);
             break;
         case F_TRUNCATE:
-            ftruncate_s(ontextoEjecucion->motivoDesalojo->parametros);
+            ftruncate_s(proceso, contextoEjecucion->motivoDesalojo->parametros);
             break;
         case CREATE_SEGMENT:
-            createSegment_s(contextoEjecucion->motivoDesalojo->parametros);
+            createSegment_s(proceso, contextoEjecucion->motivoDesalojo->parametros);
             break;
         case DELETE_SEGMENT:
-            deleteSegment_s(contextoEjecucion->motivoDesalojo->parametros);
+            deleteSegment_s(proceso, contextoEjecucion->motivoDesalojo->parametros);
             break;
    
      */   
@@ -69,7 +67,7 @@ void retornoContexto(t_pcb *pcb, t_contexto *contextoEjecucion){
     }
 }
 
-void wait_s(char **parametros){
+void wait_s(t_pcb *proceso, char **parametros){
 
     char *recurso = parametros[0];
 
@@ -77,7 +75,7 @@ void wait_s(char **parametros){
 
     if (indexRecurso == -1)
     {
-        exit_s(&segFault); 
+        exit_s(proceso, &segFault); 
         return;
     }
 
@@ -98,22 +96,24 @@ void wait_s(char **parametros){
         list_add(colaBloqueadosRecurso, (void *)proceso);
 
         loggearCambioDeEstado(proceso->pid, estadoAnterior, proceso->estado);
-        loggearBloqueoDeProcesos(recurso); 
+        loggearBloqueoDeProcesos(proceso, recurso); 
         
     } 
-   
-    else 
-        procesarPCB(proceso); 
+    else {
+        contextoEjecucion = procesarPCB(proceso);
+        rafagaCPU = contextoEjecucion->rafagaCPUEjecutada; 
+        retornoContexto(proceso, contextoEjecucion); 
+    }
 }
 
-void signal_s(char **parametros){
+void signal_s(t_pcb *proceso, char **parametros){
 
     char *recurso = parametros[0];
 
     int indexRecurso = indiceRecurso(recurso);
 
     if (indexRecurso == -1){
-        exit_s(&segFault); 
+        exit_s(proceso, &segFault); 
         return;
     }
 
@@ -141,46 +141,47 @@ void signal_s(char **parametros){
     
     }
     
-    procesarPCB(proceso); 
+     contextoEjecucion = procesarPCB(proceso);
+    rafagaCPU = contextoEjecucion->rafagaCPUEjecutada; 
+    retornoContexto(proceso, contextoEjecucion);
 }
 
-void io_s(char **parametros){   
+void io_s(t_pcb *proceso, char **parametros){   
     
     estadoAnterior = proceso->estado;
     proceso->estado = BLOCK; 
 
-    loggearBloqueoDeProcesos("IO"); 
+    loggearBloqueoDeProcesos(proceso, "IO"); 
     loggearCambioDeEstado(proceso->pid, estadoAnterior, proceso->estado);
     
     int tiempo = atoi(parametros[0]);
     log_info(logger,"PID: <%d> - Ejecuta IO: <%d>",proceso->pid,tiempo); 
-    bloqueoIO(tiempo); 
-}
+   //bloqueoIO(tiempo);
 
+     pthread_t pcb_bloqueado;
 
-void bloqueoIO(int tiempo){
-
-    pthread_t pcb_bloqueado;
-
-    if (!pthread_create(&pcb_bloqueado, NULL, (void *)bloquearIO, (void *)&tiempo)){
-        pthread_detach(pcb_bloqueado);
-    } else {
-        log_error(loggerError, "Error en la creacion de hilo para realizar I/O, Abort");
-        abort();
-    }
-}
-
-void bloquearIO(int tiempo){  
-
-        sleep(tiempo); 
+    if (!pthread_create(&pcb_bloqueado, NULL, (void *)bloquearIO, (void *)tiempo)){
+        pthread_join(pcb_bloqueado,NULL);
         estimacionNuevaRafaga(proceso); 
         estadoAnterior = proceso->estado;
         proceso->estado = READY;
         loggearCambioDeEstado(proceso->pid, estadoAnterior, proceso->estado);
         ingresarAReady(proceso);
+    } else {
+        log_error(loggerError, "Error en la creacion de hilo para realizar I/O, Abort");
+        abort();
+    } 
+     
 }
 
-void yield_s(){  
+void bloquearIO(int tiempo){  
+        log_info(logger,"me voy a dormir"); 
+        sleep(tiempo);
+        log_info(logger,"me despierto"); 
+        
+}
+
+void yield_s(t_pcb *proceso){  
 
     estimacionNuevaRafaga(proceso); 
     estadoAnterior = proceso->estado;
@@ -189,13 +190,13 @@ void yield_s(){
     ingresarAReady(proceso); 
 }
 
-void exit_s(char **parametros){   
+void exit_s(t_pcb* proceso, char **parametros){   
     
     estadoAnterior = proceso->estado; 
     proceso->estado = SALIDA; 
 
     loggearCambioDeEstado(proceso->pid, estadoAnterior, proceso->estado); 
-    loggearSalidaDeProceso(parametros[0]); 
+    loggearSalidaDeProceso(proceso, parametros[0]); 
     
     enviarMensaje("Terminado", proceso->socketPCB);
     destruirPCB(proceso);
@@ -235,10 +236,10 @@ void deleteSegment_s(t_pcb *proceso, char **parametros)
 
 */
 
-void loggearBloqueoDeProcesos(char* motivo) {
+void loggearBloqueoDeProcesos(t_pcb* proceso, char* motivo) {
     log_info(logger,"PID: <%d> - Bloqueado por: %s", proceso->pid, motivo); 
 }
 
-void loggearSalidaDeProceso(char* motivo) {
+void loggearSalidaDeProceso(t_pcb* proceso, char* motivo) {
     log_info(logger,"Finaliza el proceso <%d> - Motivo: <%s>", proceso->pid, motivo); 
 }
