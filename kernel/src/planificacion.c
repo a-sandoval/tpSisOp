@@ -25,7 +25,8 @@ void planificarALargoPlazo(){
         sem_wait(&semGradoMultiprogramacion);
 
         t_pcb *pcb = obtenerSiguienteAReady();
-    
+
+        recibirEstructurasInicialesMemoria(pcb); 
 
         estadoProceso anterior = pcb->estado;
         pcb->estado = READY;
@@ -94,7 +95,6 @@ t_pcb *obtenerSiguienteAReady()
 
 void ingresarAReady(t_pcb *pcb) {
 
-    recibirEstructurasInicialesMemoria(pcb); 
 
     pthread_mutex_lock(&mutexListaReady);
     encolar(pcbsREADY, pcb);

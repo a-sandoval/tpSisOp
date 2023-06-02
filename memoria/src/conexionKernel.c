@@ -1,18 +1,20 @@
 #include "memoria/include/conexionKernel.h"
 
 
-int ejecutarServidorKernel(int socket){
-    socketCliente = socket; 
+int ejecutarServidorKernel(int *socketCliente){
 	
 	log_info(logger, "Entre a servidor kernel");
 	while (1) {
-		int peticion = recibirOperacion(socketCliente);
+		int peticion = recibirOperacion(*socketCliente);
+		
+		log_info(logger,"Hice peticion %d", peticion); 
+
 		switch (peticion) {
 			case NEWPCB:
 				log_info(logger, "Creo tabla de Segmentos y envio segmento 0");
 				break;
             case ENDPCB:
-				log_info(logger, "Creo tabla de Segmentos y envio segmento 0");
+				log_info(logger, "Elimino estructuras asociadas a este PCB");
 				break;
 			case CREATE_SEGMENT_OP:
                 log_info(logger, "Creo nuevo segmento de memoria");
@@ -21,7 +23,6 @@ int ejecutarServidorKernel(int socket){
                 log_info(logger, "Borro segmento dado");
 				break;
 			case -1:
-				log_info(logger, "soyservidor kernel");
 				log_error(logger, "El cliente se desconecto");
 				return EXIT_FAILURE;
 				break; 
@@ -31,7 +32,6 @@ int ejecutarServidorKernel(int socket){
 		}
 	}
 }
-
 
 
 t_list* crearTablaDeSegmentosInicial() {

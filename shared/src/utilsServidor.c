@@ -38,7 +38,7 @@ int esperarCliente(int socketServidor){
 	return socketClienteFD;
 }
 
-int recibirOperacion(){
+int recibirOperacion(int socketCliente){
 	int cod_op;
 	if(recv(socketCliente, &cod_op, sizeof(int), MSG_WAITALL) > 0)
 		return cod_op;
@@ -59,14 +59,14 @@ void* recibirBuffer(int socket, int  * size){
 	return buffer;
 }
 
-char *recibirMensaje()
+char *recibirMensaje(int socketCliente)
 {
 	int size;
 	char *buffer = recibirBuffer(socketCliente, &size);
 	return buffer;
 }
 
-t_list* recibirPaquete(){
+t_list* recibirPaquete(int socketCliente){
 	int size;
 	int desplazamiento = 0;
 	void * buffer;

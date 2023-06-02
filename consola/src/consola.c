@@ -15,12 +15,12 @@ int main(int, char *archivos[]) {
             sleep(5);
         }
     }
-    FILE *codigo = abrir(archivos[1], "r");
+    FILE *codigo = abrir(socketCliente, archivos[1], "r");
     size_t cantChars = MAX_CHARS;
 
     while(!feof(codigo)) {
         char *linea = (char *) malloc (sizeof (char) * cantChars);
-        if (linea == NULL) error("No se pudo alocar memoria");
+        if (linea == NULL) error(socketCliente, "No se pudo alocar memoria");
 
         getline(&linea, &cantChars, codigo);
         char *lineaCodigo = string_replace(linea, "\n\0", "\0");

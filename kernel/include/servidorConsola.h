@@ -17,4 +17,6 @@ void recibirConsolas(char *puerto);
 void iterator(void* value);
 void ejecutarServidorKernel(); 
 
+extern int socketCliente;
+
 #endif /* SERVER_H_ */

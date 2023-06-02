@@ -27,8 +27,7 @@
 
 #include "fileSystem/include/servidorKernel.h"
 
-
-extern int socketCliente;
+int socketCliente;
 extern int socketMemoria;
 extern t_log * logger; 
 extern t_log * loggerError; 

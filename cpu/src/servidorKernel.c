@@ -27,7 +27,7 @@ bool noEsBloqueante(t_comando instruccionActual) {
 int ejecutarServidorCPU(){
 	while (1) {
         instruccionActual = -1;
-		int codOP = recibirOperacion();
+		int codOP = recibirOperacion(socketCliente);
 		switch (codOP) {
 			case -1:
 				log_info(logger, "El Kernel se desconecto.");

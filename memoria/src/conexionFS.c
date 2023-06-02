@@ -1,14 +1,13 @@
 #include "memoria/include/conexionFS.h"
 
 
-int ejecutarServidorFS(int socket){
-
-    socketCliente = socket; 
+int ejecutarServidorFS(int *socketCliente){
 
 	log_info(logger, "Entre a servidor fs");
 	while (1) {
-		int peticion = recibirOperacion(socketCliente);
-		switch (peticion) {
+		int peticion = recibirOperacion(*socketCliente);
+		log_info(logger,"Hice peticion %d", peticion); 
+		switch (peticion) {	
 			case READ:
 				log_info(logger, "Solicitud de lectura");
 				break;
@@ -16,7 +15,6 @@ int ejecutarServidorFS(int socket){
                 log_info(logger, "Solicitud de escritura");
 				break;
 			case -1:
-				log_info(logger, "soyservidor kernel");
 				log_error(logger, "El cliente se desconecto");
 				return EXIT_FAILURE;
 				break; 

@@ -11,7 +11,6 @@ int conexionMemoria() {
         conexionAMemoria = conexion("MEMORIA");
 
         if(conexionAMemoria != -1){
-            enviarMensaje("Hola Memoria", conexionAMemoria); 
             return 0;
         }
         else {

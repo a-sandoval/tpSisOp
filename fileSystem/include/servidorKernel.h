@@ -8,4 +8,6 @@ void escucharAlKernel();
 void ejecutarServidor();
 void iterator(void* value); 
 
+extern int socketCliente;
+
 #endif

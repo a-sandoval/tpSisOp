@@ -23,7 +23,10 @@ int conexionMemoria() {
 
 
 void recibirEstructurasInicialesMemoria(t_pcb* pcb) {
+
+    t_paquete* paquete = crearPaquete(); 
+    paquete->codigo_operacion = NEWPCB; 
     log_debug(logger, "PID <%d>: Se esta solicitando estructuras iniciales de memoria.", pcb->pid);
-    enviarMensaje("Estructuras iniciales",conexionAMemoria); 
+    enviarPaquete(paquete, conexionAMemoria); 
 }
 

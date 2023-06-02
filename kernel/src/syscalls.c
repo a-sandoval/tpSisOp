@@ -195,10 +195,21 @@ void exit_s(t_pcb* proceso, char **parametros){
     loggearSalidaDeProceso(proceso, parametros[0]); 
     
     enviarMensaje("Terminado", proceso->socketPCB);
+
+    liberarMemoriaPCB(proceso); 
+
     destruirPCB(proceso);
     sem_post(&semGradoMultiprogramacion); 
 }
 
+
+void liberarMemoriaPCB(t_pcb* proceso) {
+
+    t_paquete* paquete = crearPaquete(); 
+    paquete->codigo_operacion=ENDPCB; 
+
+    enviarPaquete(paquete,conexionAMemoria); 
+}
 /*
 void fopen_s(t_pcb *proceso, char **parametros)
 {

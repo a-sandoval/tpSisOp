@@ -9,10 +9,10 @@
 #include "shared/include/global.h"
 
 
-int ejecutarServidorCPU(int * socket); 
+int ejecutarServidorCPU(int*); 
 
 
-extern int socketCliente;
+
 extern t_config* config;
 extern t_log* logger; 
 

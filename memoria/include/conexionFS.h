@@ -8,13 +8,13 @@
 #include "shared/include/global.h"
 
 
-int ejecutarServidorFS(int);
+int ejecutarServidorFS(int*);
 
 
 
 extern t_config* config;
 extern t_log* logger; 
-extern int socketCliente;
+
 
 
 

@@ -35,7 +35,7 @@ void ejecutarServidorKernel(){
 				list_destroy(lista);
 				break;
 			case MENSAJE:
-				char *mensaje = recibirMensaje();
+				char *mensaje = recibirMensaje(socketCliente);
 				log_info(logger, "%s", mensaje);
 				if (!strcmp(mensaje, "Fin de instrucciones")) {
 					enviarMensaje(string_from_format("%d", PCB->pid), socketCliente);

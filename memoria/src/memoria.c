@@ -52,8 +52,6 @@ int main() {
 	pthread_join(threadFS, NULL);
 	pthread_join(threadKernel, NULL);
 
-
-	log_info(logger, "muero");
 	return 0;
 }
 

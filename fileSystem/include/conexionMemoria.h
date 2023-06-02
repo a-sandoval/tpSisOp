@@ -8,7 +8,7 @@
 #include "shared/include/utilsCliente.h"
 #include "shared/include/utilsServidor.h"
 
-extern int socketCliente;
+
 extern t_log* logger;
 extern t_log* loggerError; 
 extern t_config* config;

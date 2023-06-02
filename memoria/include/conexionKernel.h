@@ -20,11 +20,11 @@ typedef struct {
 }t_segmento; 
 
 
-int ejecutarServidorKernel(int);
+int ejecutarServidorKernel(int*);
 
 extern t_config* config;
 extern t_log* logger; 
-extern int socketCliente;
+
 
 
 #endif

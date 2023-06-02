@@ -1,15 +1,14 @@
 #include "memoria/include/conexionCPU.h"
 
-int socketCliente; 
 
-int ejecutarServidorCPU(int * socket){
-
-    socketCliente = socket; 
+int ejecutarServidorCPU(int * socketCliente){
 
 	log_info(logger, "Entre a servidor cpu");
 
 	while (1) {
-		int peticion = recibirOperacion(socketCliente);
+		int peticion = recibirOperacion(*socketCliente);
+		log_info(logger,"Hice peticion %d", peticion); 
+
 		switch (peticion) {
 			case READ:
 				log_info(logger, "Solicitud de lectura");
@@ -18,7 +17,6 @@ int ejecutarServidorCPU(int * socket){
                 log_info(logger, "Solicitud de escritura");
 				break;
 			case -1:
-				log_info(logger, "soyservidor kernel");
 				log_error(logger, "El cliente se desconecto");
 				return EXIT_FAILURE;
 				break; 

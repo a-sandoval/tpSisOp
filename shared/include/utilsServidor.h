@@ -13,16 +13,15 @@
 #include <assert.h>
 #include "configuraciones.h"
 
-extern int socketCliente;
 extern t_log *logger;
 extern t_config *config;
 
 int iniciarServidor(char * puerto);
 int esperarCliente(int socketServidor);
-int recibirOperacion();
+int recibirOperacion(int socketCliente);
 void * recibirBuffer(int socket, int  * size);
-t_list * recibirPaquete();
-char * recibirMensaje();
+t_list * recibirPaquete(int socketCliente);
+char * recibirMensaje(int socketCliente);
 int alistarServidor(char * puerto);
 void elementDestroyer(void * palabra);
 

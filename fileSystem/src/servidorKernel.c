@@ -19,7 +19,7 @@ void ejecutarServidor() {
 				list_destroy(lista);
 				break;
 			case MENSAJE:
-				char *mensaje = recibirMensaje();
+				char *mensaje = recibirMensaje(socketCliente);
 				log_info(logger, "%s", mensaje);
 				free(mensaje);
                 enviarMensaje("Finalizado", socketCliente);

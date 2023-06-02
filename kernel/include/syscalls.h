@@ -7,12 +7,14 @@
 #include "planificacion.h"
 #include "manejoRecursos.h"
 #include "algoritmosCortoPlazo.h"
+#include "conexionMemoria.h"
 
 extern t_list *recursos;
 extern char **nombresRecursos;
 extern t_contexto* contextoEjecucion;
 extern sem_t hayProcesosReady;
 extern int *instanciasRecursos;
+extern int conexionAMemoria; 
 
 void retornoContexto(t_pcb*, t_contexto*);
 
@@ -34,5 +36,7 @@ void bloquearIO(int *tiempo);
 void loggearBloqueoDeProcesos(t_pcb*,char* motivo); 
 
 void loggearSalidaDeProceso(t_pcb*,char* motivo); 
+
+void liberarMemoriaPCB(t_pcb* proceso); 
 
 #endif /* SYSCALLS_H_ */

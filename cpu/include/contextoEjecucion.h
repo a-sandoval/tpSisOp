@@ -32,6 +32,7 @@ typedef struct {
 } t_contexto;
 
 extern t_contexto* contextoEjecucion;
+extern int socketCliente;
 
 
 void agregarMotivoAPaquete(t_paquete* paquete, t_motivoDeDesalojo* motivoDesalojo);

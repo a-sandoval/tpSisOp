@@ -3,7 +3,7 @@
 
 int main(void){
 	
-	logger = iniciarLogger("cpu.log", "Memoria");
+	logger = iniciarLogger("cpu.log", "CPU");
 	loggerError = iniciarLogger("errores.log", "Errores CPU");
 	
 	config = iniciarConfiguracion("cpu.config");

@@ -21,7 +21,6 @@
 #include <commons/config.h>
 #include <commons/string.h>
 
-extern int socketCliente;
 extern t_log *logger;
 extern t_config *config;
 
@@ -101,7 +100,7 @@ void terminarPrograma();
  * @param tipoDeArchivo Linea de texto del tipo de archivo para abrir, para referencia ver fopen(3).
  * @return FILE* Retorna el archivo abierto.
  */
-FILE *abrir (char *archivo, char *tipoDeArchivo);
+FILE *abrir (int socket, char *archivo, char *tipoDeArchivo);
 
 /**
  * @fn void error (char *mensajeFormato, ...)
@@ -110,11 +109,7 @@ FILE *abrir (char *archivo, char *tipoDeArchivo);
  * @param mensajeFormato Formato del mensaje como un printf para mandarlo por log_error().
  * @param ... Resto de los parametros en caso de mandarse.
  */
-void error (char *mensajeFormato, ...) __attribute__((format(printf, 1, 2)));
 
-/**
- * @}
- */
-
+void error (int socket, char *mensajeFormato, ...); 
 
 #endif /* CONFIGURACIONES_H_ */

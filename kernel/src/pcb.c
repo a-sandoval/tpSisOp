@@ -17,6 +17,7 @@ t_pcb *crearPCB(){
     nuevoPCB->registrosCPU = crearDiccionarioDeRegistros();
 
     procesosCreados++; // para el nuevo pid
+    
 
     return nuevoPCB;
 }
