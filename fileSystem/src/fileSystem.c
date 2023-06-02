@@ -12,7 +12,8 @@ int main () {
     logger = iniciarLogger("fileSys.log","file-system");
     config = iniciarConfiguracion("filesys.config");
     loggerError = iniciarLogger("errores.log", "File-System"); 
-    socketMemoria = conexion("MEMORIA"); 
+    
+    conexionMemoria();
 
     // Se abre el archivo de super-bloque y se agarra la cantidad de bloques y el tamaño de cada bloque.
 
@@ -111,7 +112,7 @@ int main () {
     munmap(ptrBitMap, tamanioBitmap);
     //munmap(ptrBloques, tamanioBloques);
     close(fD);
-    close(socketMemoria);
+    //close(socketMemoria);
     fclose(bloques);
     config_destroy(superbloque);
     bitarray_destroy(bitmap);

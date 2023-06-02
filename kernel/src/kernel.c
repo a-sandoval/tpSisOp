@@ -12,7 +12,8 @@ int main(){
 	inicializarListasPCBS(); 
 	
 	conexionCPU();
-	log_info(logger, "Conectado al CPU");
+	conexionFileSystem(); 
+	conexionMemoria(); 
 
     //Inicializar Hilos
 	pthread_t planificadorLargoPlazo_h; //Hilo Planificador Largo Plazo -> Mueve procesos de NEW a READY

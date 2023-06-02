@@ -3,10 +3,10 @@
 void escucharAlKernel() {
     char* puertoEscucha = confGet ("PUERTO_ESCUCHA");
     socketCliente = alistarServidor (puertoEscucha);
-    ejecutarServidor ();  
+    ejecutarServidor();  
 }
 
-void ejecutarServidor () {
+void ejecutarServidor() {
 	t_list* lista;
 	
 	while (1) {

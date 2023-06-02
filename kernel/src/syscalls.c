@@ -15,10 +15,8 @@ void retornoContexto(t_pcb *proceso, t_contexto *contextoEjecucion){
     log_info (logger, "Contexto retornado con motivo: comando %d%s", contextoEjecucion->motivoDesalojo->comando, temp);
 
     free (temp); */  
-     log_info(logger,"switch syscalls"); 
     switch (contextoEjecucion->motivoDesalojo->comando){
         case IO:
-             log_info(logger,"vine a io"); 
             io_s(proceso, contextoEjecucion->motivoDesalojo->parametros);
             break;
         case WAIT:
@@ -156,8 +154,7 @@ void io_s(t_pcb *proceso, char **parametros){
     
     int tiempo = atoi(parametros[0]);
     log_info(logger,"PID: <%d> - Ejecuta IO: <%d>",proceso->pid,tiempo); 
-   //bloqueoIO(tiempo);
-
+  
      pthread_t pcb_bloqueado;
 
     if (!pthread_create(&pcb_bloqueado, NULL, (void *)bloquearIO, (void *)tiempo)){
@@ -175,9 +172,8 @@ void io_s(t_pcb *proceso, char **parametros){
 }
 
 void bloquearIO(int tiempo){  
-        log_info(logger,"me voy a dormir"); 
-        sleep(tiempo);
-        log_info(logger,"me despierto"); 
+       
+    sleep(tiempo);
         
 }
 
@@ -231,8 +227,6 @@ void createSegment_s(t_pcb *proceso, char **parametros)
 void deleteSegment_s(t_pcb *proceso, char **parametros)
 {
 }
-
-
 
 */
 

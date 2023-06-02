@@ -1,11 +1,11 @@
-#include "cpu/include/conexionMemoria.h"
+#include "fileSystem/include/conexionMemoria.h"
 
 int conexionAMemoria; 
 
 int conexionMemoria() {
 
-    logger = cambiarNombre(logger, "CPU - MEMORIA");
-    loggerError = cambiarNombre(loggerError,"Errores CPU- Memoria");
+    logger = cambiarNombre(logger, "File-System - Memoria");
+    loggerError = cambiarNombre(loggerError,"Errores FS- Memoria");
 
     while(1) {
         conexionAMemoria = conexion("MEMORIA");

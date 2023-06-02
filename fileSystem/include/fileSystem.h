@@ -16,6 +16,8 @@
 #include <sys/mman.h>
 #include <sys/stat.h>
 
+#include "fileSystem/include/conexionMemoria.h"
+
 #include <commons/log.h>
 #include <commons/config.h>
 #include <commons/bitarray.h>
@@ -24,6 +26,7 @@
 #include "shared/include/configuraciones.h"
 
 #include "fileSystem/include/servidorKernel.h"
+
 
 extern int socketCliente;
 extern int socketMemoria;

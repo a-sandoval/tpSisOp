@@ -30,7 +30,7 @@ int ejecutarServidorCPU(){
 		int codOP = recibirOperacion();
 		switch (codOP) {
 			case -1:
-				log_info(logger, "La Kernel se desconecto.");
+				log_info(logger, "El Kernel se desconecto.");
 				return EXIT_FAILURE;
 			case CONTEXTOEJECUCION:
 				recibirContextoActualizado();

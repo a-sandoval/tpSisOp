@@ -32,7 +32,7 @@ t_log* iniciarLogger(char* nombreArchivo, char* nombreLogger){
 	return nuevoLogger;
 }
 
-t_log *cambiarNombre(char *nuevoNombre) {
+t_log *cambiarNombre(t_log* logger, char *nuevoNombre) {
     t_log *nuevoLogger = logger;
 	free(logger->program_name);
     nuevoLogger->program_name = strdup(nuevoNombre);

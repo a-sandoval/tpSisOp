@@ -78,7 +78,7 @@ t_log* iniciarLogger(char* nombreArchivo, char* nombreLogger);
  * @return t_log* 
  * Se retorna el logger modificado.
  */
-t_log *cambiarNombre(char *nuevoNombre);
+t_log *cambiarNombre(t_log* logger, char *nuevoNombre);
 
 /**
  * @}

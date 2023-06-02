@@ -21,20 +21,17 @@
 #include<commons/config.h>
 #include <pthread.h>
 
-#include "shared/include/global.h"
-#include "shared/include/utilsServidor.h"
-#include "shared/include/configuraciones.h"
-#include "shared/include/utilsCliente.h"
 #include "conexionKernel.h"
 #include "conexionCPU.h"
 #include "conexionFS.h"
 
-/**
- * @var socketCliente
- * Socket para recibir conexiones.
- * 
- */
-int socketCliente;
+#include "shared/include/global.h"
+#include "shared/include/utilsServidor.h"
+#include "shared/include/utilsCliente.h"
+#include "shared/include/configuraciones.h"
+#include "shared/include/utilsCliente.h"
+
+
 
 /**
  * @fn void iterator (void* value)
@@ -47,7 +44,6 @@ int socketCliente;
  * @param value El valor que recibe del paquete sera recibido como parametro y utilizado como se desee.
  */
 
-void iterator(void* value);
 t_log* logger; 
 t_log* loggerError; 
 t_config* config; 
@@ -55,7 +51,9 @@ void* espacioDeUsuario;
 
 extern int sockets[3];
 
-int ejecutarServidor(int socket); 
+
+
+
 
 /**
  * Fin.

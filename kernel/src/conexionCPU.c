@@ -7,7 +7,9 @@ t_contexto* contextoEjecucion;
 int conexionACPU;
 
 void conexionCPU() {
-    logger = cambiarNombre("Kernel-CPU");
+    logger = cambiarNombre(logger, "Kernel-CPU");
+    loggerError = cambiarNombre(loggerError,"Errores Kernel-CPU");
+
 
     while(1) {
         conexionACPU = conexion("CPU");
