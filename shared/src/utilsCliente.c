@@ -106,6 +106,13 @@ void eliminarPaquete(t_paquete *paquete)
 	free(paquete);
 }
 
+void enviarCodOp (op_code codigoDeOperacion, int socket) {
+	void * buffer = malloc (sizeof (int));
+	memcpy (buffer, &(codigoDeOperacion), sizeof (int));
+	send (socket, buffer, sizeof (int), 0);
+	free (buffer);
+}
+
 int conexion(char *SERVIDOR)
 {
 	char *KEYS[] = {

@@ -3,11 +3,11 @@
 
 int ejecutarServidorCPU(int * socketCliente){
 
-	log_info(logger, "Entre a servidor cpu");
+	log_info(logger, "Conectado el CPU.");
 
 	while (1) {
 		int peticion = recibirOperacion(*socketCliente);
-		log_info(logger,"Hice peticion %d", peticion); 
+		log_info(logger,"Se recibio peticion %d del CPU", peticion); 
 
 		switch (peticion) {
 			case READ:
@@ -17,11 +17,11 @@ int ejecutarServidorCPU(int * socketCliente){
                 log_info(logger, "Solicitud de escritura");
 				break;
 			case -1:
-				log_error(logger, "El cliente se desconecto");
+				log_error(logger, "El CPU se desconecto");
 				return EXIT_FAILURE;
 				break; 
 			default:
-				log_warning(logger,"Operacion desconocida. No quieras meter la pata");
+				log_warning(logger,"Operacion desconocida del CPU.");
 				break;
 		}
 	}

@@ -7,15 +7,21 @@ t_contexto* contextoEjecucion;
 int conexionACPU;
 
 void conexionCPU() {
+    char * nombreAnterior = duplicarNombre (logger);
     logger = cambiarNombre(logger, "Kernel-CPU");
+    char * nombreAnteriorErrores = duplicarNombre (loggerError);
     loggerError = cambiarNombre(loggerError,"Errores Kernel-CPU");
 
 
     while(1) {
         conexionACPU = conexion("CPU");
 
-        if(conexionACPU != -1)
+        if(conexionACPU != -1) {
+            log_info(logger, "Conectado a CPU");
+            logger = cambiarNombre(logger, nombreAnterior);
+            loggerError = cambiarNombre(loggerError, nombreAnteriorErrores);
             return;
+        }
         else {
             log_error(loggerError, "No se pudo conectar al servidor, socket %d, esperando 5 segundos y reintentando.", conexionACPU);
             sleep(5);

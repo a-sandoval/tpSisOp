@@ -116,6 +116,8 @@ void enviarPaquete(t_paquete* paquete, int socketCliente);
  */
 void eliminarPaquete(t_paquete* paquete);
 
+void enviarCodOp (op_code codigoDeOperacion, int socket);
+
 /**
  * @fn int conexion(char *SERVIDOR)
  * 

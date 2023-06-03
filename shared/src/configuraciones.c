@@ -39,6 +39,10 @@ t_log *cambiarNombre(t_log* logger, char *nuevoNombre) {
     return nuevoLogger;
 }
 
+char * duplicarNombre(t_log *logger) {
+    return string_duplicate(logger->program_name);
+}
+
 void terminarPrograma() {
 	log_destroy(logger);
 	config_destroy(config);

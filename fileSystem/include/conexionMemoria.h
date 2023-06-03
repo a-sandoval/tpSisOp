@@ -13,6 +13,6 @@ extern t_log* logger;
 extern t_log* loggerError; 
 extern t_config* config;
 
-int conexionMemoria();
+void conexionMemoria();
 
 #endif 

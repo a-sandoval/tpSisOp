@@ -3,6 +3,7 @@
 void escucharAlKernel() {
     char* puertoEscucha = confGet ("PUERTO_ESCUCHA");
     socketCliente = alistarServidor (puertoEscucha);
+	log_info(logger, "Se conecto el Kernel");
     ejecutarServidor();  
 }
 
@@ -25,6 +26,7 @@ void ejecutarServidor() {
                 enviarMensaje("Finalizado", socketCliente);
 				break;
             case -1:
+				log_info(logger, "Se desconecto el Kernel");
                 close(socketCliente);
                 return;
 			default:

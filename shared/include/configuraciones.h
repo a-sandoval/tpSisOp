@@ -79,6 +79,8 @@ t_log* iniciarLogger(char* nombreArchivo, char* nombreLogger);
  */
 t_log *cambiarNombre(t_log* logger, char *nuevoNombre);
 
+char * duplicarNombre(t_log *logger);
+
 /**
  * @}
  * @ingroup funcionesGlobales

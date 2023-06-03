@@ -59,8 +59,9 @@ void retornoContexto(t_pcb *proceso, t_contexto *contextoEjecucion){
    
      */   
     default:
-        log_error(loggerError, "Comando incorrecto");
-        exit(1);
+        log_error(loggerError, "Comando incorrecto, ejecutando Yield para continuar");
+        yield_s(proceso);
+        //exit(1);
         break;
     }
 }
@@ -202,14 +203,6 @@ void exit_s(t_pcb* proceso, char **parametros){
     sem_post(&semGradoMultiprogramacion); 
 }
 
-
-void liberarMemoriaPCB(t_pcb* proceso) {
-
-    t_paquete* paquete = crearPaquete(); 
-    paquete->codigo_operacion=ENDPCB; 
-
-    enviarPaquete(paquete,conexionAMemoria); 
-}
 /*
 void fopen_s(t_pcb *proceso, char **parametros)
 {

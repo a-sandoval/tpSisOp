@@ -3,10 +3,10 @@
 
 int ejecutarServidorFS(int *socketCliente){
 
-	log_info(logger, "Entre a servidor fs");
+	log_info(logger, "Conectado el File System");
 	while (1) {
 		int peticion = recibirOperacion(*socketCliente);
-		log_info(logger,"Hice peticion %d", peticion); 
+		log_info(logger,"Se recibio peticion %d de File System", peticion); 
 		switch (peticion) {	
 			case READ:
 				log_info(logger, "Solicitud de lectura");
@@ -15,7 +15,7 @@ int ejecutarServidorFS(int *socketCliente){
                 log_info(logger, "Solicitud de escritura");
 				break;
 			case -1:
-				log_error(logger, "El cliente se desconecto");
+				log_error(logger, "El File System se desconecto");
 				return EXIT_FAILURE;
 				break; 
 			default:

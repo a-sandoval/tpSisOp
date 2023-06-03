@@ -37,6 +37,4 @@ void loggearBloqueoDeProcesos(t_pcb*,char* motivo);
 
 void loggearSalidaDeProceso(t_pcb*,char* motivo); 
 
-void liberarMemoriaPCB(t_pcb* proceso); 
-
 #endif /* SYSCALLS_H_ */

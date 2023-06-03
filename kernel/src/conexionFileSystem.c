@@ -4,19 +4,23 @@
 int conexionAFS; 
 
  void conexionFileSystem(){
-   logger = cambiarNombre(logger,"Kernel-FS");
-   loggerError = cambiarNombre(loggerError,"Errores Kernel-FS");
-    
-    log_info(logger,"Conexion lista entre Kernel y File System"); 
+    char * nombreAnterior = duplicarNombre (logger);
+    logger = cambiarNombre(logger,"Kernel-FS");
+    char * nombreAnteriorErrores = duplicarNombre (loggerError);
+    loggerError = cambiarNombre(loggerError,"Errores Kernel-FS");
 
     while(1) {
        
         conexionAFS = conexion("FILESYSTEM");
 
-        if(conexionAFS != -1)
+        if(conexionAFS != -1) {
+            log_info(logger, "Conectado a File System");
+            logger = cambiarNombre(logger, nombreAnterior);
+            loggerError = cambiarNombre(loggerError, nombreAnteriorErrores);
             return;
+        }
         else {
-            log_error(loggerError, "No se pudo conectar al servidor, socket %d, esperando 5 segundos y reintentando.", conexionAFS);
+            log_error(loggerError, "No se pudo conectar al File System, esperando 5 segundos y reintentando.");
             sleep(5);
         }
     }

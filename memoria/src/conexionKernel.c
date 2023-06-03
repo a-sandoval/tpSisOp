@@ -3,11 +3,11 @@
 
 int ejecutarServidorKernel(int *socketCliente){
 	
-	log_info(logger, "Entre a servidor kernel");
+	log_info(logger, "Conectado el Kernel");
 	while (1) {
 		int peticion = recibirOperacion(*socketCliente);
 		
-		log_info(logger,"Hice peticion %d", peticion); 
+		log_info(logger,"Se recibio peticion %d del Kernel", peticion); 
 
 		switch (peticion) {
 			case NEWPCB:
@@ -23,7 +23,7 @@ int ejecutarServidorKernel(int *socketCliente){
                 log_info(logger, "Borro segmento dado");
 				break;
 			case -1:
-				log_error(logger, "El cliente se desconecto");
+				log_error(logger, "El Kernel se desconecto");
 				return EXIT_FAILURE;
 				break; 
 			default:
