@@ -22,27 +22,16 @@ char* instruccionAEjecutar;
 char** elementosInstruccion; 
 int instruccionActual; 
 int cantParametros;
-//nuevos
+int tiempoEspera;
 
 t_temporal* rafagaCPU; 
 int64_t rafagaCPUEjecutada; 
-
-
 t_contexto* contextoEjecucion;
 
-void liberarMemoria() {
-    for (int i = 0; i <= cantParametros; i++) free(elementosInstruccion[i]);
-    free(elementosInstruccion);
-}
-
 void cicloDeInstruccion(){
-
     fetch();//busca la próxima instruccion a ejecutar. Lista en pcb
-
     decode();//interpreta que instruccion va a ejecutar y si requiere traduccion logica o fisica
-
     execute();//ejecuta la instruccion 
-    
     liberarMemoria();
 }
 
@@ -56,7 +45,6 @@ void fetch() {
 void decode(){
     elementosInstruccion = string_n_split(instruccionAEjecutar, 4, " ");
     cantParametros = string_array_size(elementosInstruccion) - 1;
-    //instruccionAEjecutar = string_(elementosInstruccion[cantParametros], "\0", "");
     instruccionActual = buscar(elementosInstruccion[0], listaComandos);
 }
  
@@ -111,7 +99,6 @@ void execute() {
             break;
         case WAIT:
             wait_c(elementosInstruccion[1]);
-            //un recurso puede ser un archivo, memoria reservada, semáforos, sockets, etc
             break;
         case SIGNAL:
             signal_c(elementosInstruccion[1]);
@@ -134,152 +121,100 @@ void execute() {
     }
 }
 
-
-void set_c(char* registro, char* valor){
-    int tiempoEspera = obtenerTiempoEspera();
+void set_c(char* registro, char* valor){ 
+    tiempoEspera = obtenerTiempoEspera();
     usleep(tiempoEspera * 1000); 
     dictionary_remove_and_destroy(contextoEjecucion->registrosCPU, registro, free); 
     dictionary_put(contextoEjecucion->registrosCPU, registro, string_duplicate(valor));
 }
 
-int obtenerTiempoEspera(){
-    return config_get_int_value(config,"RETARDO_INSTRUCCION"); 
-}
-
 void io(char* tiempo){
-    temporal_stop(rafagaCPU); 
-    
-    rafagaCPUEjecutada = temporal_gettime(rafagaCPU);  
-
-    contextoEjecucion->motivoDesalojo->comando = IO;
-    contextoEjecucion->motivoDesalojo->parametros[0]= tiempo;
-    contextoEjecucion->motivoDesalojo->parametrosLength = 1;
-
+    destruirTemporizador(rafagaCPU);
+    modificarMotivoDesalojo (IO, 1, tiempo, "", "");
     enviarContextoActualizado();
-
-
 }
 
 void wait_c(char* recurso){
-    
-   
-    contextoEjecucion->motivoDesalojo->comando = WAIT;
-    contextoEjecucion->motivoDesalojo->parametros[0] = recurso;
-    contextoEjecucion->motivoDesalojo->parametrosLength = 1;
+    modificarMotivoDesalojo (WAIT, 1, recurso, "", "");
     enviarContextoActualizado();
 }
 
 void signal_c(char* recurso){
-
-    contextoEjecucion->motivoDesalojo->comando = SIGNAL;
-    contextoEjecucion->motivoDesalojo->parametros[0] = recurso;
-    contextoEjecucion->motivoDesalojo->parametrosLength = 1;
-
+    modificarMotivoDesalojo (SIGNAL, 1, recurso, "", "");
     enviarContextoActualizado();
 }
 
 void yield_c(){ 
-    temporal_stop(rafagaCPU);
-    contextoEjecucion->rafagaCPUEjecutada = temporal_gettime(rafagaCPU);  
-
-    contextoEjecucion->motivoDesalojo->comando = YIELD;
-    contextoEjecucion->motivoDesalojo->parametros[0]= "";
-    contextoEjecucion->motivoDesalojo->parametrosLength = 0;
-
+    destruirTemporizador(rafagaCPU);
+    modificarMotivoDesalojo (YIELD, 0, "", "", "");
     enviarContextoActualizado();
-
-    temporal_destroy(rafagaCPU); 
 }
 
 void exit_c(){
-
-    temporal_stop(rafagaCPU); 
-    temporal_destroy(rafagaCPU); 
-
-    contextoEjecucion->motivoDesalojo->comando = EXIT;
-    contextoEjecucion->motivoDesalojo->parametros[0]= "SUCCESS";
-    contextoEjecucion->motivoDesalojo->parametrosLength = 1;
+    destruirTemporizador(rafagaCPU);
+    modificarMotivoDesalojo (EXIT, 1, "SUCCESS", "", "");
     enviarContextoActualizado();
 }
 
 void f_open(char* nombre){
-
-    contextoEjecucion->motivoDesalojo->comando = F_OPEN;
-    contextoEjecucion->motivoDesalojo->parametros[0] = nombre;
-    contextoEjecucion->motivoDesalojo->parametrosLength = 1;
-
+    modificarMotivoDesalojo (F_OPEN, 1, nombre, "", "");
     enviarContextoActualizado();
 };
 
 void f_close(char* nombre){
-
-    contextoEjecucion->motivoDesalojo->comando = F_CLOSE;
-    contextoEjecucion->motivoDesalojo->parametros[0] = nombre;
-    contextoEjecucion->motivoDesalojo->parametrosLength = 1;
-
+    modificarMotivoDesalojo (F_CLOSE, 1, nombre, "", "");
     enviarContextoActualizado();
 };
 
 void f_seek(char* nombre, char* puntero){
-
-    contextoEjecucion->motivoDesalojo->comando = F_SEEK;
-    contextoEjecucion->motivoDesalojo->parametros[0] = nombre;
-    contextoEjecucion->motivoDesalojo->parametros[1] = puntero;
-    contextoEjecucion->motivoDesalojo->parametrosLength = 2;
-
+    modificarMotivoDesalojo (F_SEEK, 2, nombre, puntero, "");
     enviarContextoActualizado();
 };
 
 void f_read(char* nombre, char* direccionLogica, char* cantBytes){
-
-    contextoEjecucion->motivoDesalojo->comando = F_READ;
-    contextoEjecucion->motivoDesalojo->parametros[0] = nombre;
-    contextoEjecucion->motivoDesalojo->parametros[1] = direccionLogica;
-    contextoEjecucion->motivoDesalojo->parametros[2] = cantBytes;
-    contextoEjecucion->motivoDesalojo->parametrosLength = 3;
-
+    modificarMotivoDesalojo (F_READ, 3, nombre, direccionLogica, cantBytes);
     enviarContextoActualizado();
 };
 
 void f_write(char* nombre, char* direccionLogica, char* cantBytes){
-
-    contextoEjecucion->motivoDesalojo->comando = F_WRITE;
-    contextoEjecucion->motivoDesalojo->parametros[0] = nombre;
-    contextoEjecucion->motivoDesalojo->parametros[1] = direccionLogica;
-    contextoEjecucion->motivoDesalojo->parametros[2] = cantBytes;
-    contextoEjecucion->motivoDesalojo->parametrosLength = 3;
-
+    modificarMotivoDesalojo (F_WRITE, 3, nombre, direccionLogica, cantBytes);
     enviarContextoActualizado();
 };
 
 void f_truncate(char* nombre, char* tamanio){
-
-    contextoEjecucion->motivoDesalojo->comando = F_TRUNCATE;
-    contextoEjecucion->motivoDesalojo->parametros[0] = nombre;
-    contextoEjecucion->motivoDesalojo->parametros[1] = tamanio;
-    contextoEjecucion->motivoDesalojo->parametrosLength = 2;
-
+    modificarMotivoDesalojo (F_TRUNCATE, 2, nombre, tamanio, "");
     enviarContextoActualizado();
 };
 
 void create_segment(char* idSegmento, char* tamanio){
-
-    contextoEjecucion->motivoDesalojo->comando = CREATE_SEGMENT;
-    contextoEjecucion->motivoDesalojo->parametros[0] = idSegmento;
-    contextoEjecucion->motivoDesalojo->parametros[1] = tamanio;
-    contextoEjecucion->motivoDesalojo->parametrosLength = 2;
-
+    modificarMotivoDesalojo (CREATE_SEGMENT, 2, idSegmento, tamanio, "");
     enviarContextoActualizado();
 };
 
 void delete_segment(char* idSegmento){
-
-    contextoEjecucion->motivoDesalojo->comando = DELETE_SEGMENT;
-    contextoEjecucion->motivoDesalojo->parametros[0] = idSegmento; 
-    contextoEjecucion->motivoDesalojo->parametrosLength = 1;
-
+    modificarMotivoDesalojo (DELETE_SEGMENT, 1, idSegmento, "", "");
     enviarContextoActualizado();
 };
+
+void destruirTemporizador (t_temporal * temporizador) {
+    temporal_stop(temporizador);
+    contextoEjecucion->rafagaCPUEjecutada = temporal_gettime(temporizador);  
+    temporal_destroy(temporizador); 
+}
+
+void modificarMotivoDesalojo (t_comando comando, int numParametros, char * parm1, char * parm2, char * parm3) {
+    char * (parametros[3]) = { parm1, parm2, parm3 };
+    contextoEjecucion->motivoDesalojo->comando = comando;
+    for (int i = 0; i < numParametros; i++)
+        contextoEjecucion->motivoDesalojo->parametros[0] = parametros[i];
+    contextoEjecucion->motivoDesalojo->parametrosLength = numParametros;
+}
+
+void liberarMemoria() {
+    for (int i = 0; i <= cantParametros; i++) free(elementosInstruccion[i]);
+    free(elementosInstruccion);
+}
+
 /*
 
 void mov_in(char* registro, char* direccionLogica){

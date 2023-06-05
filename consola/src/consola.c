@@ -2,11 +2,14 @@
 
 int socketCliente;
 t_log *logger;
+t_log *loggerError;
 t_config *config;
 
 int main(int, char *archivos[]) {
     logger = iniciarLogger("consola.log", "consola");
+    loggerError = iniciarLogger("consolaErrores.log", "consolaErrores");
     config = iniciarConfiguracion(archivos[2]);
+    atexit(terminarPrograma);
     socketCliente = -1;
     while(!(socketCliente + 1)) {
         socketCliente = conexion("KERNEL");
@@ -38,9 +41,8 @@ int main(int, char *archivos[]) {
 
     close(socketCliente);
     fclose(codigo);
-    terminarPrograma();
 
-    return 0;
+    exit(0);
 }
 
 void esperarPID(char * archivo) {

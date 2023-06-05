@@ -44,9 +44,9 @@ void agregarInstruccionesAPaquete(t_paquete* paquete, t_list* instrucciones){
     
     agregarAPaquete(paquete, &contextoEjecucion->instruccionesLength, sizeof(uint32_t)); //primero envio la cantidad de elementos
     uint32_t i;
-    for(i=0;i<contextoEjecucion->instruccionesLength;i++){
+    for(i=0;i<contextoEjecucion->instruccionesLength;i++)
         agregarAPaquete (paquete, list_get(instrucciones, i), sizeof(char) * (strlen(list_get(instrucciones, i)) + 1 ));
-    }
+    
 }
 
 void agregarRegistrosAPaquete(t_paquete* paquete, t_dictionary* registrosCPU){
@@ -228,15 +228,11 @@ void iniciarContexto(){
 	
 }
 
-void iterator(void *value){
-	free(value);
-}
-
 void destroyContexto() {
-    list_destroy_and_destroy_elements(contextoEjecucion->instrucciones, iterator);
-    dictionary_destroy_and_destroy_elements(contextoEjecucion->registrosCPU, iterator);
-    list_destroy_and_destroy_elements(contextoEjecucion->tablaDeArchivos, iterator);
-    list_destroy_and_destroy_elements(contextoEjecucion->tablaDeSegmentos, iterator);
+    list_destroy_and_destroy_elements(contextoEjecucion->instrucciones, free);
+    dictionary_destroy_and_destroy_elements(contextoEjecucion->registrosCPU, free);
+    list_destroy_and_destroy_elements(contextoEjecucion->tablaDeArchivos, free);
+    list_destroy_and_destroy_elements(contextoEjecucion->tablaDeSegmentos, free);
     free(contextoEjecucion->motivoDesalojo);
     free(contextoEjecucion);
 }

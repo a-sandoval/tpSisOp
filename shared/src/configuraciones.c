@@ -1,5 +1,8 @@
 #include "shared/include/configuraciones.h"
 
+bool imprimirLogs = true;
+t_log_level nivelDeLog = LOG_LEVEL_DEBUG;
+
 // CONFIG
 
 t_config* iniciarConfiguracion(char* ruta){
@@ -15,14 +18,10 @@ t_config* iniciarConfiguracion(char* ruta){
     return nuevoConfig; 
 }
 
-char *confGet(char *key) {
-	return config_get_string_value(config, key);
-}
-
 // LOGS 
 
 t_log* iniciarLogger(char* nombreArchivo, char* nombreLogger){
-	t_log* nuevoLogger = log_create(nombreArchivo, nombreLogger, 1, LOG_LEVEL_DEBUG);
+	t_log* nuevoLogger = log_create(nombreArchivo, nombreLogger, imprimirLogs, nivelDeLog);
 
 	if(nuevoLogger == NULL) {
 		perror("No se pudo crear el logger");
@@ -45,6 +44,7 @@ char * duplicarNombre(t_log *logger) {
 
 void terminarPrograma() {
 	log_destroy(logger);
+    log_destroy(loggerError);
 	config_destroy(config);
 }
 
@@ -61,10 +61,9 @@ void error (int socket, char *mensajeFormato, ...) {
 
     char *mensajeCompleto = string_from_vformat(mensajeFormato, argumentos);
 
-    log_error(logger, "%s", mensajeCompleto);
+    log_error(loggerError, "%s", mensajeCompleto);
 
     va_end(argumentos);
     close(socket);
-    terminarPrograma();
     exit(1);
 }
