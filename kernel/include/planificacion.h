@@ -52,6 +52,8 @@ void planificarACortoPlazo(t_pcb* (*proximoAEjecutar)());
 */
 void inicializarSemaforos();
 
+void destruirSemaforos();
+
 // Operaciones con t_pcb
 
 /**

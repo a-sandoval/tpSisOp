@@ -44,5 +44,6 @@ void liberarMemoriaPCB(t_pcb* proceso) {
     paquete->codigo_operacion=ENDPCB; 
 
     enviarPaquete(paquete,conexionAMemoria); */
+    log_info(logger, "PID <%d>: Se envia señal para eliminar estructuras en memoria.", proceso->pid);
     enviarCodOp (ENDPCB, conexionAMemoria);
 }

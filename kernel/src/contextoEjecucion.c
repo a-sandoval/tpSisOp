@@ -31,9 +31,7 @@ void enviarContexto(){
    
     agregarAPaquete(paquete,(void *)&contextoEjecucion->pid, sizeof(contextoEjecucion->pid));
     agregarAPaquete(paquete,(void *)&contextoEjecucion->programCounter, sizeof(contextoEjecucion->programCounter));
-
     agregarInstruccionesAPaquete(paquete, contextoEjecucion->instrucciones);
-
     agregarRegistrosAPaquete(paquete, contextoEjecucion->registrosCPU);
 
     //no sabemos listas de que son estas tablas entonces aun no podemos serializar o hay que serializarlo como listas y ver si dsps cambia
@@ -50,14 +48,10 @@ void enviarContexto(){
 	eliminarPaquete(paquete);
 }
 
-void agregarInstruccionesAPaquete(t_paquete* paquete, t_list* instrucciones){
-    
+void agregarInstruccionesAPaquete (t_paquete* paquete, t_list* instrucciones){
     agregarAPaquete(paquete, &contextoEjecucion->instruccionesLength, sizeof(uint32_t)); //primero envio la cantidad de elementos
-    uint32_t i;
-    
-    for(i=0;i<contextoEjecucion->instruccionesLength;i++){
+    for (uint32_t i = 0; i < contextoEjecucion->instruccionesLength; i++) 
         agregarAPaquete (paquete, list_get(instrucciones, i), sizeof(char) * (strlen(list_get(instrucciones, i)) + 1 ));
-    }
 }
 
 void agregarRegistrosAPaquete(t_paquete* paquete, t_dictionary* registrosCPU) {
@@ -91,13 +85,10 @@ void agregarRegistrosAPaquete(t_paquete* paquete, t_dictionary* registrosCPU) {
 }
 
 void agregarMotivoAPaquete(t_paquete* paquete, t_motivoDeDesalojo* motivoDesalojo){
-
-    agregarAPaquete(paquete,(void *)&motivoDesalojo->comando, sizeof(motivoDesalojo->comando));
-
-    agregarAPaquete(paquete,(void *)&motivoDesalojo->parametrosLength, sizeof(motivoDesalojo->parametrosLength));
-
+    agregarAPaquete(paquete, (void *)&motivoDesalojo->comando, sizeof(motivoDesalojo->comando));
+    agregarAPaquete(paquete, (void *)&motivoDesalojo->parametrosLength, sizeof(motivoDesalojo->parametrosLength));
     for (int i = 0; i < motivoDesalojo->parametrosLength; i++)
-        agregarAPaquete(paquete,(void *)&(motivoDesalojo->parametros[i]), (strlen(motivoDesalojo->parametros[i]) + 1) * sizeof(char));
+        agregarAPaquete(paquete, (void *)&(motivoDesalojo->parametros[i]), (strlen(motivoDesalojo->parametros[i]) + 1) * sizeof(char));
 }
 
 //FUNCIONES PARA RECIBIR NUEVO CONTEXTO POR PARTE DE LA CPU
@@ -117,71 +108,24 @@ void recibirContextoActualizado(){
         desplazamiento += sizeof(contextoEjecucion->programCounter) + sizeof(int);
 
         dictionary_clean_and_destroy_elements(contextoEjecucion->registrosCPU, free);
-        char* AX = malloc(sizeof(char) * (4 + 1));
-        memcpy(AX, buffer + desplazamiento, sizeof(char) * (4 + 1));
-        dictionary_put(contextoEjecucion->registrosCPU, "AX", AX);
-        desplazamiento += sizeof(char) * (4 + 1) + sizeof(int);
+        
+        char *temp, name[3] = "AX", longName[4] = "EAX";
 
-        char* BX = malloc(sizeof(char) * (4 + 1));
-        memcpy(BX, buffer + desplazamiento, sizeof(char) * (4 + 1));
-        dictionary_put(contextoEjecucion->registrosCPU, "BX", BX);
-        desplazamiento += sizeof(char) * (4 + 1) + sizeof(int);
-
-        char* CX = malloc(sizeof(char) * (4 + 1));
-        memcpy(CX, buffer + desplazamiento, sizeof(char) * (4 + 1));
-        dictionary_put(contextoEjecucion->registrosCPU, "CX", CX);
-        desplazamiento += sizeof(char) * (4 + 1) + sizeof(int);
-
-        char* DX = malloc(sizeof(char) * (4 + 1));
-        memcpy(DX, buffer + desplazamiento, sizeof(char) * (4 + 1));
-        dictionary_put(contextoEjecucion->registrosCPU, "DX", DX);
-        desplazamiento += sizeof(char) * (4 + 1) + sizeof(int);
-
-        char* EAX = malloc(sizeof(char) * (8 + 1));
-        memcpy(EAX, buffer + desplazamiento, sizeof(char) * (8 + 1));
-        dictionary_put(contextoEjecucion->registrosCPU, "EAX", EAX);
-        desplazamiento += sizeof(char) * (8 + 1) + sizeof(int);
-
-        char* EBX = malloc(sizeof(char) * (8 + 1));
-        memcpy(EBX, buffer + desplazamiento, sizeof(char) * (8 + 1));
-        dictionary_put(contextoEjecucion->registrosCPU, "EBX", EBX);
-        desplazamiento += sizeof(char) * (8 + 1) + sizeof(int);
-
-        char* ECX = malloc(sizeof(char) * (8 + 1));
-        memcpy(ECX, buffer + desplazamiento, sizeof(char) * (8 + 1));
-        dictionary_put(contextoEjecucion->registrosCPU, "ECX", ECX);
-        desplazamiento += sizeof(char) * (8 + 1) + sizeof(int);
-
-        char* EDX = malloc(sizeof(char) * (8 + 1));
-        memcpy(EDX, buffer + desplazamiento, sizeof(char) * (8 + 1));
-        dictionary_put(contextoEjecucion->registrosCPU, "EDX", EDX);
-        desplazamiento += sizeof(char) * (8 + 1) + sizeof(int);
-
-        char* RAX = malloc(sizeof(char) * (16 + 1));
-        memcpy(RAX, buffer + desplazamiento, sizeof(char) * (16 + 1));
-        dictionary_put(contextoEjecucion->registrosCPU, "RAX", RAX);
-        desplazamiento += sizeof(char) * (16 + 1) + sizeof(int);
-
-        char* RBX = malloc(sizeof(char) * (16 + 1));
-        memcpy(RBX, buffer + desplazamiento, sizeof(char) * (16 + 1));
-        dictionary_put(contextoEjecucion->registrosCPU, "RBX", RBX);
-        desplazamiento += sizeof(char) * (16 + 1) + sizeof(int);
-
-        char* RCX = malloc(sizeof(char) * (16 + 1));
-        memcpy(RCX, buffer + desplazamiento, sizeof(char) * (16 + 1));
-        dictionary_put(contextoEjecucion->registrosCPU, "RCX", RCX);
-        desplazamiento += sizeof(char) * (16 + 1) + sizeof(int);
-
-        char* RDX = malloc(sizeof(char) * (16 + 1));
-        memcpy(RDX, buffer + desplazamiento, sizeof(char) * (16 + 1));
-        dictionary_put(contextoEjecucion->registrosCPU, "RDX", RDX);
-        desplazamiento += sizeof(char) * (16 + 1) + sizeof(int);
+        for (int i = 0; i < 3; i++) {
+            ssize_t tamanioActual = sizeof(char) * (4 * pow(2, i) + 1);
+            for (int j = 0; j < 4; j++) {
+                temp = malloc (tamanioActual);
+                memcpy (temp, buffer + desplazamiento, tamanioActual);
+                dictionary_put (contextoEjecucion->registrosCPU, (i) ? longName : name, string_duplicate (temp));
+                desplazamiento += tamanioActual + sizeof(int);
+                free (temp);
+            }
+            name[0]++, longName[1]++, longName[0] = (i == 2) ? 'R' : 'E';
+        }
 
         //recibirTablaDeArchivos();
-
         //recibirTablaDeSegmentos();
-
-        //recibirMotivoDeDesalojo
+        //recibirMotivoDeDesalojo()
 
         memcpy(&(contextoEjecucion->motivoDesalojo->comando), buffer + desplazamiento, sizeof(t_comando));
         desplazamiento += sizeof(t_comando) + sizeof(int);

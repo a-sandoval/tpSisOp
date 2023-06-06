@@ -6,10 +6,13 @@ int main(){
     logger = iniciarLogger("kernel.log", "Kernel");
 	loggerError = iniciarLogger("errores.log", "Errores - Kernel"); 
     config = iniciarConfiguracion("kernel.config");
+	atexit (terminarPrograma);
 	char* puertoDeEscucha = confGet("PUERTO_ESCUCHA"); 
 
 	inicializarSemaforos();
-	inicializarListasPCBS(); 
+	atexit (destruirSemaforos);
+	inicializarListasPCBs(); 
+	atexit (destruirListasPCBs);
 	
 	conexionCPU();
 	conexionFileSystem(); 
@@ -17,7 +20,7 @@ int main(){
 
     //Inicializar Hilos
 	pthread_t planificadorLargoPlazo_h; //Hilo Planificador Largo Plazo -> Mueve procesos de NEW a READY
-    	if(!pthread_create(&planificadorLargoPlazo_h, NULL,(void *) planificarALargoPlazo, NULL))
+    	if (!pthread_create(&planificadorLargoPlazo_h, NULL, (void *) planificarALargoPlazo, NULL)) 
     	    pthread_detach(planificadorLargoPlazo_h);
     	else{
     	    log_error(loggerError, "Error al iniciar servidor Kernel, Abort");
@@ -39,8 +42,6 @@ int main(){
     	    log_error(loggerError, "Error al iniciar servidor Kernel, Abort");
     	    return EXIT_FAILURE;
     	}
-
-    terminarPrograma();
 
     return 0; 
 }

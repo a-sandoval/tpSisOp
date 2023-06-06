@@ -67,13 +67,21 @@ void planificarACortoPlazo(t_pcb *(*proximoAEjecutar)()){
 
 // Semaforos
 
-void inicializarSemaforos()
-{   gradoMultiprogramacion = obtenerGradoMultiprogramacion();
+void inicializarSemaforos(){   
+    gradoMultiprogramacion = obtenerGradoMultiprogramacion();
     pthread_mutex_init(&mutexListaNew, NULL);
     pthread_mutex_init(&mutexListaReady,NULL); 
-    sem_init(&hayProcesosReady, 0, 0);
     sem_init(&hayProcesosNuevos, 0, 0);
+    sem_init(&hayProcesosReady, 0, 0);
     sem_init(&semGradoMultiprogramacion, 0, gradoMultiprogramacion);
+}
+
+void destruirSemaforos () {
+    pthread_mutex_destroy(&mutexListaNew);
+    pthread_mutex_destroy(&mutexListaReady);
+    sem_close(&hayProcesosNuevos);
+    sem_close(&hayProcesosReady);
+    sem_close(&semGradoMultiprogramacion);
 }
 
 
@@ -94,7 +102,6 @@ t_pcb *obtenerSiguienteAReady()
 }
 
 void ingresarAReady(t_pcb *pcb){
-
     pthread_mutex_lock(&mutexListaReady);
     encolar(pcbsREADY, pcb);
     pcb->tiempoEnReady = temporal_create();
@@ -108,21 +115,11 @@ void ingresarAReady(t_pcb *pcb){
     listarPIDS(pcbsREADY);
     log_info(logger, "Cola Ready <%s>: [%s]", obtenerAlgoritmoPlanificacion(), pidsInvolucrados);
     free(pidsInvolucrados);
-   
-
 }
-
-
-void instruct_print(void *value)
-{
-    log_info(logger, "Que linda mi instruccion: %s", (char *)value);
-}
-
 
 // Logs minimos y obligatorios
 
 void loggearCambioDeEstado(uint32_t pid, estadoProceso anterior, estadoProceso actual){
-
     log_info(logger, "PID: <%d> - Estado Anterior: <%s> - Estado Actual: <%s>", pid, estadosProcesos[anterior], estadosProcesos[actual]);
 }
 

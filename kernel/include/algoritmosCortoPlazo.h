@@ -40,7 +40,6 @@ void listarPIDS(t_list* pcbs);
 void detenerYDestruirCronometro(t_temporal* ); 
 void calcularEstimadoProximaRafaga(t_pcb* , int64_t );
 void estimacionNuevaRafaga(t_pcb*); 
-char* obtenerAlgoritmoPlanificacion();
 
 
 #endif 

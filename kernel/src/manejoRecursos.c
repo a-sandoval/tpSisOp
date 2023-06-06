@@ -43,17 +43,12 @@ void crearColasBloqueo()
 }
 
 // Devuelve el indice que se corresponde al recurso correspondiente, -1 si no lo encuentra
-int indiceRecurso(char *recurso){
+int indiceRecurso (char * recurso){
     int tamanio = tamanioArrayCharDoble(nombresRecursos);
 
     for (int i = 0; i < tamanio; i++)
-    {	
         if (!strcmp(recurso, nombresRecursos[i]))
-        {
             return i;
-        }
-    }
-
     return -1;
 }
 
@@ -69,13 +64,9 @@ void destruirInstanciasRecursos(){
 }
 
 
-void destruirArrayCharDoble(char**array){
-
+void destruirArrayCharDoble (char ** array){
 	int tamanio=tamanioArrayCharDoble(array);
-
-	for(int i=0;i<tamanio;i++){
-		free(array[i]);
-	}
+	for (int i = 0; i<tamanio; i++) free(array[i]);
 	free(array);
 }
 
@@ -86,7 +77,7 @@ void closureMatriz(void* colaBloqueados){
 
 	list_iterate(cola, closurePCB);
 
-	putchar('\n');
+	//putchar('\n');
 
 }
 
@@ -94,12 +85,26 @@ void closurePCB(void* pcbActual){
 
 	t_pcb* pcb = (t_pcb*) pcbActual;
 
+/*
+█▀▄ █ █▀ █▀▀ █░█ █░░ █▀█ █▀▀ █▄░█ ░   █▀█ █▀█ █▀█ █▀█ █░█ █▀▀   █░█ ▄▀█ █▄█   █░█ █▄░█   █▀█ █▀█ █ █▄░█ ▀█▀   █▀▀ ░
+█▄▀ █ ▄█ █▄▄ █▄█ █▄▄ █▀▀ ██▄ █░▀█ █   █▀▀ █▄█ █▀▄ ▀▀█ █▄█ ██▄   █▀█ █▀█ ░█░   █▄█ █░▀█   █▀▀ █▀▄ █ █░▀█ ░█░   █▀░ █
+
+█▀ █▀▀ █▀▀ █░█ █ █▀▄ █▀█   █▀▄ █▀▀   █░█ █▄░█   █▀█ █░█ ▀█▀ █▀▀ █░█ ▄▀█ █▀█ ░   █▀ █▀▀ █▀▀ █░█ █ █▀▄ █▀█ ░
+▄█ ██▄ █▄█ █▄█ █ █▄▀ █▄█   █▄▀ ██▄   █▄█ █░▀█   █▀▀ █▄█ ░█░ █▄▄ █▀█ █▀█ █▀▄ █   ▄█ ██▄ █▄█ █▄█ █ █▄▀ █▄█ █
+
+▄▀█ █░░   █▀▀ █ █▄░█ ▄▀█ █░░   █▀▄ █▀▀   █▀▀ █▀ █▀█ ░   █▀▄ █▀▀   █▀█ ▀█▀ █▀█ █▀█   █▀█ █░█ ▀█▀ █▀▀ █░█ ▄▀█ █▀█ ░
+█▀█ █▄▄   █▀░ █ █░▀█ █▀█ █▄▄   █▄▀ ██▄   ██▄ ▄█ █▄█ █   █▄▀ ██▄   █▄█ ░█░ █▀▄ █▄█   █▀▀ █▄█ ░█░ █▄▄ █▀█ █▀█ █▀▄ █
+
+█▄░█ █▀█   █▀▀ █▄░█ ▀█▀ █ █▀▀ █▄░█ █▀▄ █▀█ ░
+█░▀█ █▄█   ██▄ █░▀█ ░█░ █ ██▄ █░▀█ █▄▀ █▄█ ▄ Para que se usa esto igual?
+*/
+	/*
 	printf("Estado del PCB: %s \t",estadosProcesos[pcb->estado]);
 
 	printf("PID del PCB: %d",pcb->pid);
 
 	putchar('\n');
-
+	*/
 }
 
 
@@ -111,35 +116,14 @@ void destruirRecursos(){
 	list_destroy_and_destroy_elements(recursos, colaBloqueadosDestroyer);
 }
 
-//imprimir
-
-void imprimirVectorEnteros(int* vector, int tamanio){
-
-	for(int i=0;i<tamanio;i++){
-		printf("%d \t",vector[i]);
-	}
-
-}
-
-
-void imprimirArrayStrings(char** array,int tamanio){
-
-	for(int i =0;i<tamanio;i++){
-		printf("Elemento %d: %s \t ",i,array[i]);
-	}
-	putchar('\n');
-}
-
 //Calcula el tamanio de un array char doble que vienen de los config y termina en NULL
-int tamanioArrayCharDoble(char**arreglo){
-
-	    int tamano = 0;
-
-	    while (arreglo[tamano] != NULL) {
+int tamanioArrayCharDoble (char **arreglo){
+	    /*
+		int tamano = 0;
+	    while (arreglo[tamano] != NULL) 
 	        tamano++;
-	    }
-
-	    return tamano;
+	    */
+	    return string_array_size(arreglo);
 
 }
 

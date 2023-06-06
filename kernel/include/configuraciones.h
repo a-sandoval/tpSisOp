@@ -5,30 +5,13 @@
 #include "shared/include/global.h"
 #include "shared/include/configuraciones.h"
 
+#define obtenerGradoMultiprogramacion() config_get_int_value   (config, "GRADO_MAX_MULTIPROGRAMACION")
+#define obtenerEstimacionInicial()      config_get_double_value(config, "ESTIMACION_INICIAL")
+#define obtenerAlgoritmoPlanificacion() config_get_string_value(config, "ALGORITMO_PLANIFICACION")
+#define obtenerAlfaEstimacion()         config_get_double_value(config, "HRRN_ALFA")
+#define obtenerRecursos()               config_get_array_value (config, "RECURSOS")
+#define obtenerInstanciasRecursos()     config_get_array_value (config, "INSTANCIAS_RECURSOS")
+
 extern t_config* config;
-
-// Configuracion
-
-/**
- * @brief obtiene el grado multiprogramacion del archivo de configuraciones
- * @param
- * @return el grado de multiprogramacion de la cpu
- */
-int obtenerGradoMultiprogramacion();
-/**
- * @brief Obtiene la estimacion inicial de rafaga del archivo de configuraciones del kernel
- * @param
- * @return el valor de la estimacion inicial de la rafaga
-
- */
-double  obtenerEstimacionInicial();
-
-/**
- * @brief obtiene del archivo de configuracion el algoritmo con que se va a realizar la planificacion a corto plazo
- * */
-char* obtenerAlgoritmoPlanificacion();
-double obtenerAlfaEstimacion(); 
-char** obtenerRecursos();
-char **obtenerInstanciasRecursos(); 
 
 #endif

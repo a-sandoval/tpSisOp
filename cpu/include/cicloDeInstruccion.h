@@ -31,6 +31,7 @@
     void fetch();
     void decode();
     void execute();
+    void liberarMemoria();
     int buscar(char *elemento, char **lista); 
 
     void set_c(char*, char*);

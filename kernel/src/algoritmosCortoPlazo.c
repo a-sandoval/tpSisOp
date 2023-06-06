@@ -29,7 +29,6 @@ t_pcb *proximoAEjecutarFIFO(){
 }
 
 void *mayorRR(void *unPCB, void *otroPCB){
-
     return (calcularRR(unPCB) >= calcularRR(otroPCB)) ? unPCB : otroPCB;
 }
 
@@ -44,9 +43,7 @@ void estimacionNuevaRafaga(t_pcb *pcb){
 void calcularEstimadoProximaRafaga(t_pcb *pcb, int64_t rafagaReal){
 
     double alfa = obtenerAlfaEstimacion();
-
     double estimadoRafaga = alfa * rafagaReal + (1 - alfa) * pcb->estimadoProximaRafaga;
-
     pcb->estimadoProximaRafaga = estimadoRafaga;
 }
 

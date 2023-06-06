@@ -23,7 +23,4 @@ void colaBloqueadosDestroyer(void* colaBloqueados);
 void destruirRecursos();
 void liberarColasBloqueo();
 
-void imprimirArrayStrings(char** array,int tamanio);
-void imprimirVectorEnteros(int* vector, int tamanio);
-
 #endif

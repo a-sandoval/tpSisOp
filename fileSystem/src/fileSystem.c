@@ -26,6 +26,7 @@ int main () {
     // A su vez se crea con permisos para que el usuario pueda leerlas y modificarlas por si las dudas.
 
     int fD = open("bitmap.dat", O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
+    ftruncate(fD, tamanioBitmap);
     struct stat statFD;
     if (fD < 0) {
         log_error(loggerError, "No se abrio correctamente el archivo %s; error: %s", "bitmap.dat", strerror(errno));
@@ -76,8 +77,10 @@ int main () {
         ((rand() % 2) - 1) ? bitarray_clean_bit(bitmap, i) : bitarray_set_bit(bitmap, i); 
     msync(ptrBitMap, tamanioBitmap, MS_SYNC);
 
+    int fdBloques = open("bloques.dat", O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
+    ftruncate(fdBloques, cantBloques * tamanioBloques);
+    close(fdBloques);
     FILE *bloques = fopen("bloques.dat","r+w");
-    
     /*
     int bloques = open("bloques.dat", O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
     struct stat statBloques;

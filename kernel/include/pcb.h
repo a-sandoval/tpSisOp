@@ -65,7 +65,9 @@ t_dictionary* crearDiccionarioDeRegistros();
  * @param
  * @return
  */
-void inicializarListasPCBS(); 
+void inicializarListasPCBs(); 
+
+void destruirListasPCBs();
 
 /**
  * @brief Libera la memoria de una lista de pcbs

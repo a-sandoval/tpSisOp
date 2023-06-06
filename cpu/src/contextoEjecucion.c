@@ -8,23 +8,17 @@ void enviarContextoActualizado(){
    
     agregarAPaquete(paquete,(void *)&contextoEjecucion->pid, sizeof(contextoEjecucion->pid));
     agregarAPaquete(paquete,(void *)&contextoEjecucion->programCounter, sizeof(contextoEjecucion->programCounter));
-
-    //agregarInstruccionesAPaquete(paquete, contextoEjecucion->instrucciones);
-
+    // No se envian las instrucciones.
     agregarRegistrosAPaquete(paquete, contextoEjecucion->registrosCPU);
-
     //no sabemos listas de que son estas tablas entonces aun no podemos serializar o hay que serializarlo como listas y ver si dsps cambia
     //agregarAPaquete(paquete,(void *)&contextoEjecucion->tablaDeArchivosSize, sizeof(contextoEjecucion->tablaDeArchivosSize));
     //agregarAPaquete(paquete,contextoEjecucion->tablaDeArchivos, contextoEjecucion->tablaDeArchivosSize);
     //agregarAPaquete(paquete,(void *)&contextoEjecucion->tablaDeSegmentosSize, sizeof(contextoEjecucion->tablaDeSegmentosSize));
     //agregarAPaquete(paquete,contextoEjecucion->tablaDeSegmentos, contextoEjecucion->tablaDeSegmentosSize);
-    
     agregarMotivoAPaquete(paquete, contextoEjecucion->motivoDesalojo);
-    
     agregarAPaquete(paquete, (void *)&contextoEjecucion->rafagaCPUEjecutada, sizeof(contextoEjecucion->rafagaCPUEjecutada));
 
     enviarPaquete(paquete, socketCliente);
-
 	eliminarPaquete(paquete);
 }
 

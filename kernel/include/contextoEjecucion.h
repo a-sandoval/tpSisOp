@@ -1,12 +1,13 @@
 #ifndef CONTEXTO_EJECUCION_H
 #define CONTEXTO_EJECUCION_H
 
+#include <math.h>
+#include <stdint.h>
+#include <stdlib.h>
 #include "shared/include/global.h"
 #include "shared/include/utilsCliente.h"
 #include "shared/include/utilsServidor.h"
-#include "stdlib.h"
-#include "stdint.h"
-#include "pcb.h"
+#include "kernel/include/pcb.h"
 
 typedef struct {
 

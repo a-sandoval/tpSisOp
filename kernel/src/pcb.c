@@ -34,43 +34,15 @@ t_dictionary *crearDiccionarioDeRegistros(){
 
     t_dictionary *registros = dictionary_create();
 
-    char *AX = malloc(sizeof(char) * (4 + 1));
-    char *BX = malloc(sizeof(char) * (4 + 1));
-    char *CX = malloc(sizeof(char) * (4 + 1));
-    char *DX = malloc(sizeof(char) * (4 + 1));
-    char *EAX = malloc(sizeof(char) * (8 + 1));
-    char *EBX = malloc(sizeof(char) * (8 + 1));
-    char *ECX = malloc(sizeof(char) * (8 + 1));
-    char *EDX = malloc(sizeof(char) * (8 + 1));
-    char *RAX = malloc(sizeof(char) * (16 + 1));
-    char *RBX = malloc(sizeof(char) * (16 + 1));
-    char *RCX = malloc(sizeof(char) * (16 + 1));
-    char *RDX = malloc(sizeof(char) * (16 + 1));
-
-    strncpy(AX, "0000\0", 5);
-    strncpy(BX, "0000\0", 5);
-    strncpy(CX, "0000\0", 5);
-    strncpy(DX, "0000\0", 5);
-    strncpy(EAX, "00000000\0", 9);
-    strncpy(EBX, "00000000\0", 9);
-    strncpy(ECX, "00000000\0", 9);
-    strncpy(EDX, "00000000\0", 9);
-    strncpy(RAX, "0000000000000000\0", 17);
-    strncpy(RBX, "0000000000000000\0", 17);
-    strncpy(RCX, "0000000000000000\0", 17);
-    strncpy(RDX, "0000000000000000\0", 17);
-    dictionary_put(registros, "AX", AX);
-    dictionary_put(registros, "BX", BX);
-    dictionary_put(registros, "CX", CX);
-    dictionary_put(registros, "DX", DX);
-    dictionary_put(registros, "EAX", EAX);
-    dictionary_put(registros, "EBX", EBX);
-    dictionary_put(registros, "ECX", ECX);
-    dictionary_put(registros, "EDX", EDX);
-    dictionary_put(registros, "RAX", RAX);
-    dictionary_put(registros, "RBX", RBX);
-    dictionary_put(registros, "RCX", RCX);
-    dictionary_put(registros, "RDX", RDX);
+    char name[3] = "AX", longName[4] = "EAX";
+    for (int i = 0; i < 4; i++) {
+        dictionary_put(registros, name, string_repeat('0', 4));
+        longName[0] = 'E';
+        dictionary_put(registros, longName, string_repeat('0', 8));
+        longName[0] = 'R';
+        dictionary_put(registros, longName, string_repeat('0', 16));
+        name[0]++, longName[1]++;
+    }
 
     return registros;
 }
@@ -78,9 +50,14 @@ t_dictionary *crearDiccionarioDeRegistros(){
 
 // Lista de PCBs
 
-void inicializarListasPCBS(){
+void inicializarListasPCBs(){
     pcbsNEW = list_create();
     pcbsREADY = list_create();
+}
+
+void destruirListasPCBs () {
+    destruirListaPCB(pcbsNEW);
+    destruirListaPCB(pcbsREADY);
 }
 
 void destruirListaPCB(t_list *pcbs){
@@ -101,7 +78,7 @@ void agregarPID(void *value){
     string_append_with_format(&pidsInvolucrados, " %s ", pid);
 }
 
-void listarPIDS(t_list *pcbs){
+void listarPIDS(t_list *pcbs) {
     list_iterate(pcbs, agregarPID);
 }
 
