@@ -4,10 +4,10 @@
 #include "pcb.h"
 #include "contextoEjecucion.h"
 #include "semaphore.h"
-#include "planificacion.h"
-#include "manejoRecursos.h"
-#include "algoritmosCortoPlazo.h"
-#include "conexionMemoria.h"
+#include "planificacion/planificacion.h"
+#include "peticiones/manejoRecursos.h"
+#include "planificacion/algoritmosCortoPlazo.h"
+#include "conexiones/conexionMemoria.h"
 
 extern t_list *recursos;
 extern char **nombresRecursos;

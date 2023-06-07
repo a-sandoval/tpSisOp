@@ -10,13 +10,13 @@
 #include "shared/include/utilsCliente.h"
 #include "shared/include/global.h"
 #include <semaphore.h>
-#include "pcb.h"
+#include "peticiones/pcb.h"
 #include <pthread.h>
-#include "conexionCPU.h"
-#include "syscalls.h"
-#include "algoritmosCortoPlazo.h"
-#include "manejoRecursos.h"
-#include "conexionMemoria.h"
+#include "conexiones/conexionCPU.h"
+#include "peticiones/syscalls.h"
+#include "planificacion/algoritmosCortoPlazo.h"
+#include "peticiones/manejoRecursos.h"
+#include "conexiones/conexionMemoria.h"
 
 
 extern t_list* pcbsNEW; 

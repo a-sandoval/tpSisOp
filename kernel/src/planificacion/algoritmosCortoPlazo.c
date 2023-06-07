@@ -1,4 +1,4 @@
-#include "kernel/include/algoritmosCortoPlazo.h"
+#include "kernel/include/planificacion/algoritmosCortoPlazo.h"
 
 void detenerYDestruirCronometro(t_temporal *cronometroReady){
 

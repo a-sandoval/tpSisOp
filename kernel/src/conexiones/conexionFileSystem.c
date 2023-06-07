@@ -1,5 +1,5 @@
 /* KERNEL- cliente | FYLESYSTEM - sevidor*/
-#include "kernel/include/conexionFileSystem.h"
+#include "kernel/include/conexiones/conexionFileSystem.h"
 
 int conexionAFS; 
 

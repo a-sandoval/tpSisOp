@@ -10,7 +10,7 @@
 #include <shared/include/utilsCliente.h>
 #include <shared/include/utilsServidor.h>
 //#include <shared/include/configuraciones.h>
-#include "planificacion.h"
+#include "planificacion/planificacion.h"
 #include <pthread.h>
 
 void recibirConsolas(char *puerto); 

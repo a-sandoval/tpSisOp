@@ -8,13 +8,13 @@
 #include <commons/config.h>
 
 // Conexiones propias del kernel
-#include "kernel/include/conexionMemoria.h"
-#include "kernel/include/conexionCPU.h"
-#include "kernel/include/conexionFileSystem.h"
-#include "kernel/include/servidorConsola.h"
-#include "kernel/include/planificacion.h"
-#include "kernel/include/pcb.h"
-#include "kernel/include/algoritmosCortoPlazo.h"
+#include "kernel/include/conexiones/conexionMemoria.h"
+#include "kernel/include/conexiones/conexionCPU.h"
+#include "kernel/include/conexiones/conexionFileSystem.h"
+#include "kernel/include/conexiones/servidorConsola.h"
+#include "kernel/include/planificacion/planificacion.h"
+#include "kernel/include/peticiones/pcb.h"
+#include "kernel/include/planificacion/algoritmosCortoPlazo.h"
 #include "kernel/include/configuraciones.h"
 
 // Utils y funciones del shared
@@ -22,7 +22,7 @@
 
 int socketCliente;
 t_log* logger;
-t_log* loggerError; 
+t_log* loggerError;
 t_config* config;
 
 #endif

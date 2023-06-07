@@ -1,4 +1,4 @@
-#include "kernel/include/syscalls.h"
+#include "kernel/include/peticiones/syscalls.h"
 
 t_list *recursos;
 char **nombresRecursos;

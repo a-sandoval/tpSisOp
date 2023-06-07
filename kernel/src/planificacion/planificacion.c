@@ -1,4 +1,4 @@
-#include "kernel/include/planificacion.h"
+#include "kernel/include/planificacion/planificacion.h"
 
 sem_t hayProcesosReady;
 sem_t hayProcesosNuevos;

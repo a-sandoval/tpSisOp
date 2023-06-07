@@ -1,11 +1,11 @@
 #ifndef PCB_H_
 #define PCB_H_
 
-#include<commons/collections/list.h>
+#include <commons/collections/list.h>
 #include <commons/string.h>
 #include <string.h> 
-#include<commons/collections/dictionary.h>
-#include<commons/temporal.h>
+#include <commons/collections/dictionary.h>
+#include <commons/temporal.h>
 #include "shared/include/global.h"
 #include <stdlib.h>
 #include "configuraciones.h"

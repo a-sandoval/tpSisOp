@@ -1,5 +1,5 @@
 /* CONSOLA - cliente | KERNEL - servidor*/
-#include "kernel/include/servidorConsola.h"
+#include "kernel/include/conexiones/servidorConsola.h"
 
 void recibirConsolas(char *puerto){ 
 	int server_fd = iniciarServidor(puerto);

@@ -1,4 +1,4 @@
-#include "kernel/include/pcb.h"
+#include "kernel/include/peticiones/pcb.h"
 
 char* pidsInvolucrados; 
 

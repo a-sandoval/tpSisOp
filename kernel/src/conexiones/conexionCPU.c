@@ -1,5 +1,5 @@
 /* KERNEL- cliente | CPU - servidor*/
-#include "kernel/include/conexionCPU.h"
+#include "kernel/include/conexiones/conexionCPU.h"
 
 
 t_buffer* bufferContexto;

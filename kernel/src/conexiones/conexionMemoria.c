@@ -1,5 +1,5 @@
 /* KERNEL- cliente | MEMORIA - servidor*/
-#include "kernel/include/conexionMemoria.h"
+#include "kernel/include/conexiones/conexionMemoria.h"
 
 int conexionAMemoria;
 

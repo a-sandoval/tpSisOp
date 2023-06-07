@@ -3,8 +3,9 @@
 
 #include <commons/collections/list.h>
 #include <stdlib.h> 
-#include "pcb.h"
-#include "planificacion.h"
+#include "peticiones/pcb.h"
+#include "planificacion/planificacion.h"
+
 
 //Variables de manejo de recursos
 extern int *instanciasRecursos;

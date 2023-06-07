@@ -5,9 +5,9 @@
 #include <commons/string.h>
 #include "shared/include/utilsCliente.h"
 #include "shared/include/utilsServidor.h"
-#include "pcb.h"
+#include "peticiones/pcb.h"
 #include "shared/include/global.h"
-#include "contextoEjecucion.h"
+#include "peticiones/contextoEjecucion.h"
 
 extern int conexionACPU;
 extern t_log* loggerError; 
