@@ -49,9 +49,11 @@ t_log* loggerError;
 t_config* config; 
 void* espacioDeUsuario; 
 
+
 extern int sockets[3];
+extern t_segmento* segmento0; 
 
-
+t_segmento* crearSegmentoCompartido(); 
 
 
 

@@ -24,6 +24,7 @@ int ejecutarServidorKernel(int*);
 
 extern t_config* config;
 extern t_log* logger; 
+extern t_segmento* segmento0; 
 
 
 
