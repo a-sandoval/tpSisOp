@@ -1,12 +1,12 @@
 UNAME:=$(shell uname)
 
 ifeq ($(UNAME),Linux)
-FILE_EXT:=.out
+	FILE_EXT:=.out
 else
-FILE_EXT:=.exe
+	FILE_EXT:=.exe
 endif
 
-SHARED := shared/src
+SHARED         := shared/src
 CONFIG         := $(SHARED)/configuraciones.c
 UTILS_CLIENTE  := $(SHARED)/utilsCliente.c
 UTILS_SERVIDOR := $(SHARED)/utilsServidor.c
@@ -25,11 +25,13 @@ FILESYS_SRC := fileSystem/src/
 ARCHIVOS_FILESYS := $(FILESYS_SRC)fileSystem.c $(FILESYS_SRC)servidorKernel.c $(FILESYS_SRC)conexionMemoria.c \
 				    $(CONFIG) $(UTILS_CLIENTE) $(UTILS_SERVIDOR) 
 
+KERNEL_CONEXIONES := kernel/src/conexiones
+KERNEL_PETICIONES := kernel/src/peticiones
+KERNEL_PLANIFIACION := kernel/src/planificacion
 ARCHIVOS_KERNEL  := kernel/src/kernel.c \
-					kernel/src/conexionMemoria.c  kernel/src/conexionCPU.c  kernel/src/conexionFileSystem.c \
-					kernel/src/servidorConsola.c \
-					kernel/src/planificacion.c kernel/src/contextoEjecucion.c kernel/src/algoritmosCortoPlazo.c \
-					kernel/src/syscalls.c kernel/src/pcb.c kernel/src/manejoRecursos.c \
+					$(KERNEL_CONEXIONES)/*.c \
+					$(KERNEL_PETICIONES)/*.c \
+					$(KERNEL_PLANIFIACION)/*.c \
                     $(CONFIG) $(UTILS_CLIENTE) $(UTILS_SERVIDOR) 
 
 ARCHIVOS_MEMORIA := memoria/src/memoria.c memoria/src/conexionCPU.c memoria/src/conexionFS.c memoria/src/conexionKernel.c \

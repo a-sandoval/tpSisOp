@@ -5,7 +5,7 @@
 #include <commons/log.h>
 #include <commons/string.h>
 #include "shared/include/utilsCliente.h"
-#include "pcb.h"
+#include "kernel/include/peticiones/pcb.h"
 
 
 void conexionMemoria();

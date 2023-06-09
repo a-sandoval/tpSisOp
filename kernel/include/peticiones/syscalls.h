@@ -1,13 +1,13 @@
 #ifndef SYSCALLS_H_
 #define SYSCALLS_H_
 
-#include "pcb.h"
-#include "contextoEjecucion.h"
 #include "semaphore.h"
-#include "planificacion/planificacion.h"
-#include "peticiones/manejoRecursos.h"
-#include "planificacion/algoritmosCortoPlazo.h"
-#include "conexiones/conexionMemoria.h"
+#include "kernel/include/conexiones/conexionMemoria.h"
+#include "kernel/include/peticiones/pcb.h"
+#include "kernel/include/peticiones/manejoRecursos.h"
+#include "kernel/include/peticiones/contextoEjecucion.h"
+#include "kernel/include/planificacion/planificacion.h"
+#include "kernel/include/planificacion/algoritmosCortoPlazo.h"
 
 extern t_list *recursos;
 extern char **nombresRecursos;

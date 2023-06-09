@@ -12,8 +12,8 @@
 #include "kernel/include/conexiones/conexionCPU.h"
 #include "kernel/include/conexiones/conexionFileSystem.h"
 #include "kernel/include/conexiones/servidorConsola.h"
-#include "kernel/include/planificacion/planificacion.h"
 #include "kernel/include/peticiones/pcb.h"
+#include "kernel/include/planificacion/planificacion.h"
 #include "kernel/include/planificacion/algoritmosCortoPlazo.h"
 #include "kernel/include/configuraciones.h"
 

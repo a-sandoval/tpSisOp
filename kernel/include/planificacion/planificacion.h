@@ -1,7 +1,8 @@
 #ifndef PLANIFICACION_PROCESOS_H
 #define PLANIFICACION_PROCESOS_H
 
-#include "configuraciones.h"
+#include <pthread.h>
+#include <semaphore.h>
 #include <commons/config.h>
 #include <commons/log.h>
 #include <commons/string.h>
@@ -9,14 +10,13 @@
 #include <commons/temporal.h>
 #include "shared/include/utilsCliente.h"
 #include "shared/include/global.h"
-#include <semaphore.h>
-#include "peticiones/pcb.h"
-#include <pthread.h>
-#include "conexiones/conexionCPU.h"
-#include "peticiones/syscalls.h"
-#include "planificacion/algoritmosCortoPlazo.h"
-#include "peticiones/manejoRecursos.h"
-#include "conexiones/conexionMemoria.h"
+#include "kernel/include/configuraciones.h"
+#include "kernel/include/conexiones/conexionCPU.h"
+#include "kernel/include/conexiones/conexionMemoria.h"
+#include "kernel/include/peticiones/pcb.h"
+#include "kernel/include/peticiones/syscalls.h"
+#include "kernel/include/peticiones/manejoRecursos.h"
+#include "kernel/include/planificacion/algoritmosCortoPlazo.h"
 
 
 extern t_list* pcbsNEW; 

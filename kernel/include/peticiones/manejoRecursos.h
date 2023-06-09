@@ -3,8 +3,8 @@
 
 #include <commons/collections/list.h>
 #include <stdlib.h> 
-#include "peticiones/pcb.h"
-#include "planificacion/planificacion.h"
+#include "kernel/include/peticiones/pcb.h"
+#include "kernel/include/planificacion/planificacion.h"
 
 
 //Variables de manejo de recursos

@@ -6,11 +6,11 @@
 #include <commons/string.h>
 #include <commons/collections/list.h>
 #include <commons/temporal.h>
-#include "string.h"
-#include "pcb.h"
+#include <string.h>
 #include "shared/include/global.h"
-#include "configuraciones.h"
-#include "planificacion.h"
+#include "kernel/include/configuraciones.h"
+#include "kernel/include/peticiones/pcb.h"
+#include "kernel/include/planificacion/planificacion.h"
 
 
 extern t_list* pcbsNEW; 

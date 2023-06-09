@@ -1,5 +1,5 @@
-#ifndef CONFIGURACIONES_H
-#define CONFIGURACIONES_H
+#ifndef CONFIGURACIONES_KERNEL_H
+#define CONFIGURACIONES_KERNEL_H
 
 #include <commons/config.h>
 #include "shared/include/global.h"

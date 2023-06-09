@@ -7,7 +7,7 @@
 #include "shared/include/global.h"
 #include "shared/include/utilsCliente.h"
 #include "shared/include/utilsServidor.h"
-#include "peticiones/pcb.h"
+#include "kernel/include/peticiones/pcb.h"
 
 typedef struct {
 
