@@ -4,6 +4,7 @@
 int ejecutarServidorKernel(int *socketCliente){
 	
 	log_info(logger, "Conectado el Kernel");
+	
 	while (1) {
 		int peticion = recibirOperacion(*socketCliente);
 		

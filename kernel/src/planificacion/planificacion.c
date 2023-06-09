@@ -40,14 +40,12 @@ void planificarALargoPlazo(){
 
 void planificarACortoPlazo(t_pcb *(*proximoAEjecutar)()){
 
-    crearColasBloqueo(recursos, instanciasRecursos);
+    crearColasBloqueo();
 
     while (1)
     {
         sem_wait(&hayProcesosReady);
         t_pcb *aEjecutar = proximoAEjecutar();
-        t_contexto *contextoEjecucion = malloc(sizeof(t_contexto));
-        iniciarContexto(contextoEjecucion);
 
         detenerYDestruirCronometro(aEjecutar->tiempoEnReady);
         estadoProceso estadoAnterior = aEjecutar->estado;
@@ -60,7 +58,7 @@ void planificarACortoPlazo(t_pcb *(*proximoAEjecutar)()){
         rafagaCPU = contextoEjecucion->rafagaCPUEjecutada; 
 
         retornoContexto(aEjecutar, contextoEjecucion);
-        
+
     }
 }
 

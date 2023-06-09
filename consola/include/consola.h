@@ -36,6 +36,7 @@
 
 #include "shared/include/global.h"
 #include "shared/include/utilsCliente.h"
+#include "shared/include/utilsServidor.h"
 #include "shared/include/configuraciones.h"
 
 /**
@@ -46,12 +47,14 @@
 #define MAX_CHARS 2048
 
 /**
- * @var socketCliente 
+ * @var socketKernel
  * Socket utilizado para conectarse y enviar informacion al Kernel.
  */
-extern int socketCliente;
+extern int socketKernel;
 extern t_log *logger;
+extern t_log *loggerError;
 extern t_config *config;
+extern FILE *codigo;
 
 /**
  * @fn int   main  (int, char *archivos[])
@@ -60,7 +63,7 @@ extern t_config *config;
  *                 y el segundo es el archivo de configuracion para conocer IP y Puerto del Kernel.
  * @return Se retorna un 0 en corrida correcta y un 1 en caso de un fallo.
  */
-int   main  (int, char *archivos[]);
+int main (int, char *archivos[]);
 
 void esperarPID(char * archivo);
 
@@ -69,6 +72,9 @@ void esperarPID(char * archivo);
  * Funcion de espera para recibir el mensaje de finalizacion de la Kernel.
  */
 void esperarFinalizacion ();
+
+void cerrarConexion ();
+void cerrarArchivo ();
 
 /**
  * Fin de la consola. 

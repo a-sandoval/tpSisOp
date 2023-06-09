@@ -99,7 +99,7 @@ void listarPIDS(t_list *pcbs);
 
 // frees
 
-void destruirInstruccion(t_instruccion *instruccion);
+void destruirInstruccion(char *instruccion);
 void destruirRegistro(char *registro);
 
 #endif

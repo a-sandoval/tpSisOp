@@ -76,6 +76,7 @@ void agregarPID(void *value){
     t_pcb *pcb = (t_pcb *)value;
     char *pid = string_itoa(pcb->pid);
     string_append_with_format(&pidsInvolucrados, " %s ", pid);
+    free (pid);
 }
 
 void listarPIDS(t_list *pcbs) {
@@ -85,7 +86,7 @@ void listarPIDS(t_list *pcbs) {
 
 // frees
 
-void destruirInstruccion(t_instruccion *instruccion){
+void destruirInstruccion(char *instruccion){
     free(instruccion);
 }
 

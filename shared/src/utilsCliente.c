@@ -43,7 +43,7 @@ int crearConexion(char *ip, char *puerto)
 	}
 }
 
-void enviarMensaje(char *mensaje, int socketCliente)
+void enviarMensaje(char *mensaje, int socket)
 {
 	t_paquete *paquete = malloc(sizeof(t_paquete));
 
@@ -57,7 +57,7 @@ void enviarMensaje(char *mensaje, int socketCliente)
 
 	void *a_enviar = serializarPaquete(paquete, bytes);
 
-	send(socketCliente, a_enviar, bytes, 0);
+	send(socket, a_enviar, bytes, 0);
 
 	free(a_enviar);
 	eliminarPaquete(paquete);
@@ -89,12 +89,14 @@ void agregarAPaquete(t_paquete *paquete, void *valor, int tamanio)
 	paquete->buffer->size += tamanio + sizeof(int);
 }
 
-void enviarPaquete(t_paquete *paquete, int socketCliente)
+void enviarPaquete(t_paquete *paquete, int socket)
 {
 	int bytes = paquete->buffer->size + 2 * sizeof(int);
 	void *a_enviar = serializarPaquete(paquete, bytes);
 
-	send(socketCliente, a_enviar, bytes, 0);
+	log_debug (logger, "Enviando paquete con tamaño %d, de %d bytes.", paquete->buffer->size, bytes);
+
+	send(socket, a_enviar, bytes, 0);
 
 	free(a_enviar);
 }
@@ -123,8 +125,15 @@ int conexion(char *SERVIDOR)
 	free(KEYS[0]);
 	char *ip = confGet(KEYS[1]);
 	free(KEYS[1]);
-	int conexion = crearConexion(ip, puerto);
-	//log_info(logger, "Conexion creada: %d", conexion);
+	int conexion = -1;
+	while (conexion == -1) {
+		conexion = crearConexion(ip, puerto);
+		if (conexion == -1) {
+			log_warning (logger, "No se pudo conectar a %s, esperando %d segundos para intentar nuevamente.", SERVIDOR, SEGS_ANTES_DE_REINTENTO);
+			sleep (SEGS_ANTES_DE_REINTENTO);
+		}
+	}
+	log_info(logger, "Conectado a %s, en socket %d", SERVIDOR, conexion);
 
 	return conexion;
 }

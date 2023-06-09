@@ -1,14 +1,14 @@
 #include "shared/include/contextoEjecucion.h"
-t_contexto* contextoEjecucion;
+t_contexto * contextoEjecucion = NULL;
 
 // MANEJO DE CONTEXTO
 void enviarContextoActualizado(int socket){ 
-    t_paquete* paquete = crearPaquete();
+    t_paquete * paquete = crearPaquete();
     
     paquete->codigo_operacion = CONTEXTOEJECUCION;
    
-    agregarAPaquete(paquete,(void *)&contextoEjecucion->pid, sizeof(contextoEjecucion->pid));
-    agregarAPaquete(paquete,(void *)&contextoEjecucion->programCounter, sizeof(contextoEjecucion->programCounter));
+    agregarAPaquete (paquete,(void *)&contextoEjecucion->pid, sizeof(contextoEjecucion->pid));
+    agregarAPaquete (paquete,(void *)&contextoEjecucion->programCounter, sizeof(contextoEjecucion->programCounter));
     agregarInstruccionesAPaquete (paquete, contextoEjecucion->instrucciones);
     agregarRegistrosAPaquete(paquete, contextoEjecucion->registrosCPU);
     //no sabemos listas de que son estas tablas entonces aun no podemos serializar o hay que serializarlo como listas y ver si dsps cambia
@@ -61,6 +61,7 @@ void agregarRegistrosAPaquete(t_paquete* paquete, t_dictionary* registrosCPU){
 
 void recibirContextoActualizado (int socket) {
 
+    if (contextoEjecucion != NULL) destroyContextoUnico ();
 	iniciarContexto ();
 	int size, desplazamiento = 0;
 	void * buffer;
@@ -85,8 +86,8 @@ void recibirContextoActualizado (int socket) {
     deserializarMotivoDesalojo (buffer, &desplazamiento);
 
     // Desplazamiento: Tamaño de la rafaga de CPU Ejecutada.
-    desplazamiento += sizeof (int);
-    memcpy(&(contextoEjecucion->rafagaCPUEjecutada), buffer + desplazamiento, sizeof (uint64_t));
+    //desplazamiento += sizeof (int);
+    //memcpy(&(contextoEjecucion->rafagaCPUEjecutada), buffer + desplazamiento, sizeof (uint64_t));
 		
 	free(buffer);
 
@@ -95,7 +96,7 @@ void recibirContextoActualizado (int socket) {
 void deserializarInstrucciones (void * buffer, int * desplazamiento) {
 
     int tamanio;
-
+    list_clean_and_destroy_elements (contextoEjecucion->instrucciones, free);
     // Desplazamiento: instruccionesLength.
     memcpy(&(contextoEjecucion->instruccionesLength), buffer + (* desplazamiento), sizeof(uint32_t));
     (* desplazamiento) += sizeof(uint32_t);
@@ -186,6 +187,7 @@ void iniciarContexto(){
     contextoEjecucion->motivoDesalojo->parametros[1] = "";
     contextoEjecucion->motivoDesalojo->parametros[2] = "";
     contextoEjecucion->motivoDesalojo->parametrosLength = 0;
+    contextoEjecucion->motivoDesalojo->comando = 0;
 	
 }
 
@@ -200,3 +202,14 @@ void destroyContexto() {
     free(contextoEjecucion);
 }
 
+void destroyContextoUnico () {
+    list_destroy(contextoEjecucion->instrucciones);
+    dictionary_destroy_and_destroy_elements(contextoEjecucion->registrosCPU, free);
+    list_destroy_and_destroy_elements(contextoEjecucion->tablaDeArchivos, free);
+    list_destroy_and_destroy_elements(contextoEjecucion->tablaDeSegmentos, free);
+    for (int i = 0; i < contextoEjecucion->motivoDesalojo->parametrosLength; i++) 
+        if (strcmp(contextoEjecucion->motivoDesalojo->parametros[i], "")) free(contextoEjecucion->motivoDesalojo->parametros[i]);
+    free(contextoEjecucion->motivoDesalojo);
+    free(contextoEjecucion);
+    contextoEjecucion = NULL;
+}

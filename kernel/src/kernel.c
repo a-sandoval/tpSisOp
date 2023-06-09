@@ -1,7 +1,15 @@
 /* - Interprete entre el hardware y el software - */
 #include "kernel/include/kernel.h"
 
-int main(){
+
+int socketCliente;
+t_log* logger;
+t_log* loggerError;
+t_config* config;
+pthread_t planificadorLargoPlazo_h, planificadorCortoPlazo_h, recibirConsolas_h;
+
+
+int main () {
     //Inicializar variables
     logger = iniciarLogger("kernel.log", "Kernel");
 	loggerError = iniciarLogger("errores.log", "Errores - Kernel"); 
@@ -19,29 +27,26 @@ int main(){
 	conexionMemoria(); 
 
     //Inicializar Hilos
-	pthread_t planificadorLargoPlazo_h; //Hilo Planificador Largo Plazo -> Mueve procesos de NEW a READY
-    	if (!pthread_create(&planificadorLargoPlazo_h, NULL, (void *) planificarALargoPlazo, NULL)) 
-    	    pthread_detach(planificadorLargoPlazo_h);
-    	else{
-    	    log_error(loggerError, "Error al iniciar servidor Kernel, Abort");
-    	    return EXIT_FAILURE;
-		}
+	//Hilo Planificador Largo Plazo -> Mueve procesos de NEW a READY
+    if (!pthread_create(&planificadorLargoPlazo_h, NULL, (void *) planificarALargoPlazo, NULL)) 
+        pthread_detach(planificadorLargoPlazo_h);
+    else 
+        {error ("Error al generar hilo para el planificador de largo plazo, terminando el programa.");}
+	
 
-	pthread_t planificadorCortoPlazo_h;  //Hilo Planificador Corto Plazo --> Mueve procesos de READY a EXEC
-		if(!pthread_create(&planificadorCortoPlazo_h, NULL, (void*) planificarACortoPlazoSegunAlgoritmo, NULL))
-    	    pthread_detach(planificadorCortoPlazo_h);
-    	else{
-    	    log_error(loggerError, "Error al iniciar servidor Kernel, Abort");
-    	    return EXIT_FAILURE;
-		}
+	//Hilo Planificador Corto Plazo --> Mueve procesos de READY a EXEC
+	if (!pthread_create(&planificadorCortoPlazo_h, NULL, (void*) planificarACortoPlazoSegunAlgoritmo, NULL)) 
+		pthread_detach(planificadorCortoPlazo_h);
+	
+    else 
+        error ("Error al generar hilo para el planificador de corto plazo, terminando el programa.");
+	
+	
+	// Hilo Principal -> Recibe consolas y crea PCBs 
+    if (!pthread_create(&recibirConsolas_h, NULL,(void *) recibirConsolas, puertoDeEscucha)) 
+           pthread_join(recibirConsolas_h, NULL);
+    else
+		error ("Error al generar hilo para recibir consolas, terminando el programa.");
 
-	pthread_t recibirConsolas_h; // Hilo Principal -> Recibe consolas y crea PCBs 
-    	if(!pthread_create(&recibirConsolas_h, NULL,(void *) recibirConsolas, puertoDeEscucha)) 
-            pthread_join(recibirConsolas_h, NULL);
-    	else{
-    	    log_error(loggerError, "Error al iniciar servidor Kernel, Abort");
-    	    return EXIT_FAILURE;
-    	}
-
-    return 0; 
+    exit (0);
 }

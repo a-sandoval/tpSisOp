@@ -14,7 +14,7 @@ UTILS_SERVIDOR := $(SHARED)/utilsServidor.c
 
 
 ARCHIVOS_CONSOLA := consola/src/consola.c \
-                    $(CONFIG) $(UTILS_CLIENTE) 
+                    $(CONFIG) $(UTILS_CLIENTE) $(UTILS_SERVIDOR) 
 
 CPU_SRC := cpu/src/
 ARCHIVOS_CPU     := $(CPU_SRC)cpu.c	\

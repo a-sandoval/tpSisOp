@@ -9,30 +9,20 @@ int cantidadRecursos;
 void crearColasBloqueo()
 {
 	instanciasRecursos = NULL; 
-
 	recursos = list_create();
-
     nombresRecursos = obtenerRecursos();
-	
     char **cantInstanciasRecursos = obtenerInstanciasRecursos();
-
     int tamanio = tamanioArrayCharDoble(cantInstanciasRecursos);
 
     cantidadRecursos=tamanio;
-
     for (int i = 0; i < tamanio; i++)
     {
 
         int instanciasConvertEntero = atoi(cantInstanciasRecursos[i]);
-
         instanciasRecursos=realloc(instanciasRecursos,(i+1)*sizeof(int));
-
         instanciasRecursos[i]=instanciasConvertEntero;
 
-        
-
         t_list *colaBloqueo = list_create();
-
         list_add(recursos, (void *)colaBloqueo);
     }
 

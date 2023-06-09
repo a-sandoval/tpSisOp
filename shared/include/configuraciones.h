@@ -63,7 +63,7 @@
      * @param tipoDeArchivo Linea de texto del tipo de archivo para abrir, para referencia ver fopen(3).
      * @return FILE* Retorna el archivo abierto.
      */
-    FILE *abrir (int socket, char *archivo, char *tipoDeArchivo);
+    FILE *abrir (char *archivo, char *tipoDeArchivo);
 
     /**
      * @fn void error (char *mensajeFormato, ...)
@@ -72,6 +72,6 @@
      * @param ... Resto de los parametros en caso de mandarse.
      */
 
-    void error (int socket, char *mensajeFormato, ...); 
+    void error (char *mensajeFormato, ...); 
 
 #endif /* CONFIGURACIONES_H_ */

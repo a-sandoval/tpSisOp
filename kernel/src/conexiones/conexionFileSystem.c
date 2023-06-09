@@ -9,21 +9,12 @@ int conexionAFS;
     char * nombreAnteriorErrores = duplicarNombre (loggerError);
     loggerError = cambiarNombre(loggerError,"Errores Kernel-FS");
 
-    while(1) {
-       
-        conexionAFS = conexion("FILESYSTEM");
-
-        if(conexionAFS != -1) {
-            log_info(logger, "Conectado a File System");
-            logger = cambiarNombre(logger, nombreAnterior);
-            loggerError = cambiarNombre(loggerError, nombreAnteriorErrores);
-            return;
-        }
-        else {
-            log_error(loggerError, "No se pudo conectar al File System, esperando 5 segundos y reintentando.");
-            sleep(5);
-        }
-    }
+    conexionAFS = conexion("FILESYSTEM");
+    logger = cambiarNombre(logger, nombreAnterior);
+    loggerError = cambiarNombre(loggerError, nombreAnteriorErrores);
+    free (nombreAnterior);
+    free (nombreAnteriorErrores);
+    return;
 }
     
 

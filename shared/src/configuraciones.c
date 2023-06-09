@@ -48,22 +48,23 @@ void terminarPrograma() {
 	config_destroy(config);
 }
 
-FILE * abrir(int socket, char *archivo, char *tipoDeArchivo) {
+FILE * abrir(char *archivo, char *tipoDeArchivo) {
     FILE *codigo = fopen(archivo, tipoDeArchivo);
-    if (codigo == NULL) error(socket, "No se pudo abrir el archivo %s", archivo);
+    if (codigo == NULL) error("No se pudo abrir el archivo %s", archivo);
     return codigo;
 }
 
 
-void error (int socket, char *mensajeFormato, ...) {
+void error (char *mensajeFormato, ...) {
     va_list argumentos;
-    va_start(argumentos, mensajeFormato);
+    va_start (argumentos, mensajeFormato);
 
-    char *mensajeCompleto = string_from_vformat(mensajeFormato, argumentos);
+    char *mensajeCompleto = string_from_vformat (mensajeFormato, argumentos);
 
-    log_error(loggerError, "%s", mensajeCompleto);
+    log_error (loggerError, "%s", mensajeCompleto);
 
-    va_end(argumentos);
-    close(socket);
+    free (mensajeCompleto);
+
+    va_end (argumentos);
     exit(1);
 }

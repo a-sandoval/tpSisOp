@@ -13,6 +13,7 @@
 #include <commons/string.h>
 #include "configuraciones.h"
 
+#define SEGS_ANTES_DE_REINTENTO 3
 
 extern t_log *logger;
 extern t_config *config;

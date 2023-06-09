@@ -7,25 +7,16 @@ int conexionACPU;
 
 void conexionCPU() {
     char * nombreAnterior = duplicarNombre (logger);
-    logger = cambiarNombre(logger, "Kernel-CPU");
     char * nombreAnteriorErrores = duplicarNombre (loggerError);
+    logger = cambiarNombre(logger, "Kernel-CPU");
     loggerError = cambiarNombre(loggerError,"Errores Kernel-CPU");
 
-
-    while(1) {
-        conexionACPU = conexion("CPU");
-
-        if(conexionACPU != -1) {
-            log_info(logger, "Conectado a CPU");
-            logger = cambiarNombre(logger, nombreAnterior);
-            loggerError = cambiarNombre(loggerError, nombreAnteriorErrores);
-            return;
-        }
-        else {
-            log_error(loggerError, "No se pudo conectar al servidor, socket %d, esperando 5 segundos y reintentando.", conexionACPU);
-            sleep(5);
-        }
-    }
+    conexionACPU = conexion("CPU");
+    logger = cambiarNombre(logger, nombreAnterior);
+    loggerError = cambiarNombre(loggerError, nombreAnteriorErrores);
+    free (nombreAnterior);
+    free (nombreAnteriorErrores);
+    return;
 }
 
 int recibirOperacionDeCPU(){ //Hay que ver esto en el utils.
@@ -41,8 +32,8 @@ int recibirOperacionDeCPU(){ //Hay que ver esto en el utils.
 
 
 t_contexto* procesarPCB(t_pcb* procesoEnEjecucion) {
-
-    iniciarContexto();
+    if (contextoEjecucion != NULL) destroyContextoUnico ();
+	iniciarContexto ();
 
     bufferContexto = malloc(sizeof(t_buffer));
 
@@ -62,7 +53,7 @@ t_contexto* procesarPCB(t_pcb* procesoEnEjecucion) {
 }
 
 void actualizarPCB(t_pcb* proceso){
-	list_destroy(proceso->instrucciones);
+	list_destroy_and_destroy_elements(proceso->instrucciones, free);
     proceso->instrucciones = list_duplicate(contextoEjecucion->instrucciones);
     proceso->pid = contextoEjecucion->pid;
     proceso->programCounter = contextoEjecucion->programCounter;
@@ -77,10 +68,12 @@ void actualizarPCB(t_pcb* proceso){
 
 void asignarPCBAContexto(t_pcb* proceso){
 
+    list_destroy_and_destroy_elements(contextoEjecucion->instrucciones, free);
     contextoEjecucion->instrucciones = list_duplicate(proceso->instrucciones);
     contextoEjecucion->instruccionesLength = list_size(contextoEjecucion->instrucciones);
     contextoEjecucion->pid = proceso->pid;
     contextoEjecucion->programCounter = proceso->programCounter;
+    dictionary_destroy(contextoEjecucion->registrosCPU);
     contextoEjecucion->registrosCPU = registrosDelCPU(proceso->registrosCPU);
     //contextoEjecucion->tablaDeArchivos = proceso->tablaDeArchivos;
     //contextoEjecucion->tablaDeArchivosSize = list_size(contextoEjecucion->tablaDeArchivos);

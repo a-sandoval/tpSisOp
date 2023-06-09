@@ -22,33 +22,35 @@ void ejecutarServidorKernel(){
 	
 	t_list* lista;
 	
-	PCB = crearPCB(); 
+	PCB = crearPCB (); 
 	PCB->socketPCB = socketCliente; 
 	
 	while (1) {
-		op_code cod_op = recibirOperacion(socketCliente); 
+		op_code cod_op = recibirOperacion (socketCliente); 
 		switch (cod_op) {
 			case PAQUETE:
-				lista = recibirPaquete(socketCliente);
-				list_iterate(lista, (void*) iterator); 
+				lista = recibirPaquete (socketCliente);
+				list_iterate (lista, (void*) iterator); 
 				//list_destroy_and_destroy_elements(lista, (void*)element_destroyer);
-				list_destroy(lista);
+				list_destroy (lista);
 				break;
 			case MENSAJE:
-				char *mensaje = recibirMensaje(socketCliente);
-				log_info(logger, "%s", mensaje);
-				if (!strcmp(mensaje, "Fin de instrucciones")) {
-					enviarMensaje(string_from_format("%d", PCB->pid), socketCliente);
-					ingresarANew(PCB);
-					free(mensaje);
+				char *mensaje = recibirMensaje (socketCliente);
+				log_info (logger, "%s", mensaje);
+				if (!strcmp (mensaje, "Fin de instrucciones")) {
+					char * pidAEnviar = string_from_format("%d", PCB->pid);
+					enviarMensaje (pidAEnviar, socketCliente);
+					ingresarANew (PCB);
+					free (pidAEnviar);
+					free (mensaje);
 					return;
 				}
 				else {
-					free(mensaje);
+					free (mensaje);
 					break;
 				}
 			case TERMINAR_KERNEL:
-				exit(0);
+				exit (0);
 			default:
 				break;
 		}

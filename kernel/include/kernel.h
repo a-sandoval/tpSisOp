@@ -20,9 +20,10 @@
 // Utils y funciones del shared
 #include "shared/include/configuraciones.h"
 
-int socketCliente;
-t_log* logger;
-t_log* loggerError;
-t_config* config;
+extern int socketCliente;
+extern t_log* logger;
+extern t_log* loggerError;
+extern t_config* config;
+extern pthread_t planificadorLargoPlazo_h, planificadorCortoPlazo_h, recibirConsolas_h;
 
 #endif

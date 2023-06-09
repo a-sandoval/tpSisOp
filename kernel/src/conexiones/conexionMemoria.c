@@ -9,21 +9,14 @@ void conexionMemoria() {
     char * nombreAnteriorErrores = duplicarNombre (loggerError);
     loggerError = cambiarNombre (loggerError, "Errores Kernel-Memoria");
     
-    while(1) {
+    
 
-        conexionAMemoria = conexion("MEMORIA");
-
-        if(conexionAMemoria != -1){
-            log_info(logger, "Conectado a Memoria");
-            logger = cambiarNombre(logger, nombreAnterior);
-            loggerError = cambiarNombre(loggerError, nombreAnteriorErrores);
-            return;
-        }
-        else {
-            log_error(loggerError, "No se pudo conectar a memoria, esperando 5 segundos y reintentando.");
-            sleep(5);
-        }
-    }
+    conexionAMemoria = conexion("MEMORIA");
+    logger = cambiarNombre(logger, nombreAnterior);
+    loggerError = cambiarNombre(loggerError, nombreAnteriorErrores);
+    free (nombreAnterior);
+    free (nombreAnteriorErrores);
+    return;
 }
 
 void recibirEstructurasInicialesMemoria(t_pcb* pcb) {
@@ -36,9 +29,14 @@ void recibirEstructurasInicialesMemoria(t_pcb* pcb) {
     //enviarPaquete(paquete, conexionAMemoria); 
     enviarCodOp(NEWPCB, conexionAMemoria);
     logger = cambiarNombre(logger, nombreAnterior);
+    free (nombreAnterior);
+
 }
 
 void liberarMemoriaPCB(t_pcb* proceso) {
+    
+    char * nombreAnterior = duplicarNombre(logger);
+    logger = cambiarNombre(logger,"Kernel-Memoria");
 
     /*t_paquete* paquete = crearPaquete(); 
     paquete->codigo_operacion=ENDPCB; 
@@ -46,4 +44,6 @@ void liberarMemoriaPCB(t_pcb* proceso) {
     enviarPaquete(paquete,conexionAMemoria); */
     log_info(logger, "PID <%d>: Se envia señal para eliminar estructuras en memoria.", proceso->pid);
     enviarCodOp (ENDPCB, conexionAMemoria);
+    logger = cambiarNombre(logger, nombreAnterior);
+    free (nombreAnterior);
 }

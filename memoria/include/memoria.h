@@ -55,7 +55,8 @@ extern t_segmento* segmento0;
 
 t_segmento* crearSegmentoCompartido(); 
 
-
+void liberarEspacioDeUsuario ();
+void liberarSegmentoCompartido ();
 
 /**
  * Fin.

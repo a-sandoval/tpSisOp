@@ -33,18 +33,17 @@ int iniciarServidor(char *puerto){
 int esperarCliente(int socketServidor){
 
 	int socketClienteFD = accept(socketServidor, NULL, NULL);
-	//log_info(logger, "Se conecto un cliente!");
 
 	return socketClienteFD;
 }
 
-int recibirOperacion(int socketCliente){
+int recibirOperacion(int socket){
 	int cod_op;
-	if(recv(socketCliente, &cod_op, sizeof(int), MSG_WAITALL) > 0)
+	if(recv(socket, &cod_op, sizeof(int), MSG_WAITALL) > 0)
 		return cod_op;
 	else
 	{
-		close(socketCliente);
+		close(socket);
 		return -1;
 	}
 }
@@ -59,21 +58,21 @@ void* recibirBuffer(int socket, int  * size){
 	return buffer;
 }
 
-char *recibirMensaje(int socketCliente)
+char *recibirMensaje(int socket)
 {
 	int size;
-	char *buffer = recibirBuffer(socketCliente, &size);
+	char *buffer = recibirBuffer(socket, &size);
 	return buffer;
 }
 
-t_list* recibirPaquete(int socketCliente){
+t_list* recibirPaquete(int socket){
 	int size;
 	int desplazamiento = 0;
 	void * buffer;
 	t_list* valores = list_create();
 	int tamanio;
 
-	buffer = recibirBuffer(socketCliente, &size);
+	buffer = recibirBuffer(socket, &size);
 	while(desplazamiento < size){
 		memcpy(&tamanio, buffer + desplazamiento, sizeof(int));
 		desplazamiento+=sizeof(int);

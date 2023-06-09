@@ -51,6 +51,7 @@ void deserializarMotivoDesalojo (void * buffer, int * desplazamiento);
 
 void iniciarContexto();
 void destroyContexto();
+void destroyContextoUnico();
 
 
 #endif

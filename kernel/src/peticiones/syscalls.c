@@ -140,7 +140,7 @@ void signal_s(t_pcb *proceso, char **parametros){
     
     }
     
-     contextoEjecucion = procesarPCB(proceso);
+    contextoEjecucion = procesarPCB(proceso);
     rafagaCPU = contextoEjecucion->rafagaCPUEjecutada; 
     retornoContexto(proceso, contextoEjecucion);
 }
