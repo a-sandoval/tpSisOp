@@ -23,10 +23,10 @@ void ejecutarServidorKernel(){
 	t_list* lista;
 	
 	PCB = crearPCB(); 
-	PCB->socketPCB=socketCliente; 
+	PCB->socketPCB = socketCliente; 
 	
 	while (1) {
-		int cod_op = recibirOperacion(socketCliente); 
+		op_code cod_op = recibirOperacion(socketCliente); 
 		switch (cod_op) {
 			case PAQUETE:
 				lista = recibirPaquete(socketCliente);
@@ -47,6 +47,8 @@ void ejecutarServidorKernel(){
 					free(mensaje);
 					break;
 				}
+			case TERMINAR_KERNEL:
+				exit(0);
 			default:
 				break;
 		}

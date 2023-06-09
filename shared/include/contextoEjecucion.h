@@ -6,6 +6,7 @@
 #include "shared/include/utilsServidor.h"
 #include "stdlib.h"
 #include "stdint.h"
+#include "math.h"
 
 typedef struct {
 
@@ -37,16 +38,18 @@ extern int socketCliente;
 
 void agregarMotivoAPaquete(t_paquete* paquete, t_motivoDeDesalojo* motivoDesalojo);
 void agregarRegistrosAPaquete(t_paquete* paquete, t_dictionary* registrosCPU);
+void agregarInstruccionesAPaquete(t_paquete* paquete, t_list* instrucciones);
 
 // FUNCIONES PARA ENVIO DE CONTEXTO DE EJECUCION
-void* serializar_contextoEjecucion(t_paquete* paquete, int bytes);
-void enviar_contexto();
-void enviarContextoActualizado();
+void enviarContextoActualizado(int socket);
 
 //FUNCIONES PARA RECIBIR CONTEXTO DE EJECUCION
-void recibirContextoActualizado();
+void recibirContextoActualizado(int socket);
+void deserializarInstrucciones (void * buffer, int * desplazamiento);
+void deserializarRegistros (void * buffer, int * desplazamiento);
+void deserializarMotivoDesalojo (void * buffer, int * desplazamiento);
+
 void iniciarContexto();
-void iterator(void*);
 void destroyContexto();
 
 

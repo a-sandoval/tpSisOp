@@ -8,6 +8,7 @@ endif
 
 SHARED         := shared/src
 CONFIG         := $(SHARED)/configuraciones.c
+CONTEXTO_EJECUCION := $(SHARED)/contextoEjecucion.c
 UTILS_CLIENTE  := $(SHARED)/utilsCliente.c
 UTILS_SERVIDOR := $(SHARED)/utilsServidor.c
 
@@ -18,8 +19,7 @@ ARCHIVOS_CONSOLA := consola/src/consola.c \
 CPU_SRC := cpu/src/
 ARCHIVOS_CPU     := $(CPU_SRC)cpu.c	\
 					$(CPU_SRC)servidorKernel.c $(CPU_SRC)cicloDeInstruccion.c $(CPU_SRC)conexionMemoria.c \
-					$(CPU_SRC)contextoEjecucion.c  \
-				    $(CONFIG) $(UTILS_CLIENTE) $(UTILS_SERVIDOR) 
+				    $(CONFIG) $(CONTEXTO_EJECUCION) $(UTILS_CLIENTE) $(UTILS_SERVIDOR) 
 
 FILESYS_SRC := fileSystem/src/
 ARCHIVOS_FILESYS := $(FILESYS_SRC)fileSystem.c $(FILESYS_SRC)servidorKernel.c $(FILESYS_SRC)conexionMemoria.c \
@@ -30,9 +30,9 @@ KERNEL_PETICIONES := kernel/src/peticiones
 KERNEL_PLANIFIACION := kernel/src/planificacion
 ARCHIVOS_KERNEL  := kernel/src/kernel.c \
 					$(KERNEL_CONEXIONES)/*.c \
-					$(KERNEL_PETICIONES)/*.c \
+					$(KERNEL_PETICIONES)/manejoRecursos.c $(KERNEL_PETICIONES)/pcb.c $(KERNEL_PETICIONES)/syscalls.c \
 					$(KERNEL_PLANIFIACION)/*.c \
-                    $(CONFIG) $(UTILS_CLIENTE) $(UTILS_SERVIDOR) 
+                    $(CONFIG) $(UTILS_CLIENTE) $(UTILS_SERVIDOR) $(CONTEXTO_EJECUCION)
 
 ARCHIVOS_MEMORIA := memoria/src/memoria.c memoria/src/conexionCPU.c memoria/src/conexionFS.c memoria/src/conexionKernel.c \
                     $(CONFIG)                  $(UTILS_SERVIDOR) 
@@ -52,7 +52,7 @@ Consola:
 
 Cpu:
 	@echo "Compilando CPU... "
-	@$(CC) $(ARCHIVOS_CPU)     -o cpu/cpu$(FILE_EXT)             $(CFLAGS)
+	@$(CC) $(ARCHIVOS_CPU)     -o cpu/cpu$(FILE_EXT)             $(CFLAGS) -lm
 
 Filesys:
 	@echo "Compilando File System... "

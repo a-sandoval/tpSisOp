@@ -10,3 +10,5 @@ deadlock:
 error:
 	cp ./tuki-pruebas/ERROR.config ./kernel.config; ./kernel.out
 
+ejemplo:
+	cp ./tuki-pruebas/EJEMPLO.config ./kernel.config; ./kernel.out

@@ -3,14 +3,15 @@
 
 #include <commons/config.h>
 #include <commons/string.h>
+#include "shared/include/contextoEjecucion.h"
 #include "shared/include/utilsCliente.h"
 #include "shared/include/utilsServidor.h"
 #include "shared/include/global.h"
 #include "kernel/include/peticiones/pcb.h"
-#include "kernel/include/peticiones/contextoEjecucion.h"
 
 extern int conexionACPU;
 extern t_log* loggerError; 
+extern t_contexto* contextoEjecucion;
 
 
 void conexionCPU();

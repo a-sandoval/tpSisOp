@@ -3,7 +3,6 @@
 
 
 t_buffer* bufferContexto;
-t_contexto* contextoEjecucion;
 int conexionACPU;
 
 void conexionCPU() {
@@ -32,10 +31,9 @@ void conexionCPU() {
 int recibirOperacionDeCPU(){ //Hay que ver esto en el utils.
 	int cod_op;
     
-	if(recv(conexionACPU, &cod_op, sizeof(int), MSG_WAITALL) > 0)
+	if (recv(conexionACPU, &cod_op, sizeof(int), MSG_WAITALL) > 0)
 		return cod_op;
-	else
-	{
+	else {
 		close(conexionACPU);
 		return -1;
 	}
@@ -50,16 +48,11 @@ t_contexto* procesarPCB(t_pcb* procesoEnEjecucion) {
 
     asignarPCBAContexto(procesoEnEjecucion);
 
-    enviarContexto();
+    enviarContextoActualizado(conexionACPU);
 
     int operacion = recibirOperacionDeCPU();
 
-
-    switch(operacion){
-        case CONTEXTOEJECUCION:
-            recibirContextoActualizado(); 
-            break;
-    }
+    recibirContextoActualizado(conexionACPU); 
 
     actualizarPCB(procesoEnEjecucion);
 

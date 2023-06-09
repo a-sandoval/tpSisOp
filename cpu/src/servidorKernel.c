@@ -33,7 +33,7 @@ int ejecutarServidorCPU(){
 				log_info(logger, "El Kernel se desconecto.");
 				return EXIT_FAILURE;
 			case CONTEXTOEJECUCION:
-				recibirContextoActualizado();
+				recibirContextoActualizado(socketCliente);
     			rafagaCPU = temporal_create(); 
                 while(contextoEjecucion->programCounter != (int) contextoEjecucion->instruccionesLength 
 					  && (noEsBloqueante(instruccionActual))) {

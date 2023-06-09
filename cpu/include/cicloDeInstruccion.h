@@ -14,7 +14,7 @@
     #include "shared/include/configuraciones.h"
     #include "shared/include/utilsCliente.h"
     #include "shared/include/utilsServidor.h"
-    #include "contextoEjecucion.h"
+    #include "shared/include/contextoEjecucion.h"
 
     #define obtenerTiempoEspera() config_get_int_value(config, "RETARDO_INSTRUCCION")
 

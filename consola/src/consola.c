@@ -18,6 +18,11 @@ int main(int, char *archivos[]) {
             sleep(5);
         }
     }
+    
+    if (!strcmp (archivos[1], "matar")) {
+        enviarCodOp(TERMINAR_KERNEL, socketCliente);
+        exit(0);
+    }
     FILE *codigo = abrir(socketCliente, archivos[1], "r");
     size_t cantChars = MAX_CHARS;
 
@@ -67,4 +72,8 @@ void esperarFinalizacion () {
     log_info(logger, mensaje);
     free(mensaje);
     return;
+}
+
+void cerrarConexion () {
+    close (socketCliente);
 }

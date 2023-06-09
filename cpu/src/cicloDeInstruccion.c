@@ -26,7 +26,6 @@ int tiempoEspera;
 
 t_temporal* rafagaCPU; 
 int64_t rafagaCPUEjecutada; 
-t_contexto* contextoEjecucion;
 
 void cicloDeInstruccion(){
     fetch();//busca la próxima instruccion a ejecutar. Lista en pcb
@@ -46,6 +45,12 @@ void decode(){
     elementosInstruccion = string_n_split(instruccionAEjecutar, 4, " ");
     cantParametros = string_array_size(elementosInstruccion) - 1;
     instruccionActual = buscar(elementosInstruccion[0], listaComandos);
+}
+
+int buscar(char *elemento, char **lista) {
+    int i = 0;
+    for (; strcmp(lista[i], elemento) && i <= string_array_size(lista); i++);
+    return (i > string_array_size(lista)) ? -1 : i;
 }
  
 void execute() {
@@ -131,69 +136,70 @@ void set_c(char* registro, char* valor){
 void io(char* tiempo){
     destruirTemporizador(rafagaCPU);
     modificarMotivoDesalojo (IO, 1, tiempo, "", "");
-    enviarContextoActualizado();
+    enviarContextoActualizado(socketCliente);
 }
 
 void wait_c(char* recurso){
     modificarMotivoDesalojo (WAIT, 1, recurso, "", "");
-    enviarContextoActualizado();
+    enviarContextoActualizado(socketCliente);
 }
 
 void signal_c(char* recurso){
     modificarMotivoDesalojo (SIGNAL, 1, recurso, "", "");
-    enviarContextoActualizado();
+    enviarContextoActualizado(socketCliente);
 }
 
 void yield_c(){ 
     destruirTemporizador(rafagaCPU);
     modificarMotivoDesalojo (YIELD, 0, "", "", "");
-    enviarContextoActualizado();
+    enviarContextoActualizado(socketCliente);
 }
 
-void exit_c(){
+void exit_c () {
     destruirTemporizador(rafagaCPU);
-    modificarMotivoDesalojo (EXIT, 1, "SUCCESS", "", "");
-    enviarContextoActualizado();
+    char * terminado = string_duplicate ("SUCCESS");
+    modificarMotivoDesalojo (EXIT, 1, terminado, "", "");
+    enviarContextoActualizado(socketCliente);
 }
 
 void f_open(char* nombre){
     modificarMotivoDesalojo (F_OPEN, 1, nombre, "", "");
-    enviarContextoActualizado();
+    enviarContextoActualizado(socketCliente);
 };
 
 void f_close(char* nombre){
     modificarMotivoDesalojo (F_CLOSE, 1, nombre, "", "");
-    enviarContextoActualizado();
+    enviarContextoActualizado(socketCliente);
 };
 
 void f_seek(char* nombre, char* puntero){
     modificarMotivoDesalojo (F_SEEK, 2, nombre, puntero, "");
-    enviarContextoActualizado();
+    enviarContextoActualizado(socketCliente);
 };
 
 void f_read(char* nombre, char* direccionLogica, char* cantBytes){
     modificarMotivoDesalojo (F_READ, 3, nombre, direccionLogica, cantBytes);
-    enviarContextoActualizado();
+    enviarContextoActualizado(socketCliente);
 };
 
 void f_write(char* nombre, char* direccionLogica, char* cantBytes){
     modificarMotivoDesalojo (F_WRITE, 3, nombre, direccionLogica, cantBytes);
-    enviarContextoActualizado();
+    enviarContextoActualizado(socketCliente);
 };
 
 void f_truncate(char* nombre, char* tamanio){
     modificarMotivoDesalojo (F_TRUNCATE, 2, nombre, tamanio, "");
-    enviarContextoActualizado();
+    enviarContextoActualizado(socketCliente);
 };
 
 void create_segment(char* idSegmento, char* tamanio){
     modificarMotivoDesalojo (CREATE_SEGMENT, 2, idSegmento, tamanio, "");
-    enviarContextoActualizado();
+    enviarContextoActualizado(socketCliente);
 };
 
 void delete_segment(char* idSegmento){
     modificarMotivoDesalojo (DELETE_SEGMENT, 1, idSegmento, "", "");
-    enviarContextoActualizado();
+    enviarContextoActualizado(socketCliente);
 };
 
 void destruirTemporizador (t_temporal * temporizador) {
@@ -206,7 +212,7 @@ void modificarMotivoDesalojo (t_comando comando, int numParametros, char * parm1
     char * (parametros[3]) = { parm1, parm2, parm3 };
     contextoEjecucion->motivoDesalojo->comando = comando;
     for (int i = 0; i < numParametros; i++)
-        contextoEjecucion->motivoDesalojo->parametros[0] = parametros[i];
+        contextoEjecucion->motivoDesalojo->parametros[i] = string_duplicate(parametros[i]);
     contextoEjecucion->motivoDesalojo->parametrosLength = numParametros;
 }
 

@@ -14,8 +14,6 @@ int main(void){
     escucharAlKernel();
 
 	log_destroy(loggerError);
-	terminarPrograma(); 
-    
 
 	return EXIT_SUCCESS;
 }	

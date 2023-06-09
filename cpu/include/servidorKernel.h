@@ -9,8 +9,8 @@
 
 #include "shared/include/utilsServidor.h"
 #include "shared/include/utilsCliente.h"
+#include "shared/include/contextoEjecucion.h"
 #include "cpu/include/cicloDeInstruccion.h"
-#include "contextoEjecucion.h"
 
 extern t_log* loggerError; 
 
