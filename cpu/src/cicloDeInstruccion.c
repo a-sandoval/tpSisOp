@@ -160,6 +160,7 @@ void exit_c () {
     char * terminado = string_duplicate ("SUCCESS");
     modificarMotivoDesalojo (EXIT, 1, terminado, "", "");
     enviarContextoActualizado(socketCliente);
+    free (terminado);
 }
 
 void f_open(char* nombre){
@@ -205,7 +206,7 @@ void delete_segment(char* idSegmento){
 void destruirTemporizador (t_temporal * temporizador) {
     temporal_stop(temporizador);
     contextoEjecucion->rafagaCPUEjecutada = temporal_gettime(temporizador);  
-    temporal_destroy(temporizador); 
+    //temporal_destroy(temporizador); 
 }
 
 void modificarMotivoDesalojo (t_comando comando, int numParametros, char * parm1, char * parm2, char * parm3) {

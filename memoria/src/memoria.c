@@ -31,7 +31,7 @@ int main() {
 		pthread_detach (threadCPU);
 	}	
     else {
-        error (loggerError, "Error en iniciar el servidor a CPU");
+        error ("Error en iniciar el servidor a CPU");
     }
 	
 	usleep (1000 * 500);
@@ -42,7 +42,7 @@ int main() {
 		pthread_detach (threadFS);
 	}	
     else {
-        error (loggerError, "Error en iniciar el servidor a FS");
+        error ("Error en iniciar el servidor a FS");
     }
 	
 	usleep (1000 * 500);
@@ -54,7 +54,7 @@ int main() {
 		pthread_join (threadKernel, NULL);
 	}	
     else {
-        error (loggerError, "Error en iniciar el servidor a Kernel");
+        error ("Error en iniciar el servidor a Kernel");
     }
 
 	exit (0);

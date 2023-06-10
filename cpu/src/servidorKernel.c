@@ -33,13 +33,15 @@ int ejecutarServidorCPU(){
 				log_info(logger, "El Kernel se desconecto.");
 				return EXIT_FAILURE;
 			case CONTEXTOEJECUCION:
+				if (contextoEjecucion != NULL) 
+					list_clean_and_destroy_elements (contextoEjecucion->instrucciones, free);
 				recibirContextoActualizado(socketCliente);
     			rafagaCPU = temporal_create(); 
                 while(contextoEjecucion->programCounter != (int) contextoEjecucion->instruccionesLength 
 					  && (noEsBloqueante(instruccionActual))) {
                     cicloDeInstruccion();
-                }
-                destroyContexto();
+                }	
+				temporal_destroy (rafagaCPU);
 				break;
 			default:
 				log_warning(loggerError,"Operacion desconocida. No quieras meter la pata");
