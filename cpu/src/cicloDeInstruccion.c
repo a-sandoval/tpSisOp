@@ -222,11 +222,94 @@ void liberarMemoria() {
     free(elementosInstruccion);
 }
 
-/*
+/* dejo silenciado para que no me peguen porque rompe
 
+// RECORDAR LOG MINIMO POR SEG FAULT 
 void mov_in(char* registro, char* direccionLogica){
+
+    uint32_t valor;
+    uint32_t dirFisica = mmu(direccionLogica);
+
+    //envio a memoria la dirFIsica con el opCode LEER / serializo
+    t_paquete* peticion = crearPaquete();
+    peticion->codigo_operacion = READ;
+    agregarAPaquete(peticion,dirFisica, sizeof(uint32_t));
+    enviarPaquete(peticion, conexionMemoria);
+
+    valor = recibirValor(conexionMemoria);
+
+    // recien aca podria chequear que lo que leyó mas el nro de desplazamiento no haya sido mayor al tamaño del segmento
+
+    dictionary_remove_and_destroy(contextoEjecucion->registrosCPU, registro, free); 
+    dictionary_put(contextoEjecucion->registrosCPU, registro, string_duplicate(valor));
+
+    log_info(logger, "PID: %d - Accion: %s -  Segmento: %d - Direccion Fisica: %d - Valor:  %d", contextoEjecucion->pid, "LEER", nroSegmento, dirFisica, valor );
+    
+
 };
 
 void mov_out(char* direccionLogica, char* registro){
+
+    void* valor = dictionary_get(contextoEjecucion->registrosCPU, registro);
+
+    int dirFisica = mmu(direccionLogica);
+
+    t_paquete* peticion = crearPaquete();
+    peticion->codigo_operacion = WRITE;
+
+    agregarAPaquete(peticion, dirFisica, sizeof(uint32_t));
+    agregarAPaquete(peticion, valor, sizeof(char) * 16); // como mucho es un registro de 16 bytes no?
+
+    enviarPaquete(peticion, conexionMemoria);
+
+    recibirMensaje(conexionMemoria);
+    // que hago cuando recibo la confimracion?
+
+    log_info(logger, "PID: %d - Accion: %s -  Segmento: %d - Direccion Fisica: %d - Valor:  %d", contextoEjecucion->pid, "WRITE", nroSegmento, dirFisica, valor );
 };  
+
+
+uint32_t mmu(int dirLogica){
+    uint32_t dirFisica;
+    int tamMaxSegmento = obtenerTamanioMaxSeg();
+
+    int numSegmento = floor(dirLogica/tamMaxSegmento);
+
+    int desplazamiento = dirLogica % tamMaxSegmento;
+
+    t_segmento* segmento = list_get(contextoEjecucion->tablaDeSegmentos,numSegmento);
+    
+    uint32_t base = segmento->direccionBase;
+
+    if(desplazamiento + tamValor > segmento->tamanio){
+        char * terminado = string_duplicate ("SEG_FAULT");
+        modificarMotivoDesalojo (EXIT, 1, terminado, "", "");
+        enviarContextoActualizado(socketCliente);
+        free (terminado);
+    }
+    else{
+        dirFisica = base + desplazamiento;
+    
+        return dirFisica;
+
+    }
+    
+}
+
+uint32_t recibirValor(int socket) {
+    uint32_t valor;
+	int size, desplazamiento = 0;
+	void * buffer;
+
+	buffer = recibirBuffer(socket, &size);
+
+    desplazamiento += sizeof(int);
+    memcpy(&(valor), buffer, sizeof(uint32_t));
+
+	free(buffer);
+
+    return valor;
+
+}
+
 */

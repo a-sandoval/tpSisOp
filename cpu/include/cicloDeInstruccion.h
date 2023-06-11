@@ -15,8 +15,18 @@
     #include "shared/include/utilsCliente.h"
     #include "shared/include/utilsServidor.h"
     #include "shared/include/contextoEjecucion.h"
+    #include "conexionMemoria.h"
 
     #define obtenerTiempoEspera() config_get_int_value(config, "RETARDO_INSTRUCCION")
+    #define obtenerTamanioMaxSeg() config_get_int_value(config, "TAM_MAX_SEGMENTO")
+
+    typedef struct {
+
+    uint32_t id; 
+    uint32_t direccionBase; 
+    uint32_t tamanio; 
+
+    }t_segmento; 
 
     extern char *listaComandos[];
     extern char* instruccionAEjecutar; 
@@ -24,6 +34,7 @@
     extern int instruccionActual; 
     extern int cantParametros;
     extern int tiempoEspera;
+    extern int conexionAMemoria;
 
     extern t_contexto* contextoEjecucion;
 
