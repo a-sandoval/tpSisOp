@@ -11,8 +11,7 @@ typedef struct{
     char* nombre;
     t_list* bloqueados;
     uint32_t tamanio;
-    uint32_t puntero; //??????
-    //deberia representar propiamente el archivo
+    uint32_t puntero; //al primer bloque
 
 }t_fcb;
 

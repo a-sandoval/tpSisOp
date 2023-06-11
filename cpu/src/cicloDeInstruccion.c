@@ -179,14 +179,16 @@ void f_seek(char* nombre, char* puntero){
 };
 
 void f_read(char* nombre, char* direccionLogica, char* cantBytes){
-    int dirFisica = mmu (direccionLogica);
+    int tamanioLeer = atoi(cantBytes);
+    int dirFisica = mmu (direccionLogica, tamanioLeer);
     char* direccionFisica = string_itoa(dirFisica);
     modificarMotivoDesalojo (F_READ, 3, nombre, direccionFisica, cantBytes);
     enviarContextoActualizado(socketCliente);
 };
 
 void f_write(char* nombre, char* direccionLogica, char* cantBytes){
-    int dirFisica = mmu(direccionLogica);
+    int tamanioEscribir = atoi(cantBytes);
+    int dirFisica = mmu (direccionLogica, tamanioEscribir);
     char* direccionFisica = string_itoa(dirFisica);
     modificarMotivoDesalojo (F_WRITE, 3, nombre, direccionFisica, cantBytes);
     enviarContextoActualizado(socketCliente);
@@ -231,7 +233,8 @@ void liberarMemoria() {
 void mov_in(char* registro, char* direccionLogica){
 
     int valor;
-    int dirFisica = mmu(direccionLogica);
+    int tamRegistro = obtenerTamanioReg(registro);
+    int dirFisica = mmu(direccionLogica, tamRegistro);
 
     t_paquete* peticion = crearPaquete();
     peticion->codigo_operacion = READ;
@@ -239,10 +242,6 @@ void mov_in(char* registro, char* direccionLogica){
     enviarPaquete(peticion, conexionAMemoria);
 
     valor = recibirValor(conexionAMemoria);
-
-    //chequeoDesplazamiento(direccionLogica, valor);
-
-    // recien aca podria chequear que lo que leyó mas el nro de desplazamiento no haya sido mayor al tamaño del segmento
 
     char* valorInsertar=string_itoa(valor);
     dictionary_remove_and_destroy(contextoEjecucion->registrosCPU, registro, free); 
@@ -256,9 +255,9 @@ void mov_in(char* registro, char* direccionLogica){
 void mov_out(char* direccionLogica, char* registro){
 
     void* valor = dictionary_get(contextoEjecucion->registrosCPU, registro);
+    int tamRegistro = obtenerTamanioReg(registro);
 
-    //chequeoDesplazamiento(direccionLogica, valor);
-    int dirFisica = mmu(direccionLogica);
+    int dirFisica = mmu(direccionLogica, tamRegistro);
 
     t_paquete* peticion = crearPaquete();
     peticion->codigo_operacion = WRITE;
@@ -275,9 +274,9 @@ void mov_out(char* direccionLogica, char* registro){
 };  
 
 
-int mmu(char* direccionLogica){
+int mmu(char* direccionLogica, int tamValor){
     int dirFisica;
-    int dirLogica = direccionLogica - '0';
+    int dirLogica = atoi(direccionLogica);
     int tamMaxSegmento = obtenerTamanioMaxSeg();
 
     int numSegmento = floor(dirLogica/tamMaxSegmento);
@@ -286,6 +285,13 @@ int mmu(char* direccionLogica){
     t_segmento* segmento = list_get(contextoEjecucion->tablaDeSegmentos, numSegmento);
     
     int base = segmento->direccionBase;
+
+    if(desplazamiento + tamValor > segmento->tamanio){
+        char * terminado = string_duplicate ("SEG_FAULT");
+        modificarMotivoDesalojo (EXIT, 1, terminado, "", "");
+        enviarContextoActualizado(socketCliente);
+        free (terminado);
+    }
     
     dirFisica = base + desplazamiento;
     return dirFisica;
@@ -308,4 +314,10 @@ int recibirValor(int socket) {
     return valor;
 }
 
+int obtenerTamanioReg(char* registro){
 
+    if(string_starts_with(registro, 'E')) return 8;
+    else if(string_starts_with(registro, 'R')) return 16;
+    else return 4;
+
+}
