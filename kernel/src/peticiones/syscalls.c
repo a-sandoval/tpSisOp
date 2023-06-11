@@ -3,6 +3,7 @@
 t_list *recursos;
 char **nombresRecursos;
 char* segFault = "SEG_FAULT"; 
+char* outOfMemory = "OUT_OF_MEMORY";
 estadoProceso estadoAnterior; 
 
 void retornoContexto(t_pcb *proceso, t_contexto *contextoEjecucion){
@@ -204,35 +205,84 @@ void exit_s(t_pcb* proceso, char **parametros){
 }
 
 /*
-void fopen_s(t_pcb *proceso, char **parametros)
-{
+void fopen_s(t_pcb *proceso, char **parametros){
 }
 
-void fclose_s(t_pcb *proceso, char **parametros)
-{
+void fclose_s(t_pcb *proceso, char **parametros){
 }
 
-void fseek_s(t_pcb *proceso, char **parametros)
-{
+void fseek_s(t_pcb *proceso, char **parametros){
 }
 
-void fread_s(t_pcb *proceso, char **parametros)
-{
+void fread_s(t_pcb *proceso, char **parametros){
 }
 
-void fwrite_s(t_pcb *proceso, char **parametros)
-{
+void fwrite_s(t_pcb *proceso, char **parametros){
 }
-
-void createSegment_s(t_pcb *proceso, char **parametros)
-{
-}
-
-void deleteSegment_s(t_pcb *proceso, char **parametros)
-{
-}
-
 */
+
+void createSegment_s(t_pcb *proceso, char **parametros){
+
+    uint32_t idSegmento = parametros[0];
+    int tamanio = parametros[1];
+
+    log_info(logger, "PID: %d - Crear Segmento - Id: %d - Tamanio: %d", proceso->pid, idSegmento, tamanio);
+    
+    t_paquete* peticion = crearPaquete();
+    peticion->codigo_operacion = CREATE_SEGMENT_OP;
+
+    agregarAPaquete(peticion, idSegmento, sizeof(uint32_t));
+    agregarAPaquete(peticion, tamanio, sizeof(uint32_t));
+
+    enviarPaquete(peticion, conexionAMemoria);
+    
+    t_paquete* rdoPeticion = recibirPaquete(conexionAMemoria);
+    // aca deberia venir en el opcode el rdo de lo que paso en memoria para saber como seguir
+
+    switch(rdoPeticion->codigo_operacion){
+        case SUCCESS:
+                // habria que agregar el segmento a la tabla no?
+                contextoEjecucion = procesarPCB(proceso);
+                rafagaCPU = contextoEjecucion->rafagaCPUEjecutada; 
+                retornoContexto(proceso, contextoEjecucion);
+                break;
+
+        case OUTOFMEMORY:
+                exit_s(proceso, &outOfMemory);
+                break;
+        
+        case COMPACTACION:
+
+                break;
+    }
+}
+
+
+
+void deleteSegment_s(t_pcb *proceso, char **parametros){
+    
+    uint32_t idSegmento = parametros[0];
+
+    log_info(logger, "PID: %d - EliminarSegmento - Id: %d", proceso->pid, idSegmento);
+
+    t_paquete* peticion = crearPaquete();
+    peticion->codigo_operacion = DELETE_SEGMENT_OP;
+
+    agregarAPaquete(peticion, idSegmento, sizeof(int));
+    enviarPaquete(peticion, conexionAMemoria);
+
+    contextoEjecucion->tablaDeSegmentos = recibirTablaActualizada();
+
+    contextoEjecucion = procesarPCB(proceso);
+    rafagaCPU = contextoEjecucion->rafagaCPUEjecutada; 
+    retornoContexto(proceso, contextoEjecucion);
+
+}
+
+t_list* recibirTablaActualizada(){
+    //todavia no se como va a ser la tabla
+}
+
 
 void loggearBloqueoDeProcesos(t_pcb* proceso, char* motivo) {
     log_info(logger,"PID: <%d> - Bloqueado por: %s", proceso->pid, motivo); 
