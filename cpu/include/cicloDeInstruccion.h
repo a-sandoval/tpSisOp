@@ -66,4 +66,5 @@
     int recibirValor(int);
     void destruirTemporizador (t_temporal * temporizador);
     void modificarMotivoDesalojo (t_comando comando, int numParametros, char * parm1, char * parm2, char * parm3);
+    int obtenerTamanioReg(char* registro);
 #endif 

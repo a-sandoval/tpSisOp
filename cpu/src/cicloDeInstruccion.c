@@ -23,6 +23,7 @@ char** elementosInstruccion;
 int instruccionActual; 
 int cantParametros;
 int tiempoEspera;
+int nroSegmento;
 
 t_temporal* rafagaCPU; 
 int64_t rafagaCPUEjecutada; 
@@ -245,7 +246,7 @@ void mov_in(char* registro, char* direccionLogica){
     dictionary_remove_and_destroy(contextoEjecucion->registrosCPU, registro, free); 
     dictionary_put(contextoEjecucion->registrosCPU, registro, string_duplicate(valorInsertar));
 
-    //log_info(logger, "PID: %d - Accion: %s -  Segmento: %d - Direccion Fisica: %d - Valor:  %d", contextoEjecucion->pid, "LEER", nroSegmento, dirFisica, valor );
+    log_info(logger, "PID: %d - Accion: %s -  Segmento: %d - Direccion Fisica: %d - Valor:  %d", contextoEjecucion->pid, "LEER", nroSegmento, dirFisica, valor );
     
 
 };
@@ -268,7 +269,7 @@ void mov_out(char* direccionLogica, char* registro){
     recibirMensaje(conexionAMemoria);
     // que hago cuando recibo la confimracion?
 
-    //log_info(logger, "PID: %d - Accion: %s -  Segmento: %d - Direccion Fisica: %d - Valor:  %d", contextoEjecucion->pid, "WRITE", nroSegmento, dirFisica, valor);
+    log_info(logger, "PID: %d - Accion: %s -  Segmento: %d - Direccion Fisica: %d - Valor:  %d", contextoEjecucion->pid, "WRITE", nroSegmento, dirFisica, valor);
 };  
 
 
@@ -277,10 +278,10 @@ int mmu(char* direccionLogica, int tamValor){
     int dirLogica = atoi(direccionLogica);
     int tamMaxSegmento = obtenerTamanioMaxSeg();
 
-    int numSegmento = floor(dirLogica/tamMaxSegmento);
+    nroSegmento = floor(dirLogica/tamMaxSegmento);
     int desplazamiento = dirLogica % tamMaxSegmento;
 
-    t_segmento* segmento = list_get(contextoEjecucion->tablaDeSegmentos, numSegmento);
+    t_segmento* segmento = list_get(contextoEjecucion->tablaDeSegmentos, nroSegmento);
     
     int base = segmento->direccionBase;
 
@@ -314,8 +315,8 @@ int recibirValor(int socket) {
 
 int obtenerTamanioReg(char* registro){
 
-    if(string_starts_with(registro, 'E')) return 8;
-    else if(string_starts_with(registro, 'R')) return 16;
+    if(string_starts_with(registro, "E")) return 8;
+    else if(string_starts_with(registro, "R")) return 16;
     else return 4;
 
 }
