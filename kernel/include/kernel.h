@@ -15,7 +15,9 @@
 #include "kernel/include/peticiones/pcb.h"
 #include "kernel/include/planificacion/planificacion.h"
 #include "kernel/include/planificacion/algoritmosCortoPlazo.h"
+#include "kernel/include/peticiones/manejoArchivos.h"
 #include "kernel/include/configuraciones.h"
+
 
 // Utils y funciones del shared
 #include "shared/include/configuraciones.h"

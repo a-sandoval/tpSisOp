@@ -16,6 +16,7 @@ int main () {
     config = iniciarConfiguracion("kernel.config");
 	atexit (terminarPrograma);
 	char* puertoDeEscucha = confGet("PUERTO_ESCUCHA"); 
+	iniciarTablaGLobalDeArchivos();
 
 	inicializarSemaforos();
 	atexit (destruirSemaforos);
