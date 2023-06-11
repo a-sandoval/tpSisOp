@@ -62,8 +62,8 @@
     void create_segment(char*, char*);
     void delete_segment(char*);
 
-    int mmu(char*);
-    int recibirValor(int );
+    int mmu(char* direccionLogica, int tamValor);
+    int recibirValor(int);
     void destruirTemporizador (t_temporal * temporizador);
     void modificarMotivoDesalojo (t_comando comando, int numParametros, char * parm1, char * parm2, char * parm3);
 #endif 

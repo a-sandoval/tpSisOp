@@ -73,14 +73,12 @@ void execute() {
         case SET:
             set_c(elementosInstruccion[1], elementosInstruccion[2]);
             break;
-        /*
         case MOV_IN:
             mov_in(elementosInstruccion[1], elementosInstruccion[2]);
             break;
         case MOV_OUT:
             mov_out(elementosInstruccion[1], elementosInstruccion[2]);
             break;
-        */
         case IO:
             io(elementosInstruccion[1]);
             break;
