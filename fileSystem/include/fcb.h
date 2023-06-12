@@ -1,7 +1,6 @@
 #ifndef FCB_H
 #define FCB_H
 
-#include <errno.h>
 #include <fcntl.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -14,9 +13,7 @@
 #include <commons/string.h>
 #include <commons/bitarray.h>
 
-#define TAMANIO_PUNTERO 4
-#define CANT_BLOQUES(bytes) ((bytes != 0) ? (bytes / tamanioBloques + (bytes < (uint32_t) tamanioBloques)) : 0) 
-#define MAX_BLOQUES tamanioBloques / TAMANIO_PUNTERO + 1
+#include <fileSystem/include/bloques.h>
 
 extern int cantBloques;
 extern int tamanioBitmap;
@@ -28,6 +25,7 @@ extern t_bitarray * bitmap;
 extern char * ptrBloques;
 extern char * ptrBitMap;
 extern char ** bloques;
+extern char * pathFCBs;
 
 typedef struct {
     char * nombre;
@@ -42,12 +40,9 @@ int truncarArchivo (fcb_t * archivo, uint32_t tamanio);
 int leerArchivo (fcb_t archivo);
 int escribirArchivo (fcb_t archivo);
 
-int copiarPunteroAPtrIndirecto (fcb_t * archivo, uint32_t ptr);
-bool punteroNulo (char ptr[]);
-uint32_t proximoBloqueLibre ();
-uint32_t conseguirUltimoBloqueDePtrIndirecto (fcb_t * archivo);
-uint32_t ptrAsignable (fcb_t * archivo);
-void eliminarBloque (uint32_t ptr);
+int asignarBloqueAArchivo (fcb_t * archivo, uint32_t ptr);
+uint32_t ultimoBloqueDeArchivo (fcb_t * archivo);
+uint32_t espacioParaGuardarPuntero (fcb_t * archivo);
 int actualizarFCB (fcb_t * archivo);
 
 #endif 

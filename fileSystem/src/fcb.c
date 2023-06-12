@@ -1,7 +1,7 @@
 #include <fileSystem/include/fcb.h>
 
 int crearArchivo (char * nombre) {
-    char * pathArchivo = string_from_format ("directorioFCB/%s.fcb", nombre);
+    char * pathArchivo = string_from_format ("%s/%s.fcb", pathFCBs, nombre);
     if (!access (pathArchivo, F_OK)) return -1;
     int tempArchivo = open (pathArchivo, O_CREAT, S_IRUSR | S_IWUSR);
     if (tempArchivo < 0) return -2;
@@ -21,7 +21,7 @@ int crearArchivo (char * nombre) {
 }
 
 fcb_t * abrirArchivo (char * nombre) {
-    char * pathArchivo = string_from_format ("directorioFCB/%s.fcb", nombre);
+    char * pathArchivo = string_from_format ("%s/%s.fcb", pathFCBs, nombre);
     if (access (pathArchivo, F_OK)) return NULL;
     
     t_config * archivo = config_create (pathArchivo);
@@ -57,7 +57,7 @@ int truncarArchivo (fcb_t * archivo, uint32_t tamanio) {
         }
 
         // Buscar espacio libre en el puntero indirecto.
-        uint32_t ptr = ptrAsignable (archivo);
+        uint32_t ptr = espacioParaGuardarPuntero (archivo);
         // Si el puntero indirecto no tiene espacio libre, terminar con error.
         if (ptr >= UINT32_MAX - 1) return -1;
 
@@ -67,7 +67,7 @@ int truncarArchivo (fcb_t * archivo, uint32_t tamanio) {
             // Si no hay bloque disponible, terminar con error.
             if (proxBloque == UINT32_MAX) return -2; 
             // Si se falla al copiar el puntero del bloque libre al puntero indirecto, se termina con error.
-            if (copiarPunteroAPtrIndirecto (archivo, proxBloque) < 0) return -3;
+            if (asignarBloqueAArchivo (archivo, proxBloque) < 0) return -3;
             cantBloquesAsignados++, archivo->tamanio += tamanioBloques;
         }
     }
@@ -75,12 +75,12 @@ int truncarArchivo (fcb_t * archivo, uint32_t tamanio) {
     // Caso 2: Hay que eliminar bloques.
     else {
         // Eliminar bloques si hay en el puntero indirecto y hasta el anteultimo.
-        uint32_t ultBloque = conseguirUltimoBloqueDePtrIndirecto (archivo);
+        uint32_t ultBloque = ultimoBloqueDeArchivo (archivo);
         while (cantBloquesAsignados > cantBloquesAAsignar + 1 && ultBloque != archivo->ptrDirecto) {
             eliminarBloque (ultBloque);
-            log_debug (logger, "Bloque %d eliminado.", conseguirUltimoBloqueDePtrIndirecto (archivo));
+            log_debug (logger, "Bloque %d eliminado.", ultimoBloqueDeArchivo (archivo));
             cantBloquesAsignados--, archivo->tamanio -= tamanioBloques;
-            ultBloque = conseguirUltimoBloqueDePtrIndirecto (archivo);
+            ultBloque = ultimoBloqueDeArchivo (archivo);
         }
 
         // Segun cada caso, el ultimo puede ser el puntero directo o uno del puntero indirecto.
@@ -90,11 +90,13 @@ int truncarArchivo (fcb_t * archivo, uint32_t tamanio) {
             eliminarBloque (archivo->ptrIndirecto);
             archivo->ptrIndirecto = 0;
         }
-        else if (conseguirUltimoBloqueDePtrIndirecto (archivo) != archivo->ptrDirecto)
-            eliminarBloque (conseguirUltimoBloqueDePtrIndirecto (archivo));
+        else if (ultimoBloqueDeArchivo (archivo) != archivo->ptrDirecto)
+            eliminarBloque (ultimoBloqueDeArchivo (archivo));
         else return -6;
     }
     archivo->tamanio = tamanio;
+    msync(ptrBloques, tamanioBloques * cantBloques, MS_SYNC);
+    msync(ptrBitMap, tamanioBitmap, MS_SYNC);
     if (actualizarFCB (archivo) < 0) return -4;
     return 0;
 
@@ -103,8 +105,8 @@ int truncarArchivo (fcb_t * archivo, uint32_t tamanio) {
 int leerArchivo (fcb_t archivo);
 int escribirArchivo (fcb_t archivo);
 
-int copiarPunteroAPtrIndirecto (fcb_t * archivo, uint32_t ptr) {
-    uint32_t ptrAasignar = ptrAsignable (archivo);
+int asignarBloqueAArchivo (fcb_t * archivo, uint32_t ptr) {
+    uint32_t ptrAasignar = espacioParaGuardarPuntero (archivo);
     if (ptrAasignar >= (uint32_t) tamanioBloques - TAMANIO_PUNTERO) return -1;
     uint8_t ptrDeconstruido [4] = {
         ptr >> 24, (ptr >> 16) & 255, (ptr >> 8) & 255, ptr & 255
@@ -115,32 +117,20 @@ int copiarPunteroAPtrIndirecto (fcb_t * archivo, uint32_t ptr) {
     return 0;
 }
 
-bool punteroNulo (char ptr[]) {
-    return (ptr[0] == '\0' && ptr[1] == '\0' && ptr[2] == '\0' && ptr[3] == '\0' ) ? true : false;
-}
-
-uint32_t proximoBloqueLibre () {
-    for (uint32_t i = 0; i < (uint32_t) cantBloques; i++) 
-        if (!bitarray_test_bit (bitmap, i)) {
-            bitarray_set_bit (bitmap, i);
-            return i;
-        }
-    return UINT32_MAX;
-}
-
-uint32_t conseguirUltimoBloqueDePtrIndirecto (fcb_t * archivo) {
-    uint32_t ptrEnBloque = ptrAsignable (archivo);
+uint32_t ultimoBloqueDeArchivo (fcb_t * archivo) {
+    uint32_t ptrEnBloque = espacioParaGuardarPuntero (archivo);
     if (ptrEnBloque >= UINT32_MAX - 1) return UINT32_MAX;
     if (ptrEnBloque == 0) return archivo->ptrDirecto;
     uint8_t ptrDeconstruido[TAMANIO_PUNTERO] = {0, 0, 0, 0};
     for (int j = -TAMANIO_PUNTERO; j < 0; j++) {
         ptrDeconstruido[j + TAMANIO_PUNTERO] = (uint8_t) bloques[archivo->ptrIndirecto][ptrEnBloque + j];
     }
-    uint32_t ptr = (ptrDeconstruido[0] << 24) + (ptrDeconstruido[1] << 16) + (ptrDeconstruido[2] << 8) + ptrDeconstruido[3];
+    uint32_t ptr = 
+        (ptrDeconstruido[0] << 24) + (ptrDeconstruido[1] << 16) + (ptrDeconstruido[2] << 8) + ptrDeconstruido[3];
     return ptr;
 }
 
-uint32_t ptrAsignable (fcb_t * archivo) {
+uint32_t espacioParaGuardarPuntero (fcb_t * archivo) {
     uint32_t bloquesAsignados = CANT_BLOQUES(archivo->tamanio);
     // Se puede asignar el puntero directo.
     if (bloquesAsignados == 0) return UINT32_MAX - 1;
@@ -150,14 +140,8 @@ uint32_t ptrAsignable (fcb_t * archivo) {
     return (bloquesAsignados - 1) * TAMANIO_PUNTERO;
 }
 
-void eliminarBloque (uint32_t ptr) {
-    bitarray_clean_bit (bitmap, ptr);
-    for (int i = 0; i < tamanioBloques; i++)
-        bloques[ptr][i] = '\0';
-}
-
 int actualizarFCB (fcb_t * archivo) {
-    char * pathArchivo = string_from_format ("directorioFCB/%s.fcb", archivo->nombre);
+    char * pathArchivo = string_from_format ("%s/%s.fcb", pathFCBs, archivo->nombre);
     if (access (pathArchivo, F_OK)) return -1;
     t_config * archivoNuevo = config_create (pathArchivo);
     if (!archivoNuevo) return -3;

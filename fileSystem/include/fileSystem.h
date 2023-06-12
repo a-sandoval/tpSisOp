@@ -46,8 +46,6 @@ extern char * ptrBloques;
 extern char * ptrBitMap;
 extern char ** bloques;
 
-int copiarABloque (uint32_t numBloque, char * texto, uint32_t longTexto);
-
 void cerrarConexion ();
 void cerrarSuperBloque ();
 void cerrarBitmap ();

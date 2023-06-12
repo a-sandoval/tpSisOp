@@ -6,6 +6,7 @@ t_log * logger, * loggerError;
 t_config * config, * superbloque;
 t_bitarray * bitmap;
 char * ptrBloques, * ptrBitMap, ** bloques;
+char * pathSuperBloque, * pathBloques, * pathBitmap, * pathFCBs;
 
 int main () {
     logger = iniciarLogger("fileSys.log","File System");
@@ -19,7 +20,12 @@ int main () {
 
     // Se abre el archivo de super-bloque y se agarra la cantidad de bloques y el tamaño de cada bloque.
 
-    superbloque = config_create("superbloque.dat");
+    pathSuperBloque = confGet("PATH_SUPERBLOQUE");
+    pathBitmap = confGet("PATH_BITMAP");
+    pathBloques = confGet("PATH_BLOQUES");
+    pathFCBs = confGet("PATH_FCB");
+
+    superbloque = config_create(pathSuperBloque);
     cantBloques = config_get_int_value(superbloque, "BLOCK_COUNT");
     tamanioBitmap = BIT_CHAR(cantBloques);
     tamanioBloques = config_get_int_value(superbloque, "BLOCK_SIZE");
@@ -29,13 +35,13 @@ int main () {
     // Se abre el archivo del bitmap de bloques, con las flags para crearla si no existe y escribir y leer en caso de ser necesario.
     // A su vez se crea con permisos para que el usuario pueda leerlas y modificarlas por si las dudas.
 
-    fdBitmap = open("bitmap.dat", O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
+    fdBitmap = open(pathBitmap, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
     if (fdBitmap < 0)
-        error("No se abrio correctamente el archivo %s; error: %s", "bitmap.dat", strerror(errno));
+        error("No se abrio correctamente el archivo %s; error: %s", pathBitmap, strerror(errno));
     atexit(cerrarArchivoBitmap);
     
     if (ftruncate(fdBitmap, tamanioBitmap) < 0)
-        error("No se pudo expandir correctamente el archivo %s; error: %s", "bitmap.dat", strerror(errno));
+        error("No se pudo expandir correctamente el archivo %s; error: %s", pathBitmap, strerror(errno));
 
     // mmap es un asco, es lo peor de la galaxia.
     // Se genera un mmap, vinculado directamente al archivo de bitmap, para poder modificarlo directamente.
@@ -53,13 +59,13 @@ int main () {
     bitmap = bitarray_create_with_mode(ptrBitMap, cantBloques, LSB_FIRST);
     atexit(cerrarBitmap);
 
-    fdBloques = open("bloques.dat", O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
+    fdBloques = open(pathBloques, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
     if (fdBloques < 0)
-        error("No se abrio correctamente el archivo %s; error: %s", "bloques.dat", strerror(errno));
+        error("No se abrio correctamente el archivo %s; error: %s", pathBloques, strerror(errno));
     atexit(cerrarArchivoBloques);
 
     if (ftruncate(fdBloques, cantBloques * tamanioBloques) < 0)
-        error("No se pudo expandir correctamente el archivo %s; error: %s", "bloques.dat", strerror(errno));
+        error("No se pudo expandir correctamente el archivo %s; error: %s", pathBloques, strerror(errno));
 
     ptrBloques = mmap(0, tamanioBloques * cantBloques, PROT_WRITE | PROT_READ, MAP_SHARED, fdBloques, 0);
     if (ptrBloques == MAP_FAILED) 
@@ -72,7 +78,7 @@ int main () {
         *(bloques + i) = &ptrBloques[i * tamanioBloques];
     }
 
-    if (mkdir ("directorioFCB", S_IRUSR | S_IWUSR | S_IXUSR) == -1 && errno != EEXIST)
+    if (mkdir (pathFCBs, S_IRUSR | S_IWUSR | S_IXUSR) == -1 && errno != EEXIST)
         error ("No se pudo crear o verificar que exista el directorio de FCBs, error: %s", strerror (errno));
     
     /* Pruebas de Crear, abrir, y truncar archivo.
@@ -93,21 +99,12 @@ int main () {
     
     retCode = truncarArchivo (pruebaFCB, 0);
     if (retCode < 0) error ("No se pudo truncar correctamente el archivo %s, codigo %d.", pruebaFCB->nombre, retCode);
-    */
     msync(ptrBloques, tamanioBloques * cantBloques, MS_SYNC);
     msync(ptrBitMap, tamanioBitmap, MS_SYNC);
+    */
 
     //escucharAlKernel();
     exit(0);
-}
-
-int copiarABloque (uint32_t numBloque, char * texto, uint32_t longDeTexto) {
-    if (longDeTexto > (uint32_t) tamanioBloques)
-        return -1;
-    for (uint32_t i = 0; i < longDeTexto; i++) 
-        bloques[numBloque][i] = texto[i];
-
-    return 0;
 }
 
 void cerrarConexion () { close (socketMemoria); }
