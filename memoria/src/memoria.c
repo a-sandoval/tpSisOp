@@ -1,7 +1,6 @@
 #include "memoria/include/memoria.h"
 
 int sockets[3];
-t_segmento * segmento0; 
 pthread_t threadCPU, threadFS, threadKernel;
 
 int main() {
@@ -12,11 +11,7 @@ int main() {
 
 	atexit (terminarPrograma);
 
-	espacioDeUsuario = malloc (config_get_int_value(config,"TAM_MEMORIA")); 
-	if (espacioDeUsuario == NULL) error ("No se pudo alocar memoria al espacio de usuario.");
-	atexit (liberarEspacioDeUsuario);
-	segmento0 = crearSegmentoCompartido (); 
-	atexit (liberarSegmentoCompartido);
+	int creacionEspacio();
 
 	//Inicio servidor y queda a la espera de las conexiones de CPU, Kernel y File System
 	
@@ -58,23 +53,4 @@ int main() {
     }
 
 	exit (0);
-}
-
-
-t_segmento* crearSegmentoCompartido() {
-
-	segmento0 = malloc(sizeof(t_segmento)); 
-    segmento0->id=0; 
-    segmento0->direccionBase=0; 
-    segmento0->tamanio = config_get_int_value(config,"TAM_SEGMENTO_0"); 
-
-	return segmento0; 
-}
-
-void liberarEspacioDeUsuario () {
-	free (espacioDeUsuario);
-}
-
-void liberarSegmentoCompartido () {
-	free (segmento0);
 }

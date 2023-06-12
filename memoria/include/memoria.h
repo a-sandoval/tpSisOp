@@ -30,8 +30,7 @@
 #include "shared/include/utilsCliente.h"
 #include "shared/include/configuraciones.h"
 #include "shared/include/utilsCliente.h"
-
-
+#include "manejoSegmentacion.h"
 
 /**
  * @fn void iterator (void* value)
@@ -47,16 +46,8 @@
 t_log* logger; 
 t_log* loggerError; 
 t_config* config; 
-void* espacioDeUsuario; 
-
 
 extern int sockets[3];
-extern t_segmento* segmento0; 
-
-t_segmento* crearSegmentoCompartido(); 
-
-void liberarEspacioDeUsuario ();
-void liberarSegmentoCompartido ();
 
 /**
  * Fin.

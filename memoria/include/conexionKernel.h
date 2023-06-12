@@ -10,14 +10,7 @@
 #include <commons/collections/list.h>
 #include "shared/include/utilsServidor.h"
 #include "shared/include/utilsCliente.h"
-
-typedef struct {
-
-    uint32_t id; 
-    uint32_t direccionBase; 
-    uint32_t tamanio; 
-
-}t_segmento; 
+#include "manejoSegmentacion.h"
 
 
 int ejecutarServidorKernel(int*);

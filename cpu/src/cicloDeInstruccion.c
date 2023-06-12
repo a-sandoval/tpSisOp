@@ -228,7 +228,6 @@ void liberarMemoria() {
 }
 
 
-// RECORDAR LOG MINIMO POR SEG FAULT 
 void mov_in(char* registro, char* direccionLogica){
 
     int valor;

@@ -252,7 +252,6 @@ void createSegment_s(t_pcb *proceso, char **parametros){
                 break;
         
         case COMPACTACION:
-
                 break;
     }
 }
