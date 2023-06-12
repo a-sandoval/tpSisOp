@@ -23,6 +23,7 @@ ARCHIVOS_CPU     := $(CPU_SRC)cpu.c	\
 
 FILESYS_SRC := fileSystem/src/
 ARCHIVOS_FILESYS := $(FILESYS_SRC)fileSystem.c $(FILESYS_SRC)servidorKernel.c $(FILESYS_SRC)conexionMemoria.c \
+					$(FILESYS_SRC)fcb.c \
 				    $(CONFIG) $(UTILS_CLIENTE) $(UTILS_SERVIDOR) 
 
 KERNEL_CONEXIONES := kernel/src/conexiones

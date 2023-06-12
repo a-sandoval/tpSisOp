@@ -1,57 +1,41 @@
 #include "fileSystem/include/fileSystem.h"
 
-int socketCliente;
-int socketMemoria;
-t_log * logger; 
-t_log * loggerError; 
-t_config * config; 
-t_config * superbloque;
+int socketCliente, socketMemoria, fdBitmap, fdBloques;
+int cantBloques, tamanioBitmap, tamanioBloques;
+t_log * logger, * loggerError; 
+t_config * config, * superbloque;
 t_bitarray * bitmap;
+char * ptrBloques, * ptrBitMap, ** bloques;
 
 int main () {
-    logger = iniciarLogger("fileSys.log","file-system");
+    logger = iniciarLogger("fileSys.log","File System");
     config = iniciarConfiguracion("filesys.config");
-    loggerError = iniciarLogger("errores.log", "File-System"); 
+    loggerError = iniciarLogger("errores.log", "File System"); 
     
-    conexionMemoria();
+    atexit(terminarPrograma);
+
+    //conexionMemoria();
+    //atexit(cerrarConexion);
 
     // Se abre el archivo de super-bloque y se agarra la cantidad de bloques y el tamaño de cada bloque.
 
     superbloque = config_create("superbloque.dat");
-    const int cantBloques = config_get_int_value(superbloque, "BLOCK_COUNT");
-    const int tamanioBitmap = BIT_CHAR(cantBloques);
-    const int tamanioBloques = config_get_int_value(superbloque, "BLOCK_SIZE");
+    cantBloques = config_get_int_value(superbloque, "BLOCK_COUNT");
+    tamanioBitmap = BIT_CHAR(cantBloques);
+    tamanioBloques = config_get_int_value(superbloque, "BLOCK_SIZE");
+
+    atexit(cerrarSuperBloque);
 
     // Se abre el archivo del bitmap de bloques, con las flags para crearla si no existe y escribir y leer en caso de ser necesario.
     // A su vez se crea con permisos para que el usuario pueda leerlas y modificarlas por si las dudas.
 
-    int fD = open("bitmap.dat", O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
-    ftruncate(fD, tamanioBitmap);
-    struct stat statFD;
-    if (fD < 0) {
-        log_error(loggerError, "No se abrio correctamente el archivo %s; error: %s", "bitmap.dat", strerror(errno));
-        exit(1);
-    }
-    fstat(fD, &statFD);
-
-    // Si el archivo no existe, procedo a llenarlo con la cantidad que necesita, ¿no deberiamos hacer esto con todos los archivos?
-
-    // Explicación tecnica: El fstat crea un struct llamado stat que contiene información del archivo, por eso se abrio el archivo con 
-    // el syscall open(), este stat tiene un parametro que es el tamaño.
-    // El bitmap de bloques va a tener un bitmap por cada bloque, por lo que va a tener un octavo de la cantidad de bloques.
-    // Por lo tanto, si el tamaño de  este archivo es 0, es porque aun no se creo, y en cuyo caso, como mmap (explicado más adelante) no
-    // funciona si el archivo no esta completo, lleno el archivo con el tamaño requerido, con 0s en todo el archivo.
+    fdBitmap = open("bitmap.dat", O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
+    if (fdBitmap < 0)
+        error("No se abrio correctamente el archivo %s; error: %s", "bitmap.dat", strerror(errno));
+    atexit(cerrarArchivoBitmap);
     
-    // Nota: Tal vez deberia modularizarlo a una función, y globalizar el archivo.
-
-    if (statFD.st_size != tamanioBitmap) {
-        char *filler = malloc (sizeof(char) * tamanioBitmap);
-        for (int i = 0; i < tamanioBitmap; i++) 
-            filler [i] = 0x00;
-        write (fD, filler, tamanioBitmap);
-        log_info(logger, "El archivo no existio previamente, se genera con ceros en cada bit.");
-        free(filler);
-    }
+    if (ftruncate(fdBitmap, tamanioBitmap) < 0)
+        error("No se pudo expandir correctamente el archivo %s; error: %s", "bitmap.dat", strerror(errno));
 
     // mmap es un asco, es lo peor de la galaxia.
     // Se genera un mmap, vinculado directamente al archivo de bitmap, para poder modificarlo directamente.
@@ -62,64 +46,74 @@ int main () {
     // Para hacerlo funcionar creo un bitarray que es una forma de manejar una cantidad de bits especificos, y lo vinculo con el string que 
     // maneja el archivo de bitmap.
 
-    char *ptrBitMap = mmap(0, tamanioBitmap, PROT_WRITE | PROT_READ, MAP_SHARED, fD, 0);
-    if (ptrBitMap == MAP_FAILED) {
-        log_error(loggerError, "No se mapeo correctamente");
-        exit(1);
-    }
+    ptrBitMap = mmap(0, tamanioBitmap, PROT_WRITE | PROT_READ, MAP_SHARED, fdBitmap, 0);
+    if (ptrBitMap == MAP_FAILED) 
+        error("No se mapeo correctamente el bitmap; error: %s", strerror(errno));
+    atexit(cerrarMMapBitmap);
     bitmap = bitarray_create_with_mode(ptrBitMap, cantBloques, LSB_FIRST);
+    atexit(cerrarBitmap);
 
-    // Para comprobar que anda, relleno el archivo con datos basura.
-    // Se puede probar con el comando "od -t x1 ./bitmap.dat".
-    // Se utiliza el comando msync para sincronizar el archivo con el bitarray.
+    fdBloques = open("bloques.dat", O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
+    if (fdBloques < 0)
+        error("No se abrio correctamente el archivo %s; error: %s", "bloques.dat", strerror(errno));
+    atexit(cerrarArchivoBloques);
 
-    for (int i = 0; i < cantBloques; i++)
-        ((rand() % 2) - 1) ? bitarray_clean_bit(bitmap, i) : bitarray_set_bit(bitmap, i); 
+    if (ftruncate(fdBloques, cantBloques * tamanioBloques) < 0)
+        error("No se pudo expandir correctamente el archivo %s; error: %s", "bloques.dat", strerror(errno));
+
+    ptrBloques = mmap(0, tamanioBloques * cantBloques, PROT_WRITE | PROT_READ, MAP_SHARED, fdBloques, 0);
+    if (ptrBloques == MAP_FAILED) 
+        error("No se mapeo correctamente el bitmap; error: %s", strerror(errno));
+    atexit(cerrarMMapBloques);
+    
+    bloques = malloc(cantBloques * sizeof (char *));
+
+    for (int i = 0; i < cantBloques; i++) {
+        *(bloques + i) = &ptrBloques[i * tamanioBloques];
+    }
+
+    if (mkdir ("directorioFCB", S_IRUSR | S_IWUSR | S_IXUSR) == -1 && errno != EEXIST)
+        error ("No se pudo crear o verificar que exista el directorio de FCBs, error: %s", strerror (errno));
+    
+    /* Pruebas de Crear, abrir, y truncar archivo.
+    int retCode;
+    retCode = (access("directorioFCB/prueba.fcb", F_OK)) ? crearArchivo ("prueba") : 0;
+    if (retCode < 0) error ("Se creo archivo incorrectamente, codigo de error: %d, error: %s", retCode, strerror(errno));
+    fcb_t * pruebaFCB = abrirArchivo ("prueba");
+    if (pruebaFCB == NULL) error ("No se pudo abrir el archivo %s.", "prueba");
+
+    retCode = copiarABloque (1, "prueba", 6);
+    if (retCode < 0) error ("No se pudo copiar correctamente la informacion a los bloques");
+    retCode = copiarABloque (2, "prueba", 6);
+    if (retCode < 0) error ("No se pudo copiar correctamente la informacion a los bloques");
+    eliminarBloque (1);
+
+    retCode = truncarArchivo (pruebaFCB, tamanioBloques * 8);
+    if (retCode < 0) error ("No se pudo truncar correctamente el archivo %s, codigo %d.", pruebaFCB->nombre, retCode);
+    
+    retCode = truncarArchivo (pruebaFCB, 0);
+    if (retCode < 0) error ("No se pudo truncar correctamente el archivo %s, codigo %d.", pruebaFCB->nombre, retCode);
+    */
+    msync(ptrBloques, tamanioBloques * cantBloques, MS_SYNC);
     msync(ptrBitMap, tamanioBitmap, MS_SYNC);
 
-    int fdBloques = open("bloques.dat", O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
-    ftruncate(fdBloques, cantBloques * tamanioBloques);
-    close(fdBloques);
-    FILE *bloques = fopen("bloques.dat","r+w");
-    /*
-    int bloques = open("bloques.dat", O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
-    struct stat statBloques;
-    if (bloques < 0) {
-        log_error(loggerError, "No se abrio correctamente el archivo %s; error: %s", "bloques.dat", strerror(errno));
-        exit(1);
-    }
-    fstat(bloques, &statBloques);
-    
-
-    if (statBloques.st_size != tamanioBloques * cantBloques) {
-        char *filler = malloc (sizeof(char) * (tamanioBloques * cantBloques));
-        for (int i = 0; i < tamanioBloques * cantBloques; i++) 
-            filler [i] = ' ';
-        write (bloques, filler, tamanioBloques * cantBloques);
-        log_info(logger, "El archivo no existio previamente, se genera vacio.");
-        free(filler);
-    }
-    
-    char *(ptrBloques)[cantBloques];
-    ptrBloques = mmap(0, tamanioBloques * cantBloques, PROT_WRITE | PROT_READ, MAP_SHARED, bloques, 0);
-    if (ptrBloques[i] == MAP_FAILED) {
-        log_error(loggerError, "No se mapeo correctamente.");
-        exit(1);
-    }
-    ptrBloques[3] = string_duplicate("Prueba \n");
-    msync(ptrBloques, 4096, MS_SYNC);
-    */
-
-    escucharAlKernel();
-
-    munmap(ptrBitMap, tamanioBitmap);
-    //munmap(ptrBloques, tamanioBloques);
-    close(fD);
-    //close(socketMemoria);
-    fclose(bloques);
-    config_destroy(superbloque);
-    bitarray_destroy(bitmap);
-    terminarPrograma();
+    //escucharAlKernel();
     exit(0);
 }
 
+int copiarABloque (uint32_t numBloque, char * texto, uint32_t longDeTexto) {
+    if (longDeTexto > (uint32_t) tamanioBloques)
+        return -1;
+    for (uint32_t i = 0; i < longDeTexto; i++) 
+        bloques[numBloque][i] = texto[i];
+
+    return 0;
+}
+
+void cerrarConexion () { close (socketMemoria); }
+void cerrarSuperBloque () { config_destroy (superbloque); }
+void cerrarBitmap () { bitarray_destroy(bitmap); }
+void cerrarMMapBitmap () { munmap(ptrBitMap, tamanioBitmap); }
+void cerrarArchivoBitmap () { close (fdBitmap); }
+void cerrarMMapBloques () { munmap(ptrBloques, tamanioBloques); }
+void cerrarArchivoBloques () { close (fdBloques); }

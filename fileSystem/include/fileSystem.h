@@ -11,10 +11,12 @@
 
 #include <errno.h>
 #include <fcntl.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 
 #include "fileSystem/include/conexionMemoria.h"
 
@@ -26,14 +28,33 @@
 #include "shared/include/configuraciones.h"
 
 #include "fileSystem/include/servidorKernel.h"
+#include "fileSystem/include/fcb.h"
 
-int socketCliente;
+extern int socketCliente;
 extern int socketMemoria;
+extern int fdBitmap;
+extern int fdBloques;
+extern int cantBloques;
+extern int tamanioBitmap;
+extern int tamanioBloques;
 extern t_log * logger; 
 extern t_log * loggerError; 
 extern t_config * config; 
 extern t_config * superbloque;
 extern t_bitarray * bitmap;
+extern char * ptrBloques;
+extern char * ptrBitMap;
+extern char ** bloques;
+
+int copiarABloque (uint32_t numBloque, char * texto, uint32_t longTexto);
+
+void cerrarConexion ();
+void cerrarSuperBloque ();
+void cerrarBitmap ();
+void cerrarMMapBitmap ();
+void cerrarArchivoBitmap ();
+void cerrarMMapBloques ();
+void cerrarArchivoBloques ();
 
 #endif
 
