@@ -12,7 +12,6 @@
 #include "shared/include/utilsServidor.h"
 #include "shared/include/utilsCliente.h"
 #include "shared/include/configuraciones.h"
-#include "shared/include/utilsCliente.h"
 
 typedef struct {
     uint32_t id; 
@@ -26,9 +25,13 @@ typedef struct {
 } t_hueco_libre; 
 
 extern t_segmento* segmento0; 
-void* espacioDeUsuario; 
+extern void* espacioDeUsuario; 
+extern t_list* huecosLibres; 
 void liberarEspacioDeUsuario ();
 void liberarSegmentoCompartido ();
+
+void creacionEspacio(); 
+void creacionListaHuecosLibres(); 
 
 t_segmento* crearSegmentoCompartido(); 
 

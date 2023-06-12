@@ -35,7 +35,7 @@ ARCHIVOS_KERNEL  := kernel/src/kernel.c \
                     $(CONFIG) $(UTILS_CLIENTE) $(UTILS_SERVIDOR) $(CONTEXTO_EJECUCION)
 
 ARCHIVOS_MEMORIA := memoria/src/memoria.c memoria/src/conexionCPU.c memoria/src/conexionFS.c memoria/src/conexionKernel.c memoria/src/manejoSegmentacion.c \
-                    $(CONFIG)                  $(UTILS_SERVIDOR) 
+                    $(CONFIG) $(UTILS_CLIENTE)  $(UTILS_SERVIDOR) 
 
 CC := gcc
 CFLAGS := -ggdb -I ./ -lcommons -Wall -Wextra

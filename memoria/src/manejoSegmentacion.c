@@ -1,6 +1,8 @@
-#include "include/manejoSegmentacion.h"
+#include "memoria/include/manejoSegmentacion.h"
 
 t_segmento * segmento0; 
+void* espacioDeUsuario; 
+t_list* huecosLibres; 
 
 void creacionEspacio(){
     espacioDeUsuario = malloc (config_get_int_value(config,"TAM_MEMORIA")); 
@@ -11,7 +13,18 @@ void creacionEspacio(){
 	atexit (liberarSegmentoCompartido);
 }
 
-t_segmento* crearSegmentoCompartido() {
+void creacionListaHuecosLibres() {
+
+    huecosLibres = list_create(); 
+    
+    t_hueco_libre* primerHuecoLibre = malloc(sizeof(t_hueco_libre)); 
+
+    primerHuecoLibre->direccionBase = config_get_int_value(config,"TAM_SEGMENTO_0"); 
+    primerHuecoLibre->tamanioHueco = config_get_int_value(config,"TAM_MEMORIA") - primerHuecoLibre->direccionBase; 
+    
+}
+
+t_segmento* crearSegmentoCompartido(){
 
 	segmento0 = malloc(sizeof(t_segmento)); 
     segmento0->id=0; 
@@ -21,11 +34,13 @@ t_segmento* crearSegmentoCompartido() {
 	return segmento0; 
 }
 
+
+
  //Federico esto nunca se libera
-void liberarEspacioDeUsuario () {
+void liberarEspacioDeUsuario() {
 	free (espacioDeUsuario);
 }
 
-void liberarSegmentoCompartido () {
+void liberarSegmentoCompartido() {
 	free (segmento0);
 }

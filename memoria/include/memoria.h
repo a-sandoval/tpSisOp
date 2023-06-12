@@ -29,8 +29,7 @@
 #include "shared/include/utilsServidor.h"
 #include "shared/include/utilsCliente.h"
 #include "shared/include/configuraciones.h"
-#include "shared/include/utilsCliente.h"
-#include "manejoSegmentacion.h"
+
 
 /**
  * @fn void iterator (void* value)
@@ -48,6 +47,8 @@ t_log* loggerError;
 t_config* config; 
 
 extern int sockets[3];
+extern void* espacioDeUsuario; 
+extern t_list* huecosLibres; 
 
 /**
  * Fin.

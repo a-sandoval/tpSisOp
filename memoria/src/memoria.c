@@ -11,7 +11,8 @@ int main() {
 
 	atexit (terminarPrograma);
 
-	int creacionEspacio();
+	creacionEspacio();
+	creacionListaHuecosLibres(); 
 
 	//Inicio servidor y queda a la espera de las conexiones de CPU, Kernel y File System
 	

@@ -13,6 +13,8 @@ int ejecutarServidorKernel(int *socketCliente){
 		switch (peticion) {
 			case NEWPCB:
 				log_info(logger, "Creo tabla de Segmentos y envio segmento 0");
+				t_list* tablaSegmentos = crearTablaDeSegmentosInicial();
+				enviarTablaSegmentos(tablaSegmentos);
 				break;
             case ENDPCB:
 				log_info(logger, "Elimino estructuras asociadas a este PCB");
@@ -46,27 +48,26 @@ t_list* crearTablaDeSegmentosInicial() {
 
 //serializar tabla de Segmentos
 
-/*
-void enviarTablaDeSegmentos(t_list* tablaDeSegmentos){ 
+void enviarTablaSegmentos(t_list* tablaDeSegmentos){ 
     t_paquete* paquete = crearPaquete();
     
     paquete->codigo_operacion = TABLADESEGMENTOS;
 
-    uint32_t tablaDeSegmentosSize = obtenerTablaDeSegmentos(tablaDeSegmentos);
+    uint32_t tablaDeSegmentosSize = list_size(tablaDeSegmentos);
    
     uint32_t i;
-    for(i=0;i<contextoEjecucion->instruccionesSize;i++){
-        agregarAPaquete (paquete, list_get(tablaDeSegmentos, i), sizeof(char) * (strlen(list_get(tablaDeSegmentos, i)) + 1 ));
+    for(i=0;i<tablaDeSegmentosSize;i++){
+        agregarSegmentoAPaquete(paquete,list_get(tablaDeSegmentos, i));
     }
-
 
     enviarPaquete(paquete, sockets[0]);
 
 	eliminarPaquete(paquete);
 }
 
-uint32_t obtenerTablaDeSegmentosSize(t_list* tablaDeSegmentos){
-
+void agregarSegmentoAPaquete(t_paquete* paquete, t_segmento* segmento){
+	agregarAPaquete(paquete, (void*)&segmento->id, sizeof(uint32_t));
+	agregarAPaquete(paquete, (void*)&segmento->direccionBase, sizeof(uint32_t));
+	agregarAPaquete(paquete, (void*)&segmento->tamanio, sizeof(uint32_t));
 }
 
-*/
