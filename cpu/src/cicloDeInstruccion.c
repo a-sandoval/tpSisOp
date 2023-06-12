@@ -233,7 +233,7 @@ void mov_in(char* registro, char* direccionLogica){
 
     int valor;
     int tamRegistro = obtenerTamanioReg(registro);
-    int dirFisica = mmu(direccionLogica, tamRegistro);
+    uint32_t dirFisica = mmu(direccionLogica, tamRegistro);
 
     t_paquete* peticion = crearPaquete();
     peticion->codigo_operacion = READ;
@@ -246,23 +246,23 @@ void mov_in(char* registro, char* direccionLogica){
     dictionary_remove_and_destroy(contextoEjecucion->registrosCPU, registro, free); 
     dictionary_put(contextoEjecucion->registrosCPU, registro, string_duplicate(valorInsertar));
 
-    log_info(logger, "PID: %d - Accion: %s -  Segmento: %d - Direccion Fisica: %d - Valor:  %d", contextoEjecucion->pid, "LEER", nroSegmento, dirFisica, valor );
+    log_info(logger, "PID: %d - Accion: %s -  Segmento: %d - Direccion Fisica: %d - Valor:  %d", contextoEjecucion->pid, "LEER", nroSegmento, dirFisica, valor);
     
 
 };
 
 void mov_out(char* direccionLogica, char* registro){
 
-    void* valor = dictionary_get(contextoEjecucion->registrosCPU, registro);
+    int valor = *((int*)dictionary_get(contextoEjecucion->registrosCPU, registro));
     int tamRegistro = obtenerTamanioReg(registro);
 
-    int dirFisica = mmu(direccionLogica, tamRegistro);
+    uint32_t dirFisica = mmu(direccionLogica, tamRegistro);
 
     t_paquete* peticion = crearPaquete();
     peticion->codigo_operacion = WRITE;
 
     agregarAPaquete(peticion, (void*)&dirFisica, sizeof(int));
-    agregarAPaquete(peticion, valor, sizeof(char) * 16); // como mucho es un registro de 16 bytes no?
+    agregarAPaquete(peticion, (void*)&valor, sizeof(char) * 16); // como mucho es un registro de 16 bytes no?
 
     enviarPaquete(peticion, conexionAMemoria);
 
@@ -273,17 +273,17 @@ void mov_out(char* direccionLogica, char* registro){
 };  
 
 
-int mmu(char* direccionLogica, int tamValor){
+uint32_t mmu(char* direccionLogica, int tamValor){
     int dirFisica;
     int dirLogica = atoi(direccionLogica);
     int tamMaxSegmento = obtenerTamanioMaxSeg();
 
     nroSegmento = floor(dirLogica/tamMaxSegmento);
-    int desplazamiento = dirLogica % tamMaxSegmento;
+    uint32_t desplazamiento = dirLogica % tamMaxSegmento;
 
     t_segmento* segmento = list_get(contextoEjecucion->tablaDeSegmentos, nroSegmento);
     
-    int base = segmento->direccionBase;
+    uint32_t base = segmento->direccionBase;
 
     if(desplazamiento + tamValor > segmento->tamanio){
         char * terminado = string_duplicate ("SEG_FAULT");
