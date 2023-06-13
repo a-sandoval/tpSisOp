@@ -3,6 +3,8 @@
 
 #include "shared/include/utilsCliente.h"
 #include "shared/include/utilsServidor.h"
+#include "fileSystem/include/fcb.h"
+#include "fileSystem/include/bloques.h"
 
 void escucharAlKernel();
 void ejecutarServidor();

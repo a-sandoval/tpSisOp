@@ -15,8 +15,8 @@ int main () {
     
     atexit(terminarPrograma);
 
-    //conexionMemoria();
-    //atexit(cerrarConexion);
+    conexionMemoria();
+    atexit(cerrarConexion);
 
     // Se abre el archivo de super-bloque y se agarra la cantidad de bloques y el tamaño de cada bloque.
 
@@ -103,7 +103,7 @@ int main () {
     msync(ptrBitMap, tamanioBitmap, MS_SYNC);
     */
 
-    //escucharAlKernel();
+    escucharAlKernel();
     exit(0);
 }
 

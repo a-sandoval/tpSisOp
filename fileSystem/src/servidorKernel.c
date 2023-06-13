@@ -44,3 +44,27 @@ void iterator (void *value) {
     eliminarPaquete(paquete);
     */
 }
+
+void recibirInstruccion () {
+	usleep (tiempoDeEspera * 1000);
+	switch (instruccion) {
+		case F_OPEN:
+			fcb_t * nuevoArchivo = abrirArchivo (nombreArchivo);
+			if (nuevoArchivo == NULL) {
+				if (crearArchivo(nombreArchivo) < 0)
+					return;
+				log_info (logger, "Crear Archivo: <%s>", nombreArchivo);
+				nuevoArchivo = abrirArchivo (nombreArchivo);
+			}
+			log_info (logger, "Abrir Archivo: <%s>", nombreArchivo);
+			enviarArchivo ();
+			break;
+		case F_TRUNCATE:
+			truncarArchivo (fcbRecibido, tamanioNuevo);
+			log_info (logger, "Truncar Archivo: <%s> - Tamaño: <%d>", fcbRecibido->nombre, tamanioNuevo);
+			break;
+		case F_READ:
+		case F_WRITE:
+			break;
+	}
+}
