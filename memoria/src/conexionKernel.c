@@ -3,7 +3,7 @@
 
 int ejecutarServidorKernel(int *socketCliente){
 	
-	log_info(logger, "Conectado el Kernel");
+	log_debug(logger, "Conectado el Kernel");
 	
 	while (1) {
 		int peticion = recibirOperacion(*socketCliente);
@@ -12,12 +12,14 @@ int ejecutarServidorKernel(int *socketCliente){
 
 		switch (peticion) {
 			case NEWPCB:
-				log_info(logger, "Creo tabla de Segmentos y envio segmento 0");
-				t_list* tablaSegmentos = crearTablaDeSegmentosInicial();
-				enviarTablaSegmentos(tablaSegmentos);
+				t_proceso* procesoNuevo = crearProcesoEnMemoria(recibirPID(*socketCliente)); 
+				enviarTablaSegmentos(procesoNuevo);
 				break;
             case ENDPCB:
-				log_info(logger, "Elimino estructuras asociadas a este PCB");
+				uint32_t pid = recibirPID(*socketCliente);
+				//Primero tendriamos que buscar y borrar todos los segmentos que guardo este pid, actualizar huecos libres
+				list_remove_and_destroy_element(tablaDeTablasDeSegmentos,pid,(void*)eliminarProcesoDeMemoria); 
+				log_info(logger, "Eliminación de Proceso PID: %d",pid);
 				break;
 			case CREATE_SEGMENT_OP:
                 log_info(logger, "Creo nuevo segmento de memoria");
@@ -46,18 +48,44 @@ t_list* crearTablaDeSegmentosInicial() {
 
 }
 
+t_proceso* crearProcesoEnMemoria(uint32_t pid) {
+
+	t_proceso* procesoNuevo = malloc(sizeof(t_proceso)); 
+	procesoNuevo->pid = pid; 
+	procesoNuevo->tablaDeSegmentosAsociada = crearTablaDeSegmentosInicial();
+	list_add(tablaDeTablasDeSegmentos,(void*)procesoNuevo);
+	log_info(logger, "Creacion de Proceso PID: %d", procesoNuevo->pid);
+
+	return procesoNuevo;
+}
+
+uint32_t recibirPID(int socketCliente) {
+
+	int size, desplazamiento=0; 
+	uint32_t pid; 
+
+	void* buffer = recibirBuffer(socketCliente, &size);
+	desplazamiento += sizeof(int);
+	memcpy(&(pid), buffer + desplazamiento, sizeof(uint32_t));
+
+	return pid; 
+
+}
+
 //serializar tabla de Segmentos
 
-void enviarTablaSegmentos(t_list* tablaDeSegmentos){ 
+void enviarTablaSegmentos(t_proceso* procesoEnMemoria){ 
     t_paquete* paquete = crearPaquete();
     
     paquete->codigo_operacion = TABLADESEGMENTOS;
 
-    uint32_t tablaDeSegmentosSize = list_size(tablaDeSegmentos);
+    uint32_t tablaDeSegmentosSize = list_size(procesoEnMemoria->tablaDeSegmentosAsociada);
+
+	agregarAPaquete(paquete,(void*)&procesoEnMemoria->pid,sizeof(uint32_t)); 
    
     uint32_t i;
     for(i=0;i<tablaDeSegmentosSize;i++){
-        agregarSegmentoAPaquete(paquete,list_get(tablaDeSegmentos, i));
+        agregarSegmentoAPaquete(paquete,list_get(procesoEnMemoria->tablaDeSegmentosAsociada, i));
     }
 
     enviarPaquete(paquete, sockets[0]);
@@ -69,5 +97,11 @@ void agregarSegmentoAPaquete(t_paquete* paquete, t_segmento* segmento){
 	agregarAPaquete(paquete, (void*)&segmento->id, sizeof(uint32_t));
 	agregarAPaquete(paquete, (void*)&segmento->direccionBase, sizeof(uint32_t));
 	agregarAPaquete(paquete, (void*)&segmento->tamanio, sizeof(uint32_t));
+}
+
+void eliminarProcesoDeMemoria(t_proceso* proceso) {
+	list_remove_element(proceso->tablaDeSegmentosAsociada, (void*)segmento0); 
+	list_destroy_and_destroy_elements(proceso->tablaDeSegmentosAsociada, free);
+	free(proceso); 
 }
 

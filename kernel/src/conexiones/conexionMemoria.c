@@ -8,8 +8,6 @@ void conexionMemoria() {
     logger = cambiarNombre (logger,"Kernel-Memoria");
     char * nombreAnteriorErrores = duplicarNombre (loggerError);
     loggerError = cambiarNombre (loggerError, "Errores Kernel-Memoria");
-    
-    
 
     conexionAMemoria = conexion("MEMORIA");
     logger = cambiarNombre(logger, nombreAnterior);
@@ -23,27 +21,28 @@ void recibirEstructurasInicialesMemoria(t_pcb* pcb) {
     
     char * nombreAnterior = duplicarNombre(logger);
     logger = cambiarNombre(logger,"Kernel-Memoria");
-    //t_paquete* paquete = crearPaquete(); 
-    //paquete->codigo_operacion = NEWPCB; 
+    
+    t_paquete* peticion = crearPaquete(); 
+    peticion->codigo_operacion = NEWPCB; 
+    agregarAPaquete(peticion,(void*)&pcb->pid, sizeof(uint32_t));
+    enviarPaquete(peticion, conexionAMemoria); 
     log_debug(logger, "PID <%d>: Se esta solicitando estructuras iniciales de memoria.", pcb->pid);
-    //enviarPaquete(paquete, conexionAMemoria); 
-    enviarCodOp(NEWPCB, conexionAMemoria);
     logger = cambiarNombre(logger, nombreAnterior);
     free (nombreAnterior);
-
 }
 
-void liberarMemoriaPCB(t_pcb* proceso) {
+
+void liberarMemoriaPCB(t_pcb* proceso){
     
     char * nombreAnterior = duplicarNombre(logger);
     logger = cambiarNombre(logger,"Kernel-Memoria");
 
-    /*t_paquete* paquete = crearPaquete(); 
-    paquete->codigo_operacion=ENDPCB; 
-
-    enviarPaquete(paquete,conexionAMemoria); */
     log_info(logger, "PID <%d>: Se envia señal para eliminar estructuras en memoria.", proceso->pid);
-    enviarCodOp (ENDPCB, conexionAMemoria);
     logger = cambiarNombre(logger, nombreAnterior);
     free (nombreAnterior);
+
+    t_paquete* peticion = crearPaquete(); 
+    peticion->codigo_operacion = ENDPCB; 
+    agregarAPaquete(peticion,(void*)&proceso->pid, sizeof(uint32_t));
+    enviarPaquete(peticion, conexionAMemoria); 
 }

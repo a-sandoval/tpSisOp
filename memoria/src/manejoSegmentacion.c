@@ -3,7 +3,9 @@
 t_segmento * segmento0; 
 void* espacioDeUsuario; 
 t_list* huecosLibres; 
+t_list* tablaDeTablasDeSegmentos; 
 
+// Creación estructuras
 void creacionEspacio(){
     espacioDeUsuario = malloc (config_get_int_value(config,"TAM_MEMORIA")); 
 	if (espacioDeUsuario == NULL) error ("No se pudo alocar memoria al espacio de usuario.");
@@ -21,6 +23,8 @@ void creacionListaHuecosLibres() {
 
     primerHuecoLibre->direccionBase = config_get_int_value(config,"TAM_SEGMENTO_0"); 
     primerHuecoLibre->tamanioHueco = config_get_int_value(config,"TAM_MEMORIA") - primerHuecoLibre->direccionBase; 
+
+	list_add(huecosLibres,(void*)primerHuecoLibre); 
     
 }
 
@@ -34,9 +38,6 @@ t_segmento* crearSegmentoCompartido(){
 	return segmento0; 
 }
 
-
-
- //Federico esto nunca se libera
 void liberarEspacioDeUsuario() {
 	free (espacioDeUsuario);
 }
@@ -44,3 +45,10 @@ void liberarEspacioDeUsuario() {
 void liberarSegmentoCompartido() {
 	free (segmento0);
 }
+
+// Esquema de memoria
+
+void ubicarSegmentosEnEspaciosLibres(t_segmento* segmento){
+
+}
+

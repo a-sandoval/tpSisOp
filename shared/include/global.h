@@ -15,7 +15,7 @@
     #define NUM_COMANDOS 16
     typedef enum {
         SET, MOV_IN, MOV_OUT, IO,
-        F_OPEN, F_CLOSE, F_SEEK, F_READ, F_WRITE, F_TRUNCATE,
+        F_OPEN, F_CLOSE, F_SEEK, F_READ, F_WRITE, F_TRUNCATE, F_CREATE,
         WAIT, SIGNAL,
         CREATE_SEGMENT, DELETE_SEGMENT,
         YIELD, EXIT

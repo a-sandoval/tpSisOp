@@ -13,6 +13,7 @@ int main() {
 
 	creacionEspacio();
 	creacionListaHuecosLibres(); 
+	tablaDeTablasDeSegmentos=list_create(); 
 
 	//Inicio servidor y queda a la espera de las conexiones de CPU, Kernel y File System
 	

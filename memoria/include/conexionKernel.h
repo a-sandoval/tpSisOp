@@ -12,16 +12,20 @@
 #include "manejoSegmentacion.h"
 
 extern t_config* config;
-extern t_log* logger; 
-extern t_segmento* segmento0; 
-extern void* espacioDeUsuario; 
+extern t_log* logger;
+extern t_segmento* segmento0;
+extern void* espacioDeUsuario;
 extern t_list* huecosLibres; 
+extern t_list* tablaDeTablasDeSegmentos; 
 extern int sockets[3];
 
 int ejecutarServidorKernel(int*);
 t_list* crearTablaDeSegmentosInicial(); 
-void enviarTablaSegmentos(t_list* tablaDeSegmentos);
+void enviarTablaSegmentos(t_proceso* procesoEnMemoria);
 void agregarSegmentoAPaquete(t_paquete* paquete, t_segmento* segmento);
 
+t_proceso* crearProcesoEnMemoria(uint32_t pid); 
+uint32_t recibirPID(int socketCliente); 
 
+void eliminarProcesoDeMemoria(t_proceso* proceso); 
 #endif

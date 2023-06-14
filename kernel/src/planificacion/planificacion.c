@@ -35,7 +35,7 @@ void planificarALargoPlazo(){
         
      
     }
-}
+} 
 
 
 void planificarACortoPlazo(t_pcb *(*proximoAEjecutar)()){

@@ -6,6 +6,7 @@
 #include "kernel/include/conexiones/conexionMemoria.h"
 #include "kernel/include/peticiones/pcb.h"
 #include "kernel/include/peticiones/manejoRecursos.h"
+#include "kernel/include/peticiones/manejoArchivos.h"
 #include "kernel/include/planificacion/planificacion.h"
 #include "kernel/include/planificacion/algoritmosCortoPlazo.h"
 
@@ -15,8 +16,18 @@ extern t_contexto* contextoEjecucion;
 extern sem_t hayProcesosReady;
 extern int *instanciasRecursos;
 extern int conexionAMemoria; 
+extern int conexionAFS; 
+
+typedef struct {
+
+    uint32_t id; 
+    uint32_t direccionBase; 
+    uint32_t tamanio; 
+
+}t_segmento; 
 
 void retornoContexto(t_pcb*, t_contexto*);
+void volverACPU(t_pcb*); 
 
 void signal_s(t_pcb*, char **parametros);
 void wait_s(t_pcb*,char **parametros);
@@ -32,6 +43,8 @@ void yield_s(t_pcb*);
 void exit_s(t_pcb*,char **parametros);
 
 void bloquearIO(int *tiempo);
+
+void recibirTablaActualizada();
 
 void loggearBloqueoDeProcesos(t_pcb*,char* motivo); 
 

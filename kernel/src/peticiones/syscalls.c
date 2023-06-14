@@ -7,15 +7,6 @@ char* outOfMemory = "OUT_OF_MEMORY";
 estadoProceso estadoAnterior; 
 
 void retornoContexto(t_pcb *proceso, t_contexto *contextoEjecucion){
-
-    /*char *temp = string_duplicate(", parametros");
-
-    for (int i = 0; i < contextoEjecucion->motivoDesalojo->parametrosLength; i++) 
-        string_append_with_format(&temp, " %s ", contextoEjecucion->motivoDesalojo->parametros[i]);
-
-    log_info (logger, "Contexto retornado con motivo: comando %d%s", contextoEjecucion->motivoDesalojo->comando, temp);
-
-    free (temp); */  
     switch (contextoEjecucion->motivoDesalojo->comando){
         case IO:
             io_s(proceso, contextoEjecucion->motivoDesalojo->parametros);
@@ -67,6 +58,13 @@ void retornoContexto(t_pcb *proceso, t_contexto *contextoEjecucion){
     }
 }
 
+void volverACPU(t_pcb* proceso) {
+    contextoEjecucion = procesarPCB(proceso);
+    rafagaCPU = contextoEjecucion->rafagaCPUEjecutada; 
+    retornoContexto(proceso, contextoEjecucion); 
+    
+}
+
 void wait_s(t_pcb *proceso, char **parametros){
 
     char *recurso = parametros[0];
@@ -100,9 +98,7 @@ void wait_s(t_pcb *proceso, char **parametros){
         
     } 
     else {
-        contextoEjecucion = procesarPCB(proceso);
-        rafagaCPU = contextoEjecucion->rafagaCPUEjecutada; 
-        retornoContexto(proceso, contextoEjecucion); 
+        volverACPU(proceso);
     }
 }
 
@@ -141,9 +137,7 @@ void signal_s(t_pcb *proceso, char **parametros){
     
     }
     
-    contextoEjecucion = procesarPCB(proceso);
-    rafagaCPU = contextoEjecucion->rafagaCPUEjecutada; 
-    retornoContexto(proceso, contextoEjecucion);
+    volverACPU(proceso); 
 }
 
 void io_s(t_pcb *proceso, char **parametros){   
@@ -200,24 +194,53 @@ void exit_s(t_pcb* proceso, char **parametros){
 
     liberarMemoriaPCB(proceso); 
 
-    destruirPCB(proceso);
+    destruirPCB(proceso); 
     sem_post(&semGradoMultiprogramacion); 
 }
 
-/*
+
 void fopen_s(t_pcb *proceso, char **parametros){
+
+    char* archivo = parametros[0];
+    //primero veo si esta en la tabla global
+    if(estaEnLaTablaGlobal(archivo)){
+
+    }
+    else{
+        solicitarArchivoFS(archivo);
+    }
+    
+
 }
 
+
+
+/*
 void fclose_s(t_pcb *proceso, char **parametros){
+
+     log_info(logger, "PID: <PID> - Cerrar Archivo: <NOMBRE ARCHIVO>",);
+    
+}
+
+void ftruncate_s(t_pcb *proceso, char **parametros){
+
+     log_info(logger, "PID: <PID> - Archivo: <NOMBRE ARCHIVO> - Tamaño: <TAMAÑO>",);
+    
 }
 
 void fseek_s(t_pcb *proceso, char **parametros){
+
+    log_info(logger, "PID: <PID> - Actualizar puntero Archivo: <NOMBRE ARCHIVO> - Puntero <PUNTERO>",);
 }
 
 void fread_s(t_pcb *proceso, char **parametros){
+
+    log_info(logger, "PID: <PID> - Leer Archivo: <NOMBRE ARCHIVO> - Puntero <PUNTERO> - Dirección Memoria <DIRECCIÓN MEMORIA> - Tamaño <TAMAÑO>",);
 }
 
 void fwrite_s(t_pcb *proceso, char **parametros){
+
+    log_info(logger, "PID: <PID> - Escribir Archivo: <NOMBRE ARCHIVO> - Puntero <PUNTERO> - Dirección Memoria <DIRECCIÓN MEMORIA> - Tamaño <TAMAÑO>"",);
 }
 */
 
@@ -226,22 +249,25 @@ void createSegment_s(t_pcb *proceso, char **parametros){
     uint32_t idSegmento = parametros[0];
     int tamanio = parametros[1];
 
-    log_info(logger, "PID: %d - Crear Segmento - Id: %d - Tamanio: %d", proceso->pid, idSegmento, tamanio);
     
     t_paquete* peticion = crearPaquete();
     peticion->codigo_operacion = CREATE_SEGMENT_OP;
 
-    agregarAPaquete(peticion, idSegmento, sizeof(uint32_t));
-    agregarAPaquete(peticion, tamanio, sizeof(uint32_t));
+    agregarAPaquete(peticion, (void*)&contextoEjecucion->pid, sizeof(uint32_t));
+    agregarAPaquete(peticion, (void*)&idSegmento, sizeof(uint32_t));
+    agregarAPaquete(peticion, (void*)&tamanio, sizeof(uint32_t));
 
     enviarPaquete(peticion, conexionAMemoria);
     
-    t_paquete* rdoPeticion = recibirPaquete(conexionAMemoria);
+    t_paquete* rdoPeticion = crearPaquete();
+    rdoPeticion = recibirPaquete(conexionAMemoria);
     // aca deberia venir en el opcode el rdo de lo que paso en memoria para saber como seguir
 
     switch(rdoPeticion->codigo_operacion){
         case SUCCESS:
-                // habria que agregar el segmento a la tabla no?
+                log_info(logger, "PID: %d - Crear Segmento - Id: %d - Tamanio: %d", proceso->pid, idSegmento, tamanio);
+                // me mandan la tabla con el nuevo segmento incorporado
+                recibirTablaActualizada();
                 contextoEjecucion = procesarPCB(proceso);
                 rafagaCPU = contextoEjecucion->rafagaCPUEjecutada; 
                 retornoContexto(proceso, contextoEjecucion);
@@ -252,8 +278,17 @@ void createSegment_s(t_pcb *proceso, char **parametros){
                 break;
         
         case COMPACTACION:
+                 log_info(logger, "Compactacion: Se solicito compactacion ");
+                 log_info(logger,  "Compactacion: Esperando Fin de Operaciones de FS");
+                log_info(logger,  "Se finalizo el proceso de compactacion");
+
+                //dsps de la compactacion
+                 log_info(logger, "PID: %d - Crear Segmento - Id: %d - Tamanio: %d", proceso->pid, idSegmento, tamanio);
                 break;
     }
+
+    free(peticion);
+    free(rdoPeticion);
 }
 
 
@@ -262,15 +297,16 @@ void deleteSegment_s(t_pcb *proceso, char **parametros){
     
     uint32_t idSegmento = parametros[0];
 
-    log_info(logger, "PID: %d - EliminarSegmento - Id: %d", proceso->pid, idSegmento);
+    log_info(logger, "PID: %d - Eliminar Segmento - Id: %d", proceso->pid, idSegmento);
 
     t_paquete* peticion = crearPaquete();
     peticion->codigo_operacion = DELETE_SEGMENT_OP;
 
-    agregarAPaquete(peticion, idSegmento, sizeof(int));
+    agregarAPaquete(peticion, (void*)&contextoEjecucion->pid, sizeof(uint32_t));
+    agregarAPaquete(peticion, (void*)&idSegmento, sizeof(int));
     enviarPaquete(peticion, conexionAMemoria);
 
-    contextoEjecucion->tablaDeSegmentos = recibirTablaActualizada();
+    recibirTablaActualizada();
 
     contextoEjecucion = procesarPCB(proceso);
     rafagaCPU = contextoEjecucion->rafagaCPUEjecutada; 
@@ -278,8 +314,37 @@ void deleteSegment_s(t_pcb *proceso, char **parametros){
 
 }
 
-t_list* recibirTablaActualizada(){
-    //todavia no se como va a ser la tabla
+void recibirTablaActualizada(){
+
+	int size, desplazamiento = 0;
+	void * buffer;
+
+	buffer = recibirBuffer(conexionAMemoria, &size);
+
+    desplazamiento += sizeof(int);
+    memcpy(&(contextoEjecucion->pid), buffer + desplazamiento, sizeof(uint32_t));
+    desplazamiento += sizeof(uint32_t);
+    
+    t_segmento* segmentoAux = malloc(sizeof(t_segmento));
+
+    list_clean_and_destroy_elements (contextoEjecucion->tablaDeSegmentos, free);
+    
+    memcpy(&(contextoEjecucion->tablaDeSegmentosSize), buffer + desplazamiento, sizeof(uint32_t));
+    desplazamiento += sizeof(uint32_t);
+    
+    for (uint32_t i = 0; i < contextoEjecucion->tablaDeSegmentos; i++) {
+
+        memcpy (&segmentoAux->id, buffer + desplazamiento, sizeof (uint32_t));
+        desplazamiento += sizeof (uint32_t);
+        memcpy (&segmentoAux->direccionBase, buffer + desplazamiento, sizeof (uint32_t));
+        desplazamiento += sizeof (uint32_t);
+        memcpy (&segmentoAux->tamanio, buffer + desplazamiento, sizeof (uint32_t));
+        desplazamiento += sizeof (uint32_t);
+        
+        list_add (contextoEjecucion->tablaDeSegmentos, segmentoAux);
+        free (segmentoAux);
+    }
+    
 }
 
 

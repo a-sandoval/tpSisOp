@@ -49,6 +49,7 @@ t_config* config;
 extern int sockets[3];
 extern void* espacioDeUsuario; 
 extern t_list* huecosLibres; 
+extern t_list* tablaDeTablasDeSegmentos; 
 
 /**
  * Fin.

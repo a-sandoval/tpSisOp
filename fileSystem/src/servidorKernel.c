@@ -8,22 +8,13 @@ void escucharAlKernel() {
 }
 
 void ejecutarServidor() {
-	t_list* lista;
-	
 	while (1) {
 		int cod_op = recibirOperacion(socketCliente); 
 		switch (cod_op) {
 			case PAQUETE:
-				lista = recibirPaquete(socketCliente);
-				list_iterate(lista, (void*) iterator); 
-				//list_destroy_and_destroy_elements(lista, (void*)element_destroyer);
-				list_destroy(lista);
+				recibirInstruccion (socketCliente);
 				break;
 			case MENSAJE:
-				char *mensaje = recibirMensaje(socketCliente);
-				log_info(logger, "%s", mensaje);
-				free(mensaje);
-                enviarMensaje("Finalizado", socketCliente);
 				break;
             case -1:
 				log_info(logger, "Se desconecto el Kernel");
@@ -45,19 +36,31 @@ void iterator (void *value) {
     */
 }
 
-void recibirInstruccion () {
+void recibirInstruccion (int socket) {
+	int size, desplazamiento = 0;
+	void *data = recibirBuffer (socketCliente, &size);
+	desplazamiento += sizeof (int);
+	operacionFS_e instruccion;
+	memcpy (&(instruccion), data + desplazamiento, sizeof (operacionFS_e)), desplazamiento += sizeof desplazamiento;
+	
+	//fcb_t * fcbRecibido = malloc (sizeof (fcb_t));
 	usleep (tiempoDeEspera * 1000);
 	switch (instruccion) {
 		case F_OPEN:
+			int longDeNombre;
+			memcpy (&(longDeNombre), data + desplazamiento, sizeof (int)), desplazamiento += sizeof longDeNombre;
+			char *nombreArchivo = malloc (sizeof (char) * longDeNombre);
 			fcb_t * nuevoArchivo = abrirArchivo (nombreArchivo);
 			if (nuevoArchivo == NULL) {
-				if (crearArchivo(nombreArchivo) < 0)
-					return;
-				log_info (logger, "Crear Archivo: <%s>", nombreArchivo);
-				nuevoArchivo = abrirArchivo (nombreArchivo);
 			}
 			log_info (logger, "Abrir Archivo: <%s>", nombreArchivo);
 			enviarArchivo ();
+			free (nombreArchivo);
+		case F_CREATE:
+			if (crearArchivo(nombreArchivo) < 0)
+				enviarMensaje ("Fallo :(", socketCliente);
+			log_info (logger, "Crear Archivo: <%s>", nombreArchivo);
+			nuevoArchivo = abrirArchivo (nombreArchivo);
 			break;
 		case F_TRUNCATE:
 			truncarArchivo (fcbRecibido, tamanioNuevo);

@@ -28,7 +28,7 @@
 #include "shared/include/configuraciones.h"
 
 #include "fileSystem/include/servidorKernel.h"
-#include "fileSystem/include/fcb.h"
+#include "fileSystem/include/operaciones.h"
 
 extern int socketCliente;
 extern int socketMemoria;
