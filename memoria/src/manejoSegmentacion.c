@@ -126,60 +126,43 @@ void reducirHuecosLibres(t_segmento* segmento, int indiceHueco) {
 
 //Implementacion Worst
 void ubicarSegmentosPorWorst(t_peticion* peticion){
-	int sobraDeHueco = 0;
-    uint32_t tamanioSegmento = peticion->segmento->tamanio; 
 
+    uint32_t tamanioSegmento = peticion->segmento->tamanio; 
     t_hueco_libre* huecoLibre; 
+    t_hueco_libre* huecoAAsignar;
+    int indiceHueco;
+    int tamanioHuecoMayor = 0;
 
     for (int i=0;i<list_size(huecosLibres);i++) {
-        
-        huecoLibre = ((t_hueco_libre*)list_get(huecosLibres,i)); 
-		/*
-		maximo
-		si es 0 no entra en ninguno
-		*/
-      
-        if(huecoLibre->tamanioHueco >= tamanioSegmento && (quedaLibreAsignandoSegmentoAHueco(tamanioSegmento, huecoLibre) > sobraDeHueco)) {
-			
-			t_hueco_libre* huecoProvisorio=huecoLibre
-			sobraHueco = quedaLibreAsignandoSegmentoAHueco(tamanioSegmento, huecoLibre);
+        huecoLibre = ((t_hueco_libre*)list_get(huecosLibres,i));
 
-            peticion->segmento->direccionBase = huecoLibre->direccionBase;
-            log_debug(logger, "Se ha encontrado un espacio para el segmento");
-            loggearCreacionDeSegmento(peticion); 
-            asignacionAlEspacioDeMemoria(peticion->segmento);
-            agregarSegmentoATablaDeSegmentosPCB(peticion); 
-			reducirHuecosLibres(peticion->segmento, i);
-            return; 
+        if(huecoLibre->tamanioHueco > tamanioHuecoMayor){
+            huecoAAsignar = huecoLibre;
+            tamanioHuecoMayor = huecoAAsignar->tamanioHueco;
+            indiceHueco = i;
         }
     }
-    corroborarPosibilidadDeCompactacion();
+
+    if(huecoAAsignar->tamanioHueco >= tamanioSegmento) {
+        peticion->segmento->direccionBase = huecoLibre->direccionBase;
+        log_debug(logger, "Se ha encontrado un espacio para el segmento");
+        loggearCreacionDeSegmento(peticion); 
+        asignacionAlEspacioDeMemoria(peticion->segmento);
+        agregarSegmentoATablaDeSegmentosPCB(peticion); 
+		reducirHuecosLibres(peticion->segmento, indiceHueco);
+        return; 
+    }
+    else
+    {
+        log_error(logger, "No se ha encontrado lugar para el segmento");
+    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 // Cositas mockeadas que linda palabra mockear
 void corroborarPosibilidadDeCompactacion() {}
 
 void ubicarSegmentosPorBest(t_peticion* peticion){}
-void ubicarSegmentosPorWorst(t_peticion* peticion){} 
 
 
 
