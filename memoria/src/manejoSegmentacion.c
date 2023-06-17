@@ -124,6 +124,35 @@ void reducirHuecosLibres(t_segmento* segmento, int indiceHueco) {
     }
 }
 
+//Implementacion Best
+void ubicarSegmentosPorBest(t_peticion* peticion){
+    uint32_t tamanioSegmento = peticion->segmento->tamanio; 
+    t_hueco_libre* huecoLibre; 
+    t_hueco_libre* huecoAAsignar = NULL;
+    t_list* huecosUtiles;
+    int indiceHueco;
+    int32_t tamanioHuecoMenor = -1000;
+
+    for (int i=0;i<list_size(huecosLibres);i++) {
+        huecoLibre = ((t_hueco_libre*)list_get(huecosLibres,i));
+
+        if((huecoLibre->tamanioHueco >= tamanioSegmento) && ((int32_t)huecoLibre->tamanioHueco < tamanioHuecoMenor)){
+            huecoAAsignar = huecoLibre;
+            tamanioHuecoMenor = huecoAAsignar->tamanioHueco;
+            indiceHueco = i;
+        }
+    }
+
+    peticion->segmento->direccionBase = huecoAAsignar->direccionBase;
+    log_debug(logger, "Se ha encontrado un espacio para el segmento");
+    loggearCreacionDeSegmento(peticion); 
+    asignacionAlEspacioDeMemoria(peticion->segmento);
+    agregarSegmentoATablaDeSegmentosPCB(peticion); 
+	reducirHuecosLibres(peticion->segmento, indiceHueco);
+    return;
+}
+
+
 //Implementacion Worst
 void ubicarSegmentosPorWorst(t_peticion* peticion){
 
@@ -144,7 +173,7 @@ void ubicarSegmentosPorWorst(t_peticion* peticion){
     }
 
     if(huecoAAsignar->tamanioHueco >= tamanioSegmento) {
-        peticion->segmento->direccionBase = huecoLibre->direccionBase;
+        peticion->segmento->direccionBase = huecoAAsignar->direccionBase;
         log_debug(logger, "Se ha encontrado un espacio para el segmento");
         loggearCreacionDeSegmento(peticion); 
         asignacionAlEspacioDeMemoria(peticion->segmento);
@@ -154,15 +183,12 @@ void ubicarSegmentosPorWorst(t_peticion* peticion){
     }
     else
     {
+        corroborarPosibilidadDeCompactacion(); 
         log_error(logger, "No se ha encontrado lugar para el segmento");
+        //proximamente será una petición de compactación
     }
 }
 
 
 // Cositas mockeadas que linda palabra mockear
 void corroborarPosibilidadDeCompactacion() {}
-
-void ubicarSegmentosPorBest(t_peticion* peticion){}
-
-
-
