@@ -176,7 +176,7 @@ void deserializarRecursos (void * buffer, int * desplazamiento) {
 void deserializarTablaDeSegmentos (void * buffer, int * desplazamiento) {
 
     int tamanio;
-    list_clean_and_destroy_elements (contextoEjecucion->tablaDeSegmentos, liberarSegmento);
+    list_clean_and_destroy_elements (contextoEjecucion->tablaDeSegmentos, free);
     // Desplazamiento: tamaño de la lista de segmentos.
     memcpy(&(contextoEjecucion->tablaDeSegmentosSize), buffer + (* desplazamiento), sizeof(uint32_t));
     (* desplazamiento) += sizeof(uint32_t);
@@ -202,17 +202,17 @@ t_segmento*  deserializarSegmento(void* buffer, int* desplazamiento){
     // id
     memcpy (&tamanio, buffer + (* desplazamiento), sizeof (int));
     (* desplazamiento) += sizeof (int);
-    memcpy (&segmento->id, buffer + (* desplazamiento), tamanio);
+    memcpy (&(segmento->id), buffer + (* desplazamiento), tamanio);
     (* desplazamiento) += sizeof (uint32_t);
     //direccion base
     memcpy (&tamanio, buffer + (* desplazamiento), sizeof (int));
     (* desplazamiento) += sizeof (int);
-    memcpy (&segmento->direccionBase, buffer + (* desplazamiento), tamanio);
+    memcpy (&(segmento->direccionBase), buffer + (* desplazamiento), tamanio);
     (* desplazamiento) += sizeof (uint32_t);
     //tamanio
     memcpy (&tamanio, buffer + (* desplazamiento), sizeof (int));
     (* desplazamiento) += sizeof (int);
-    memcpy (&segmento->tamanio, buffer + (* desplazamiento), tamanio);
+    memcpy (&(segmento->tamanio), buffer + (* desplazamiento), tamanio);
     (* desplazamiento) += sizeof (uint32_t);
 
     return segmento;

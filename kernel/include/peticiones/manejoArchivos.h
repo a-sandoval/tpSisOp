@@ -16,13 +16,26 @@ typedef struct {
     uint32_t ptrIndirecto;
 } fcb_t;
 
+typedef struct{
+
+    fcb_t* fcb;
+    t_list* colaBloqueados;
+    int colaBoqueadosSize;
+
+}t_archivo;
+
 extern t_log* logger;
 extern int conexionAFS;
-
-void solicitarArchivoFS(char* nombreArchivo);
-fcb_t* recibirFCB(char* archivo);
-void agregarArchivoATG(fcb_t* nuevoArchivo);
 extern t_contexto* contextoEjecucion;
+
+t_archivo* solicitarArchivoFS(char* nombreArchivo);
+void recibirFCB(t_archivo** nuevoArchivo);
+void agregarArchivoATG(t_archivo* nuevoArchivo);
+
+
+void deserializarFCB(t_archivo** nuevoArchivo);
+void recibirFCB(t_archivo** nuevoArchivo);
+
 
 
 #endif

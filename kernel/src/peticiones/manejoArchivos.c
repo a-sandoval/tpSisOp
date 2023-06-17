@@ -2,14 +2,16 @@
 
 t_list* tablaGlobalArchivos;
 
-iniciarTablaGlobalDeArchivos(){
+void iniciarTablaGlobalDeArchivos(){
     tablaGlobalArchivos = list_create();
 }
 
-void solicitarArchivoFS(char* nombreArchivo){
+
+t_archivo*  solicitarArchivoFS(char* nombreArchivo){
 
     t_paquete* peticion = crearPaquete();
-    fcb_t* nuevoArchivo = malloc(sizeof(fcb_t));
+    t_archivo* nuevoArchivo = malloc(sizeof(t_archivo));
+    nuevoArchivo->fcb->nombre = nombreArchivo;
 
     log_info(logger, "PID: <PID> - Abrir Archivo: <NOMBRE ARCHIVO>", nombreArchivo);
 
@@ -20,30 +22,67 @@ void solicitarArchivoFS(char* nombreArchivo){
     int respuesta = recibirOperacion(conexionAFS);
 
     switch (respuesta){
-        case MENSAJE:
+        case MENSAJE: // en este caso el archivo no existe y tiene que crearlo
                     peticion->codigo_operacion = F_CREATE; // se sobreentiende que es con tamanio 0
                     agregarAPaquete(peticion, nombreArchivo, sizeof(char)*string_length(nombreArchivo));
                     enviarPaquete(peticion, conexionAFS);
-        case PAQUETE:
-                    nuevoArchivo = recibirFCB(nombreArchivo);
+        case PAQUETE: // el archivo ya existe y solo me lo manda
+                    recibirFCB(nuevoArchivo);
                     agregarArchivoATG(nuevoArchivo);
-                    agregarArchivoATablaProceso(nuevoArchivo);
         break;
     }
 
+    return nuevoArchivo;
 }
 
-fcb_t* recibirFCB(char* archivo){
+void recibirFCB(t_archivo** nuevoArchivo){
+    //recibo el fcb
+
+    deserializarFCB(nuevoArchivo);
+
+    (*nuevoArchivo)->colaBloqueados = list_create();
+    (*nuevoArchivo)->colaBoqueadosSize = 0;
+    (*nuevoArchivo)->colaBoqueadosSize++;
 
 }
 
-void agregarArchivoATG(fcb_t* nuevoArchivo){
+void deserializarFCB(t_archivo** nuevoArchivo){
+    int size, desplazamiento = 0;
+	void * buffer;
+    int tamanio;
+    fcb_t* fcb;
+    fcb->nombre = (*nuevoArchivo)->fcb->nombre;
+
+	buffer = recibirBuffer(socket, &size);
+
+    // Desplazamiento: tamanio del archivo
+    desplazamiento += sizeof(int);
+    memcpy(&tamanio, buffer + desplazamiento, sizeof(int));
+    desplazamiento += sizeof(int);
+    memcpy(&(fcb->tamanio), buffer + desplazamiento, tamanio);
+    desplazamiento += sizeof(contextoEjecucion->pid) + sizeof(int);
+
+    memcpy(&tamanio, buffer + desplazamiento, sizeof(int));
+    desplazamiento += sizeof(int);
+    memcpy(&(fcb->ptrDirecto), buffer + desplazamiento, tamanio);
+    desplazamiento += sizeof(contextoEjecucion->pid) + sizeof(int);
+
+    memcpy(&tamanio, buffer + desplazamiento, sizeof(int));
+    desplazamiento += sizeof(int);
+    memcpy(&(fcb->ptrIndirecto), buffer + desplazamiento, tamanio);
+    desplazamiento += sizeof(contextoEjecucion->pid) + sizeof(int);
+
+    (*nuevoArchivo)->fcb = fcb;
+    free(fcb);
+
+
+}
+
+
+void agregarArchivoATG(t_archivo* nuevoArchivo){
 
     //ademas tengo que poner que archivo la esta utilizando y ver el tema de la cola de bloqueados
     list_add(tablaGlobalArchivos, nuevoArchivo);
 }
 
-void agregarArchivoATablaProceso(fcb_t* nuevoArchivo){
 
-    list_add_in_index(contextoEjecucion->tablaDeArchivos, 0, (void*)nuevoArchivo);
-}

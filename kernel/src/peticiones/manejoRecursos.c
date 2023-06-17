@@ -17,7 +17,6 @@ void crearColasBloqueo()
     cantidadRecursos=tamanio;
     for (int i = 0; i < tamanio; i++)
     {
-
         int instanciasConvertEntero = atoi(cantInstanciasRecursos[i]);
         instanciasRecursos=realloc(instanciasRecursos,(i+1)*sizeof(int));
         instanciasRecursos[i]=instanciasConvertEntero;

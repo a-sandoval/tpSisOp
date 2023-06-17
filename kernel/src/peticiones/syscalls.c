@@ -219,10 +219,15 @@ void fopen_s(t_pcb *proceso, char **parametros){
     char* archivo = parametros[0];
     //primero veo si esta en la tabla global
     if(estaEnLaTablaGlobal(archivo)){
+            // si esta en la tabla alguien ya lo esta usando y tengo que ponerlo en block
+            proceso->estado = BLOCK;
+                
 
     }
     else{
-        solicitarArchivoFS(archivo);
+        t_archivo* nuevoArchivo = solicitarArchivoFS(archivo);
+        list_add(proceso->tablaDeArchivos,(void*)nuevoArchivo);
+        volverACPU(proceso);
     }
     
 }
@@ -261,7 +266,6 @@ void createSegment_s(t_pcb *proceso, char **parametros){
 
     uint32_t idSegmento = parametros[0];
     int tamanio = parametros[1];
-
     
     t_paquete* peticion = crearPaquete();
     peticion->codigo_operacion = CREATE_SEGMENT_OP;
@@ -272,15 +276,13 @@ void createSegment_s(t_pcb *proceso, char **parametros){
 
     enviarPaquete(peticion, conexionAMemoria);
     
-    t_paquete* rdoPeticion = crearPaquete();
-    rdoPeticion = recibirPaquete(conexionAMemoria);
-    // aca deberia venir en el opcode el rdo de lo que paso en memoria para saber como seguir
+    op_code rdoPeticion = recibirCodigoDeOperacion(conexionAMemoria);
 
-    switch(rdoPeticion->codigo_operacion){
+    switch(rdoPeticion){
         case SUCCESS:
                 log_info(logger, "PID: %d - Crear Segmento - Id: %d - Tamanio: %d", proceso->pid, idSegmento, tamanio);
                 // me mandan la tabla con el nuevo segmento incorporado
-                recibirTablaActualizada();
+                recibirTablaActualizada(proceso);
                 contextoEjecucion = procesarPCB(proceso);
                 rafagaCPU = contextoEjecucion->rafagaCPUEjecutada; 
                 retornoContexto(proceso, contextoEjecucion);
@@ -318,7 +320,7 @@ void deleteSegment_s(t_pcb *proceso, char **parametros){
     agregarAPaquete(peticion, (void*)&idSegmento, sizeof(int));
     enviarPaquete(peticion, conexionAMemoria);
 
-    recibirTablaActualizada();
+    recibirTablaActualizada(proceso);
 
     contextoEjecucion = procesarPCB(proceso);
     rafagaCPU = contextoEjecucion->rafagaCPUEjecutada; 
@@ -326,7 +328,7 @@ void deleteSegment_s(t_pcb *proceso, char **parametros){
 
 }
 
-void recibirTablaActualizada(){
+void recibirTablaActualizada(t_pcb* pcb){
 
 	int size, desplazamiento = 0;
 	void * buffer;
@@ -334,31 +336,33 @@ void recibirTablaActualizada(){
 	buffer = recibirBuffer(conexionAMemoria, &size);
 
     desplazamiento += sizeof(int);
-    memcpy(&(contextoEjecucion->pid), buffer + desplazamiento, sizeof(uint32_t));
+    //salteo el pid aca porque ya lo tengo del pcb
     desplazamiento += sizeof(uint32_t);
     
     t_segmento* segmentoAux = malloc(sizeof(t_segmento));
 
     list_clean_and_destroy_elements (contextoEjecucion->tablaDeSegmentos, free);
     
-    memcpy(&(contextoEjecucion->tablaDeSegmentosSize), buffer + desplazamiento, sizeof(uint32_t));
+    int tamanio;
+    int tablaDeSegmentosSize;
+    // Desplazamiento: tamaño de la lista de segmentos.
+    memcpy(&(tablaDeSegmentosSize), buffer + desplazamiento, sizeof(uint32_t));
     desplazamiento += sizeof(uint32_t);
     
-    for (uint32_t i = 0; i < contextoEjecucion->tablaDeSegmentos; i++) {
+    for (uint32_t i = 0; i < tablaDeSegmentosSize; i++) {
 
-        memcpy (&segmentoAux->id, buffer + desplazamiento, sizeof (uint32_t));
-        desplazamiento += sizeof (uint32_t);
-        memcpy (&segmentoAux->direccionBase, buffer + desplazamiento, sizeof (uint32_t));
-        desplazamiento += sizeof (uint32_t);
-        memcpy (&segmentoAux->tamanio, buffer + desplazamiento, sizeof (uint32_t));
-        desplazamiento += sizeof (uint32_t);
-        
-        list_add (contextoEjecucion->tablaDeSegmentos, segmentoAux);
-        free (segmentoAux);
+        // Desplazamiento: Tamaño del segmento.
+        memcpy (&tamanio, buffer + desplazamiento, sizeof (int));
+        desplazamiento += sizeof (int);
+
+        t_segmento* segmento = deserializarSegmento(buffer, &desplazamiento);
+        list_add (pcb->tablaDeSegmentos, segmento);
+        free(segmento);
     }
-    
-}
 
+    desplazamiento += sizeof(int);
+
+}
 
 void loggearBloqueoDeProcesos(t_pcb* proceso, char* motivo) {
     log_info(logger,"PID: <%d> - Bloqueado por: %s", proceso->pid, motivo); 

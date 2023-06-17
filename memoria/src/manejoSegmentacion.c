@@ -69,6 +69,7 @@ void ubicarSegmentosEnEspaciosLibres(t_peticion* peticion){
     abort();
 }
 
+//Implementacion First
 void ubicarSegmentosPorFirst(t_peticion* peticion){
 	
     uint32_t tamanioSegmento = peticion->segmento->tamanio; 
@@ -82,33 +83,103 @@ void ubicarSegmentosPorFirst(t_peticion* peticion){
         if(huecoLibre->tamanioHueco >= tamanioSegmento) {
 			
             peticion->segmento->direccionBase = huecoLibre->direccionBase;
+            
             log_debug(logger, "Se ha encontrado un espacio para el segmento");
-
-            asignacionAlEspacioDeMemoria(peticion);
-            actualizarTablaDeSegmentosProceso(peticion); 
-			actualizarListaDeHuecosLibres(peticion);
+            loggearCreacionDeSegmento(peticion); 
+            asignacionAlEspacioDeMemoria(peticion->segmento);
+            agregarSegmentoATablaDeSegmentosPCB(peticion); 
+			reducirHuecosLibres(peticion->segmento, i);
             return; 
         }
     }
+    corroborarPosibilidadDeCompactacion();
 }
 
-void asignacionAlEspacioDeMemoria(t_peticion* peticion){
 
-    int blockSize = 1024; // Tamaño del bloque de memoria en bytes
-    void* memoryBlock = malloc(blockSize); // Puntero al bloque de memoria asignado
+void loggearCreacionDeSegmento(t_peticion* peticion) {
+    log_info(logger,"PID: %d - Crear Segmento: %d - Base: %d - TAMAÑO: %d",peticion->pid,peticion->segmento->id,peticion->segmento->direccionBase,peticion->segmento->tamanio); 
+}
 
-    // Ejemplo de uso: escribir y leer valores en el bloque de memoria
-    int intValue = 42;
-    int* offsetPointer = (int*)((char*)memoryBlock + 4); // Desplazarse 4 bytes dentro del bloque de memoria
-    *offsetPointer = intValue;
+void asignacionAlEspacioDeMemoria(t_segmento* segmento){
+    t_segmento* offsetPointer = (t_segmento*)((char*)espacioDeUsuario + segmento->direccionBase);
+	*offsetPointer = *segmento;
+}
 
-    // Leer el valor desde el bloque de memoria
-    int readValue = *(int*)((char*)memoryBlock + 4);
-    printf("Valor leído: %d\n", readValue);
-
-    // Liberar el bloque de memoria
-    free(memoryBlock);
-
-    return 0
+void agregarSegmentoATablaDeSegmentosPCB(t_peticion* peticion){
+	int pidProceso = peticion -> pid;
+	t_segmento* segmentoAAgregar = peticion->segmento;
+	t_proceso* proceso = (t_proceso*) list_get(tablaDeTablasDeSegmentos,pidProceso);
 	
+	list_add(proceso->tablaDeSegmentosAsociada, (void*) segmentoAAgregar);
 }
+
+void reducirHuecosLibres(t_segmento* segmento, int indiceHueco) {
+    t_hueco_libre* aModificar = list_get(huecosLibres,indiceHueco); 
+    aModificar->tamanioHueco -= segmento->tamanio; 
+    if(aModificar->tamanioHueco == 0) {
+    	list_remove_and_destroy_element(huecosLibres,indiceHueco,free); 
+    }
+    else {
+        aModificar->direccionBase = segmento->tamanio; 
+    }
+}
+
+//Implementacion Worst
+void ubicarSegmentosPorWorst(t_peticion* peticion){
+	int sobraDeHueco = 0;
+    uint32_t tamanioSegmento = peticion->segmento->tamanio; 
+
+    t_hueco_libre* huecoLibre; 
+
+    for (int i=0;i<list_size(huecosLibres);i++) {
+        
+        huecoLibre = ((t_hueco_libre*)list_get(huecosLibres,i)); 
+		/*
+		maximo
+		si es 0 no entra en ninguno
+		*/
+      
+        if(huecoLibre->tamanioHueco >= tamanioSegmento && (quedaLibreAsignandoSegmentoAHueco(tamanioSegmento, huecoLibre) > sobraDeHueco)) {
+			
+			t_hueco_libre* huecoProvisorio=huecoLibre
+			sobraHueco = quedaLibreAsignandoSegmentoAHueco(tamanioSegmento, huecoLibre);
+
+            peticion->segmento->direccionBase = huecoLibre->direccionBase;
+            log_debug(logger, "Se ha encontrado un espacio para el segmento");
+            loggearCreacionDeSegmento(peticion); 
+            asignacionAlEspacioDeMemoria(peticion->segmento);
+            agregarSegmentoATablaDeSegmentosPCB(peticion); 
+			reducirHuecosLibres(peticion->segmento, i);
+            return; 
+        }
+    }
+    corroborarPosibilidadDeCompactacion();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Cositas mockeadas que linda palabra mockear
+void corroborarPosibilidadDeCompactacion() {}
+
+void ubicarSegmentosPorBest(t_peticion* peticion){}
+void ubicarSegmentosPorWorst(t_peticion* peticion){} 
+
+
+

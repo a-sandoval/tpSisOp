@@ -13,6 +13,7 @@ int ejecutarServidorKernel(int *socketCliente){
 			case NEWPCB:
 				t_proceso* procesoNuevo = crearProcesoEnMemoria(recibirPID(*socketCliente)); 
 				enviarTablaSegmentos(procesoNuevo);
+
 				break;
             case ENDPCB:
 				uint32_t pid = recibirPID(*socketCliente);
@@ -23,6 +24,8 @@ int ejecutarServidorKernel(int *socketCliente){
 			case CREATE_SEGMENT_OP:
 				t_peticion* peticion = recibirPeticionCreacionDeSegmento(*socketCliente); 
 				ubicarSegmentosEnEspaciosLibres(peticion); 
+				enviarCodOp(SUCCESS,socketCliente); 
+				enviarTablaSegmentos((t_proceso*)list_get(tablaDeTablasDeSegmentos,peticion->pid)); 
 				break;
             case DELETE_SEGMENT_OP:
                 log_info(logger, "Borro segmento dado");

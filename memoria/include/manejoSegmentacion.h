@@ -9,7 +9,7 @@
 #include <pthread.h>
 
 #include "shared/include/global.h"
-#include "shared/include/utilsServidor.h"
+#include "shared/in clude/utilsServidor.h"
 #include "shared/include/utilsCliente.h"
 #include "shared/include/configuraciones.h"
 
@@ -46,5 +46,18 @@ void creacionListaHuecosLibres();
 t_segmento* crearSegmentoCompartido(); 
 void ubicarSegmentosEnEspaciosLibres(t_peticion* peticion); 
 void ubicarSegmentosPorFirst(t_peticion* peticion); 
+void ubicarSegmentosPorBest(t_peticion* peticion);
+void ubicarSegmentosPorWorst(t_peticion* peticion); 
+
+
+void loggearCreacionDeSegmento(t_peticion* peticion);
+void asignacionAlEspacioDeMemoria(t_segmento* segmento);
+
+void agregarSegmentoATablaDeSegmentosPCB(t_peticion* peticion); 
+void reducirHuecosLibres(t_segmento* segmento, int indiceHueco); 
+
+void corroborarPosibilidadDeCompactacion(); 
+
+
 
 #endif 

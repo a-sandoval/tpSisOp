@@ -66,7 +66,7 @@ void deserializarTablaDeSegmentos (void * buffer, int * desplazamiento);
 void iniciarContexto();
 void destroyContexto();
 void destroyContextoUnico();
-void liberarSegmento(t_segmento* segmento);
+
 
 
 #endif
