@@ -20,13 +20,14 @@ typedef struct{
 
     fcb_t* fcb;
     t_list* colaBloqueados;
-    int colaBoqueadosSize;
+    int colaBloqueadosSize;
 
 }t_archivo;
 
 extern t_log* logger;
 extern int conexionAFS;
 extern t_contexto* contextoEjecucion;
+extern t_list* tablaGlobalArchivos;
 
 t_archivo* solicitarArchivoFS(char* nombreArchivo);
 void recibirFCB(t_archivo** nuevoArchivo);

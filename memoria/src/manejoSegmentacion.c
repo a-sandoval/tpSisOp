@@ -4,6 +4,7 @@ t_segmento * segmento0;
 void* espacioDeUsuario; 
 t_list* huecosLibres; 
 t_list* tablaDeTablasDeSegmentos; 
+op_code resultado; 
 
 // Creación estructuras
 void creacionEspacio(){
@@ -48,29 +49,39 @@ void liberarSegmentoCompartido() {
 
 // Esquema de memoria
 
-void ubicarSegmentosEnEspaciosLibres(t_peticion* peticion){
+op_code ubicarSegmentosEnEspaciosLibres(t_peticion* peticion){
 	
     char* algoritmoAUtilizar = config_get_string_value(config, "ALGORITMO_ASIGNACION");
 
+    op_code resultado; 
+
 	if (!strcmp(algoritmoAUtilizar, "FIRST"))
     {
-        ubicarSegmentosPorFirst(peticion);
+        resultado = ubicarSegmentosPorFirst(peticion);
+        return resultado; 
     }
     else if (!strcmp(algoritmoAUtilizar, "BEST"))
     {
-        ubicarSegmentosPorBest(peticion);
+        resultado = ubicarSegmentosPorBest(peticion);
+        return resultado; 
+        
+
     }
     else if (!strcmp(algoritmoAUtilizar, "WORST"))
     {
-        ubicarSegmentosPorWorst(peticion); 
+        resultado = ubicarSegmentosPorWorst(peticion); 
+        return resultado; 
+        
     }
 
     log_error(loggerError, "ERROR EN ALGORITMO DE ASIGNACION");
     abort();
 }
 
+
+
 //Implementacion First
-void ubicarSegmentosPorFirst(t_peticion* peticion){
+op_code ubicarSegmentosPorFirst(t_peticion* peticion){
 	
     uint32_t tamanioSegmento = peticion->segmento->tamanio; 
 
@@ -89,10 +100,12 @@ void ubicarSegmentosPorFirst(t_peticion* peticion){
             asignacionAlEspacioDeMemoria(peticion->segmento);
             agregarSegmentoATablaDeSegmentosPCB(peticion); 
 			reducirHuecosLibres(peticion->segmento, i);
-            return; 
+            return SUCCESS; 
         }
     }
     corroborarPosibilidadDeCompactacion();
+
+    return OUTOFMEMORY; 
 }
 
 
@@ -125,12 +138,12 @@ void reducirHuecosLibres(t_segmento* segmento, int indiceHueco) {
 }
 
 //Implementacion Best
-void ubicarSegmentosPorBest(t_peticion* peticion){
+op_code ubicarSegmentosPorBest(t_peticion* peticion){
     uint32_t tamanioSegmento = peticion->segmento->tamanio; 
     t_hueco_libre* huecoLibre; 
     t_hueco_libre* huecoAAsignar = NULL;
-    t_list* huecosUtiles;
     int indiceHueco;
+    bool encontrado; 
     int32_t tamanioHuecoMenor = -1000;
 
     for (int i=0;i<list_size(huecosLibres);i++) {
@@ -140,27 +153,37 @@ void ubicarSegmentosPorBest(t_peticion* peticion){
             huecoAAsignar = huecoLibre;
             tamanioHuecoMenor = huecoAAsignar->tamanioHueco;
             indiceHueco = i;
+            encontrado=true; 
         }
     }
+    if(encontrado) {
 
-    peticion->segmento->direccionBase = huecoAAsignar->direccionBase;
-    log_debug(logger, "Se ha encontrado un espacio para el segmento");
-    loggearCreacionDeSegmento(peticion); 
-    asignacionAlEspacioDeMemoria(peticion->segmento);
-    agregarSegmentoATablaDeSegmentosPCB(peticion); 
-	reducirHuecosLibres(peticion->segmento, indiceHueco);
-    return;
+        peticion->segmento->direccionBase = huecoAAsignar->direccionBase;
+        log_debug(logger, "Se ha encontrado un espacio para el segmento");
+        loggearCreacionDeSegmento(peticion); 
+        asignacionAlEspacioDeMemoria(peticion->segmento);
+        agregarSegmentoATablaDeSegmentosPCB(peticion); 
+	    reducirHuecosLibres(peticion->segmento, indiceHueco);
+        return SUCCESS;
+
+    }
+   
+    else {
+        corroborarPosibilidadDeCompactacion(); 
+        return OUTOFMEMORY;
+    }
+    
 }
 
 
 //Implementacion Worst
-void ubicarSegmentosPorWorst(t_peticion* peticion){
+op_code ubicarSegmentosPorWorst(t_peticion* peticion){
 
     uint32_t tamanioSegmento = peticion->segmento->tamanio; 
     t_hueco_libre* huecoLibre; 
     t_hueco_libre* huecoAAsignar;
     int indiceHueco;
-    int tamanioHuecoMayor = 0;
+    uint32_t tamanioHuecoMayor = 0;
 
     for (int i=0;i<list_size(huecosLibres);i++) {
         huecoLibre = ((t_hueco_libre*)list_get(huecosLibres,i));
@@ -179,12 +202,13 @@ void ubicarSegmentosPorWorst(t_peticion* peticion){
         asignacionAlEspacioDeMemoria(peticion->segmento);
         agregarSegmentoATablaDeSegmentosPCB(peticion); 
 		reducirHuecosLibres(peticion->segmento, indiceHueco);
-        return; 
+        return SUCCESS; 
     }
     else
     {
         corroborarPosibilidadDeCompactacion(); 
         log_error(logger, "No se ha encontrado lugar para el segmento");
+        return OUTOFMEMORY; 
         //proximamente será una petición de compactación
     }
 }

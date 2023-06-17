@@ -41,8 +41,8 @@ void recibirFCB(t_archivo** nuevoArchivo){
     deserializarFCB(nuevoArchivo);
 
     (*nuevoArchivo)->colaBloqueados = list_create();
-    (*nuevoArchivo)->colaBoqueadosSize = 0;
-    (*nuevoArchivo)->colaBoqueadosSize++;
+    (*nuevoArchivo)->colaBloqueadosSize = 0;
+    (*nuevoArchivo)->colaBloqueadosSize++;
 
 }
 

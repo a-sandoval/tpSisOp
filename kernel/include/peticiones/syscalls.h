@@ -17,6 +17,7 @@ extern sem_t hayProcesosReady;
 extern int *instanciasRecursos;
 extern int conexionAMemoria; 
 extern int conexionAFS; 
+extern t_list* tablaGlobalArchivos;
 
 typedef struct {
 
@@ -25,6 +26,14 @@ typedef struct {
     uint32_t tamanio; 
 
 }t_segmento; 
+
+typedef struct{
+
+    fcb_t* fcb;
+    t_list* colaBloqueados;
+    int colaBloqueadosSize;
+
+}t_archivo;
 
 void retornoContexto(t_pcb*, t_contexto*);
 void volverACPU(t_pcb*); 

@@ -44,10 +44,10 @@ void creacionEspacio();
 void creacionListaHuecosLibres(); 
 
 t_segmento* crearSegmentoCompartido(); 
-void ubicarSegmentosEnEspaciosLibres(t_peticion* peticion); 
-void ubicarSegmentosPorFirst(t_peticion* peticion); 
-void ubicarSegmentosPorBest(t_peticion* peticion);
-void ubicarSegmentosPorWorst(t_peticion* peticion); 
+op_code ubicarSegmentosEnEspaciosLibres(t_peticion* peticion); 
+op_code ubicarSegmentosPorFirst(t_peticion* peticion); 
+op_code ubicarSegmentosPorBest(t_peticion* peticion);
+op_code ubicarSegmentosPorWorst(t_peticion* peticion); 
 
 
 void loggearCreacionDeSegmento(t_peticion* peticion);

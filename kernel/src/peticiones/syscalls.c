@@ -216,30 +216,88 @@ void liberarRecursosAsignados(t_pcb* proceso){
 
 void fopen_s(t_pcb *proceso, char **parametros){
 
-    char* archivo = parametros[0];
+    t_archivo* archivo = malloc(sizeof(t_archivo));
+    char* nombreArchivo = parametros[0];
     //primero veo si esta en la tabla global
-    if(estaEnLaTablaGlobal(archivo)){
+    if(estaEnLaTablaGlobal(nombreArchivo)){
             // si esta en la tabla alguien ya lo esta usando y tengo que ponerlo en block
+            estadoAnterior = proceso->estado;
             proceso->estado = BLOCK;
-                
+            
+            //noc si este list find funciona
+            archivo = list_find(tablaGlobalArchivos, estaEnLaTablaGlobal(nombreArchivo));
 
+            list_add(archivo->colaBloqueados, proceso);
+            archivo->colaBloqueadosSize++;
+            loggearCambioDeEstado(proceso->pid, estadoAnterior, proceso->estado);
+            loggearBloqueoDeProcesos(proceso, nombreArchivo);
     }
+
     else{
-        t_archivo* nuevoArchivo = solicitarArchivoFS(archivo);
-        list_add(proceso->tablaDeArchivos,(void*)nuevoArchivo);
+        archivo = solicitarArchivoFS(nombreArchivo);
+        list_add(proceso->tablaDeArchivos,(void*)archivo);
         volverACPU(proceso);
     }
+    free(archivo);
     
 }
 
+bool estaEnLaTablaGlobal(char* nombreArchivo){
 
-/*
+    int cantArchivos = list_size(tablaGlobalArchivos);
+    t_archivo* archivoAux = malloc(sizeof(t_archivo));
+
+
+    for(int i=0; i<cantArchivos; i++){
+        archivoAux=list_get(tablaGlobalArchivos, i);
+
+        if(!strcmp(nombreArchivo, archivoAux->fcb->nombre)){
+            free(archivoAux);
+            return true;
+        }
+    }
+    free(archivoAux);
+    return false;
+}
+
+
 void fclose_s(t_pcb *proceso, char **parametros){
 
-     log_info(logger, "PID: <PID> - Cerrar Archivo: <NOMBRE ARCHIVO>",);
+    char* nombreArchivo = parametros[0];
+
+    log_info(logger, "PID: <PID> - Cerrar Archivo: <NOMBRE ARCHIVO>",proceso->pid, nombreArchivo);
+
+    t_archivo* archivo = malloc(sizeof(t_archivo));
+
+    //archivo = list_find(tablaArchivosGlobal);
+
+    //lo saco de la tabla del proceso
+    list_remove_element(proceso->tablaDeArchivos, archivo->fcb);
+
+    
+    //SI ES 0, lo saco de la tabla
+    if(archivo->colaBloqueadosSize == 0){
+        list_remove_element(tablaGlobalArchivos, archivo);
+    }
+    else{
+        t_pcb* procesoDesbloqueo = crearPCB();
+        procesoDesbloqueo = list_get(archivo->colaBloqueados, 0);
+        list_remove(archivo->colaBloqueados, 0);
+        archivo->colaBloqueadosSize--;
+
+        estadoAnterior = proceso->estado;
+        proceso->estado = READY;
+        list_add(proceso->tablaDeArchivos, archivo->fcb);
+        loggearCambioDeEstado(proceso->pid, estadoAnterior, proceso->estado);
+        ingresarAReady(proceso);
+
+
+    }
+
     
 }
 
+/*
 void ftruncate_s(t_pcb *proceso, char **parametros){
 
      log_info(logger, "PID: <PID> - Archivo: <NOMBRE ARCHIVO> - Tamaño: <TAMAÑO>",);
@@ -276,7 +334,7 @@ void createSegment_s(t_pcb *proceso, char **parametros){
 
     enviarPaquete(peticion, conexionAMemoria);
     
-    op_code rdoPeticion = recibirCodigoDeOperacion(conexionAMemoria);
+    int rdoPeticion = recibirCodigoDeOperacion(conexionAMemoria);
 
     switch(rdoPeticion){
         case SUCCESS:

@@ -1,19 +1,20 @@
 #include "memoria/include/conexionKernel.h"
 
+t_peticion* peticion; 
+
 int ejecutarServidorKernel(int *socketCliente){
 	
 	log_debug(logger, "Conectado el Kernel");
 	
 	while (1) {
-		int peticion = recibirOperacion(*socketCliente);
+		int peticionRealizada = recibirOperacion(*socketCliente);
 		
-		log_info(logger,"Se recibio peticion %d del Kernel", peticion); 
+		log_debug(logger,"Se recibio peticion %d del Kernel", peticionRealizada); 
 
-		switch (peticion) {
+		switch (peticionRealizada) {
 			case NEWPCB:
 				t_proceso* procesoNuevo = crearProcesoEnMemoria(recibirPID(*socketCliente)); 
 				enviarTablaSegmentos(procesoNuevo);
-
 				break;
             case ENDPCB:
 				uint32_t pid = recibirPID(*socketCliente);
@@ -22,10 +23,9 @@ int ejecutarServidorKernel(int *socketCliente){
 				log_info(logger, "Eliminación de Proceso PID: %d",pid);
 				break;
 			case CREATE_SEGMENT_OP:
-				t_peticion* peticion = recibirPeticionCreacionDeSegmento(*socketCliente); 
-				ubicarSegmentosEnEspaciosLibres(peticion); 
-				enviarCodOp(SUCCESS,socketCliente); 
-				enviarTablaSegmentos((t_proceso*)list_get(tablaDeTablasDeSegmentos,peticion->pid)); 
+				peticion = recibirPeticionCreacionDeSegmento(*socketCliente); 
+				op_code resultado = ubicarSegmentosEnEspaciosLibres(peticion); 
+				procesarResultado((int)resultado,*socketCliente); 
 				break;
             case DELETE_SEGMENT_OP:
                 log_info(logger, "Borro segmento dado");
@@ -39,6 +39,26 @@ int ejecutarServidorKernel(int *socketCliente){
 				break;
 		}
 	}
+}
+
+void procesarResultado(int resultado, int socketKernel) {
+
+	switch(resultado) {
+		case SUCCESS: 
+		enviarCodOp(SUCCESS,socketKernel); 
+		enviarTablaSegmentos((t_proceso*)list_get(tablaDeTablasDeSegmentos,peticion->pid)); 
+		break; 
+
+		case OUTOFMEMORY: 
+		enviarCodOp(OUTOFMEMORY,socketKernel); 
+		break; 
+
+		case COMPACTACION:
+		break; 
+
+	}
+
+
 }
 
 
