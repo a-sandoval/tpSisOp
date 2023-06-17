@@ -3,12 +3,15 @@
 
 #include "semaphore.h"
 #include "shared/include/contextoEjecucion.h"
+#include "shared/include/utilsServidor.h"
 #include "kernel/include/conexiones/conexionMemoria.h"
 #include "kernel/include/peticiones/pcb.h"
 #include "kernel/include/peticiones/manejoRecursos.h"
 #include "kernel/include/peticiones/manejoArchivos.h"
 #include "kernel/include/planificacion/planificacion.h"
 #include "kernel/include/planificacion/algoritmosCortoPlazo.h"
+
+
 
 extern t_list *recursos;
 extern char **nombresRecursos;
@@ -18,22 +21,6 @@ extern int *instanciasRecursos;
 extern int conexionAMemoria; 
 extern int conexionAFS; 
 extern t_list* tablaGlobalArchivos;
-
-typedef struct {
-
-    uint32_t id; 
-    uint32_t direccionBase; 
-    uint32_t tamanio; 
-
-}t_segmento; 
-
-typedef struct{
-
-    fcb_t* fcb;
-    t_list* colaBloqueados;
-    int colaBloqueadosSize;
-
-}t_archivo;
 
 void retornoContexto(t_pcb*, t_contexto*);
 void volverACPU(t_pcb*); 
@@ -52,6 +39,8 @@ void yield_s(t_pcb*);
 void exit_s(t_pcb*,char **parametros);
 
 void liberarRecursosAsignados(t_pcb* proceso);
+
+bool estaEnLaTablaGlobal(char* nombreArchivo);
 
 void bloquearIO(int *tiempo);
 

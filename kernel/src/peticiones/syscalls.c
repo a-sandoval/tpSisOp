@@ -195,8 +195,8 @@ void exit_s(t_pcb* proceso, char **parametros){
     enviarMensaje("Terminado", proceso->socketPCB);
 
     liberarRecursosAsignados(proceso);
-    liberarArchivosAsignados(proceso);
-    liberarSegmentos(proceso);
+    //liberarArchivosAsignados(proceso);
+    //liberarSegmentos(proceso);
     liberarMemoriaPCB(proceso); 
 
     destruirPCB(proceso); 
@@ -207,7 +207,7 @@ void liberarRecursosAsignados(t_pcb* proceso){
 
      int cantRecursos = list_size(proceso->recursosAsignados);
 
-    uint32_t i;
+    int i;
     for(i=0; i<cantRecursos;i++){
         signal_s(proceso, list_get(proceso->recursosAsignados, i));
     }
@@ -265,17 +265,15 @@ void fclose_s(t_pcb *proceso, char **parametros){
 
     char* nombreArchivo = parametros[0];
 
-    log_info(logger, "PID: <PID> - Cerrar Archivo: <NOMBRE ARCHIVO>",proceso->pid, nombreArchivo);
+    log_info(logger, "PID: %d - Cerrar Archivo: %s",proceso->pid, nombreArchivo);
 
     t_archivo* archivo = malloc(sizeof(t_archivo));
 
     //archivo = list_find(tablaArchivosGlobal);
 
-    //lo saco de la tabla del proceso
     list_remove_element(proceso->tablaDeArchivos, archivo->fcb);
 
     
-    //SI ES 0, lo saco de la tabla
     if(archivo->colaBloqueadosSize == 0){
         list_remove_element(tablaGlobalArchivos, archivo);
     }
@@ -285,16 +283,15 @@ void fclose_s(t_pcb *proceso, char **parametros){
         list_remove(archivo->colaBloqueados, 0);
         archivo->colaBloqueadosSize--;
 
-        estadoAnterior = proceso->estado;
-        proceso->estado = READY;
-        list_add(proceso->tablaDeArchivos, archivo->fcb);
-        loggearCambioDeEstado(proceso->pid, estadoAnterior, proceso->estado);
-        ingresarAReady(proceso);
-
-
+        estadoAnterior = procesoDesbloqueo->estado;
+        procesoDesbloqueo ->estado = READY;
+        list_add(procesoDesbloqueo->tablaDeArchivos, archivo->fcb);
+        loggearCambioDeEstado(proceso->pid, estadoAnterior, procesoDesbloqueo->estado);
+        ingresarAReady(procesoDesbloqueo);
+        destruirPCB(procesoDesbloqueo);
     }
 
-    
+    volverACPU(proceso);
 }
 
 /*
@@ -322,19 +319,20 @@ void fwrite_s(t_pcb *proceso, char **parametros){
 
 void createSegment_s(t_pcb *proceso, char **parametros){
 
-    uint32_t idSegmento = parametros[0];
-    int tamanio = parametros[1];
+  
+    int idSegmento = atoi(parametros[0]);
+    int tamanio = atoi(parametros[1]);
     
     t_paquete* peticion = crearPaquete();
     peticion->codigo_operacion = CREATE_SEGMENT_OP;
 
     agregarAPaquete(peticion, (void*)&contextoEjecucion->pid, sizeof(uint32_t));
-    agregarAPaquete(peticion, (void*)&idSegmento, sizeof(uint32_t));
+    agregarAPaquete(peticion, (void*)&idSegmento, sizeof(int));
     agregarAPaquete(peticion, (void*)&tamanio, sizeof(uint32_t));
 
     enviarPaquete(peticion, conexionAMemoria);
     
-    int rdoPeticion = recibirCodigoDeOperacion(conexionAMemoria);
+    int rdoPeticion = recibirOperacion(conexionAMemoria);
 
     switch(rdoPeticion){
         case SUCCESS:
@@ -361,13 +359,12 @@ void createSegment_s(t_pcb *proceso, char **parametros){
     }
 
     free(peticion);
-    free(rdoPeticion);
 }
 
 
 void deleteSegment_s(t_pcb *proceso, char **parametros){
     
-    uint32_t idSegmento = parametros[0];
+   int idSegmento = atoi(parametros[0]);
 
     log_info(logger, "PID: %d - Eliminar Segmento - Id: %d", proceso->pid, idSegmento);
 
@@ -375,7 +372,7 @@ void deleteSegment_s(t_pcb *proceso, char **parametros){
     peticion->codigo_operacion = DELETE_SEGMENT_OP;
 
     agregarAPaquete(peticion, (void*)&contextoEjecucion->pid, sizeof(uint32_t));
-    agregarAPaquete(peticion, (void*)&idSegmento, sizeof(int));
+    agregarAPaquete(peticion, (void*)&idSegmento, sizeof(uint32_t));
     enviarPaquete(peticion, conexionAMemoria);
 
     recibirTablaActualizada(proceso);
@@ -397,12 +394,12 @@ void recibirTablaActualizada(t_pcb* pcb){
     //salteo el pid aca porque ya lo tengo del pcb
     desplazamiento += sizeof(uint32_t);
     
-    t_segmento* segmentoAux = malloc(sizeof(t_segmento));
+    t_segmento* segmento;
 
     list_clean_and_destroy_elements (contextoEjecucion->tablaDeSegmentos, free);
     
     int tamanio;
-    int tablaDeSegmentosSize;
+    uint32_t tablaDeSegmentosSize;
     // Desplazamiento: tamaño de la lista de segmentos.
     memcpy(&(tablaDeSegmentosSize), buffer + desplazamiento, sizeof(uint32_t));
     desplazamiento += sizeof(uint32_t);
@@ -413,7 +410,7 @@ void recibirTablaActualizada(t_pcb* pcb){
         memcpy (&tamanio, buffer + desplazamiento, sizeof (int));
         desplazamiento += sizeof (int);
 
-        t_segmento* segmento = deserializarSegmento(buffer, &desplazamiento);
+        segmento = deserializarSegmento(buffer, &desplazamiento);
         list_add (pcb->tablaDeSegmentos, segmento);
         free(segmento);
     }

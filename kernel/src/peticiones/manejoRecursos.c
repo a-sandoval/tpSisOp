@@ -57,22 +57,6 @@ void destruirArrayCharDoble (char ** array){
 }
 
 
-void closureMatriz(void* colaBloqueados){
-
-	t_list* cola = (t_list*)colaBloqueados;
-
-	list_iterate(cola, closurePCB);
-
-	//putchar('\n');
-
-}
-
-void closurePCB(void* pcbActual){
-
-	t_pcb* pcb = (t_pcb*) pcbActual;
-}
-
-
 void colaBloqueadosDestroyer(void* colaBloqueados){
 	list_destroy_and_destroy_elements(colaBloqueados,(void*)destruirPCB);
 }

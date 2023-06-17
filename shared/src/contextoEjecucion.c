@@ -187,7 +187,7 @@ void deserializarTablaDeSegmentos (void * buffer, int * desplazamiento) {
         memcpy (&tamanio, buffer + (* desplazamiento), sizeof (int));
         (* desplazamiento) += sizeof (int);
 
-        t_segmento* segmento = deserializarSegmento(buffer, &desplazamiento);
+        t_segmento* segmento = deserializarSegmento(buffer, desplazamiento);
         list_add (contextoEjecucion->tablaDeSegmentos, segmento);
         free(segmento);
     }
@@ -197,7 +197,7 @@ void deserializarTablaDeSegmentos (void * buffer, int * desplazamiento) {
 }
 
 t_segmento*  deserializarSegmento(void* buffer, int* desplazamiento){
-    t_segmento* segmento;
+    t_segmento* segmento = malloc(sizeof(t_segmento));
     int tamanio;
     // id
     memcpy (&tamanio, buffer + (* desplazamiento), sizeof (int));

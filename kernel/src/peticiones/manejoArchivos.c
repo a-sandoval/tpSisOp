@@ -1,4 +1,4 @@
-#include "include/peticiones/manejoArchivos.h"
+#include "kernel/include/peticiones/manejoArchivos.h"
 
 t_list* tablaGlobalArchivos;
 
@@ -13,7 +13,7 @@ t_archivo*  solicitarArchivoFS(char* nombreArchivo){
     t_archivo* nuevoArchivo = malloc(sizeof(t_archivo));
     nuevoArchivo->fcb->nombre = nombreArchivo;
 
-    log_info(logger, "PID: <PID> - Abrir Archivo: <NOMBRE ARCHIVO>", nombreArchivo);
+    log_info(logger, "PID: %d - Abrir Archivo: %s",contextoEjecucion->pid,nombreArchivo);
 
     peticion->codigo_operacion = F_OPEN;
     agregarAPaquete(peticion, nombreArchivo, sizeof(char)*string_length(nombreArchivo));
@@ -50,10 +50,10 @@ void deserializarFCB(t_archivo** nuevoArchivo){
     int size, desplazamiento = 0;
 	void * buffer;
     int tamanio;
-    fcb_t* fcb;
+    fcb_t* fcb = malloc(sizeof(fcb));
     fcb->nombre = (*nuevoArchivo)->fcb->nombre;
 
-	buffer = recibirBuffer(socket, &size);
+	buffer = recibirBuffer(conexionAFS, &size);
 
     // Desplazamiento: tamanio del archivo
     desplazamiento += sizeof(int);

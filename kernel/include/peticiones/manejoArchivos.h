@@ -29,13 +29,12 @@ extern int conexionAFS;
 extern t_contexto* contextoEjecucion;
 extern t_list* tablaGlobalArchivos;
 
-t_archivo* solicitarArchivoFS(char* nombreArchivo);
-void recibirFCB(t_archivo** nuevoArchivo);
-void agregarArchivoATG(t_archivo* nuevoArchivo);
-
-
-void deserializarFCB(t_archivo** nuevoArchivo);
-void recibirFCB(t_archivo** nuevoArchivo);
+t_archivo* solicitarArchivoFS(char* );
+void recibirFCB(t_archivo**);
+void agregarArchivoATG(t_archivo*);
+void iniciarTablaGlobalDeArchivos();
+void deserializarFCB(t_archivo** );
+void recibirFCB(t_archivo**);
 
 
 
