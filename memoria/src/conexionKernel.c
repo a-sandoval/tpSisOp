@@ -1,6 +1,5 @@
 #include "memoria/include/conexionKernel.h"
 
-
 int ejecutarServidorKernel(int *socketCliente){
 	
 	log_debug(logger, "Conectado el Kernel");
@@ -22,7 +21,8 @@ int ejecutarServidorKernel(int *socketCliente){
 				log_info(logger, "Eliminación de Proceso PID: %d",pid);
 				break;
 			case CREATE_SEGMENT_OP:
-                log_info(logger, "Creo nuevo segmento de memoria");
+				t_peticion* peticion = recibirPeticionCreacionDeSegmento(*socketCliente); 
+				ubicarSegmentosEnEspaciosLibres(peticion); 
 				break;
             case DELETE_SEGMENT_OP:
                 log_info(logger, "Borro segmento dado");
@@ -65,7 +65,7 @@ uint32_t recibirPID(int socketCliente) {
 	uint32_t pid; 
 
 	void* buffer = recibirBuffer(socketCliente, &size);
-	desplazamiento += sizeof(int);
+	desplazamiento += sizeof(uint32_t);
 	memcpy(&(pid), buffer + desplazamiento, sizeof(uint32_t));
 
 	return pid; 
@@ -105,3 +105,30 @@ void eliminarProcesoDeMemoria(t_proceso* proceso) {
 	free(proceso); 
 }
 
+t_peticion* recibirPeticionCreacionDeSegmento(int socketCliente) {
+
+	int size, desplazamiento = 0; 
+
+	t_peticion* peticion = malloc(sizeof(t_peticion)); 
+
+	t_segmento* segmentoPedido = malloc(sizeof(t_peticion)); 
+
+	peticion->segmento = segmentoPedido; 
+
+	void* buffer = recibirBuffer(socketCliente, &size); 
+
+	desplazamiento+=sizeof(uint32_t); 
+
+	memcpy(&peticion->pid, buffer + desplazamiento, sizeof(uint32_t));
+
+	desplazamiento+=(2*sizeof(uint32_t)); 
+
+	memcpy(&peticion->segmento->id,buffer+desplazamiento,sizeof(uint32_t)); 
+
+	desplazamiento +=(3*sizeof(uint32_t)); 
+
+	memcpy(&peticion->segmento->direccionBase, buffer+desplazamiento,sizeof(uint32_t)); 
+
+	return peticion; 
+
+}

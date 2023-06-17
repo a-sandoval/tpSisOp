@@ -37,6 +37,7 @@ typedef struct {
     t_temporal* tiempoEnReady; 
     t_list* tablaDeSegmentos; 
     t_list* tablaDeArchivos; 
+    t_list* recursosAsignados;
 
 } t_pcb; 
 
@@ -97,9 +98,6 @@ t_pcb* desencolar(t_list* pcbs);
 void agregarPID(void *value); 
 void listarPIDS(t_list *pcbs); 
 
-// frees
 
-void destruirInstruccion(char *instruccion);
-void destruirRegistro(char *registro);
 
 #endif

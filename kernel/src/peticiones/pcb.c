@@ -12,8 +12,9 @@ t_pcb *crearPCB(){
     nuevoPCB->programCounter = 0;
     nuevoPCB->instrucciones = list_create();
     nuevoPCB->estimadoProximaRafaga = obtenerEstimacionInicial();
-    //nuevoPCB->tablaDeArchivos = list_create();
-    //nuevoPCB->tablaDeSegmentos = list_create();
+    nuevoPCB->tablaDeArchivos = list_create();
+    nuevoPCB->tablaDeSegmentos = list_create();
+    nuevoPCB->recursosAsignados = list_create();
     nuevoPCB->registrosCPU = crearDiccionarioDeRegistros();
 
     procesosCreados++; // para el nuevo pid
@@ -23,10 +24,11 @@ t_pcb *crearPCB(){
 }
 
 void destruirPCB(t_pcb *pcb){
-    list_destroy_and_destroy_elements(pcb->instrucciones, (void *)destruirInstruccion);
-    //list_destroy_and_destroy_elements(pcb->tablaDeArchivos, (void *)destruirInstruccion);
-    //list_destroy_and_destroy_elements(pcb->tablaDeSegmentos, (void *)destruirInstruccion);
-    dictionary_destroy_and_destroy_elements(pcb->registrosCPU, (void *)destruirRegistro);
+    list_destroy_and_destroy_elements(pcb->instrucciones, free);
+    list_destroy_and_destroy_elements(pcb->tablaDeSegmentos, free);
+    //list_destroy_and_destroy_elements(pcb->tablaDeArchivos, (void *)quitarArchivo);
+    list_destroy_and_destroy_elements(pcb->recursosAsignados, free);
+    dictionary_destroy_and_destroy_elements(pcb->registrosCPU, free);
     free(pcb);
 }
 
@@ -84,15 +86,8 @@ void listarPIDS(t_list *pcbs) {
 }
 
 
-// frees
 
-void destruirInstruccion(char *instruccion){
-    free(instruccion);
-}
 
-void destruirRegistro(char *registro){
-    free(registro);
-}
 
 
 

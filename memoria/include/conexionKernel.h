@@ -26,6 +26,7 @@ void agregarSegmentoAPaquete(t_paquete* paquete, t_segmento* segmento);
 
 t_proceso* crearProcesoEnMemoria(uint32_t pid); 
 uint32_t recibirPID(int socketCliente); 
+t_peticion* recibirPeticionCreacionDeSegmento(int socketCliente); 
 
 void eliminarProcesoDeMemoria(t_proceso* proceso); 
 #endif

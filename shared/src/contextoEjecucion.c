@@ -11,16 +11,42 @@ void enviarContextoActualizado(int socket){
     agregarAPaquete (paquete,(void *)&contextoEjecucion->programCounter, sizeof(contextoEjecucion->programCounter));
     agregarInstruccionesAPaquete (paquete, contextoEjecucion->instrucciones);
     agregarRegistrosAPaquete(paquete, contextoEjecucion->registrosCPU);
-    //no sabemos listas de que son estas tablas entonces aun no podemos serializar o hay que serializarlo como listas y ver si dsps cambia
-    //agregarAPaquete(paquete,(void *)&contextoEjecucion->tablaDeArchivosSize, sizeof(contextoEjecucion->tablaDeArchivosSize));
-    //agregarAPaquete(paquete,contextoEjecucion->tablaDeArchivos, contextoEjecucion->tablaDeArchivosSize);
-    //agregarAPaquete(paquete,(void *)&contextoEjecucion->tablaDeSegmentosSize, sizeof(contextoEjecucion->tablaDeSegmentosSize));
-    //agregarAPaquete(paquete,contextoEjecucion->tablaDeSegmentos, contextoEjecucion->tablaDeSegmentosSize);
+    
+    agregarTablaDeSegmentosAPaquete(paquete);
+    // agregarTablaDeArchivosAPaquete(paquete);
+    agregarRecursosAsignadosAPaquete(paquete); 
     agregarMotivoAPaquete(paquete, contextoEjecucion->motivoDesalojo);
     agregarAPaquete(paquete, (void *)&contextoEjecucion->rafagaCPUEjecutada, sizeof(contextoEjecucion->rafagaCPUEjecutada));
 
     enviarPaquete(paquete, socket);
 	eliminarPaquete(paquete);
+}
+
+void agregarRecursosAsignadosAPaquete(t_paquete* paquete){
+    
+    agregarAPaquete(paquete, &contextoEjecucion->recursosAsignadosSize, sizeof(uint32_t));
+
+    uint32_t i;
+    for(i=0;i<contextoEjecucion->recursosAsignadosSize;i++){
+        char* recurso = list_get(contextoEjecucion->recursosAsignados, i);
+        agregarAPaquete (paquete, recurso, sizeof(char) * (strlen(recurso) + 1 ));
+        free(recurso);
+    }
+       
+}
+
+void agregarTablaDeSegmentosAPaquete(t_paquete* paquete){
+    
+    uint32_t i;
+    for(i=0;i<contextoEjecucion->tablaDeSegmentosSize;i++){
+        agregarSegmentoAPaquete(paquete,list_get(contextoEjecucion->tablaDeSegmentos, i));
+    }
+}
+
+void agregarSegmentoAPaquete(t_paquete* paquete, t_segmento* segmento){
+	agregarAPaquete(paquete, (void*)&segmento->id, sizeof(uint32_t));
+	agregarAPaquete(paquete, (void*)&segmento->direccionBase, sizeof(uint32_t));
+	agregarAPaquete(paquete, (void*)&segmento->tamanio, sizeof(uint32_t));
 }
 
 void agregarMotivoAPaquete (t_paquete* paquete, t_motivoDeDesalojo* motivoDesalojo){
@@ -29,7 +55,6 @@ void agregarMotivoAPaquete (t_paquete* paquete, t_motivoDeDesalojo* motivoDesalo
     agregarAPaquete (paquete, (void *)&motivoDesalojo->parametrosLength, sizeof (motivoDesalojo->parametrosLength));
     for (int i = 0; i < motivoDesalojo->parametrosLength; i++) 
         agregarAPaquete (paquete, (void *)motivoDesalojo->parametros[i], (strlen (motivoDesalojo->parametros[i]) + 1) * sizeof(char));
-    
 
 }
 
@@ -59,6 +84,7 @@ void agregarRegistrosAPaquete(t_paquete* paquete, t_dictionary* registrosCPU){
 
 }
 
+
 void recibirContextoActualizado (int socket) {
 
     if (contextoEjecucion != NULL) destroyContextoUnico ();
@@ -80,8 +106,10 @@ void recibirContextoActualizado (int socket) {
     deserializarInstrucciones (buffer, &desplazamiento);
     deserializarRegistros (buffer, &desplazamiento);
 
+    
+    deserializarTablaDeSegmentos(buffer, &desplazamiento);
     //recibirTablaDeArchivos();
-    //recibirTablaDeSegmentos();
+    deserializarRecursos(buffer, &desplazamiento);
     
     deserializarMotivoDesalojo (buffer, &desplazamiento);
 
@@ -115,10 +143,81 @@ void deserializarInstrucciones (void * buffer, int * desplazamiento) {
         free (valor);
     }
 
-    // Desplazamiento: Tamaño de registro AX.
     (* desplazamiento) += sizeof(int);
 
 }
+
+void deserializarRecursos (void * buffer, int * desplazamiento) {
+
+    int tamanio;
+    list_clean_and_destroy_elements (contextoEjecucion->recursosAsignados, free);
+    // Desplazamiento: tamaño de la lista de los recursos.
+    memcpy(&(contextoEjecucion->recursosAsignadosSize), buffer + (* desplazamiento), sizeof(uint32_t));
+    (* desplazamiento) += sizeof(uint32_t);
+    
+    for (uint32_t i = 0; i < contextoEjecucion->recursosAsignadosSize; i++) {
+
+        // Desplazamiento: Tamaño del recurso.
+        memcpy (&tamanio, buffer + (* desplazamiento), sizeof (int));
+        (* desplazamiento) += sizeof (int);
+        char * valor = malloc (tamanio);
+
+        //Desplazamiento: recurso.
+        memcpy(valor, buffer + (* desplazamiento), tamanio);
+        (* desplazamiento) += tamanio;
+        list_add (contextoEjecucion->recursosAsignados, string_duplicate (valor));
+        free (valor);
+    }
+
+    (* desplazamiento) += sizeof(int);
+
+}
+
+void deserializarTablaDeSegmentos (void * buffer, int * desplazamiento) {
+
+    int tamanio;
+    list_clean_and_destroy_elements (contextoEjecucion->tablaDeSegmentos, liberarSegmento);
+    // Desplazamiento: tamaño de la lista de segmentos.
+    memcpy(&(contextoEjecucion->tablaDeSegmentosSize), buffer + (* desplazamiento), sizeof(uint32_t));
+    (* desplazamiento) += sizeof(uint32_t);
+    
+    for (uint32_t i = 0; i < contextoEjecucion->tablaDeSegmentosSize; i++) {
+
+        // Desplazamiento: Tamaño del segmento.
+        memcpy (&tamanio, buffer + (* desplazamiento), sizeof (int));
+        (* desplazamiento) += sizeof (int);
+
+        t_segmento* segmento = deserializarSegmento(buffer, &desplazamiento);
+        list_add (contextoEjecucion->tablaDeSegmentos, segmento);
+        free(segmento);
+    }
+
+    (* desplazamiento) += sizeof(int);
+
+}
+
+t_segmento*  deserializarSegmento(void* buffer, int* desplazamiento){
+    t_segmento* segmento;
+    int tamanio;
+    // id
+    memcpy (&tamanio, buffer + (* desplazamiento), sizeof (int));
+    (* desplazamiento) += sizeof (int);
+    memcpy (&segmento->id, buffer + (* desplazamiento), tamanio);
+    (* desplazamiento) += sizeof (uint32_t);
+    //direccion base
+    memcpy (&tamanio, buffer + (* desplazamiento), sizeof (int));
+    (* desplazamiento) += sizeof (int);
+    memcpy (&segmento->direccionBase, buffer + (* desplazamiento), tamanio);
+    (* desplazamiento) += sizeof (uint32_t);
+    //tamanio
+    memcpy (&tamanio, buffer + (* desplazamiento), sizeof (int));
+    (* desplazamiento) += sizeof (int);
+    memcpy (&segmento->tamanio, buffer + (* desplazamiento), tamanio);
+    (* desplazamiento) += sizeof (uint32_t);
+
+    return segmento;
+}
+
 
 void deserializarRegistros (void * buffer, int * desplazamiento) {
     dictionary_clean_and_destroy_elements (contextoEjecucion->registrosCPU, free);
@@ -181,6 +280,8 @@ void iniciarContexto(){
 	contextoEjecucion->tablaDeArchivosSize = 0;
 	contextoEjecucion->tablaDeSegmentos = list_create();
 	contextoEjecucion->tablaDeSegmentosSize = 0;
+    contextoEjecucion->recursosAsignados = list_create();
+	contextoEjecucion->recursosAsignadosSize = 0;
     contextoEjecucion->rafagaCPUEjecutada = 0;
     contextoEjecucion->motivoDesalojo = (t_motivoDeDesalojo *)malloc(sizeof(t_motivoDeDesalojo));
     contextoEjecucion->motivoDesalojo->parametros[0] = "";

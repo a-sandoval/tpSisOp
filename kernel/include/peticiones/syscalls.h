@@ -42,6 +42,8 @@ void deleteSegment_s(t_pcb*,char **parametros);
 void yield_s(t_pcb*);
 void exit_s(t_pcb*,char **parametros);
 
+void liberarRecursosAsignados(t_pcb* proceso);
+
 void bloquearIO(int *tiempo);
 
 void recibirTablaActualizada();

@@ -80,6 +80,7 @@ void wait_s(t_pcb *proceso, char **parametros){
     int instancRecurso = instanciasRecursos[indexRecurso];
     instancRecurso--;
     instanciasRecursos[indexRecurso]=instancRecurso;
+    list_add(proceso->recursosAsignados, recurso);
 
     log_info(logger,"PID: <%d> - Wait: <%s> - Instancias: <%d>",proceso->pid,recurso,instancRecurso); 
 
@@ -114,8 +115,8 @@ void signal_s(t_pcb *proceso, char **parametros){
     }
 
     int instancRecurso = instanciasRecursos[indexRecurso];
-
     instancRecurso++;
+    list_remove_element(proceso->recursosAsignados,(void*)recurso);
 
     log_info(logger,"PID: <%d> - Signal: <%s> - Instancias: <%d>",proceso->pid,recurso,instancRecurso); 
 
@@ -137,8 +138,9 @@ void signal_s(t_pcb *proceso, char **parametros){
     
     }
     
-    volverACPU(proceso); 
+    volverACPU(proceso);    
 }
+
 
 void io_s(t_pcb *proceso, char **parametros){   
     
@@ -192,10 +194,23 @@ void exit_s(t_pcb* proceso, char **parametros){
     
     enviarMensaje("Terminado", proceso->socketPCB);
 
+    liberarRecursosAsignados(proceso);
+    liberarArchivosAsignados(proceso);
+    liberarSegmentos(proceso);
     liberarMemoriaPCB(proceso); 
 
     destruirPCB(proceso); 
     sem_post(&semGradoMultiprogramacion); 
+}
+
+void liberarRecursosAsignados(t_pcb* proceso){
+
+     int cantRecursos = list_size(proceso->recursosAsignados);
+
+    uint32_t i;
+    for(i=0; i<cantRecursos;i++){
+        signal_s(proceso, list_get(proceso->recursosAsignados, i));
+    }
 }
 
 
@@ -210,9 +225,7 @@ void fopen_s(t_pcb *proceso, char **parametros){
         solicitarArchivoFS(archivo);
     }
     
-
 }
-
 
 
 /*
@@ -278,8 +291,8 @@ void createSegment_s(t_pcb *proceso, char **parametros){
                 break;
         
         case COMPACTACION:
-                 log_info(logger, "Compactacion: Se solicito compactacion ");
-                 log_info(logger,  "Compactacion: Esperando Fin de Operaciones de FS");
+                log_info(logger, "Compactacion: Se solicito compactacion ");
+                log_info(logger,  "Compactacion: Esperando Fin de Operaciones de FS");
                 log_info(logger,  "Se finalizo el proceso de compactacion");
 
                 //dsps de la compactacion
@@ -290,7 +303,6 @@ void createSegment_s(t_pcb *proceso, char **parametros){
     free(peticion);
     free(rdoPeticion);
 }
-
 
 
 void deleteSegment_s(t_pcb *proceso, char **parametros){
@@ -355,3 +367,4 @@ void loggearBloqueoDeProcesos(t_pcb* proceso, char* motivo) {
 void loggearSalidaDeProceso(t_pcb* proceso, char* motivo) {
     log_info(logger,"Finaliza el proceso <%d> - Motivo: <%s>", proceso->pid, motivo); 
 }
+

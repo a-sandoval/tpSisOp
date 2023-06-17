@@ -46,3 +46,4 @@ void liberarMemoriaPCB(t_pcb* proceso){
     agregarAPaquete(peticion,(void*)&proceso->pid, sizeof(uint32_t));
     enviarPaquete(peticion, conexionAMemoria); 
 }
+
