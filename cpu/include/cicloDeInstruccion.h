@@ -20,14 +20,6 @@
     #define obtenerTiempoEspera() config_get_int_value(config, "RETARDO_INSTRUCCION")
     #define obtenerTamanioMaxSeg() config_get_int_value(config, "TAM_MAX_SEGMENTO")
 
-    typedef struct {
-
-    uint32_t id; 
-    uint32_t direccionBase; 
-    uint32_t tamanio; 
-
-    }t_segmento; 
-
     extern char *listaComandos[];
     extern char* instruccionAEjecutar; 
     extern char** elementosInstruccion; 
@@ -67,4 +59,5 @@
     void destruirTemporizador (t_temporal * temporizador);
     void modificarMotivoDesalojo (t_comando comando, int numParametros, char * parm1, char * parm2, char * parm3);
     int obtenerTamanioReg(char* registro);
+
 #endif 

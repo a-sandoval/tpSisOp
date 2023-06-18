@@ -11,6 +11,8 @@ void ejecutarServidor();
 void iterator(void* value); 
 
 extern int socketCliente;
+extern int conexionAMemoria;
+extern int tiempoDeEspera;
 
 typedef enum {
     F_OPEN,

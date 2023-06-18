@@ -102,7 +102,60 @@ int truncarArchivo (fcb_t * archivo, uint32_t tamanio) {
 
 }
 
-int leerArchivo (fcb_t archivo);
+char * leerArchivo (fcb_t * archivo, uint32_t puntero, uint32_t tamanio) {
+    // Bloque Inicial: Si es 1 entonces es el puntero directo, sino es el bloque n - 2 (empezando desde 0).
+    uint32_t bloqueInicial = puntero / tamanioBloques + 1;
+    // Bloque Final: Idem.
+    uint32_t bloqueFinal = (puntero + tamanio) / tamanioBloques + 1;
+    // Puntero en bloque: Si el puntero es mayor a 64 bytes, se tiene que sacar el resto de la division para saber
+    // donde estaria en el bloque inicial.
+    uint32_t punteroEnBloque = puntero % tamanioBloques;
+    
+    // Tamaño del primer bloque: Si nada mas se accede a un solo bloque entonces el tamaño va a ser el tamaño del
+    // primer bloque, sino va a ser 64 bytes menos el puntero en bloque.
+    uint32_t tamanioDelPrimerBloque = 
+        (bloqueInicial == bloqueFinal)  ? tamanio
+                                        : tamanioBloques  - punteroEnBloque;
+    // Tamaño del ultimo bloque: Si sumamos el puntero por el tamaño nos va a dar el ultimo valor del puntero.
+    // Por lo tanto el resto de esto por 64 bytes nos va a dar el mismo valor pero dentro del ultimo bloque,
+    // que es igual al tamaño del ultimo bloque empezando desde 0.
+    uint32_t tamanioDelBloqueFinal = (punteroEnBloque + tamanio) % tamanioBloques;
+    char *data = malloc (sizeof (char) * tamanio);
+
+    // Direccion del primer bloque: La direccion del primer bloque va a ser, o el puntero directo, o un puntero
+    // dentro del puntero indirecto.
+    uint32_t direccionBloque = 
+        (bloqueInicial == 1) ? archivo->ptrDirecto 
+                             : direccionIndirectaAReal (archivo->ptrIndirecto, bloqueInicial - 2);
+                            // Se le resta dos para considerar el puntero directo.
+    // Caso 1: Me solicitan leer menos de 1 bloque con el puntero inicial entre 0 y 63.
+    // Nada mas se lee el primer bloque, y se lee desde el puntero hasta el final del primer bloque o menos.
+    // Esto va a pasar siempre.
+    for (uint32_t i = punteroEnBloque; i < tamanioDelPrimerBloque + punteroEnBloque; i++) 
+        data[i - punteroEnBloque] = bloques[direccionBloque][i];
+    // Caso 2: Me solicitan leer mas de un bloque (tamaño + puntero) es mayor a 64 bytes.
+    if (bloqueFinal > bloqueInicial) {
+        uint32_t desplazamiento = tamanioDelPrimerBloque;
+        // Si la cantidad de bloques a leer es mayor a 2, entonces los bloques entre medios van a ser leidos por 
+        // completo. Se realiza un for loop anidado para leer cada bloque intermedio.
+        for (uint32_t i = bloqueInicial - 1; i < bloqueFinal - 2; i++) {
+            for (uint32_t j = 0; j < (uint32_t) tamanioBloques; j++) 
+                data[j + desplazamiento] = bloques[direccionIndirectaAReal (archivo->ptrIndirecto, i)][j];
+            desplazamiento += tamanioBloques;
+        }
+        // Si o si va a haber un bloque final y este va a tener un valor menor o igual al tamaño del bloque.
+        for (uint32_t i = 0; i < tamanioDelBloqueFinal; i++) 
+            data[i + desplazamiento] = bloques[direccionIndirectaAReal (archivo->ptrIndirecto, bloqueFinal)][i];
+    }
+    return data;
+}
+// Casos de ejemplo:
+/**
+ * Caso 1: leerArchivo (archivoX = { "Tantos", 0, 1, 257 }, 12, 120)
+ *  bloqueInicial = 1, bloqueFinal = 3, punteroEnBloque = 12, tamañoDelPrimerBloque = 52, tamañoDelUltimoBloque = 4
+ * 
+*/
+
 int escribirArchivo (fcb_t archivo);
 
 int asignarBloqueAArchivo (fcb_t * archivo, uint32_t ptr) {
@@ -121,13 +174,7 @@ uint32_t ultimoBloqueDeArchivo (fcb_t * archivo) {
     uint32_t ptrEnBloque = espacioParaGuardarPuntero (archivo);
     if (ptrEnBloque >= UINT32_MAX - 1) return UINT32_MAX;
     if (ptrEnBloque == 0) return archivo->ptrDirecto;
-    uint8_t ptrDeconstruido[TAMANIO_PUNTERO] = {0, 0, 0, 0};
-    for (int j = -TAMANIO_PUNTERO; j < 0; j++) {
-        ptrDeconstruido[j + TAMANIO_PUNTERO] = (uint8_t) bloques[archivo->ptrIndirecto][ptrEnBloque + j];
-    }
-    uint32_t ptr = 
-        (ptrDeconstruido[0] << 24) + (ptrDeconstruido[1] << 16) + (ptrDeconstruido[2] << 8) + ptrDeconstruido[3];
-    return ptr;
+    return direccionIndirectaAReal (archivo->ptrIndirecto, ptrEnBloque - TAMANIO_PUNTERO);
 }
 
 uint32_t espacioParaGuardarPuntero (fcb_t * archivo) {

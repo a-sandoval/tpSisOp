@@ -25,3 +25,13 @@ int copiarABloque (uint32_t numBloque, char * texto, uint32_t longDeTexto) {
 
     return 0;
 }
+
+uint32_t direccionIndirectaAReal (uint32_t ptrIndirecto, uint32_t bloqueABuscar) {
+    uint8_t direccionDeconstruida[TAMANIO_PUNTERO];
+    for (int i = bloqueABuscar * TAMANIO_PUNTERO; i < TAMANIO_PUNTERO; i++)
+        direccionDeconstruida[i - bloqueABuscar] = bloques[ptrIndirecto][i];
+    uint32_t direccion = 0;
+    for (int i = 1; i <= TAMANIO_PUNTERO; i++)
+        direccion += (direccionDeconstruida[i] << ((TAMANIO_PUNTERO - i) * 8));
+    return direccion;
+}

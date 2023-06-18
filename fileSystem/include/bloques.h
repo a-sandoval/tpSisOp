@@ -13,7 +13,7 @@
 #include <commons/bitarray.h>
 
 #define TAMANIO_PUNTERO 4
-#define CANT_BLOQUES(bytes) ((bytes != 0) ? (bytes / tamanioBloques + (bytes < (uint32_t) tamanioBloques)) : 0) 
+#define CANT_BLOQUES(bytes) ((bytes != 0) ? (bytes / tamanioBloques + 1) : 0) 
 #define MAX_BLOQUES tamanioBloques / TAMANIO_PUNTERO + 1
 
 extern int cantBloques;
@@ -29,6 +29,8 @@ extern char ** bloques;
 
 int copiarABloque (uint32_t numBloque, char * texto, uint32_t longTexto);
 uint32_t proximoBloqueLibre ();
+uint32_t direccionIndirectaAReal (uint32_t ptrIndirecto, uint32_t bloqueABuscar);
 void eliminarBloque (uint32_t ptr);
+
 
 #endif
