@@ -76,3 +76,13 @@ int tamanioArrayCharDoble (char **arreglo){
 
 }
 
+void liberarRecursosAsignados(t_pcb* proceso){
+
+     int cantRecursos = list_size(proceso->recursosAsignados);
+
+    int i;
+    for(i=0; i<cantRecursos;i++){
+        signal_s(proceso, list_get(proceso->recursosAsignados, i));
+        list_remove(proceso->recursosAsignados,i);
+    }
+}

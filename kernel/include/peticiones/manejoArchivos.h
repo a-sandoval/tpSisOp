@@ -8,6 +8,7 @@
 #include "shared/include/utilsCliente.h"
 #include "shared/include/global.h"
 #include "shared/include/contextoEjecucion.h"
+#include "kernel/include/peticiones/pcb.h"
 
 typedef struct {
     char * nombre;
@@ -36,6 +37,8 @@ void iniciarTablaGlobalDeArchivos();
 void deserializarFCB(t_archivo** );
 void recibirFCB(t_archivo**);
 
-
+bool estaEnLaTablaGlobal(char* nombreArchivo);
+t_archivo* obtenerArchivo(char* nombreArchivo);
+void eliminarArchivo(t_archivo* archivo);
 
 #endif

@@ -31,7 +31,7 @@ KERNEL_PETICIONES := kernel/src/peticiones
 KERNEL_PLANIFIACION := kernel/src/planificacion
 ARCHIVOS_KERNEL  := kernel/src/kernel.c \
 					$(KERNEL_CONEXIONES)/*.c \
-					$(KERNEL_PETICIONES)/manejoRecursos.c $(KERNEL_PETICIONES)/manejoArchivos.c $(KERNEL_PETICIONES)/pcb.c $(KERNEL_PETICIONES)/syscalls.c \
+					$(KERNEL_PETICIONES)/manejoRecursos.c $(KERNEL_PETICIONES)/manejoSegmentos.c $(KERNEL_PETICIONES)/manejoArchivos.c $(KERNEL_PETICIONES)/pcb.c $(KERNEL_PETICIONES)/syscalls.c \
 					$(KERNEL_PLANIFIACION)/*.c \
                     $(CONFIG) $(UTILS_CLIENTE) $(UTILS_SERVIDOR) $(CONTEXTO_EJECUCION)
 

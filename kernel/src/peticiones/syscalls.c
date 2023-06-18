@@ -23,13 +23,14 @@ void retornoContexto(t_pcb *proceso, t_contexto *contextoEjecucion){
         case EXIT:
             exit_s(proceso, contextoEjecucion->motivoDesalojo->parametros);
             break;
-    /*
+    
         case F_OPEN:
             fopen_s(proceso, contextoEjecucion->motivoDesalojo->parametros);
             break;
         case F_CLOSE:
             fclose_s(proceso, contextoEjecucion->motivoDesalojo->parametros);
             break;
+    /*
         case F_SEEK:
             fseek_s(proceso, contextoEjecucion->motivoDesalojo->parametros);
             break;
@@ -42,14 +43,13 @@ void retornoContexto(t_pcb *proceso, t_contexto *contextoEjecucion){
         case F_TRUNCATE:
             ftruncate_s(proceso, contextoEjecucion->motivoDesalojo->parametros);
             break;
+    */
         case CREATE_SEGMENT:
             createSegment_s(proceso, contextoEjecucion->motivoDesalojo->parametros);
             break;
         case DELETE_SEGMENT:
             deleteSegment_s(proceso, contextoEjecucion->motivoDesalojo->parametros);
-            break;
-   
-     */   
+            break; 
     default:
         log_error(loggerError, "Comando incorrecto, ejecutando Yield para continuar");
         yield_s(proceso);
@@ -203,16 +203,6 @@ void exit_s(t_pcb* proceso, char **parametros){
     sem_post(&semGradoMultiprogramacion); 
 }
 
-void liberarRecursosAsignados(t_pcb* proceso){
-
-     int cantRecursos = list_size(proceso->recursosAsignados);
-
-    int i;
-    for(i=0; i<cantRecursos;i++){
-        signal_s(proceso, list_get(proceso->recursosAsignados, i));
-    }
-}
-
 
 void fopen_s(t_pcb *proceso, char **parametros){
 
@@ -224,8 +214,7 @@ void fopen_s(t_pcb *proceso, char **parametros){
             estadoAnterior = proceso->estado;
             proceso->estado = BLOCK;
             
-            //noc si este list find funciona
-            archivo = list_find(tablaGlobalArchivos, estaEnLaTablaGlobal(nombreArchivo));
+            archivo = obtenerArchivo(nombreArchivo);
 
             list_add(archivo->colaBloqueados, proceso);
             archivo->colaBloqueadosSize++;
@@ -238,28 +227,9 @@ void fopen_s(t_pcb *proceso, char **parametros){
         list_add(proceso->tablaDeArchivos,(void*)archivo);
         volverACPU(proceso);
     }
-    free(archivo);
+    eliminarArchivo(archivo);
     
 }
-
-bool estaEnLaTablaGlobal(char* nombreArchivo){
-
-    int cantArchivos = list_size(tablaGlobalArchivos);
-    t_archivo* archivoAux = malloc(sizeof(t_archivo));
-
-
-    for(int i=0; i<cantArchivos; i++){
-        archivoAux=list_get(tablaGlobalArchivos, i);
-
-        if(!strcmp(nombreArchivo, archivoAux->fcb->nombre)){
-            free(archivoAux);
-            return true;
-        }
-    }
-    free(archivoAux);
-    return false;
-}
-
 
 void fclose_s(t_pcb *proceso, char **parametros){
 
@@ -338,10 +308,8 @@ void createSegment_s(t_pcb *proceso, char **parametros){
         case SUCCESS:
                 log_info(logger, "PID: %d - Crear Segmento - Id: %d - Tamanio: %d", proceso->pid, idSegmento, tamanio);
                 // me mandan la tabla con el nuevo segmento incorporado
-                recibirTablaActualizada(proceso);
-                contextoEjecucion = procesarPCB(proceso);
-                rafagaCPU = contextoEjecucion->rafagaCPUEjecutada; 
-                retornoContexto(proceso, contextoEjecucion);
+                recibirTablaDeSegmentosActualizada(proceso);
+                volverACPU(proceso);
                 break;
 
         case OUTOFMEMORY:
@@ -354,7 +322,7 @@ void createSegment_s(t_pcb *proceso, char **parametros){
                 log_info(logger,  "Se finalizo el proceso de compactacion");
 
                 //dsps de la compactacion
-                 log_info(logger, "PID: %d - Crear Segmento - Id: %d - Tamanio: %d", proceso->pid, idSegmento, tamanio);
+               
                 break;
     }
 
@@ -375,49 +343,12 @@ void deleteSegment_s(t_pcb *proceso, char **parametros){
     agregarAPaquete(peticion, (void*)&idSegmento, sizeof(uint32_t));
     enviarPaquete(peticion, conexionAMemoria);
 
-    recibirTablaActualizada(proceso);
+    recibirTablaDeSegmentosActualizada(proceso);
 
-    contextoEjecucion = procesarPCB(proceso);
-    rafagaCPU = contextoEjecucion->rafagaCPUEjecutada; 
-    retornoContexto(proceso, contextoEjecucion);
+    volverACPU(proceso);
 
 }
 
-void recibirTablaActualizada(t_pcb* pcb){
-
-	int size, desplazamiento = 0;
-	void * buffer;
-
-	buffer = recibirBuffer(conexionAMemoria, &size);
-
-    desplazamiento += sizeof(int);
-    //salteo el pid aca porque ya lo tengo del pcb
-    desplazamiento += sizeof(uint32_t);
-    
-    t_segmento* segmento;
-
-    list_clean_and_destroy_elements (contextoEjecucion->tablaDeSegmentos, free);
-    
-    int tamanio;
-    uint32_t tablaDeSegmentosSize;
-    // Desplazamiento: tamaño de la lista de segmentos.
-    memcpy(&(tablaDeSegmentosSize), buffer + desplazamiento, sizeof(uint32_t));
-    desplazamiento += sizeof(uint32_t);
-    
-    for (uint32_t i = 0; i < tablaDeSegmentosSize; i++) {
-
-        // Desplazamiento: Tamaño del segmento.
-        memcpy (&tamanio, buffer + desplazamiento, sizeof (int));
-        desplazamiento += sizeof (int);
-
-        segmento = deserializarSegmento(buffer, &desplazamiento);
-        list_add (pcb->tablaDeSegmentos, segmento);
-        free(segmento);
-    }
-
-    desplazamiento += sizeof(int);
-
-}
 
 void loggearBloqueoDeProcesos(t_pcb* proceso, char* motivo) {
     log_info(logger,"PID: <%d> - Bloqueado por: %s", proceso->pid, motivo); 
@@ -426,4 +357,3 @@ void loggearBloqueoDeProcesos(t_pcb* proceso, char* motivo) {
 void loggearSalidaDeProceso(t_pcb* proceso, char* motivo) {
     log_info(logger,"Finaliza el proceso <%d> - Motivo: <%s>", proceso->pid, motivo); 
 }
-

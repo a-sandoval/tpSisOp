@@ -7,6 +7,7 @@
 #include "kernel/include/conexiones/conexionMemoria.h"
 #include "kernel/include/peticiones/pcb.h"
 #include "kernel/include/peticiones/manejoRecursos.h"
+#include "kernel/include/peticiones/manejoSegmentos.h"
 #include "kernel/include/peticiones/manejoArchivos.h"
 #include "kernel/include/planificacion/planificacion.h"
 #include "kernel/include/planificacion/algoritmosCortoPlazo.h"
@@ -38,13 +39,10 @@ void deleteSegment_s(t_pcb*,char **parametros);
 void yield_s(t_pcb*);
 void exit_s(t_pcb*,char **parametros);
 
-void liberarRecursosAsignados(t_pcb* proceso);
 
-bool estaEnLaTablaGlobal(char* nombreArchivo);
 
 void bloquearIO(int *tiempo);
 
-void recibirTablaActualizada();
 
 void loggearBloqueoDeProcesos(t_pcb*,char* motivo); 
 

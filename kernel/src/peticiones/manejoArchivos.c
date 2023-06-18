@@ -15,7 +15,7 @@ t_archivo*  solicitarArchivoFS(char* nombreArchivo){
 
     log_info(logger, "PID: %d - Abrir Archivo: %s",contextoEjecucion->pid,nombreArchivo);
 
-    peticion->codigo_operacion = F_OPEN;
+    peticion->codigo_operacion = FOPEN;
     agregarAPaquete(peticion, nombreArchivo, sizeof(char)*string_length(nombreArchivo));
     enviarPaquete(peticion, conexionAFS);
 
@@ -23,17 +23,19 @@ t_archivo*  solicitarArchivoFS(char* nombreArchivo){
 
     switch (respuesta){
         case MENSAJE: // en este caso el archivo no existe y tiene que crearlo
-                    peticion->codigo_operacion = F_CREATE; // se sobreentiende que es con tamanio 0
+                    peticion->codigo_operacion = FCREATE; // se sobreentiende que es con tamanio 0
                     agregarAPaquete(peticion, nombreArchivo, sizeof(char)*string_length(nombreArchivo));
                     enviarPaquete(peticion, conexionAFS);
         case PAQUETE: // el archivo ya existe y solo me lo manda
-                    recibirFCB(nuevoArchivo);
+                    recibirFCB(&nuevoArchivo);
                     agregarArchivoATG(nuevoArchivo);
         break;
     }
 
     return nuevoArchivo;
 }
+
+
 
 void recibirFCB(t_archivo** nuevoArchivo){
     //recibo el fcb
@@ -81,8 +83,45 @@ void deserializarFCB(t_archivo** nuevoArchivo){
 
 void agregarArchivoATG(t_archivo* nuevoArchivo){
 
-    //ademas tengo que poner que archivo la esta utilizando y ver el tema de la cola de bloqueados
     list_add(tablaGlobalArchivos, nuevoArchivo);
 }
 
+void eliminarArchivo(t_archivo* archivo){
+    //espero que esto este bien
+    free(archivo->fcb);
+    destruirListaPCB(archivo->colaBloqueados);
+    free(archivo);
+}
 
+bool estaEnLaTablaGlobal(char* nombreArchivo){
+
+    int cantArchivos = list_size(tablaGlobalArchivos);
+    t_archivo* archivoAux = malloc(sizeof(t_archivo));
+
+
+    for(int i=0; i<cantArchivos; i++){
+        archivoAux=list_get(tablaGlobalArchivos, i);
+
+        if(!strcmp(nombreArchivo, archivoAux->fcb->nombre)){
+            eliminarArchivo(archivoAux);
+            return true;
+        }
+    }
+    eliminarArchivo(archivoAux);
+    return false;
+}
+
+t_archivo* obtenerArchivo(char* nombreArchivo){
+
+    int cantArchivos = list_size(tablaGlobalArchivos);
+    t_archivo* archivoAux = malloc(sizeof(t_archivo));
+
+
+    for(int i=0; i<cantArchivos; i++){
+        archivoAux=list_get(tablaGlobalArchivos, i);
+
+        if(!strcmp(nombreArchivo, archivoAux->fcb->nombre)){
+            return archivoAux; //no haria falta otra opcion porque si llegue a esta funcion, el archivo esta
+        }
+    }
+}

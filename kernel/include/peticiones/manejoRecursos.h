@@ -23,5 +23,6 @@ void destruirArrayCharDoble(char**array);
 void colaBloqueadosDestroyer(void* colaBloqueados);
 void destruirRecursos();
 void liberarColasBloqueo();
+void liberarRecursosAsignados(t_pcb* proceso);;
 
 #endif
