@@ -3,7 +3,7 @@
 
 int ejecutarServidorCPU(int * socketCliente){
 
-	log_info(logger, "Conectado el CPU.");
+	log_debug(logger, "Conectado el CPU.");
 
 	while (1) {
 		int peticion = recibirOperacion(*socketCliente);

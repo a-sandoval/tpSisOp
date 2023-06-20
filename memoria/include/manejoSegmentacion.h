@@ -12,6 +12,7 @@
 #include "shared/include/utilsServidor.h"
 #include "shared/include/utilsCliente.h"
 #include "shared/include/configuraciones.h"
+#include "memoria/include/algoritmosAsignacion.h"
 
 typedef struct {
     uint32_t id;
