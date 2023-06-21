@@ -17,6 +17,7 @@ void ejecutarServidor() {
 		int size, longDeNombre, desplazamiento = 0;
 		char * nombreArchivo;
 		fcb_t * nuevoArchivo, * fcbRecibido;
+		uint32_t puntero, tamanio, segmento;
 		void * data = recibirBuffer (socketCliente, &size);
 		usleep (tiempoDeEspera * 1000);
 		switch (cod_op) {
@@ -61,7 +62,6 @@ void ejecutarServidor() {
 			case FREAD:
 				fcbRecibido = recibirArchivo (data, &(desplazamiento));
 				desplazamiento += sizeof (int);
-				uint32_t puntero, tamanio, segmento;
 				memcpy (& (puntero), data + desplazamiento, sizeof puntero);
 				desplazamiento += sizeof (int) + sizeof puntero;
 				memcpy (& (tamanio), data + desplazamiento, sizeof tamanio);
@@ -77,6 +77,17 @@ void ejecutarServidor() {
 				break;
 
 			case FWRITE:
+				fcbRecibido = recibirArchivo (data, &(desplazamiento));
+				memcpy (& (puntero), data + desplazamiento, sizeof puntero);
+				desplazamiento += sizeof (int) + sizeof puntero;
+				memcpy (& (tamanio), data + desplazamiento, sizeof tamanio);
+				desplazamiento += sizeof (int) + sizeof tamanio;
+				memcpy (& (segmento), data + desplazamiento, sizeof segmento);
+				char * aEscribir = solicitarAMemoria (segmento, tamanio, conexionAMemoria);
+				if (escribirArchivo (fcbRecibido, aEscribir, tamanio, puntero) < 0)
+					enviarMensaje ("Fallo :(", socketCliente);
+				else enviarMensaje ("Yayayay!", socketCliente);
+				free (aEscribir), free (fcbRecibido->nombre), free (fcbRecibido), free (data);
 				break;
 
 			default:
@@ -110,14 +121,5 @@ int enviarArchivo (fcb_t * archivo, int socket) {
 	agregarAPaquete (paquete, &(archivo->ptrIndirecto), sizeof archivo->ptrIndirecto);
 	enviarPaquete (paquete, socket);
 	free (paquete->buffer), free (paquete), free (archivo->nombre), free (archivo);
-	return 0;
-}
-
-int enviarAMemoria (char * mensaje, uint32_t segmento, uint32_t tamanio, int socket) {
-	t_paquete * paquete = crearPaquete ();
-	paquete->codigo_operacion = segmento;
-	agregarAPaquete (paquete, (void *) mensaje, tamanio);
-	enviarPaquete (paquete, socket);
-	free (paquete->buffer), free (paquete);
 	return 0;
 }

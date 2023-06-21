@@ -66,7 +66,7 @@ typedef enum
 	FREAD,
 	FWRITE
 
-}op_code;
+} op_code;
 
 
 /**
