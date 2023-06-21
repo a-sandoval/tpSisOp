@@ -12,120 +12,112 @@ void escucharAlKernel() {
 void ejecutarServidor() {
 	tiempoDeEspera = config_get_int_value (config, "RETARDO_ACCESO_BLOQUE");
 	while (1) {
-		int cod_op = recibirOperacion(socketCliente); 
+		op_code cod_op = recibirOperacion(socketCliente); 
+
+		int size, longDeNombre, desplazamiento = 0;
+		char * nombreArchivo;
+		fcb_t * nuevoArchivo, * fcbRecibido;
+		void * data = recibirBuffer (socketCliente, &size);
+		usleep (tiempoDeEspera * 1000);
 		switch (cod_op) {
-			case PAQUETE:
-				recibirInstruccion (socketCliente);
+			case FOPEN:
+				memcpy (&(longDeNombre), data + desplazamiento, sizeof (int)), desplazamiento += sizeof longDeNombre;
+				nombreArchivo = malloc (sizeof (char) * longDeNombre);
+				memcpy (nombreArchivo, data + desplazamiento, longDeNombre), desplazamiento += longDeNombre;
+				log_info (logger, "Abrir Archivo: <%s>", nombreArchivo);
+				nuevoArchivo = abrirArchivo (nombreArchivo);
+				if (nuevoArchivo == NULL) enviarMensaje ("Apertura de archivo fallida, desea crear el archivo?", socketCliente);
+				else enviarArchivo (nuevoArchivo, socketCliente);
+				free (nombreArchivo), free (data);
 				break;
-			case MENSAJE:
+
+			case FCREATE:
+				memcpy (&(longDeNombre), data + desplazamiento, sizeof (int)), desplazamiento += sizeof longDeNombre;
+				nombreArchivo = malloc (sizeof (char) * longDeNombre);
+				memcpy (nombreArchivo, data + desplazamiento, longDeNombre), desplazamiento += longDeNombre;
+				log_info (logger, "Crear Archivo: <%s>", nombreArchivo);
+				if (crearArchivo(nombreArchivo) < 0) {
+					enviarMensaje ("Fallo en la creacion de archivo :(", socketCliente);
+					free (data), free (nombreArchivo);
+					break;
+				}
+				nuevoArchivo = abrirArchivo (nombreArchivo);
+				if (nuevoArchivo == NULL) enviarMensaje ("Fallo en la apertura de archivo :(", socketCliente);
+				else enviarArchivo (nuevoArchivo, socketCliente);
+				free (data), free (nombreArchivo);
 				break;
-            case -1:
-				log_info(logger, "Se desconecto el Kernel");
-                close(socketCliente);
-                return;
+
+			case FTRUNCATE:
+				fcbRecibido = recibirArchivo (data, &(desplazamiento));
+				desplazamiento += sizeof (int);
+				uint32_t tamanioNuevo;
+				memcpy (&(tamanioNuevo), data + desplazamiento, sizeof tamanioNuevo);
+				log_info (logger, "Truncar Archivo: <%s> - Tamaño: <%d>", fcbRecibido->nombre, tamanioNuevo);
+				if (truncarArchivo (fcbRecibido, tamanioNuevo) < 0) enviarMensaje ("Fallo truncacion de archivo :(", socketCliente);
+				else enviarArchivo (fcbRecibido, socketCliente);
+				free (data);
+				break;
+
+			case FREAD:
+				fcbRecibido = recibirArchivo (data, &(desplazamiento));
+				desplazamiento += sizeof (int);
+				uint32_t puntero, tamanio, segmento;
+				memcpy (& (puntero), data + desplazamiento, sizeof puntero);
+				desplazamiento += sizeof (int) + sizeof puntero;
+				memcpy (& (tamanio), data + desplazamiento, sizeof tamanio);
+				desplazamiento += sizeof (int) + sizeof tamanio;
+				memcpy (& (segmento), data + desplazamiento, sizeof segmento);
+				char * leido = leerArchivo (fcbRecibido, puntero, tamanio);
+				enviarAMemoria (leido, segmento, tamanio, conexionAMemoria);
+				recibirOperacion (conexionAMemoria);
+				char * mensaje = recibirMensaje (conexionAMemoria);
+				if (!strcmp (mensaje, "Ejecucion correcta :)"))
+					enviarMensaje("Yayay :)", socketCliente);
+				free (mensaje), free (leido), free (fcbRecibido->nombre), free (fcbRecibido), free (data);
+				break;
+
+			case FWRITE:
+				break;
+
 			default:
 				break;
 		}
 	}
 }
 
-void iterator (void *value) {
-    log_info(logger, "Se recibio esta data: %s.", (char *) value);
-    /*
-    t_paquete *paquete = crearPaquete();
-    agregarAPaquete ( paquete, value, sizeof(char) * strlen((char *) value) + 1 );
-    enviarPaquete(paquete, socketMemoria);
-    eliminarPaquete(paquete);
-    */
-}
-
-void recibirInstruccion (int socket) {
-	int size, desplazamiento = sizeof (int);
-	void * data = recibirBuffer (socketCliente, &size);
-	operacionFS_e instruccion;
-	memcpy (&(instruccion), data + desplazamiento, sizeof instruccion), desplazamiento += sizeof instruccion;
-	
-	//fcb_t * fcbRecibido = malloc (sizeof (fcb_t));
-	usleep (tiempoDeEspera * 1000);
-	switch (instruccion) {
-		case F_OPEN:
-			int longDeNombre;
-			memcpy (&(longDeNombre), data + desplazamiento, sizeof (int)), desplazamiento += sizeof longDeNombre;
-			char *nombreArchivo = malloc (sizeof (char) * longDeNombre);
-			fcb_t * nuevoArchivo = abrirArchivo (nombreArchivo);
-			if (nuevoArchivo == NULL) {
-				enviarMensaje ("Apertura de archivo fallida, desea crear el archivo?", socketCliente);
-				char * respuesta = recibirMensaje (socketCliente);
-				if (!strcmp (respuesta, "si")) {
-					int retCode = crearArchivo (nombreArchivo);
-					if (retCode < 0) 
-						enviarMensaje ("Fallo en la creación de archivo", socketCliente);
-					nuevoArchivo = abrirArchivo (nombreArchivo);
-					if (nuevoArchivo == NULL)
-						enviarMensaje ("Fallo en la apertura de archivo :(", socketCliente);
-				}
-				else {
-					free (nombreArchivo), free (data), free (respuesta);
-					break;
-				}
-			}
-			log_info (logger, "Abrir Archivo: <%s>", nombreArchivo);
-			enviarArchivo (nuevoArchivo);
-			free (nombreArchivo), free (data);
-		case F_CREATE:
-			if (crearArchivo(nombreArchivo) < 0)
-				enviarMensaje ("Fallo :(", socketCliente);
-			log_info (logger, "Crear Archivo: <%s>", nombreArchivo);
-			nuevoArchivo = abrirArchivo (nombreArchivo);
-			break;
-		case F_TRUNCATE:
-			fcb_t * fcbRecibido = recibirFCB (data, &(desplazamiento), socketCliente);
-			desplazamiento += sizeof (int);
-			uint32_t tamanioNuevo = (uint32_t) memcpy (&(tamanioNuevo), data + desplazamiento, sizeof tamanioNuevo);
-			int retCode = truncarArchivo (fcbRecibido, tamanioNuevo);
-			if (retCode < 0) {
-				enviarMensaje ("Fallo truncacion de archivo :(", socketCliente);
-				break;
-			} else {
-				enviarArchivo (fcbRecibido);
-			}
-			log_info (logger, "Truncar Archivo: <%s> - Tamaño: <%d>", fcbRecibido->nombre, tamanioNuevo);
-			free (fcbRecibido->nombre), free (data), free (fcbRecibido);
-			break;
-		case F_READ:
-			fcb_t * fcbRecibido = recibirArchivo (data, &(desplazamiento), socketCliente);
-			desplazamiento += sizeof (int);
-			uint32_t puntero = memcpy (& (puntero), data + desplazamiento, sizeof puntero);
-			desplazamiento += sizeof (int) + sizeof puntero;
-			uint32_t tamanio = memcpy (& (tamanio), data + desplazamiento, sizeof tamanio);
-			desplazamiento += sizeof (int) + sizeof tamanio;
-			uint32_t segmento = memcpy (& (segmento), data + desplazamiento, sizeof segmento);
-			char * leido = leerArchivo (fcbRecibido, puntero, tamanio);
-			enviarAMemoria (leido, conexionAMemoria);
-			recibirOperacion (conexionAMemoria);
-			char * mensaje = recibirMensaje (conexionAMemoria);
-			if (!strcmp (mensaje, "Ejecucion correcta :)"))
-				enviarMensaje("Yayay :)", socketCliente);
-			free (mensaje), free (leido), free (fcbRecibido->nombre), free (fcbRecibido), free (data);
-			break;
-		case F_WRITE:
-			break;
-	}
-}
-
-fcb_t * recibirArchivo (void * data, int *desplazamiento, int socket) {
+fcb_t * recibirArchivo (void * data, int *desplazamiento) {
 	fcb_t * fcbNuevo = malloc (sizeof (fcb_t));
-	int longNombre = memcpy (&(longNombre), data + (* desplazamiento), sizeof longNombre);
+	int longNombre;
+	memcpy (&(longNombre), data + (* desplazamiento), sizeof longNombre);
 	(* desplazamiento) += sizeof longNombre;
 	fcbNuevo->nombre = malloc (sizeof (char) * longNombre);
-	fcbNuevo->nombre = memcpy (fcbNuevo->nombre, data + (* desplazamiento), longNombre);
+	memcpy (fcbNuevo->nombre, data + (* desplazamiento), longNombre);
 	(* desplazamiento) += longNombre + sizeof (int);
-	fcbNuevo->tamanio = memcpy (& (fcbNuevo->tamanio), data + (* desplazamiento), sizeof (uint32_t));
+	memcpy (& (fcbNuevo->tamanio), data + (* desplazamiento), sizeof (uint32_t));
 	(* desplazamiento) += sizeof (uint32_t) + sizeof (int);
-	fcbNuevo->ptrDirecto = memcpy (& (fcbNuevo->ptrDirecto), data + (* desplazamiento), sizeof (uint32_t));
+	memcpy (& (fcbNuevo->ptrDirecto), data + (* desplazamiento), sizeof (uint32_t));
 	(* desplazamiento) += sizeof (uint32_t) + sizeof (int);
-	fcbNuevo->ptrIndirecto = memcpy (& (fcbNuevo->ptrIndirecto), data + (* desplazamiento), sizeof (uint32_t));
+	memcpy (& (fcbNuevo->ptrIndirecto), data + (* desplazamiento), sizeof (uint32_t));
 	(* desplazamiento) += sizeof (uint32_t);
 	return fcbNuevo;
 	
+}
+
+int enviarArchivo (fcb_t * archivo, int socket) {
+	t_paquete * paquete = crearPaquete ();
+	agregarAPaquete (paquete, &(archivo->tamanio), sizeof archivo->tamanio);
+	agregarAPaquete (paquete, &(archivo->ptrDirecto), sizeof archivo->ptrDirecto);
+	agregarAPaquete (paquete, &(archivo->ptrIndirecto), sizeof archivo->ptrIndirecto);
+	enviarPaquete (paquete, socket);
+	free (paquete->buffer), free (paquete), free (archivo->nombre), free (archivo);
+	return 0;
+}
+
+int enviarAMemoria (char * mensaje, uint32_t segmento, uint32_t tamanio, int socket) {
+	t_paquete * paquete = crearPaquete ();
+	paquete->codigo_operacion = segmento;
+	agregarAPaquete (paquete, (void *) mensaje, tamanio);
+	enviarPaquete (paquete, socket);
+	free (paquete->buffer), free (paquete);
+	return 0;
 }

@@ -43,6 +43,7 @@ int escribirArchivo (fcb_t archivo);
 int asignarBloqueAArchivo (fcb_t * archivo, uint32_t ptr);
 uint32_t ultimoBloqueDeArchivo (fcb_t * archivo);
 uint32_t espacioParaGuardarPuntero (fcb_t * archivo);
+int eliminarPtr (fcb_t * archivo, uint32_t bloque);
 int actualizarFCB (fcb_t * archivo);
 
 #endif 

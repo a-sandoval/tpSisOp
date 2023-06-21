@@ -13,7 +13,7 @@
 #include <commons/bitarray.h>
 
 #define TAMANIO_PUNTERO 4
-#define CANT_BLOQUES(bytes) ((bytes != 0) ? (bytes / tamanioBloques + 1) : 0) 
+#define CANT_BLOQUES(bytes) ((bytes != 0) ? (bytes / tamanioBloques) + (bytes < (uint32_t) tamanioBloques) : 0) 
 #define MAX_BLOQUES tamanioBloques / TAMANIO_PUNTERO + 1
 
 extern int cantBloques;

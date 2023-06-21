@@ -8,18 +8,12 @@
 
 void escucharAlKernel();
 void ejecutarServidor();
-void iterator(void* value); 
+fcb_t * recibirArchivo (void * data, int *desplazamiento);
+int enviarArchivo (fcb_t * archivo, int socket);
+int enviarAMemoria (char * mensaje, uint32_t segmento, uint32_t tamanio, int socket);
 
 extern int socketCliente;
 extern int conexionAMemoria;
 extern int tiempoDeEspera;
-
-typedef enum {
-    F_OPEN,
-    F_CREATE,
-    F_READ,
-    F_WRITE,
-    F_TRUNCATE
-} operacionFS_e;
 
 #endif
