@@ -332,7 +332,7 @@ void createSegment_s(t_pcb *proceso, char **parametros){
 
 void deleteSegment_s(t_pcb *proceso, char **parametros){
     
-   int idSegmento = atoi(parametros[0]);
+    uint32_t idSegmento = (uint32_t) atoi(parametros[0]);
 
     log_info(logger, "PID: %d - Eliminar Segmento - Id: %d", proceso->pid, idSegmento);
 

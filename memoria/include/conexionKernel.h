@@ -26,8 +26,17 @@ void agregarSegmentoAPaquete(t_paquete* paquete, t_segmento* segmento);
 
 t_proceso* crearProcesoEnMemoria(uint32_t pid); 
 uint32_t recibirPID(int socketCliente); 
-t_peticion* recibirPeticionCreacionDeSegmento(int socketCliente); 
+
+t_peticion* recibirPeticionCreacionDeSegmento(int); 
+void recibirYProcesarPeticionEliminacionSegmento(int socketCliente); 
+
 void procesarResultado(int resultado, int socketKernel); 
 
 void eliminarProcesoDeMemoria(t_proceso* proceso); 
+void deleteSegment(uint32_t pid, uint32_t segmentId);
+
+void convertirSegmentoEnHuecoLibre(void* segmentoAEliminar);
+
+void liberarTodosLosSegmentos(uint32_t pid);
+
 #endif

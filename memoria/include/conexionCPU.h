@@ -7,16 +7,28 @@
 #include "shared/include/utilsServidor.h"
 #include "shared/include/utilsCliente.h"
 #include "shared/include/global.h"
+#include "manejoSegmentacion.h"
 
 
 int ejecutarServidorCPU(int*); 
 
+extern void* espacioDeUsuario; 
 
 
 extern t_config* config;
 extern t_log* logger; 
+extern t_log* loggerError; 
 
 
+char* leer(int32_t direccionFisica); 
+
+void recibirPeticionDeLectura(int socketCPU);
+
+void recibirPeticionDeEscritura(int socketCPU); 
+
+void enviarValorObtenido(int socketCPU); 
+
+void escribir(char* valor, int32_t direccionFisica);
 
 #endif 
 

@@ -18,7 +18,7 @@ int ejecutarServidorKernel(int *socketCliente){
 				break;
             case ENDPCB:
 				uint32_t pid = recibirPID(*socketCliente);
-				//Primero tendriamos que buscar y borrar todos los segmentos que guardo este pid, actualizar huecos libres
+				liberarTodosLosSegmentos(pid); 
 				list_remove_and_destroy_element(tablaDeTablasDeSegmentos,pid,(void*)eliminarProcesoDeMemoria); 
 				log_info(logger, "Eliminación de Proceso PID: %d",pid);
 				break;
@@ -28,7 +28,7 @@ int ejecutarServidorKernel(int *socketCliente){
 				procesarResultado((int)resultado,*socketCliente); 
 				break;
             case DELETE_SEGMENT_OP:
-                log_info(logger, "Borro segmento dado");
+				recibirYProcesarPeticionEliminacionSegmento(*socketCliente); 
 				break;
 			case -1:
 				log_error(logger, "El Kernel se desconecto");
@@ -58,9 +58,7 @@ void procesarResultado(int resultado, int socketKernel) {
 
 	}
 
-
 }
-
 
 t_list* crearTablaDeSegmentosInicial() {
 
@@ -82,45 +80,7 @@ t_proceso* crearProcesoEnMemoria(uint32_t pid) {
 	return procesoNuevo;
 }
 
-uint32_t recibirPID(int socketCliente) {
 
-	int size, desplazamiento=0; 
-	uint32_t pid; 
-
-	void* buffer = recibirBuffer(socketCliente, &size);
-	desplazamiento += sizeof(uint32_t);
-	memcpy(&(pid), buffer + desplazamiento, sizeof(uint32_t));
-
-	return pid; 
-
-}
-
-//serializar tabla de Segmentos
-
-void enviarTablaSegmentos(t_proceso* procesoEnMemoria){ 
-    t_paquete* paquete = crearPaquete();
-    
-    paquete->codigo_operacion = TABLADESEGMENTOS;
-
-    uint32_t tablaDeSegmentosSize = list_size(procesoEnMemoria->tablaDeSegmentosAsociada);
-
-	agregarAPaquete(paquete,(void*)&procesoEnMemoria->pid,sizeof(uint32_t)); 
-   
-    uint32_t i;
-    for(i=0;i<tablaDeSegmentosSize;i++){
-        agregarSegmentoAPaquete(paquete,list_get(procesoEnMemoria->tablaDeSegmentosAsociada, i));
-    }
-
-    enviarPaquete(paquete, sockets[0]);
-
-	eliminarPaquete(paquete);
-}
-
-void agregarSegmentoAPaquete(t_paquete* paquete, t_segmento* segmento){
-	agregarAPaquete(paquete, (void*)&segmento->id, sizeof(uint32_t));
-	agregarAPaquete(paquete, (void*)&segmento->direccionBase, sizeof(uint32_t));
-	agregarAPaquete(paquete, (void*)&segmento->tamanio, sizeof(uint32_t));
-}
 
 void eliminarProcesoDeMemoria(t_proceso* proceso) {
 	list_remove_element(proceso->tablaDeSegmentosAsociada, (void*)segmento0); 
@@ -128,30 +88,38 @@ void eliminarProcesoDeMemoria(t_proceso* proceso) {
 	free(proceso); 
 }
 
-t_peticion* recibirPeticionCreacionDeSegmento(int socketCliente) {
+void deleteSegment(uint32_t pid, uint32_t segmentId) {
 
-	int size, desplazamiento = 0; 
+	t_proceso* procesoBuscado = (t_proceso*)list_get(tablaDeTablasDeSegmentos,pid); 
 
-	t_peticion* peticion = malloc(sizeof(t_peticion)); 
+	t_segmento* segmentoAEliminar = (t_segmento*)list_get(procesoBuscado->tablaDeSegmentosAsociada,segmentId);
 
-	t_segmento* segmentoPedido = malloc(sizeof(t_peticion)); 
+	list_remove_and_destroy_element(procesoBuscado->tablaDeSegmentosAsociada,segmentId, free);  
 
-	peticion->segmento = segmentoPedido; 
+	log_info(logger, "PID: %d - Eliminar Segmento: %d - Base: %d - TAMAÑO: %d",pid,segmentId,segmentoAEliminar->direccionBase,segmentoAEliminar->tamanio); 
 
-	void* buffer = recibirBuffer(socketCliente, &size); 
+	convertirSegmentoEnHuecoLibre((void*)segmentoAEliminar); 
 
-	desplazamiento+=sizeof(uint32_t); 
+	enviarTablaSegmentos(procesoBuscado); 
 
-	memcpy(&peticion->pid, buffer + desplazamiento, sizeof(uint32_t));
+	//Revisar una vez implementemos compactación para incluir ese nuevo segm libre
+}
 
-	desplazamiento+=(2*sizeof(uint32_t)); 
+void convertirSegmentoEnHuecoLibre(void* segmento) {
 
-	memcpy(&peticion->segmento->id,buffer+desplazamiento,sizeof(uint32_t)); 
+	t_segmento* aConvertir = (t_segmento*) segmento; 
 
-	desplazamiento +=(3*sizeof(uint32_t)); 
+	t_hueco_libre* nuevoHuecoLibre = malloc(sizeof(t_hueco_libre)); 
+	
+	nuevoHuecoLibre->direccionBase = aConvertir->direccionBase; 
+	nuevoHuecoLibre->tamanioHueco = aConvertir->tamanio; 
 
-	memcpy(&peticion->segmento->direccionBase, buffer+desplazamiento,sizeof(uint32_t)); 
+	list_add(huecosLibres, (void*)nuevoHuecoLibre);
+}
 
-	return peticion; 
+void liberarTodosLosSegmentos(uint32_t pid) {
+	
+	t_list* tablaDeSegmentos = (t_list*)list_get(tablaDeTablasDeSegmentos,pid); 
 
+	list_iterate(tablaDeSegmentos,convertirSegmentoEnHuecoLibre); 
 }

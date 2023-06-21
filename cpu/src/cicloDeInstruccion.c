@@ -230,24 +230,21 @@ void liberarMemoria() {
 
 void mov_in(char* registro, char* direccionLogica){
 
-    int valor;
+    char* valorAInsertar;
     int tamRegistro = obtenerTamanioReg(registro);
     uint32_t dirFisica = mmu(direccionLogica, tamRegistro);
 
     t_paquete* peticion = crearPaquete();
     peticion->codigo_operacion = READ;
-    agregarAPaquete(peticion,(void*)&dirFisica, sizeof(int));
+    agregarAPaquete(peticion,(void*)&dirFisica, sizeof(uint32_t));
     enviarPaquete(peticion, conexionAMemoria);
 
-    valor = recibirValor(conexionAMemoria);
+    valorAInsertar = recibirValor(conexionAMemoria);
 
-    char* valorInsertar=string_itoa(valor);
     dictionary_remove_and_destroy(contextoEjecucion->registrosCPU, registro, free); 
-    dictionary_put(contextoEjecucion->registrosCPU, registro, string_duplicate(valorInsertar));
+    dictionary_put(contextoEjecucion->registrosCPU, registro, string_duplicate(valorAInsertar));
 
-    log_info(logger, "PID: %d - Accion: %s -  Segmento: %d - Direccion Fisica: %d - Valor:  %d", contextoEjecucion->pid, "LEER", nroSegmento, dirFisica, valor);
-    
-
+    log_info(logger, "PID: %d - Accion: %s -  Segmento: %d - Direccion Fisica: %d - Valor:  %s", contextoEjecucion->pid, "LEER", nroSegmento, dirFisica, valorAInsertar);
 };
 
 void mov_out(char* direccionLogica, char* registro){
@@ -297,15 +294,20 @@ uint32_t mmu(char* direccionLogica, int tamValor){
     
 }
 
-int recibirValor(int socket) {
-    int valor;
+char* recibirValor(int socket) {
+    char* valor;
+    int tamanio; 
 	int size, desplazamiento = 0;
 	void * buffer;
 
 	buffer = recibirBuffer(socket, &size);
 
-    desplazamiento += sizeof(int);
-    memcpy(&(valor), buffer, sizeof(int));
+    desplazamiento += sizeof(int32_t);
+    memcpy(&(tamanio), buffer, sizeof(int32_t));
+
+    desplazamiento+=sizeof(char)*tamanio; 
+
+    memcpy(&(valor),buffer+desplazamiento,sizeof(char)*tamanio); 
 
 	free(buffer);
 

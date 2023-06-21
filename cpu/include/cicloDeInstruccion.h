@@ -55,7 +55,7 @@
     void delete_segment(char*);
 
     uint32_t mmu(char* direccionLogica, int tamValor);
-    int recibirValor(int);
+    char* recibirValor(int);
     void destruirTemporizador (t_temporal * temporizador);
     void modificarMotivoDesalojo (t_comando comando, int numParametros, char * parm1, char * parm2, char * parm3);
     int obtenerTamanioReg(char* registro);
