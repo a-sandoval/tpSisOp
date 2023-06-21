@@ -15,8 +15,8 @@ int main () {
     
     atexit(terminarPrograma);
 
-    //conexionMemoria();
-    //atexit(cerrarConexion);
+    conexionMemoria();
+    atexit(cerrarConexion);
 
     // Se abre el archivo de super-bloque y se agarra la cantidad de bloques y el tamaño de cada bloque.
 
@@ -82,6 +82,7 @@ int main () {
         error ("No se pudo crear o verificar que exista el directorio de FCBs, error: %s", strerror (errno));
     
     // Pruebas de Crear, abrir, y truncar archivo.
+    /*
     int retCode = 0;
     //if (access("directorioFCB/prueba.fcb", F_OK)) 
         retCode = crearArchivo ("prueba");
@@ -91,40 +92,42 @@ int main () {
     //log_debug (logger, "Test: %d %d %d", bloques[pruebaFCB->ptrIndirecto][3], bloques[pruebaFCB->ptrIndirecto][7], bloques[pruebaFCB->ptrIndirecto][11]);
     //log_debug (logger, "Test: %d %d %d", direccionIndirectaAReal (pruebaFCB->ptrIndirecto, 0), direccionIndirectaAReal (pruebaFCB->ptrIndirecto, 1), direccionIndirectaAReal (pruebaFCB->ptrIndirecto, 2));
     
-    retCode = copiarABloque (0, string_repeat ('t', 64), 64);
-    retCode = copiarABloque (2, string_repeat ('e', 64), 64);
-    retCode = copiarABloque (3, string_repeat ('s', 64), 64);
-    retCode = copiarABloque (4, string_repeat ('t', 64), 64);
+    //retCode = copiarABloque (0, string_repeat ('t', 64), 64);
+    //retCode = copiarABloque (2, string_repeat ('e', 64), 64);
+    //retCode = copiarABloque (3, string_repeat ('s', 64), 64);
+    //retCode = copiarABloque (4, string_repeat ('t', 64), 64);
     //if (retCode < 0) error ("No se pudo copiar correctamente la informacion a los bloques");
     
     retCode = truncarArchivo (pruebaFCB, tamanioBloques * 8);
     if (retCode < 0) error ("No se pudo truncar correctamente el archivo %s, codigo %d.", pruebaFCB->nombre, retCode);
     
+    escribirArchivo (pruebaFCB, string_repeat ('t', 64), 64, 0);
+    escribirArchivo (pruebaFCB, string_repeat ('e', 64), 64, 64);
+    escribirArchivo (pruebaFCB, string_repeat ('s', 64), 64, 128);
+    escribirArchivo (pruebaFCB, string_repeat ('t', 64), 64, 192);
     leerArchivo (pruebaFCB, 0, tamanioBloques);
     leerArchivo (pruebaFCB, 10, 10);
     leerArchivo (pruebaFCB, tamanioBloques, 10);
     leerArchivo (pruebaFCB, 0, tamanioBloques * 4);
     leerArchivo (pruebaFCB, 5, tamanioBloques * 3);
-    retCode = copiarABloque (2, "prueba", 6);
-    //if (retCode < 0) error ("No se pudo copiar correctamente la informacion a los bloques");
-    //eliminarBloque (1);
 
-    retCode = truncarArchivo (pruebaFCB, 0);
-    if (retCode < 0) error ("No se pudo truncar correctamente el archivo %s, codigo %d.", pruebaFCB->nombre, retCode);
+    //retCode = truncarArchivo (pruebaFCB, 0);
+    //if (retCode < 0) error ("No se pudo truncar correctamente el archivo %s, codigo %d.", pruebaFCB->nombre, retCode);
     
     //retCode = truncarArchivo (pruebaFCB, (MAX_BLOQUES) * tamanioBloques);
     //if (retCode < 0) error ("No se pudo truncar correctamente el archivo %s, codigo %d.", pruebaFCB->nombre, retCode);
     
-    crearArchivo ("prueba2");
-    fcb_t * prueba2 = abrirArchivo ("prueba2");
+    //crearArchivo ("prueba2");
+    //fcb_t * prueba2 = abrirArchivo ("prueba2");
 
-    truncarArchivo (prueba2, 16 * tamanioBloques);
-    truncarArchivo (prueba2, 8 * tamanioBloques);
+    //truncarArchivo (prueba2, 16 * tamanioBloques);
+    //truncarArchivo (prueba2, 8 * tamanioBloques);
+    */
     msync(ptrBloques, tamanioBloques * cantBloques, MS_SYNC);
     msync(ptrBitMap, tamanioBitmap, MS_SYNC);
     
 
-    //escucharAlKernel();
+    escucharAlKernel();
     exit(0);
 }
 

@@ -162,7 +162,34 @@ char * leerArchivo (fcb_t * archivo, uint32_t puntero, uint32_t tamanio) {
  * 
 */
 
-int escribirArchivo (fcb_t archivo);
+int escribirArchivo (fcb_t * archivo, char * data, uint32_t tamanio, uint32_t puntero) {
+    uint32_t bloqueInicial = puntero / tamanioBloques + 1;
+    uint32_t bloqueFinal = (puntero + tamanio - 1) / tamanioBloques + 1;
+    uint32_t punteroEnBloque = puntero % tamanioBloques;
+    uint32_t tamanioDelPrimerBloque = 
+        (bloqueInicial == bloqueFinal)  ? tamanio
+                                        : tamanioBloques  - punteroEnBloque;
+    uint32_t tamanioDelBloqueFinal = (punteroEnBloque + tamanio) % tamanioBloques + (!punteroEnBloque && !(tamanio % tamanioBloques)) * tamanioBloques;
+    uint32_t direccionBloque = 
+        (bloqueInicial == 1) ? archivo->ptrDirecto 
+                             : direccionIndirectaAReal (archivo->ptrIndirecto, bloqueInicial - 2);
+    for (uint32_t i = punteroEnBloque; i < tamanioDelPrimerBloque + punteroEnBloque; i++) 
+        bloques[direccionBloque][i] = data[i - punteroEnBloque];
+    if (bloqueFinal > bloqueInicial) {
+        uint32_t desplazamiento = tamanioDelPrimerBloque;
+        for (uint32_t i = bloqueInicial - 1; i < bloqueFinal - 2; i++) {
+            uint32_t ptr = direccionIndirectaAReal (archivo->ptrIndirecto, i);
+            for (uint32_t j = 0; j < (uint32_t) tamanioBloques; j++) 
+                bloques[ptr][j] = data[j + desplazamiento];
+            desplazamiento += tamanioBloques;
+        }
+        uint32_t ptrFinal = direccionIndirectaAReal (archivo->ptrIndirecto, bloqueFinal - 2);
+        for (uint32_t i = 0; i < tamanioDelBloqueFinal; i++) 
+            bloques[ptrFinal][i] = data[i + desplazamiento];
+    }
+    log_debug (logger, "Tamaño de data: %ld, data: %s", strlen (data), data);
+    return 0;
+}
 
 int asignarBloqueAArchivo (fcb_t * archivo, uint32_t ptr) {
     uint32_t ptrAasignar = espacioParaGuardarPuntero (archivo);

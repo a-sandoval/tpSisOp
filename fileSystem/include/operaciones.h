@@ -38,7 +38,7 @@ int crearArchivo (char * nombre);
 fcb_t * abrirArchivo (char * nombre);
 int truncarArchivo (fcb_t * archivo, uint32_t tamanio);
 char * leerArchivo (fcb_t * archivo, uint32_t puntero, uint32_t tamanio);
-int escribirArchivo (fcb_t archivo);
+int escribirArchivo (fcb_t * archivo, char * data, uint32_t tamanio, uint32_t puntero);
 
 int asignarBloqueAArchivo (fcb_t * archivo, uint32_t ptr);
 uint32_t ultimoBloqueDeArchivo (fcb_t * archivo);
