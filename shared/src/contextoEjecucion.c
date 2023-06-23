@@ -108,7 +108,6 @@ void recibirContextoActualizado (int socket) {
 
     
     deserializarTablaDeSegmentos(buffer, &desplazamiento);
-    //recibirTablaDeArchivos();
     deserializarRecursos(buffer, &desplazamiento);
     
     deserializarMotivoDesalojo (buffer, &desplazamiento);
@@ -276,8 +275,6 @@ void iniciarContexto(){
 	contextoEjecucion->pid = 0;
 	contextoEjecucion->programCounter = 0;
 	contextoEjecucion->registrosCPU = dictionary_create();
-	contextoEjecucion->tablaDeArchivos = list_create();
-	contextoEjecucion->tablaDeArchivosSize = 0;
 	contextoEjecucion->tablaDeSegmentos = list_create();
 	contextoEjecucion->tablaDeSegmentosSize = 0;
     contextoEjecucion->recursosAsignados = list_create();
@@ -295,7 +292,6 @@ void iniciarContexto(){
 void destroyContexto() {
     list_destroy_and_destroy_elements(contextoEjecucion->instrucciones, free);
     dictionary_destroy_and_destroy_elements(contextoEjecucion->registrosCPU, free);
-    list_destroy_and_destroy_elements(contextoEjecucion->tablaDeArchivos, free);
     list_destroy_and_destroy_elements(contextoEjecucion->tablaDeSegmentos, free);
     for (int i = 0; i < contextoEjecucion->motivoDesalojo->parametrosLength; i++) 
         if (strcmp(contextoEjecucion->motivoDesalojo->parametros[i], "")) free(contextoEjecucion->motivoDesalojo->parametros[i]);
@@ -306,7 +302,6 @@ void destroyContexto() {
 void destroyContextoUnico () {
     list_destroy(contextoEjecucion->instrucciones);
     dictionary_destroy_and_destroy_elements(contextoEjecucion->registrosCPU, free);
-    list_destroy_and_destroy_elements(contextoEjecucion->tablaDeArchivos, free);
     list_destroy_and_destroy_elements(contextoEjecucion->tablaDeSegmentos, free);
     for (int i = 0; i < contextoEjecucion->motivoDesalojo->parametrosLength; i++) 
         if (strcmp(contextoEjecucion->motivoDesalojo->parametros[i], "")) free(contextoEjecucion->motivoDesalojo->parametros[i]);

@@ -41,7 +41,10 @@ int truncarArchivo (fcb_t * archivo, uint32_t tamanio) {
     // Cantidad de bloques a asignar.
     int cantBloquesAAsignar = CANT_BLOQUES (tamanio);
     // Si ya se asignaron los bloques necesarios terminar.
-    if (cantBloquesAsignados == cantBloquesAAsignar) return 0;
+    if (cantBloquesAsignados == cantBloquesAAsignar) {
+        archivo->tamanio = tamanio;
+        return 0;
+    }
     // Si la cantidad requerida es mayor a la que permite acceder el puntero indirecto y el puntero directo terminar con error.
     if (cantBloquesAAsignar > tamanioBloques / TAMANIO_PUNTERO + 1) return -7;
 

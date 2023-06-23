@@ -67,6 +67,7 @@ void ejecutarServidor() {
 				memcpy (& (tamanio), data + desplazamiento, sizeof tamanio);
 				desplazamiento += sizeof (int) + sizeof tamanio;
 				memcpy (& (segmento), data + desplazamiento, sizeof segmento);
+				log_info (logger, "Leer Archivo: <%s> - Puntero: <%d> - Memoria: <%d> - Tamaño: <%d>", fcbRecibido->nombre, puntero, segmento, tamanio);
 				char * leido = leerArchivo (fcbRecibido, puntero, tamanio);
 				enviarAMemoria (leido, segmento, tamanio, conexionAMemoria);
 				recibirOperacion (conexionAMemoria);
@@ -83,6 +84,7 @@ void ejecutarServidor() {
 				memcpy (& (tamanio), data + desplazamiento, sizeof tamanio);
 				desplazamiento += sizeof (int) + sizeof tamanio;
 				memcpy (& (segmento), data + desplazamiento, sizeof segmento);
+				log_info (logger, "Escribir Archivo: <%s> - Puntero: <%d> - Memoria: <%d> - Tamaño: <%d>", fcbRecibido->nombre, puntero, segmento, tamanio);
 				char * aEscribir = solicitarAMemoria (segmento, tamanio, conexionAMemoria);
 				if (escribirArchivo (fcbRecibido, aEscribir, tamanio, puntero) < 0)
 					enviarMensaje ("Fallo :(", socketCliente);
@@ -116,6 +118,7 @@ fcb_t * recibirArchivo (void * data, int *desplazamiento) {
 
 int enviarArchivo (fcb_t * archivo, int socket) {
 	t_paquete * paquete = crearPaquete ();
+	agregarAPaquete (paquete, &(archivo->nombre), (strlen (archivo->nombre) + 1) * sizeof (char));
 	agregarAPaquete (paquete, &(archivo->tamanio), sizeof archivo->tamanio);
 	agregarAPaquete (paquete, &(archivo->ptrDirecto), sizeof archivo->ptrDirecto);
 	agregarAPaquete (paquete, &(archivo->ptrIndirecto), sizeof archivo->ptrIndirecto);

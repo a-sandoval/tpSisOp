@@ -18,7 +18,6 @@ op_code ubicarSegmentosEnEspaciosLibres(t_peticion* peticion){
         resultado = ubicarSegmentosPorBest(peticion);
         return resultado; 
         
-
     }
     else if (!strcmp(algoritmoAUtilizar, "WORST"))
     {

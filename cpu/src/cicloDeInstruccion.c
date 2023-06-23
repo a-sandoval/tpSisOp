@@ -236,6 +236,7 @@ void mov_in(char* registro, char* direccionLogica){
 
     t_paquete* peticion = crearPaquete();
     peticion->codigo_operacion = READ;
+    agregarAPaquete(peticion,(void*)&contextoEjecucion->pid, sizeof(uint32_t));
     agregarAPaquete(peticion,(void*)&dirFisica, sizeof(uint32_t));
     enviarPaquete(peticion, conexionAMemoria);
 
@@ -257,8 +258,9 @@ void mov_out(char* direccionLogica, char* registro){
     t_paquete* peticion = crearPaquete();
     peticion->codigo_operacion = WRITE;
 
+    agregarAPaquete(peticion,(void*)&contextoEjecucion->pid, sizeof(uint32_t));
     agregarAPaquete(peticion, (void*)&dirFisica, sizeof(int));
-    agregarAPaquete(peticion, (void*)&valor, sizeof(char) * 16); // como mucho es un registro de 16 bytes no?
+    agregarAPaquete(peticion, (void*)&valor, sizeof(char) * tamRegistro); 
 
     enviarPaquete(peticion, conexionAMemoria);
 

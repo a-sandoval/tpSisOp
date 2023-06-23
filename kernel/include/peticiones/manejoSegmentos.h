@@ -8,8 +8,6 @@
 
 extern int conexionAMemoria;
 
-
-
 void recibirTablaDeSegmentosActualizada(t_pcb* pcb);
 
 #endif /* MANEJO_SEGMENTOS_H_ */

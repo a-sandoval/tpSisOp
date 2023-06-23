@@ -3,8 +3,9 @@
 
 uint32_t proximoBloqueLibre () {
     for (uint32_t i = 0; i < (uint32_t) cantBloques; i++) {
-        log_debug (logger, "Acceso a BitMap, puntero <%d>, estado <%d>.", i, bitarray_test_bit (bitmap, i));
-        if (!bitarray_test_bit (bitmap, i)) {
+        bool noDisponible = bitarray_test_bit (bitmap, i);
+        log_info (logger, "Acceso a Bitmap - Bloque: <%d> - Estado: <%d>", i, noDisponible);
+        if (!noDisponible) {
             bitarray_set_bit (bitmap, i);
             msync (bitmap->bitarray, tamanioBitmap, MS_SYNC);
             return i;
@@ -15,6 +16,7 @@ uint32_t proximoBloqueLibre () {
 
 
 void eliminarBloque (uint32_t ptr) {
+    log_info (logger, "Acceso a Bitmap - Bloque: <%d> - Estado: <%d>", ptr, bitarray_test_bit (bitmap, ptr));
     bitarray_clean_bit (bitmap, ptr);
     for (int i = 0; i < tamanioBloques; i++)
         bloques[ptr][i] = '\0';

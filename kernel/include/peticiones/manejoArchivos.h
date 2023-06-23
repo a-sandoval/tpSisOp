@@ -18,10 +18,15 @@ typedef struct {
 } fcb_t;
 
 typedef struct{
+    
+    fcb_t* fcb;
+    uint32_t punteroArch;
+    
+}t_archivoProceso;
+typedef struct{
 
     fcb_t* fcb;
     t_list* colaBloqueados;
-    int colaBloqueadosSize;
 
 }t_archivo;
 
@@ -34,11 +39,14 @@ t_archivo* solicitarArchivoFS(char* );
 void recibirFCB(t_archivo**);
 void agregarArchivoATG(t_archivo*);
 void iniciarTablaGlobalDeArchivos();
-void deserializarFCB(t_archivo** );
-void recibirFCB(t_archivo**);
-
+fcb_t* deserializarFCB();
 bool estaEnLaTablaGlobal(char* nombreArchivo);
-t_archivo* obtenerArchivo(char* nombreArchivo);
+t_archivo* obtenerArchivoDeTG(char* nombreArchivo);
 void eliminarArchivo(t_archivo* archivo);
+void solicitarTruncadoDeArchivo(fcb_t* fcb, int tamanio);
+t_archivoProceso* obtenerArchivoDeProceso(t_pcb* proceso, char* nombreArchivo);
+void desbloquearProcesoPorArchivo();
+void quitarArchivo(t_pcb* proceso, char* nombreArchivo);
+void eliminarArchivoDeTabla(void* archivo);
 
 #endif

@@ -29,8 +29,6 @@ typedef struct {
     uint32_t instruccionesLength;
     t_list* instrucciones; 
     t_dictionary* registrosCPU;  
-    uint32_t tablaDeArchivosSize;
-    t_list* tablaDeArchivos; 
     uint32_t tablaDeSegmentosSize;
     t_list* tablaDeSegmentos; 
     uint32_t recursosAsignadosSize;

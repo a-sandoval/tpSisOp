@@ -208,26 +208,28 @@ void fopen_s(t_pcb *proceso, char **parametros){
 
     t_archivo* archivo = malloc(sizeof(t_archivo));
     char* nombreArchivo = parametros[0];
+
     //primero veo si esta en la tabla global
     if(estaEnLaTablaGlobal(nombreArchivo)){
             // si esta en la tabla alguien ya lo esta usando y tengo que ponerlo en block
+            archivo = obtenerArchivoDeTG(nombreArchivo);
+            
             estadoAnterior = proceso->estado;
             proceso->estado = BLOCK;
-            
-            archivo = obtenerArchivo(nombreArchivo);
 
             list_add(archivo->colaBloqueados, proceso);
-            archivo->colaBloqueadosSize++;
             loggearCambioDeEstado(proceso->pid, estadoAnterior, proceso->estado);
             loggearBloqueoDeProcesos(proceso, nombreArchivo);
     }
 
-    else{
+    else{ // si no esta en la tabla, se lo tengo que solicitar al FS y lo asigno porque nadie lo esta usando
         archivo = solicitarArchivoFS(nombreArchivo);
-        list_add(proceso->tablaDeArchivos,(void*)archivo);
+        t_archivoProceso* nuevoArchivo = malloc(sizeof(t_archivoProceso));
+        nuevoArchivo->fcb = archivo->fcb;
+        nuevoArchivo->punteroArch = 0;
+        list_add(proceso->tablaDeArchivos,(void*)nuevoArchivo);
         volverACPU(proceso);
     }
-    eliminarArchivo(archivo);
     
 }
 
@@ -239,43 +241,76 @@ void fclose_s(t_pcb *proceso, char **parametros){
 
     t_archivo* archivo = malloc(sizeof(t_archivo));
 
-    //archivo = list_find(tablaArchivosGlobal);
+    quitarArchivo(proceso, nombreArchivo);
 
-    list_remove_element(proceso->tablaDeArchivos, archivo->fcb);
+    archivo = obtenerArchivoDeTG(nombreArchivo);
 
-    
-    if(archivo->colaBloqueadosSize == 0){
+    if(list_is_empty(archivo->colaBloqueados)){
+        //si no hay procesos esperando por el archivo, lo elimino
         list_remove_element(tablaGlobalArchivos, archivo);
     }
     else{
-        t_pcb* procesoDesbloqueo = crearPCB();
-        procesoDesbloqueo = list_get(archivo->colaBloqueados, 0);
+        // si hay procesos esperando, desbloqueo
+        t_pcb* procesoADesbloquear = crearPCB();
+        procesoADesbloquear = list_get(archivo->colaBloqueados, 0);
         list_remove(archivo->colaBloqueados, 0);
-        archivo->colaBloqueadosSize--;
 
-        estadoAnterior = procesoDesbloqueo->estado;
-        procesoDesbloqueo ->estado = READY;
-        list_add(procesoDesbloqueo->tablaDeArchivos, archivo->fcb);
-        loggearCambioDeEstado(proceso->pid, estadoAnterior, procesoDesbloqueo->estado);
-        ingresarAReady(procesoDesbloqueo);
-        destruirPCB(procesoDesbloqueo);
+        estadoAnterior = procesoADesbloquear->estado;
+        procesoADesbloquear ->estado = READY;
+        list_add(procesoADesbloquear->tablaDeArchivos, archivo->fcb);
+        loggearCambioDeEstado(proceso->pid, estadoAnterior,procesoADesbloquear->estado);
+        loggearBloqueoDeProcesos(proceso,nombreArchivo);
+        ingresarAReady(procesoADesbloquear);
     }
 
+    free(nombreArchivo);
     volverACPU(proceso);
 }
 
-/*
 void ftruncate_s(t_pcb *proceso, char **parametros){
+    char* nombreArchivo = parametros[0];
+    int tamanio = atoi(parametros[1]);
+    pthread_t respuestaFS_h;
+    t_archivo* archivo = obtenerArchivoDeTG(nombreArchivo);
 
-     log_info(logger, "PID: <PID> - Archivo: <NOMBRE ARCHIVO> - Tamaño: <TAMAÑO>",);
+    log_info(logger, "PID: %d - Archivo: %s - Tamaño: %d",proceso->pid, nombreArchivo, tamanio);
+
+
+    //bloqueo al proceso
+    estadoAnterior = proceso->estado;
+    proceso->estado = BLOCK;
+
+    list_add(archivo->colaBloqueados, proceso);
+    loggearCambioDeEstado(proceso->pid, estadoAnterior, proceso->estado);
+    loggearBloqueoDeProcesos(proceso, nombreArchivo);
+    
+    solicitarTruncadoDeArchivo(archivo->fcb, tamanio);
+    /*
+    if (!pthread_create(&respuestaFS_h, NULL,(void *)desbloquearProcesoPorArchivo)) 
+           pthread_detach(respuestaFS_h);
+    else
+		error ("Error al generar hilo para recibir devolucion del FS, terminando el programa.");
+        */
     
 }
 
-void fseek_s(t_pcb *proceso, char **parametros){
 
-    log_info(logger, "PID: <PID> - Actualizar puntero Archivo: <NOMBRE ARCHIVO> - Puntero <PUNTERO>",);
+
+void fseek_s(t_pcb *proceso, char **parametros){
+    char* nombreArchivo = parametros[0];
+    int puntero = atoi(parametros[1]);
+
+    log_info(logger, "PID: %d - Actualizar puntero Archivo: %s - Puntero %d",proceso->pid,nombreArchivo, puntero);
+
+    t_archivoProceso* archivo = obtenerArchivoDeProceso(proceso, nombreArchivo);
+
+    archivo->punteroArch = (uint32_t)puntero;
+
+    volverACPU(proceso);
+
 }
 
+/*
 void fread_s(t_pcb *proceso, char **parametros){
 
     log_info(logger, "PID: <PID> - Leer Archivo: <NOMBRE ARCHIVO> - Puntero <PUNTERO> - Dirección Memoria <DIRECCIÓN MEMORIA> - Tamaño <TAMAÑO>",);
