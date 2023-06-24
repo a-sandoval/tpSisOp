@@ -9,6 +9,7 @@ void enviarContextoActualizado(int socket){
    
     agregarAPaquete (paquete,(void *)&contextoEjecucion->pid, sizeof(contextoEjecucion->pid));
     agregarAPaquete (paquete,(void *)&contextoEjecucion->programCounter, sizeof(contextoEjecucion->programCounter));
+    
     agregarInstruccionesAPaquete (paquete, contextoEjecucion->instrucciones);
     agregarRegistrosAPaquete(paquete, contextoEjecucion->registrosCPU);
     
@@ -37,6 +38,7 @@ void agregarRecursosAsignadosAPaquete(t_paquete* paquete){
 
 void agregarTablaDeSegmentosAPaquete(t_paquete* paquete){
     
+    agregarAPaquete (paquete, &(contextoEjecucion->tablaDeSegmentosSize), sizeof contextoEjecucion->tablaDeSegmentosSize);
     uint32_t i;
     for(i=0;i<contextoEjecucion->tablaDeSegmentosSize;i++){
         agregarSegmentoAPaquete(paquete,list_get(contextoEjecucion->tablaDeSegmentos, i));
@@ -146,6 +148,23 @@ void deserializarInstrucciones (void * buffer, int * desplazamiento) {
 
 }
 
+void deserializarTablaDeSegmentos (void * buffer, int * desplazamiento) {
+
+    list_clean_and_destroy_elements (contextoEjecucion->tablaDeSegmentos, free);
+    // Desplazamiento: tamaño de la lista de segmentos.
+    memcpy(&(contextoEjecucion->tablaDeSegmentosSize), buffer + (* desplazamiento), sizeof(uint32_t));
+    (* desplazamiento) += sizeof(uint32_t);
+    
+    for (uint32_t i = 0; i < contextoEjecucion->tablaDeSegmentosSize; i++) {
+
+        t_segmento* segmento = deserializarSegmento(buffer, desplazamiento);
+        list_add (contextoEjecucion->tablaDeSegmentos, segmento);
+    }
+
+    (* desplazamiento) += sizeof(int);
+
+}
+
 void deserializarRecursos (void * buffer, int * desplazamiento) {
 
     int tamanio;
@@ -154,6 +173,8 @@ void deserializarRecursos (void * buffer, int * desplazamiento) {
     memcpy(&(contextoEjecucion->recursosAsignadosSize), buffer + (* desplazamiento), sizeof(uint32_t));
     (* desplazamiento) += sizeof(uint32_t);
     
+    log_debug (logger, "Cantidad de recursos = %d", contextoEjecucion->recursosAsignadosSize);
+
     for (uint32_t i = 0; i < contextoEjecucion->recursosAsignadosSize; i++) {
 
         // Desplazamiento: Tamaño del recurso.
@@ -166,36 +187,14 @@ void deserializarRecursos (void * buffer, int * desplazamiento) {
         (* desplazamiento) += tamanio;
         list_add (contextoEjecucion->recursosAsignados, string_duplicate (valor));
         free (valor);
+
     }
 
     (* desplazamiento) += sizeof(int);
 
 }
 
-void deserializarTablaDeSegmentos (void * buffer, int * desplazamiento) {
-
-    int tamanio;
-    list_clean_and_destroy_elements (contextoEjecucion->tablaDeSegmentos, free);
-    // Desplazamiento: tamaño de la lista de segmentos.
-    memcpy(&(contextoEjecucion->tablaDeSegmentosSize), buffer + (* desplazamiento), sizeof(uint32_t));
-    (* desplazamiento) += sizeof(uint32_t);
-    
-    for (uint32_t i = 0; i < contextoEjecucion->tablaDeSegmentosSize; i++) {
-
-        // Desplazamiento: Tamaño del segmento.
-        memcpy (&tamanio, buffer + (* desplazamiento), sizeof (int));
-        (* desplazamiento) += sizeof (int);
-
-        t_segmento* segmento = deserializarSegmento(buffer, desplazamiento);
-        list_add (contextoEjecucion->tablaDeSegmentos, segmento);
-        free(segmento);
-    }
-
-    (* desplazamiento) += sizeof(int);
-
-}
-
-t_segmento*  deserializarSegmento(void* buffer, int* desplazamiento){
+t_segmento* deserializarSegmento(void* buffer, int* desplazamiento){
     t_segmento* segmento = malloc(sizeof(t_segmento));
     int tamanio;
     // id
@@ -213,6 +212,8 @@ t_segmento*  deserializarSegmento(void* buffer, int* desplazamiento){
     (* desplazamiento) += sizeof (int);
     memcpy (&(segmento->tamanio), buffer + (* desplazamiento), tamanio);
     (* desplazamiento) += sizeof (uint32_t);
+
+    log_debug (logger, "Segmento: %d, %d, %d", segmento->id, segmento->direccionBase, segmento->tamanio);
 
     return segmento;
 }
@@ -250,6 +251,8 @@ void deserializarMotivoDesalojo (void * buffer, int * desplazamiento) {
     // Desplazamiento: parametrosLength.
     memcpy (&(contextoEjecucion->motivoDesalojo->parametrosLength), buffer + (* desplazamiento), sizeof (uint32_t));
     (* desplazamiento) += sizeof (contextoEjecucion->motivoDesalojo->parametrosLength);
+
+    log_debug (logger, "Comando: %d, parametros: %d", contextoEjecucion->motivoDesalojo->comando, contextoEjecucion->motivoDesalojo->parametrosLength);
 
     for (int i = 0; i < contextoEjecucion->motivoDesalojo->parametrosLength; i++) {
         int tamanioParametro;

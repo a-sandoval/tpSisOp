@@ -11,6 +11,7 @@ char *listaComandos[] = {
     [F_READ] = "F_READ",
     [F_WRITE] = "F_WRITE", 
     [F_TRUNCATE] = "F_TRUNCATE",
+    [F_CREATE] = "F_CREATE",
     [WAIT] = "WAIT",
     [SIGNAL] = "SIGNAL",
     [CREATE_SEGMENT] = "CREATE_SEGMENT",
@@ -50,7 +51,14 @@ void decode(){
 
 int buscar(char *elemento, char **lista) {
     int i = 0;
-    for (; strcmp(lista[i], elemento) && i <= string_array_size(lista); i++);
+    //for (; strcmp(lista[i], elemento) && i < string_array_size(lista); i++);
+    while (i <= string_array_size (lista)) {
+        if (i < string_array_size (lista))
+            if (!strcmp (elemento, lista[i]))
+                return i;
+        log_debug(logger, "%s", lista[i]);
+        i++;
+    }
     return (i > string_array_size(lista)) ? -1 : i;
 }
  
@@ -65,7 +73,7 @@ void execute() {
             break;
         case 2:   
             log_info(logger, "PID: %d - Ejecutando: %s -  %s, %s", contextoEjecucion->pid, listaComandos[instruccionActual], elementosInstruccion[1], elementosInstruccion[2]);
-            break; 
+            break;
         case 3:
             log_info(logger, "PID: %d - Ejecutando: %s -  %s, %s, %s", contextoEjecucion->pid, listaComandos[instruccionActual], elementosInstruccion[1], elementosInstruccion[2], elementosInstruccion[3]);
             break; 
@@ -250,7 +258,7 @@ void mov_in(char* registro, char* direccionLogica){
 
 void mov_out(char* direccionLogica, char* registro){
 
-    int valor = *((int*)dictionary_get(contextoEjecucion->registrosCPU, registro));
+    void * valor = dictionary_get(contextoEjecucion->registrosCPU, registro);
     int tamRegistro = obtenerTamanioReg(registro);
 
     uint32_t dirFisica = mmu(direccionLogica, tamRegistro);
@@ -267,7 +275,7 @@ void mov_out(char* direccionLogica, char* registro){
     recibirMensaje(conexionAMemoria);
     // que hago cuando recibo la confimracion?
 
-    log_info(logger, "PID: %d - Accion: %s -  Segmento: %d - Direccion Fisica: %d - Valor:  %d", contextoEjecucion->pid, "WRITE", nroSegmento, dirFisica, valor);
+    log_info(logger, "PID: %d - Accion: %s -  Segmento: %d - Direccion Fisica: %d - Valor:  %s", contextoEjecucion->pid, "WRITE", nroSegmento, dirFisica, (char *)valor);
 };  
 
 
@@ -282,7 +290,7 @@ uint32_t mmu(char* direccionLogica, int tamValor){
     t_segmento* segmento = list_get(contextoEjecucion->tablaDeSegmentos, nroSegmento);
     
     uint32_t base = segmento->direccionBase;
-
+    
     if(desplazamiento + tamValor > segmento->tamanio){
         char * terminado = string_duplicate ("SEG_FAULT");
         modificarMotivoDesalojo (EXIT, 1, terminado, "", "");
@@ -293,7 +301,6 @@ uint32_t mmu(char* direccionLogica, int tamValor){
     dirFisica = base + desplazamiento;
     return dirFisica;
 
-    
 }
 
 char* recibirValor(int socket) {

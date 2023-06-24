@@ -11,7 +11,6 @@ void creacionEspacio(){
 	if (espacioDeUsuario == NULL) error ("No se pudo alocar memoria al espacio de usuario.");
 	atexit (liberarEspacioDeUsuario);
 	segmento0 = crearSegmentoCompartido (); 
-	espacioDeUsuario = segmento0; 
 	atexit (liberarSegmentoCompartido);
 }
 

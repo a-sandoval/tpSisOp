@@ -12,7 +12,7 @@ void escucharAlKernel() {
 void ejecutarServidor() {
 	tiempoDeEspera = config_get_int_value (config, "RETARDO_ACCESO_BLOQUE");
 	while (1) {
-		op_code cod_op = recibirOperacion(socketCliente); 
+		int cod_op = recibirOperacion(socketCliente); 
 
 		int size, longDeNombre, desplazamiento = 0;
 		char * nombreArchivo;
@@ -91,6 +91,10 @@ void ejecutarServidor() {
 				else enviarMensaje ("Yayayay!", socketCliente);
 				free (aEscribir), free (fcbRecibido->nombre), free (fcbRecibido), free (data);
 				break;
+
+			case -1:
+				log_info (logger, "Kernel desconectado.");
+				return;
 
 			default:
 				break;

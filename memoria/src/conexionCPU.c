@@ -59,17 +59,17 @@ void recibirPeticionDeLectura(int socketCPU) {
 
 void recibirPeticionDeEscritura(int socketCPU) {
 	
-	int size, desplazamiento=0;
+	int size, desplazamiento=0, tamanio;
 	int32_t direccionFisica;
-	char* valorAEscribir; 
 
 	void* buffer = recibirBuffer(socketCPU, &size);
 	desplazamiento += sizeof(uint32_t);
 	memcpy(&(direccionFisica), buffer + desplazamiento, sizeof(int32_t));
-
-	desplazamiento+=sizeof(uint32_t) + sizeof(char)*16; 
-
-	memcpy(&valorAEscribir,buffer+desplazamiento,sizeof(char)*16);
+	desplazamiento+=sizeof(uint32_t); 
+	memcpy (&(tamanio), buffer + desplazamiento, sizeof tamanio);
+	desplazamiento += sizeof tamanio;
+	char* valorAEscribir = malloc (sizeof (char) * tamanio); 
+	memcpy(valorAEscribir,buffer+desplazamiento,sizeof(char)*tamanio);
 
 	escribir(valorAEscribir,direccionFisica);  
 

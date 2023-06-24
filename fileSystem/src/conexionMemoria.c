@@ -17,6 +17,7 @@ void conexionMemoria() {
 int enviarAMemoria (char * mensaje, uint32_t segmento, uint32_t tamanio, int socket) {
 	t_paquete * paquete = crearPaquete ();
 	paquete->codigo_operacion = WRITE;
+    agregarAPaquete (paquete, &(segmento), sizeof segmento);
 	agregarAPaquete (paquete, (void *) mensaje, tamanio);
 	enviarPaquete (paquete, socket);
 	free (paquete->buffer), free (paquete);

@@ -16,7 +16,7 @@ void enviarTablaSegmentos(t_proceso* procesoEnMemoria){
         agregarSegmentoAPaquete(paquete,list_get(procesoEnMemoria->tablaDeSegmentosAsociada, i));
     }
 
-    enviarPaquete(paquete, sockets[0]);
+    enviarPaquete(paquete, sockets[2]);
 
 	eliminarPaquete(paquete);
 }

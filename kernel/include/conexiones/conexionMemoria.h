@@ -4,7 +4,9 @@
 #include <commons/config.h>
 #include <commons/log.h>
 #include <commons/string.h>
+#include "shared/include/contextoEjecucion.h"
 #include "shared/include/utilsCliente.h"
+#include "shared/include/utilsServidor.h"
 #include "kernel/include/peticiones/pcb.h"
 
 

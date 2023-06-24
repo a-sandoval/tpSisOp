@@ -61,8 +61,8 @@ void actualizarPCB(t_pcb* proceso){
     proceso->registrosCPU = registrosDelCPU(contextoEjecucion->registrosCPU);
 	//list_destroy(proceso->tablaDeArchivos);
     //proceso->tablaDeArchivos = list_duplicate(contextoEjecucion->tablaDeArchivos);
-	//list_destroy(proceso->tablaDeSegmentos);
-    //proceso->tablaDeSegmentos = list_duplicate(contextoEjecucion->tablaDeSegmentos);
+	list_destroy(proceso->tablaDeSegmentos);
+    proceso->tablaDeSegmentos = list_duplicate(contextoEjecucion->tablaDeSegmentos);
 
 }
 
@@ -77,8 +77,8 @@ void asignarPCBAContexto(t_pcb* proceso){
     contextoEjecucion->registrosCPU = registrosDelCPU(proceso->registrosCPU);
     //contextoEjecucion->tablaDeArchivos = proceso->tablaDeArchivos;
     //contextoEjecucion->tablaDeArchivosSize = list_size(contextoEjecucion->tablaDeArchivos);
-    //contextoEjecucion->tablaDeSegmentos = proceso->tablaDeSegmentos;
-    //contextoEjecucion->tablaDeSegmentosSize = list_size(contextoEjecucion->tablaDeSegmentos);
+    contextoEjecucion->tablaDeSegmentos = proceso->tablaDeSegmentos;
+    contextoEjecucion->tablaDeSegmentosSize = list_size(contextoEjecucion->tablaDeSegmentos);
 
 }
 
