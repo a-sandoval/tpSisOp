@@ -16,7 +16,6 @@ void enviarContextoActualizado(int socket){
     agregarRegistrosAPaquete(paquete, contextoEjecucion->registrosCPU);
     
     agregarTablaDeSegmentosAPaquete(paquete);
-    // agregarTablaDeArchivosAPaquete(paquete);
     agregarRecursosAsignadosAPaquete(paquete); 
     agregarMotivoAPaquete(paquete, contextoEjecucion->motivoDesalojo);
     agregarAPaquete(paquete, (void *)&contextoEjecucion->rafagaCPUEjecutada, sizeof(contextoEjecucion->rafagaCPUEjecutada));
@@ -80,13 +79,18 @@ void agregarRegistrosAPaquete(t_paquete* paquete, t_dictionary* registrosCPU){
     for (int i = 0; i < 3; i++) {
         ssize_t tamanioActual = sizeof(char) * (4 * pow(2, i) + 1);
         for (int j = 0; j < 4; j++) {
-            agregarAPaquete(paquete, dictionary_get(registrosCPU, (i) ? longName : name), tamanioActual);
+
+            char* registroConCaracterTerminador = (char*) dictionary_get(registrosCPU, (i) ? longName : name); 
+            string_append(&registroConCaracterTerminador,"\0"); 
+            
+            agregarAPaquete(paquete, (void*) registroConCaracterTerminador, tamanioActual);
             name[0]++, longName[1]++;
         }
         longName [1] = 'A', longName [0] = (i == 1) ? 'R' : 'E';
     }
 
 }
+
 
 
 void recibirContextoActualizado (int socket) {
@@ -167,7 +171,9 @@ void deserializarRegistros (void * buffer, int * desplazamiento) {
             memcpy (temp, buffer + (* desplazamiento), tamanioActual);
             (* desplazamiento) += tamanioActual + sizeof (int);
 
-            dictionary_put (contextoEjecucion->registrosCPU, (i) ? longName : name, string_duplicate (temp));
+            char* auxiliar = string_duplicate(temp); 
+
+            dictionary_put (contextoEjecucion->registrosCPU, (i) ? longName : name, string_substring(auxiliar,0,strlen(auxiliar)));
             free (temp);
             name [0]++, longName [1]++;
         }

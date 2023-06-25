@@ -75,8 +75,6 @@ void asignarPCBAContexto(t_pcb* proceso){
     contextoEjecucion->programCounter = proceso->programCounter;
     dictionary_destroy(contextoEjecucion->registrosCPU);
     contextoEjecucion->registrosCPU = registrosDelCPU(proceso->registrosCPU);
-    //contextoEjecucion->tablaDeArchivos = proceso->tablaDeArchivos;
-    //contextoEjecucion->tablaDeArchivosSize = list_size(contextoEjecucion->tablaDeArchivos);
     contextoEjecucion->tablaDeSegmentos = proceso->tablaDeSegmentos;
     contextoEjecucion->tablaDeSegmentosSize = list_size(contextoEjecucion->tablaDeSegmentos);
 
