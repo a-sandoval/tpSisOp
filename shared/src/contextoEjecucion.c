@@ -10,6 +10,8 @@ void enviarContextoActualizado(int socket){
     agregarAPaquete (paquete,(void *)&contextoEjecucion->pid, sizeof(contextoEjecucion->pid));
     agregarAPaquete (paquete,(void *)&contextoEjecucion->programCounter, sizeof(contextoEjecucion->programCounter));
     
+    log_debug (logger, "%d %d", contextoEjecucion->pid, contextoEjecucion->programCounter);
+
     agregarInstruccionesAPaquete (paquete, contextoEjecucion->instrucciones);
     agregarRegistrosAPaquete(paquete, contextoEjecucion->registrosCPU);
     
@@ -105,6 +107,8 @@ void recibirContextoActualizado (int socket) {
     memcpy(&(contextoEjecucion->programCounter), buffer+desplazamiento, sizeof(uint32_t));
     desplazamiento += sizeof(contextoEjecucion->programCounter) + sizeof(int);
 
+    log_debug (logger, "%d %d", contextoEjecucion->pid, contextoEjecucion->programCounter);
+
     deserializarInstrucciones (buffer, &desplazamiento);
     deserializarRegistros (buffer, &desplazamiento);
 
@@ -146,6 +150,29 @@ void deserializarInstrucciones (void * buffer, int * desplazamiento) {
 
     (* desplazamiento) += sizeof(int);
 
+}
+
+void deserializarRegistros (void * buffer, int * desplazamiento) {
+    dictionary_clean_and_destroy_elements (contextoEjecucion->registrosCPU, free);
+
+    char *temp, name [3] = "AX", longName [4] = "EAX";
+
+    for (int i = 0; i < 3; i++) {
+        ssize_t tamanioActual = sizeof(char) * (4 * pow(2, i) + 1);
+        for (int j = 0; j < 4; j++) {
+            temp = malloc (tamanioActual);
+
+            // Desplazamiento: Registro actual y tamaño del proximo registro. 
+            // (Para el ultimo registro pasa a ser el tamaño del comando de desalojo)
+            memcpy (temp, buffer + (* desplazamiento), tamanioActual);
+            (* desplazamiento) += tamanioActual + sizeof (int);
+
+            dictionary_put (contextoEjecucion->registrosCPU, (i) ? longName : name, string_duplicate (temp));
+            free (temp);
+            name [0]++, longName [1]++;
+        }
+        longName [1] = 'A', longName [0] = (i == 1) ? 'R' : 'E';
+    }
 }
 
 void deserializarTablaDeSegmentos (void * buffer, int * desplazamiento) {
@@ -218,29 +245,6 @@ t_segmento* deserializarSegmento(void* buffer, int* desplazamiento){
     return segmento;
 }
 
-
-void deserializarRegistros (void * buffer, int * desplazamiento) {
-    dictionary_clean_and_destroy_elements (contextoEjecucion->registrosCPU, free);
-
-    char *temp, name [3] = "AX", longName [4] = "EAX";
-
-    for (int i = 0; i < 3; i++) {
-        ssize_t tamanioActual = sizeof(char) * (4 * pow(2, i) + 1);
-        for (int j = 0; j < 4; j++) {
-            temp = malloc (tamanioActual);
-
-            // Desplazamiento: Registro actual y tamaño del proximo registro. 
-            // (Para el ultimo registro pasa a ser el tamaño del comando de desalojo)
-            memcpy (temp, buffer + (* desplazamiento), tamanioActual);
-            (* desplazamiento) += tamanioActual + sizeof (int);
-
-            dictionary_put (contextoEjecucion->registrosCPU, (i) ? longName : name, string_duplicate (temp));
-            free (temp);
-            name [0]++, longName [1]++;
-        }
-        longName [1] = 'A', longName [0] = (i == 1) ? 'R' : 'E';
-    }
-}
 
 void deserializarMotivoDesalojo (void * buffer, int * desplazamiento) {
 

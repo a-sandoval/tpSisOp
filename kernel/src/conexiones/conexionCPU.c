@@ -41,7 +41,7 @@ t_contexto* procesarPCB(t_pcb* procesoEnEjecucion) {
 
     enviarContextoActualizado(conexionACPU);
 
-    //int operacion = recibirOperacionDeCPU();
+    recibirOperacionDeCPU();
 
     recibirContextoActualizado(conexionACPU); 
 

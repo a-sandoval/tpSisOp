@@ -56,7 +56,7 @@ int buscar(char *elemento, char **lista) {
         if (i < string_array_size (lista))
             if (!strcmp (elemento, lista[i]))
                 return i;
-        log_debug(logger, "%s", lista[i]);
+    //    log_debug(logger, "%s", lista[i]);
         i++;
     }
     return (i > string_array_size(lista)) ? -1 : i;
