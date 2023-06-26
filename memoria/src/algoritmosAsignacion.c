@@ -47,7 +47,6 @@ op_code ubicarSegmentosPorFirst(t_peticion* peticion){
             
             log_debug(logger, "Se ha encontrado un espacio para el segmento");
             loggearCreacionDeSegmento(peticion); 
-            //asignacionAlEspacioDeMemoria(peticion->segmento);
             agregarSegmentoATablaDeSegmentosPCB(peticion); 
 			reducirHuecosLibres(peticion->segmento, i);
             return SUCCESS; 
@@ -63,11 +62,7 @@ void loggearCreacionDeSegmento(t_peticion* peticion) {
     log_info(logger,"PID: %d - Crear Segmento: %d - Base: %d - TAMAÑO: %d",peticion->pid,peticion->segmento->id,peticion->segmento->direccionBase,peticion->segmento->tamanio); 
 }
 
-/* COMENTADO PORQUE CREO QUE NO SIRVE HACER ESTO, EL SEGMENTO ESTA VACIO! 
-void asignacionAlEspacioDeMemoria(t_segmento* segmento){
-    t_segmento* offsetPointer = (t_segmento*)((char*)espacioDeUsuario + segmento->direccionBase);
-	*offsetPointer = *segmento;
-}*/ 
+
 
 void agregarSegmentoATablaDeSegmentosPCB(t_peticion* peticion){
 	int pidProceso = peticion -> pid;
@@ -113,7 +108,6 @@ op_code ubicarSegmentosPorBest(t_peticion* peticion){
         peticion->segmento->direccionBase = huecoAAsignar->direccionBase;
         log_debug(logger, "Se ha encontrado un espacio para el segmento");
         loggearCreacionDeSegmento(peticion); 
-        //asignacionAlEspacioDeMemoria(peticion->segmento);
         agregarSegmentoATablaDeSegmentosPCB(peticion); 
 	    reducirHuecosLibres(peticion->segmento, indiceHueco);
         return SUCCESS;
@@ -151,7 +145,6 @@ op_code ubicarSegmentosPorWorst(t_peticion* peticion){
         log_debug(logger, "Se ha encontrado un espacio para el segmento");
         loggearCreacionDeSegmento(peticion); 
 
-        //asignacionAlEspacioDeMemoria(peticion->segmento);
         agregarSegmentoATablaDeSegmentosPCB(peticion); 
 		reducirHuecosLibres(peticion->segmento, indiceHueco);
         return SUCCESS; 
