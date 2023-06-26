@@ -45,11 +45,13 @@ char* leer(int32_t direccionFisica){
 
 void recibirPeticionDeLectura(int socketCPU) {
 
-	int size, desplazamiento=0;
+	int size, desplazamiento=0, pid;
 	int32_t direccionFisica;
 
 	void* buffer = recibirBuffer(socketCPU, &size);
 	desplazamiento += sizeof(uint32_t);
+	memcpy(&(pid), buffer + desplazamiento, sizeof(int));
+	desplazamiento += sizeof(uint32_t) + sizeof (int);
 	memcpy(&(direccionFisica), buffer + desplazamiento, sizeof(int32_t));
 
 	leer(direccionFisica); 
@@ -59,36 +61,42 @@ void recibirPeticionDeLectura(int socketCPU) {
 
 void recibirPeticionDeEscritura(int socketCPU) {
 	
-	int size, desplazamiento=0, tamanio;
+	int size, desplazamiento=0, tamanio, pid;
 	int32_t direccionFisica;
 
 	void* buffer = recibirBuffer(socketCPU, &size);
 	desplazamiento += sizeof(uint32_t);
+	memcpy(&(pid), buffer + desplazamiento, sizeof(int));
+	desplazamiento+=sizeof(uint32_t) + sizeof (int); 
 	memcpy(&(direccionFisica), buffer + desplazamiento, sizeof(int32_t));
 	desplazamiento+=sizeof(uint32_t); 
 	memcpy (&(tamanio), buffer + desplazamiento, sizeof tamanio);
 	desplazamiento += sizeof tamanio;
-	char* valorAEscribir = malloc (sizeof (char) * tamanio); 
+	char* valorAEscribir = malloc (sizeof (char) * tamanio);
 	memcpy(valorAEscribir,buffer+desplazamiento,sizeof(char)*tamanio);
+	
 
+	log_debug (logger, "Escribiendo \"%s\" en direccion física %d", valorAEscribir, direccionFisica);
 	escribir(valorAEscribir,direccionFisica);  
 
 
-	//log_info(logger, “PID: %d - Acción: %d - Dirección física: %d - Tamaño: %d - Origen: %d”, );
+	log_info(logger, "PID: %d - Acción: %s - Dirección física: %d - Tamaño: %d - Origen: %s", pid, "WRITE", direccionFisica, tamanio, "CPU");
 	//“PID: <PID> - Acción: <LEER / ESCRIBIR> - Dirección física: <DIRECCIÓN_FÍSICA> - Tamaño: <TAMAÑO> - Origen: <CPU / FS>”
 }
 
 void enviarValorObtenido(int socketCPU){
-	
+	/*
 	t_paquete* paquete = crearPaquete(); 
 	paquete->codigo_operacion=PAQUETE; 
 
-	int32_t valorLength = strlen(valorDirFisica); 
+	int32_t valorLength = strlen(valorDirFisica) + 1; 
 
-	agregarAPaquete(paquete,(void*)&valorLength, sizeof(int32_t));
-	agregarAPaquete(paquete,(void*)valorDirFisica, sizeof(char)*valorLength); 
+	//agregarAPaquete(paquete,&valorLength, sizeof(int32_t));
+	agregarAPaquete(paquete,valorDirFisica, sizeof(char)*valorLength); 
 
 	enviarPaquete(paquete,socketCPU); 
+	*/
+	enviarMensaje(valorDirFisica, socketCPU);
 }
 
 void escribir(char* valor, int32_t direccionFisica){
@@ -96,4 +104,5 @@ void escribir(char* valor, int32_t direccionFisica){
 	usleep(tiempo *1000); 
 	char* punteroADirFisica = espacioDeUsuario + direccionFisica; 
 	strcpy(punteroADirFisica, valor);
+	//log_debug(logger, "%s", (char *)(espacioDeUsuario + direccionFisica));
 }

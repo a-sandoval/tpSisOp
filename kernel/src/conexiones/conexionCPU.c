@@ -38,10 +38,14 @@ t_contexto* procesarPCB(t_pcb* procesoEnEjecucion) {
     bufferContexto = malloc(sizeof(t_buffer));
 
     asignarPCBAContexto(procesoEnEjecucion);
+    
+    t_segmento * test = (t_segmento *) list_get (procesoEnEjecucion->tablaDeSegmentos, 0);
+
+    log_debug (logger, "Test: %d %d %d", test->direccionBase, test->id, test->tamanio);
 
     enviarContextoActualizado(conexionACPU);
 
-    recibirOperacionDeCPU();
+    if (recibirOperacionDeCPU() < 0) error ("Se desconecto el CPU.");
 
     recibirContextoActualizado(conexionACPU); 
 

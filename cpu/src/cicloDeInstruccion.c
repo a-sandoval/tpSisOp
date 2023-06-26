@@ -244,11 +244,13 @@ void mov_in(char* registro, char* direccionLogica){
 
     t_paquete* peticion = crearPaquete();
     peticion->codigo_operacion = READ;
-    agregarAPaquete(peticion,(void*)&contextoEjecucion->pid, sizeof(uint32_t));
-    agregarAPaquete(peticion,(void*)&dirFisica, sizeof(uint32_t));
+    agregarAPaquete(peticion,&contextoEjecucion->pid, sizeof(uint32_t));
+    agregarAPaquete(peticion,&dirFisica, sizeof(uint32_t));
     enviarPaquete(peticion, conexionAMemoria);
-
-    valorAInsertar = recibirValor(conexionAMemoria);
+    recibirOperacion(conexionAMemoria);
+    valorAInsertar = recibirMensaje(conexionAMemoria);
+    //recibirValor(conexionAMemoria);
+    //log_debug (logger, "%d %s", opCode, valorAInsertar);
 
     dictionary_remove_and_destroy(contextoEjecucion->registrosCPU, registro, free); 
     dictionary_put(contextoEjecucion->registrosCPU, registro, string_duplicate(valorAInsertar));
@@ -266,16 +268,17 @@ void mov_out(char* direccionLogica, char* registro){
     t_paquete* peticion = crearPaquete();
     peticion->codigo_operacion = WRITE;
 
-    agregarAPaquete(peticion,(void*)&contextoEjecucion->pid, sizeof(uint32_t));
-    agregarAPaquete(peticion, (void*)&dirFisica, sizeof(int));
-    agregarAPaquete(peticion, (void*)&valor, sizeof(char) * tamRegistro); 
+    agregarAPaquete(peticion, &(contextoEjecucion->pid), sizeof(uint32_t));
+    agregarAPaquete(peticion, &(dirFisica), sizeof(int));
+    agregarAPaquete(peticion, valor, sizeof(char) * tamRegistro + 1); 
 
     enviarPaquete(peticion, conexionAMemoria);
 
+    recibirOperacion(conexionAMemoria);
     recibirMensaje(conexionAMemoria);
     // que hago cuando recibo la confimracion?
 
-    log_info(logger, "PID: %d - Accion: %s -  Segmento: %d - Direccion Fisica: %d - Valor:  %s", contextoEjecucion->pid, "WRITE", nroSegmento, dirFisica, (char *)valor);
+    log_info(logger, "PID: %d - Accion: %s - Segmento: %d - Direccion Fisica: %d - Valor: %s", contextoEjecucion->pid, "WRITE", nroSegmento, dirFisica, (char *)valor);
 };  
 
 
@@ -311,12 +314,11 @@ char* recibirValor(int socket) {
 
 	buffer = recibirBuffer(socket, &size);
 
-    desplazamiento += sizeof(int32_t);
     memcpy(&(tamanio), buffer, sizeof(int32_t));
-
-    desplazamiento+=sizeof(char)*tamanio; 
+    desplazamiento += sizeof(int32_t);
 
     memcpy(&(valor),buffer+desplazamiento,sizeof(char)*tamanio); 
+    desplazamiento+=sizeof(char)*tamanio; 
 
 	free(buffer);
 

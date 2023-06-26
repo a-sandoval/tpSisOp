@@ -18,8 +18,8 @@ void ejecutarServidor() {
 		char * nombreArchivo;
 		fcb_t * nuevoArchivo, * fcbRecibido;
 		uint32_t puntero, tamanio, segmento;
+				usleep (tiempoDeEspera * 1000);
 		void * data = recibirBuffer (socketCliente, &size);
-		usleep (tiempoDeEspera * 1000);
 		switch (cod_op) {
 			case FOPEN:
 				memcpy (&(longDeNombre), data + desplazamiento, sizeof (int)), desplazamiento += sizeof longDeNombre;

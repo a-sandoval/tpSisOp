@@ -29,12 +29,13 @@ t_archivo* solicitarArchivoFS(char* nombreArchivo){
 
     t_paquete* peticion = crearPaquete();
     t_archivo* nuevoArchivo = malloc(sizeof(t_archivo));
+    nuevoArchivo->fcb = malloc (sizeof (fcb_t));
     nuevoArchivo->fcb->nombre = nombreArchivo;
 
     log_info(logger, "PID: %d - Abrir Archivo: %s",contextoEjecucion->pid,nombreArchivo);
 
     peticion->codigo_operacion = FOPEN;
-    agregarAPaquete(peticion, nombreArchivo, sizeof(char)*string_length(nombreArchivo));
+    agregarAPaquete(peticion, nombreArchivo, sizeof(char)*strlen(nombreArchivo) + 1);
     enviarPaquete(peticion, conexionAFS);
 
     int respuesta = recibirOperacion(conexionAFS);
@@ -42,8 +43,12 @@ t_archivo* solicitarArchivoFS(char* nombreArchivo){
     switch (respuesta){
         case MENSAJE: // en este caso el archivo no existe y tiene que crearlo
                     peticion->codigo_operacion = FCREATE; // se sobreentiende que es con tamanio 0
-                    agregarAPaquete(peticion, nombreArchivo, sizeof(char)*string_length(nombreArchivo));
+                    agregarAPaquete(peticion, nombreArchivo, sizeof(char)*strlen(nombreArchivo) + 1);
                     enviarPaquete(peticion, conexionAFS);
+                    nuevoArchivo->fcb = deserializarFCB();
+                    nuevoArchivo->colaBloqueados = list_create();
+                    agregarArchivoATG(nuevoArchivo);
+                    break;
         case PAQUETE: // el archivo ya existe y solo me lo manda
                     nuevoArchivo->fcb = deserializarFCB();
                     nuevoArchivo->colaBloqueados = list_create();
@@ -63,12 +68,12 @@ fcb_t* deserializarFCB(){
 
 	buffer = recibirBuffer(conexionAFS, &size);
 
-    desplazamiento += sizeof(int);
-
     memcpy (&tamanio, buffer + desplazamiento, sizeof(int));
     desplazamiento += sizeof(int);
-    memcpy(&(fcb->nombre), buffer + desplazamiento, sizeof(char)*tamanio);
+    fcb->nombre = malloc (sizeof (char) * tamanio);
+    memcpy(fcb->nombre, buffer + desplazamiento, sizeof(char)*tamanio);
     desplazamiento += tamanio;
+
     memcpy(&tamanio, buffer + desplazamiento, sizeof(int));
     desplazamiento += sizeof(int);
     memcpy(&(fcb->tamanio), buffer + desplazamiento, tamanio);
