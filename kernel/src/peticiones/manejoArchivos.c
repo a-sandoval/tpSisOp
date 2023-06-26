@@ -215,6 +215,15 @@ void solicitarEscrituraDeArchivo(t_archivoProceso* archivo, uint32_t dirFisica, 
 
 }
 
+fcb_t * crearFCB () {
+    fcb_t * nuevo = malloc (sizeof (fcb_t));
+    nuevo->nombre = NULL;
+    nuevo->tamanio = 0;
+    nuevo->ptrDirecto = 0;
+    nuevo->ptrIndirecto = 0;
+    return nuevo;
+}
+
 void eliminarArchivoProceso(void* archivo){
     t_archivoProceso * bleh = (t_archivoProceso *) archivo;
     //espero que esto este bien
