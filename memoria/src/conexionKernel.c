@@ -1,6 +1,7 @@
 #include "memoria/include/conexionKernel.h"
 
 t_peticion* peticion; 
+int cantidadMaximaSegmentos; 
 
 int ejecutarServidorKernel(int *socketCliente){
 	
@@ -8,6 +9,7 @@ int ejecutarServidorKernel(int *socketCliente){
 	
 	while (1) {
 		int peticionRealizada = recibirOperacion(*socketCliente);
+		cantidadMaximaSegmentos = config_get_int_value(config,"CANT_SEGMENTOS"); 
 		
 		log_debug(logger,"Se recibio peticion %d del Kernel", peticionRealizada); 
 
@@ -64,6 +66,16 @@ t_list* crearTablaDeSegmentosInicial() {
 
     t_list* tablaDeSegmentos = list_create(); 
     list_add(tablaDeSegmentos,(void*)segmento0);
+
+	for(int i=1;i<cantidadMaximaSegmentos;i++) {
+
+		t_segmento* segmentoVacio = malloc(sizeof(t_segmento)); 
+		segmentoVacio->id = i; 
+		segmentoVacio->tamanio=0; 
+
+		list_add(tablaDeSegmentos,(void*)segmentoVacio); 
+
+	}
 
     return tablaDeSegmentos;  
 

@@ -47,7 +47,7 @@ op_code ubicarSegmentosPorFirst(t_peticion* peticion){
             
             log_debug(logger, "Se ha encontrado un espacio para el segmento");
             loggearCreacionDeSegmento(peticion); 
-            asignacionAlEspacioDeMemoria(peticion->segmento);
+            //asignacionAlEspacioDeMemoria(peticion->segmento);
             agregarSegmentoATablaDeSegmentosPCB(peticion); 
 			reducirHuecosLibres(peticion->segmento, i);
             return SUCCESS; 
@@ -63,17 +63,19 @@ void loggearCreacionDeSegmento(t_peticion* peticion) {
     log_info(logger,"PID: %d - Crear Segmento: %d - Base: %d - TAMAÑO: %d",peticion->pid,peticion->segmento->id,peticion->segmento->direccionBase,peticion->segmento->tamanio); 
 }
 
+/* COMENTADO PORQUE CREO QUE NO SIRVE HACER ESTO, EL SEGMENTO ESTA VACIO! 
 void asignacionAlEspacioDeMemoria(t_segmento* segmento){
     t_segmento* offsetPointer = (t_segmento*)((char*)espacioDeUsuario + segmento->direccionBase);
 	*offsetPointer = *segmento;
-}
+}*/ 
 
 void agregarSegmentoATablaDeSegmentosPCB(t_peticion* peticion){
 	int pidProceso = peticion -> pid;
 	t_segmento* segmentoAAgregar = peticion->segmento;
 	t_proceso* proceso = (t_proceso*) list_get(tablaDeTablasDeSegmentos,pidProceso);
 	
-	list_add(proceso->tablaDeSegmentosAsociada, (void*) segmentoAAgregar);
+	list_replace_and_destroy_element(proceso->tablaDeSegmentosAsociada,peticion->segmento->id,(void*)segmentoAAgregar,free); 
+
 }
 
 void reducirHuecosLibres(t_segmento* segmento, int indiceHueco) {
@@ -111,7 +113,7 @@ op_code ubicarSegmentosPorBest(t_peticion* peticion){
         peticion->segmento->direccionBase = huecoAAsignar->direccionBase;
         log_debug(logger, "Se ha encontrado un espacio para el segmento");
         loggearCreacionDeSegmento(peticion); 
-        asignacionAlEspacioDeMemoria(peticion->segmento);
+        //asignacionAlEspacioDeMemoria(peticion->segmento);
         agregarSegmentoATablaDeSegmentosPCB(peticion); 
 	    reducirHuecosLibres(peticion->segmento, indiceHueco);
         return SUCCESS;
@@ -148,7 +150,8 @@ op_code ubicarSegmentosPorWorst(t_peticion* peticion){
         peticion->segmento->direccionBase = huecoAAsignar->direccionBase;
         log_debug(logger, "Se ha encontrado un espacio para el segmento");
         loggearCreacionDeSegmento(peticion); 
-        asignacionAlEspacioDeMemoria(peticion->segmento);
+
+        //asignacionAlEspacioDeMemoria(peticion->segmento);
         agregarSegmentoATablaDeSegmentosPCB(peticion); 
 		reducirHuecosLibres(peticion->segmento, indiceHueco);
         return SUCCESS; 
