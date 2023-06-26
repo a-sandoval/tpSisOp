@@ -44,9 +44,11 @@ bool estaEnLaTablaGlobal(char* nombreArchivo);
 t_archivo* obtenerArchivoDeTG(char* nombreArchivo);
 void eliminarArchivo(t_archivo* archivo);
 void solicitarTruncadoDeArchivo(fcb_t* fcb, int tamanio);
+void solicitarLecturaDeArchivo(t_archivoProceso* archivo, uint32_t dirFisica, uint32_t bytes);
+void solicitarEscrituraDeArchivo(t_archivoProceso* archivo, uint32_t dirFisica, uint32_t bytes);
 t_archivoProceso* obtenerArchivoDeProceso(t_pcb* proceso, char* nombreArchivo);
 void desbloquearProcesoPorArchivo();
 void quitarArchivo(t_pcb* proceso, char* nombreArchivo);
-void eliminarArchivoDeTabla(void* archivo);
+void eliminarArchivoProceso(void* archivo);
 
 #endif

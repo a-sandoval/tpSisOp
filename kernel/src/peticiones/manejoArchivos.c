@@ -99,13 +99,7 @@ void agregarArchivoATG(t_archivo* nuevoArchivo){
     list_add(tablaGlobalArchivos, nuevoArchivo);
 }
 
-void eliminarArchivo(t_archivo* archivo){
-    //espero que esto este bien
-    free(archivo->fcb->nombre);
-    free(archivo->fcb);
-    destruirListaPCB(archivo->colaBloqueados);
-    free(archivo);
-}
+
 
 bool estaEnLaTablaGlobal(char* nombreArchivo){
 
@@ -166,7 +160,7 @@ void quitarArchivo(t_pcb* proceso, char* nombreArchivo){
         archivoAux=list_get(proceso->tablaDeArchivos, i);
 
         if(!strcmp(nombreArchivo, archivoAux->fcb->nombre)){
-            list_remove_and_destroy_element(proceso->tablaDeArchivos,i,eliminarArchivoDeTabla);
+            list_remove_and_destroy_element(proceso->tablaDeArchivos,i,eliminarArchivoProceso);
         }
     }
 
@@ -187,10 +181,52 @@ void solicitarTruncadoDeArchivo(fcb_t* fcb, int tamanio){
 
 }
 
-void eliminarArchivoDeTabla(void* archivo){
+void solicitarLecturaDeArchivo(t_archivoProceso* archivo, uint32_t dirFisica, uint32_t bytes){
+    fcb_t* fcb = archivo->fcb;
+    t_paquete* peticion = crearPaquete();
+    peticion->codigo_operacion = FREAD;
+
+    agregarAPaquete(peticion, (void*)fcb->nombre, sizeof(char) * string_length(fcb->nombre));
+    agregarAPaquete(peticion, &(fcb->tamanio), sizeof(uint32_t));
+    agregarAPaquete(peticion, &(fcb->ptrDirecto), sizeof(uint32_t));
+    agregarAPaquete(peticion, &(fcb->ptrIndirecto), sizeof(uint32_t));
+     agregarAPaquete(peticion, &(archivo->punteroArch), sizeof(uint32_t));
+    agregarAPaquete(peticion, (void*)&(dirFisica), sizeof(uint32_t));
+    agregarAPaquete(peticion, (void*)&(bytes), sizeof(uint32_t));
+
+    enviarPaquete(peticion, conexionAFS);
+
+}
+
+void solicitarEscrituraDeArchivo(t_archivoProceso* archivo, uint32_t dirFisica, uint32_t bytes){
+    fcb_t* fcb = archivo->fcb;
+    t_paquete* peticion = crearPaquete();
+    peticion->codigo_operacion = FWRITE;
+
+    agregarAPaquete(peticion, (void*)fcb->nombre, sizeof(char) * string_length(fcb->nombre));
+    agregarAPaquete(peticion, &(fcb->tamanio), sizeof(uint32_t));
+    agregarAPaquete(peticion, &(fcb->ptrDirecto), sizeof(uint32_t));
+    agregarAPaquete(peticion, &(fcb->ptrIndirecto), sizeof(uint32_t));
+    agregarAPaquete(peticion, &(archivo->punteroArch), sizeof(uint32_t));
+    agregarAPaquete(peticion, (void*)&(dirFisica), sizeof(uint32_t));
+    agregarAPaquete(peticion, (void*)&(bytes), sizeof(uint32_t));
+
+    enviarPaquete(peticion, conexionAFS);
+
+}
+
+void eliminarArchivoProceso(void* archivo){
     t_archivoProceso * bleh = (t_archivoProceso *) archivo;
     //espero que esto este bien
     free(bleh->fcb->nombre);
     free(bleh->fcb);
+    free(archivo);
+}
+
+void eliminarArchivo(t_archivo* archivo){
+    //espero que esto este bien
+    free(archivo->fcb->nombre);
+    free(archivo->fcb);
+    destruirListaPCB(archivo->colaBloqueados);
     free(archivo);
 }

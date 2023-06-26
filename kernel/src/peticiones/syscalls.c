@@ -270,7 +270,7 @@ void fclose_s(t_pcb *proceso, char **parametros){
 void ftruncate_s(t_pcb *proceso, char **parametros){
     char* nombreArchivo = parametros[0];
     int tamanio = atoi(parametros[1]);
-    pthread_t respuestaFS_h;
+    //pthread_t respuestaFS_h;
     t_archivo* archivo = obtenerArchivoDeTG(nombreArchivo);
 
     log_info(logger, "PID: %d - Archivo: %s - Tamaño: %d",proceso->pid, nombreArchivo, tamanio);
@@ -313,18 +313,54 @@ void fseek_s(t_pcb *proceso, char **parametros){
 /*
 void fread_s(t_pcb *proceso, char **parametros){
 
-    log_info(logger, "PID: <PID> - Leer Archivo: <NOMBRE ARCHIVO> - Puntero <PUNTERO> - Dirección Memoria <DIRECCIÓN MEMORIA> - Tamaño <TAMAÑO>",);
+    char* nombreArchivo = parametros[0];
+    uint32_t dirFisica = (uint32_t*)atoi(parametros[1]);
+    uint32_t bytes = (uint32_t*)atoi(parametros[2]);
+    pthread_t respuestaFS_h;
+    t_archivo* archivo = obtenerArchivoDeTG(nombreArchivo); //este lo necesito por la cola de bloqueo
+    t_archivoProceso* archivoProceso = obtenerArchivoDeProceso(proceso, nombreArchivo);
+
+    log_info(logger, "PID: <PID> - Leer Archivo: %s - Puntero %d - Dirección Memoria %d - Tamanio %d",proceso->pid, nombreArchivo, archivoProceso->punteroArch, dirFisica, archivo->fcb->tamanio);
+
+    //bloqueo al proceso, agregandolo a la lista de bloqueados correspondiente a ese archivo
+    estadoAnterior = proceso->estado;
+    proceso->estado = BLOCK;
+
+    list_add(archivo->colaBloqueados, proceso);
+    loggearCambioDeEstado(proceso->pid, estadoAnterior, proceso->estado);
+    loggearBloqueoDeProcesos(proceso, nombreArchivo);
+    
+    solicitarLecturaDeArchivo(archivoProceso, dirFisica, bytes);
+    
+
+    
 }
 
 void fwrite_s(t_pcb *proceso, char **parametros){
+    char* nombreArchivo = parametros[0];
+    uint32_t dirFisica = (uint32_t*)atoi(parametros[1]);
+    uint32_t bytes = (uint32_t*)atoi(parametros[2]);
+    pthread_t respuestaFS_h;
+    t_archivo* archivo = obtenerArchivoDeTG(nombreArchivo);
+    t_archivoProceso* archivoProceso = obtenerArchivoDeProceso(proceso, nombreArchivo);
 
-    log_info(logger, "PID: <PID> - Escribir Archivo: <NOMBRE ARCHIVO> - Puntero <PUNTERO> - Dirección Memoria <DIRECCIÓN MEMORIA> - Tamaño <TAMAÑO>"",);
+    log_info(logger, "PID: <PID> - Escribir Archivo: %s - Puntero %d - Dirección Memoria %d - Tamanio %d",proceso->pid, nombreArchivo, archivoProceso->punteroArch, dirFisica, archivo->fcb->tamanio);
+
+    //bloqueo al proceso, agregandolo a la lista de bloqueados correspondiente a ese archivo
+    estadoAnterior = proceso->estado;
+    proceso->estado = BLOCK;
+
+    list_add(archivo->colaBloqueados, proceso);
+    loggearCambioDeEstado(proceso->pid, estadoAnterior, proceso->estado);
+    loggearBloqueoDeProcesos(proceso, nombreArchivo);
+    
+    solicitarEscrituraDeArchivo(archivoProceso, dirFisica, bytes);
+
 }
-*/
 
+*/
 void createSegment_s(t_pcb *proceso, char **parametros){
 
-  
     int idSegmento = atoi(parametros[0]);
     int tamanio = atoi(parametros[1]);
     
