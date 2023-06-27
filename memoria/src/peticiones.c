@@ -55,17 +55,19 @@ t_peticion* recibirPeticionCreacionDeSegmento(int socketCliente) {
 
 	desplazamiento += sizeof(int); 
 
-	memcpy(&peticion->pid, buffer + desplazamiento, sizeof(uint32_t));
+	memcpy(&(peticion->pid), buffer + desplazamiento, sizeof(uint32_t));
 
 	desplazamiento += sizeof(uint32_t) + sizeof (int); 
 
-	memcpy(&peticion->segmento->id,buffer+desplazamiento,sizeof(uint32_t)); 
+	memcpy(&(peticion->segmento->id),buffer+desplazamiento,sizeof(uint32_t)); 
 
 	desplazamiento += sizeof(uint32_t) + sizeof (int); 
 
-	memcpy(&peticion->segmento->direccionBase, buffer+desplazamiento,sizeof(uint32_t)); 
+	memcpy(&(peticion->segmento->direccionBase), buffer+desplazamiento,sizeof(uint32_t)); 
 
 	free (buffer);
+
+	log_debug (logger, "Recibida peticion de PID %d, para la direccion base %d y de tamaño %d", peticion->pid, peticion->segmento->direccionBase, peticion->segmento->tamanio);
 
 	return peticion; 
 

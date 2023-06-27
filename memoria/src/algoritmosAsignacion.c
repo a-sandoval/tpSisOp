@@ -26,8 +26,8 @@ op_code ubicarSegmentosEnEspaciosLibres(t_peticion* peticion){
         
     }
 
-    log_error(loggerError, "ERROR EN ALGORITMO DE ASIGNACION");
-    abort();
+    error("ERROR EN ALGORITMO DE ASIGNACION");
+    return 0;
 }
 
 //Implementacion First

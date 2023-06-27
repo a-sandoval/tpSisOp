@@ -364,12 +364,14 @@ void createSegment_s(t_pcb *proceso, char **parametros){
     int idSegmento = atoi(parametros[0]);
     int tamanio = atoi(parametros[1]);
     
+    log_debug (logger, "Enviando petición para crear el segmento %d con tamaño %d.", idSegmento, tamanio);
+
     t_paquete* peticion = crearPaquete();
     peticion->codigo_operacion = CREATE_SEGMENT_OP;
 
-    agregarAPaquete(peticion, (void*)&contextoEjecucion->pid, sizeof(uint32_t));
-    agregarAPaquete(peticion, (void*)&idSegmento, sizeof(int));
-    agregarAPaquete(peticion, (void*)&tamanio, sizeof(uint32_t));
+    agregarAPaquete(peticion, &(contextoEjecucion->pid), sizeof(uint32_t));
+    agregarAPaquete(peticion, &(idSegmento), sizeof(int));
+    agregarAPaquete(peticion, &(tamanio), sizeof(uint32_t));
 
     enviarPaquete(peticion, conexionAMemoria);
     

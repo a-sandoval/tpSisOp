@@ -56,7 +56,7 @@ void recibirPeticionDeLectura(int socketCPU) {
 
 	leer(direccionFisica); 
 
-	
+	free (buffer);
 }
 
 void recibirPeticionDeEscritura(int socketCPU) {
@@ -82,6 +82,7 @@ void recibirPeticionDeEscritura(int socketCPU) {
 
 	log_info(logger, "PID: %d - Acción: %s - Dirección física: %d - Tamaño: %d - Origen: %s", pid, "WRITE", direccionFisica, tamanio, "CPU");
 	//“PID: <PID> - Acción: <LEER / ESCRIBIR> - Dirección física: <DIRECCIÓN_FÍSICA> - Tamaño: <TAMAÑO> - Origen: <CPU / FS>”
+	free (valorAEscribir), free (buffer);
 }
 
 void enviarValorObtenido(int socketCPU){
@@ -103,6 +104,6 @@ void escribir(char* valor, int32_t direccionFisica){
 	
 	usleep(tiempo *1000); 
 	char* punteroADirFisica = espacioDeUsuario + direccionFisica; 
-	strcpy(punteroADirFisica, valor);
+	strcpy (punteroADirFisica, valor);
 	//log_debug(logger, "%s", (char *)(espacioDeUsuario + direccionFisica));
 }
