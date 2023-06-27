@@ -10,6 +10,7 @@ void enviarTablaSegmentos(t_proceso* procesoEnMemoria){
     uint32_t tablaDeSegmentosSize = list_size(procesoEnMemoria->tablaDeSegmentosAsociada);
 
 	agregarAPaquete(paquete,(void*)&procesoEnMemoria->pid,sizeof(uint32_t)); 
+    agregarAPaquete(paquete,(void*)&tablaDeSegmentosSize,sizeof(uint32_t)); 
    
     uint32_t i;
     for(i=0;i<tablaDeSegmentosSize;i++){
@@ -51,6 +52,8 @@ t_peticion* recibirPeticionCreacionDeSegmento(int socketCliente) {
 
 	peticion->segmento = segmentoPedido; 
 
+	peticion->segmento->direccionBase = UINT32_MAX; 
+
 	void* buffer = recibirBuffer(socketCliente, &size); 
 
 	desplazamiento += sizeof(int); 
@@ -63,11 +66,11 @@ t_peticion* recibirPeticionCreacionDeSegmento(int socketCliente) {
 
 	desplazamiento += sizeof(uint32_t) + sizeof (int); 
 
-	memcpy(&(peticion->segmento->direccionBase), buffer+desplazamiento,sizeof(uint32_t)); 
+	memcpy(&(peticion->segmento->tamanio), buffer+desplazamiento,sizeof(uint32_t)); 
 
 	free (buffer);
 
-	log_debug (logger, "Recibida peticion de PID %d, para la direccion base %d y de tamaño %d", peticion->pid, peticion->segmento->direccionBase, peticion->segmento->tamanio);
+	log_debug (logger, "Recibida peticion de PID %d, para la id %d y de tamaño %d", peticion->pid, peticion->segmento->id, peticion->segmento->tamanio);
 
 	return peticion; 
 

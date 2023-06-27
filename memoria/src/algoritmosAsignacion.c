@@ -91,17 +91,18 @@ op_code ubicarSegmentosPorBest(t_peticion* peticion){
     t_hueco_libre* huecoAAsignar = NULL;
     int indiceHueco;
     bool encontrado = false; 
-    int32_t tamanioHuecoMenor = -(__INT32_MAX__);
+    int32_t tamanioHuecoMenor = __INT32_MAX__;
 
     for (int i=0;i<list_size(huecosLibres);i++) {
         huecoLibre = ((t_hueco_libre*)list_get(huecosLibres,i));
+
+        log_debug (logger, "Encontrado el hueco libre en la dirección %d y el tamaño %d.", huecoLibre->direccionBase, huecoLibre->tamanioHueco);
 
         if((huecoLibre->tamanioHueco >= tamanioSegmento) && ((int32_t)huecoLibre->tamanioHueco < tamanioHuecoMenor)){
             huecoAAsignar = huecoLibre;
             tamanioHuecoMenor = huecoAAsignar->tamanioHueco;
             indiceHueco = i;
-            encontrado=true; 
-            break;
+            encontrado=true;
         }
     }
     if (encontrado) {

@@ -201,6 +201,7 @@ void deserializarTablaDeSegmentos (void * buffer, int * desplazamiento) {
         list_add (contextoEjecucion->tablaDeSegmentos, segmento);
     }
 
+    log_debug (logger, "Me llegaron %d segmentos.", contextoEjecucion->tablaDeSegmentosSize);
     (* desplazamiento) += sizeof(int);
 
 }

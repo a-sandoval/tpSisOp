@@ -61,7 +61,7 @@ void esperarPID(char * archivo) {
 void esperarFinalizacion () {
     recibirOperacion (socketKernel);
 	char * mensaje = recibirMensaje (socketKernel);
-    log_info(logger, mensaje);
+    log_info(logger, "%s", mensaje);
     free(mensaje);
     return;
 }

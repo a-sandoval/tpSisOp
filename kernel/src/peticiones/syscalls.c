@@ -138,7 +138,7 @@ void signal_s(t_pcb *proceso, char **parametros){
     
     }
     
-    volverACPU(proceso);    
+    if (strncmp (parametros[2], "EXIT", 4)) volverACPU(proceso);    
 }
 
 
@@ -248,11 +248,11 @@ void fclose_s(t_pcb *proceso, char **parametros){
     if(list_is_empty(archivo->colaBloqueados)){
         //si no hay procesos esperando por el archivo, lo elimino
         list_remove_element(tablaGlobalArchivos, archivo);
+        eliminarArchivo (archivo);
     }
     else{
         // si hay procesos esperando, desbloqueo
-        t_pcb* procesoADesbloquear = crearPCB();
-        procesoADesbloquear = list_get(archivo->colaBloqueados, 0);
+        t_pcb* procesoADesbloquear = (t_pcb*)list_get(archivo->colaBloqueados, 0);
         list_remove(archivo->colaBloqueados, 0);
 
         estadoAnterior = procesoADesbloquear->estado;
@@ -263,7 +263,6 @@ void fclose_s(t_pcb *proceso, char **parametros){
         ingresarAReady(procesoADesbloquear);
     }
 
-    free(nombreArchivo);
     volverACPU(proceso);
 }
 
@@ -381,6 +380,8 @@ void createSegment_s(t_pcb *proceso, char **parametros){
         case SUCCESS:
                 log_info(logger, "PID: %d - Crear Segmento - Id: %d - Tamanio: %d", proceso->pid, idSegmento, tamanio);
                 // me mandan la tabla con el nuevo segmento incorporado
+                
+                recibirOperacion (conexionAMemoria);
                 recibirTablaDeSegmentosActualizada(proceso);
                 volverACPU(proceso);
                 break;
@@ -416,6 +417,7 @@ void deleteSegment_s(t_pcb *proceso, char **parametros){
     agregarAPaquete(peticion, (void*)&idSegmento, sizeof(uint32_t));
     enviarPaquete(peticion, conexionAMemoria);
 
+    recibirOperacion(conexionAMemoria);
     recibirTablaDeSegmentosActualizada(proceso);
 
     volverACPU(proceso);

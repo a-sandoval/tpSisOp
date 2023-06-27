@@ -9,13 +9,12 @@ void recibirTablaDeSegmentosActualizada(t_pcb* pcb){
 
     desplazamiento += sizeof(int);
     //salteo el pid aca porque ya lo tengo del pcb
-    desplazamiento += sizeof(uint32_t);
+    desplazamiento += sizeof(uint32_t) + sizeof(int);
     
     t_segmento* segmento;
 
     list_clean_and_destroy_elements (pcb->tablaDeSegmentos, free);
     
-    int tamanio;
     uint32_t tablaDeSegmentosSize;
     // Desplazamiento: tamaño de la lista de segmentos.
     memcpy(&(tablaDeSegmentosSize), buffer + desplazamiento, sizeof(uint32_t));
@@ -24,14 +23,11 @@ void recibirTablaDeSegmentosActualizada(t_pcb* pcb){
     for (uint32_t i = 0; i < tablaDeSegmentosSize; i++) {
 
         // Desplazamiento: Tamaño del segmento.
-        memcpy (&tamanio, buffer + desplazamiento, sizeof (int));
-        desplazamiento += sizeof (int);
 
         segmento = deserializarSegmento(buffer, &desplazamiento);
         list_add (pcb->tablaDeSegmentos, segmento);
-        free(segmento);
     }
-
+    log_debug (logger, "Me llegaron %d segmentos, deberian llegar %d.", list_size (pcb->tablaDeSegmentos), tablaDeSegmentosSize);
     desplazamiento += sizeof(int);
 
 }

@@ -8,6 +8,7 @@
 #include "shared/include/utilsCliente.h"
 #include "shared/include/utilsServidor.h"
 #include "kernel/include/peticiones/pcb.h"
+#include "kernel/include/peticiones/manejoSegmentos.h"
 
 
 void conexionMemoria();

@@ -169,7 +169,10 @@ void quitarArchivo(t_pcb* proceso, char* nombreArchivo){
         archivoAux=list_get(proceso->tablaDeArchivos, i);
 
         if(!strcmp(nombreArchivo, archivoAux->fcb->nombre)){
-            list_remove_and_destroy_element(proceso->tablaDeArchivos,i,eliminarArchivoProceso);
+            list_remove(proceso->tablaDeArchivos,i);
+            archivoAux->fcb = NULL;
+            free (archivoAux);
+            return;
         }
     }
 
