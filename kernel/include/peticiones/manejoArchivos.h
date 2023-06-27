@@ -47,8 +47,10 @@ void solicitarTruncadoDeArchivo(fcb_t* fcb, int tamanio);
 void solicitarLecturaDeArchivo(t_archivoProceso* archivo, uint32_t dirFisica, uint32_t bytes);
 void solicitarEscrituraDeArchivo(t_archivoProceso* archivo, uint32_t dirFisica, uint32_t bytes);
 t_archivoProceso* obtenerArchivoDeProceso(t_pcb* proceso, char* nombreArchivo);
+t_archivoProceso * crearArchivoProceso ();
 void desbloquearProcesoPorArchivo();
 void quitarArchivo(t_pcb* proceso, char* nombreArchivo);
+fcb_t * crearFCB ();
 void eliminarArchivoProceso(void* archivo);
 
 #endif

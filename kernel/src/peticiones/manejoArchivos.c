@@ -45,6 +45,7 @@ t_archivo* solicitarArchivoFS(char* nombreArchivo){
                     peticion->codigo_operacion = FCREATE; // se sobreentiende que es con tamanio 0
                     agregarAPaquete(peticion, nombreArchivo, sizeof(char)*strlen(nombreArchivo) + 1);
                     enviarPaquete(peticion, conexionAFS);
+                    recibirOperacion (conexionAFS);
                     nuevoArchivo->fcb = deserializarFCB();
                     nuevoArchivo->colaBloqueados = list_create();
                     agregarArchivoATG(nuevoArchivo);
@@ -52,6 +53,7 @@ t_archivo* solicitarArchivoFS(char* nombreArchivo){
         case PAQUETE: // el archivo ya existe y solo me lo manda
                     nuevoArchivo->fcb = deserializarFCB();
                     nuevoArchivo->colaBloqueados = list_create();
+                    log_debug (logger, "Recibido FCB: %s %d %d %d", nuevoArchivo->fcb->nombre, nuevoArchivo->fcb->tamanio, nuevoArchivo->fcb->ptrDirecto, nuevoArchivo->fcb->ptrIndirecto);
                     agregarArchivoATG(nuevoArchivo);
                     break;
     }
@@ -64,7 +66,7 @@ fcb_t* deserializarFCB(){
     int size, desplazamiento = 0;
 	void * buffer;
     int tamanio;
-    fcb_t* fcb = malloc(sizeof(fcb));
+    fcb_t * fcb = malloc(sizeof(fcb_t));
 
 	buffer = recibirBuffer(conexionAFS, &size);
 
@@ -137,12 +139,13 @@ t_archivo* obtenerArchivoDeTG(char* nombreArchivo){
 t_archivoProceso* obtenerArchivoDeProceso(t_pcb* proceso, char* nombreArchivo){
 
     int cantArchivos = list_size(proceso->tablaDeArchivos);
-    t_archivoProceso* archivoAux = malloc(sizeof(t_archivo));
+    t_archivoProceso* archivoAux = crearArchivoProceso();
 
+    log_debug (logger, "Se busca en proceso %d el archivo abierto \"%s\", con una cantidad de archivos en lista %d", proceso->pid, nombreArchivo, cantArchivos);
 
     for(int i=0; i<cantArchivos; i++){
         archivoAux = list_get(proceso->tablaDeArchivos, i);
-
+        log_debug (logger, "Archivo encontrado: %s", archivoAux->fcb->nombre);
         if(!strcmp(nombreArchivo, archivoAux->fcb->nombre)){
             return archivoAux; 
         }
@@ -150,6 +153,12 @@ t_archivoProceso* obtenerArchivoDeProceso(t_pcb* proceso, char* nombreArchivo){
     }
 
     return NULL;
+}
+
+t_archivoProceso * crearArchivoProceso () {
+    t_archivoProceso * nuevo = malloc (sizeof (t_archivoProceso));
+    nuevo->fcb = crearFCB ();
+    return nuevo;
 }
 
 void quitarArchivo(t_pcb* proceso, char* nombreArchivo){

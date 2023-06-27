@@ -51,6 +51,7 @@ void cerrarSuperBloque ();
 void cerrarBitmap ();
 void cerrarMMapBitmap ();
 void cerrarArchivoBitmap ();
+void limpiarBloques ();
 void cerrarMMapBloques ();
 void cerrarArchivoBloques ();
 

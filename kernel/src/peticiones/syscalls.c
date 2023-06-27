@@ -30,11 +30,11 @@ void retornoContexto(t_pcb *proceso, t_contexto *contextoEjecucion){
         case F_CLOSE:
             fclose_s(proceso, contextoEjecucion->motivoDesalojo->parametros);
             break;
-    /*
+    
         case F_SEEK:
             fseek_s(proceso, contextoEjecucion->motivoDesalojo->parametros);
             break;
-        case F_READ:
+    /*    case F_READ:
             fread_s(proceso, contextoEjecucion->motivoDesalojo->parametros);
             break;
         case F_WRITE:

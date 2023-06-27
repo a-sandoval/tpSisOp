@@ -36,6 +36,7 @@ typedef struct {
 
 int crearArchivo (char * nombre);
 fcb_t * abrirArchivo (char * nombre);
+void cerrarArchivo (fcb_t * archivo);
 int truncarArchivo (fcb_t * archivo, uint32_t tamanio);
 char * leerArchivo (fcb_t * archivo, uint32_t puntero, uint32_t tamanio);
 int escribirArchivo (fcb_t * archivo, char * data, uint32_t tamanio, uint32_t puntero);

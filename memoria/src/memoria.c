@@ -12,8 +12,10 @@ int main() {
 	atexit (terminarPrograma);
 
 	creacionEspacio();
+
 	creacionListaHuecosLibres(); 
 	tablaDeTablasDeSegmentos=list_create(); 
+	atexit (liberarTabladeTablasDeSegmentos);
 
 	//Inicio servidor y queda a la espera de las conexiones de CPU, Kernel y File System
 	
@@ -55,4 +57,8 @@ int main() {
     }
 
 	exit (0);
+}
+
+void liberarTabladeTablasDeSegmentos () {
+	list_destroy(tablaDeTablasDeSegmentos);
 }

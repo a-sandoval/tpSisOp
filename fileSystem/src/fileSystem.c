@@ -73,6 +73,7 @@ int main () {
     atexit(cerrarMMapBloques);
     
     bloques = malloc(cantBloques * sizeof (char *));
+    atexit (limpiarBloques);
 
     for (int i = 0; i < cantBloques; i++) {
         *(bloques + i) = &ptrBloques[i * tamanioBloques];
@@ -122,9 +123,9 @@ int main () {
 
     //truncarArchivo (prueba2, 16 * tamanioBloques);
     //truncarArchivo (prueba2, 8 * tamanioBloques);
-    */
     msync(ptrBloques, tamanioBloques * cantBloques, MS_SYNC);
     msync(ptrBitMap, tamanioBitmap, MS_SYNC);
+    */
     
 
     escucharAlKernel();
@@ -136,5 +137,6 @@ void cerrarSuperBloque () { config_destroy (superbloque); }
 void cerrarBitmap () { bitarray_destroy(bitmap); }
 void cerrarMMapBitmap () { munmap(ptrBitMap, tamanioBitmap); }
 void cerrarArchivoBitmap () { close (fdBitmap); }
+void limpiarBloques () { free (bloques); }
 void cerrarMMapBloques () { munmap(ptrBloques, tamanioBloques); }
 void cerrarArchivoBloques () { close (fdBloques); }

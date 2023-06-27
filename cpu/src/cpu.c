@@ -7,13 +7,15 @@ int main(void){
 	loggerError = iniciarLogger("errores.log", "Errores CPU");
 	
 	config = iniciarConfiguracion("cpu.config");
+
+	atexit(terminarPrograma);
 	
 	conexionMemoria(); 
 
-	cambiarNombre(logger,"CPU-Kernel");
+	char * nombre = string_duplicate("CPU-KERNEL");
+	cambiarNombre(logger, nombre);
     escucharAlKernel();
 
-	log_destroy(loggerError);
-
+	free (nombre);
 	return EXIT_SUCCESS;
 }	

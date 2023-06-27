@@ -39,9 +39,9 @@ t_contexto* procesarPCB(t_pcb* procesoEnEjecucion) {
 
     asignarPCBAContexto(procesoEnEjecucion);
     
-    t_segmento * test = (t_segmento *) list_get (procesoEnEjecucion->tablaDeSegmentos, 0);
+    //t_segmento * test = (t_segmento *) list_get (procesoEnEjecucion->tablaDeSegmentos, 0);
 
-    log_debug (logger, "Test: %d %d %d", test->direccionBase, test->id, test->tamanio);
+    //log_debug (logger, "Test: %d %d %d", test->direccionBase, test->id, test->tamanio);
 
     enviarContextoActualizado(conexionACPU);
 
@@ -65,7 +65,6 @@ void actualizarPCB(t_pcb* proceso){
     proceso->registrosCPU = registrosDelCPU(contextoEjecucion->registrosCPU);
 	//list_destroy(proceso->tablaDeArchivos);
     //proceso->tablaDeArchivos = list_duplicate(contextoEjecucion->tablaDeArchivos);
-	list_destroy(proceso->tablaDeSegmentos);
     proceso->tablaDeSegmentos = list_duplicate(contextoEjecucion->tablaDeSegmentos);
 
 }

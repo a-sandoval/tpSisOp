@@ -246,7 +246,9 @@ void mov_in(char* registro, char* direccionLogica){
     peticion->codigo_operacion = READ;
     agregarAPaquete(peticion,&contextoEjecucion->pid, sizeof(uint32_t));
     agregarAPaquete(peticion,&dirFisica, sizeof(uint32_t));
-    enviarPaquete(peticion, conexionAMemoria);
+    enviarPaquete(peticion, conexionAMemoria);    
+    eliminarPaquete (peticion);
+
     recibirOperacion(conexionAMemoria);
     valorAInsertar = recibirMensaje(conexionAMemoria);
     //recibirValor(conexionAMemoria);
@@ -254,8 +256,9 @@ void mov_in(char* registro, char* direccionLogica){
 
     dictionary_remove_and_destroy(contextoEjecucion->registrosCPU, registro, free); 
     dictionary_put(contextoEjecucion->registrosCPU, registro, string_duplicate(valorAInsertar));
-
-    log_info(logger, "PID: %d - Accion: %s -  Segmento: %d - Direccion Fisica: %d - Valor:  %s", contextoEjecucion->pid, "LEER", nroSegmento, dirFisica, valorAInsertar);
+    
+    log_info(logger, "PID: %d - Accion: %s - Segmento: %d - Direccion Fisica: %d - Valor: %s", contextoEjecucion->pid, "LEER", nroSegmento, dirFisica, valorAInsertar);
+    free (valorAInsertar);
 };
 
 void mov_out(char* direccionLogica, char* registro){
@@ -273,10 +276,12 @@ void mov_out(char* direccionLogica, char* registro){
     agregarAPaquete(peticion, valor, sizeof(char) * tamRegistro + 1); 
 
     enviarPaquete(peticion, conexionAMemoria);
+    eliminarPaquete (peticion);
 
     recibirOperacion(conexionAMemoria);
-    recibirMensaje(conexionAMemoria);
-    // que hago cuando recibo la confimracion?
+    char * respuesta = recibirMensaje(conexionAMemoria);
+    //log_debug (logger, "%s", respuesta);
+    free (respuesta);
 
     log_info(logger, "PID: %d - Accion: %s - Segmento: %d - Direccion Fisica: %d - Valor: %s", contextoEjecucion->pid, "WRITE", nroSegmento, dirFisica, (char *)valor);
 };  

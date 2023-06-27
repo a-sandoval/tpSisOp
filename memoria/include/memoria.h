@@ -51,6 +51,8 @@ extern void* espacioDeUsuario;
 extern t_list* huecosLibres; 
 extern t_list* tablaDeTablasDeSegmentos; 
 
+void liberarTabladeTablasDeSegmentos ();
+
 /**
  * Fin.
  * @}

@@ -13,7 +13,7 @@ void ejecutarServidor() {
 	tiempoDeEspera = config_get_int_value (config, "RETARDO_ACCESO_BLOQUE");
 	while (1) {
 		int cod_op = recibirOperacion(socketCliente); 
-
+		if (cod_op == -1) return;
 		int size, longDeNombre, desplazamiento = 0;
 		char * nombreArchivo;
 		fcb_t * nuevoArchivo, * fcbRecibido;
@@ -122,11 +122,11 @@ fcb_t * recibirArchivo (void * data, int *desplazamiento) {
 
 int enviarArchivo (fcb_t * archivo, int socket) {
 	t_paquete * paquete = crearPaquete ();
-	agregarAPaquete (paquete, &(archivo->nombre), (strlen (archivo->nombre) + 1) * sizeof (char));
+	agregarAPaquete (paquete, archivo->nombre, (strlen (archivo->nombre) + 1) * sizeof (char));
 	agregarAPaquete (paquete, &(archivo->tamanio), sizeof archivo->tamanio);
 	agregarAPaquete (paquete, &(archivo->ptrDirecto), sizeof archivo->ptrDirecto);
 	agregarAPaquete (paquete, &(archivo->ptrIndirecto), sizeof archivo->ptrIndirecto);
 	enviarPaquete (paquete, socket);
-	free (paquete->buffer), free (paquete), free (archivo->nombre), free (archivo);
+	eliminarPaquete (paquete), cerrarArchivo (archivo);
 	return 0;
 }

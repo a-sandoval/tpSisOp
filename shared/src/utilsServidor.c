@@ -48,13 +48,14 @@ int recibirOperacion(int socket){
 	}
 }
 
-void* recibirBuffer(int socket, int  * size){
+void* recibirBuffer(int socket, int * size){
 	void * buffer;
 
 	recv(socket, size, sizeof(int), MSG_WAITALL);
 	buffer = malloc(*size);
 	recv(socket, buffer, *size, MSG_WAITALL);
 
+	log_debug (logger, "Recibido paquete con tamaño %d", *(size));
 	return buffer;
 }
 

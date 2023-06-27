@@ -31,10 +31,13 @@ int ejecutarServidorCPU(){
 		switch (codOP) {
 			case -1:
 				log_info(logger, "El Kernel se desconecto.");
+				if (contextoEjecucion != NULL)
+					destroyContexto ();
 				return EXIT_FAILURE;
 			case CONTEXTOEJECUCION:
 				if (contextoEjecucion != NULL) 
-					list_clean_and_destroy_elements (contextoEjecucion->instrucciones, free);
+					list_clean_and_destroy_elements (contextoEjecucion->instrucciones, free),
+					list_clean_and_destroy_elements (contextoEjecucion->tablaDeSegmentos, free);
 				recibirContextoActualizado(socketCliente);
     			rafagaCPU = temporal_create(); 
                 while(contextoEjecucion->programCounter != (int) contextoEjecucion->instruccionesLength 

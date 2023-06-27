@@ -33,9 +33,10 @@ uint32_t recibirPID(int socketCliente) {
 	uint32_t pid; 
 
 	void* buffer = recibirBuffer(socketCliente, &size);
-	desplazamiento += sizeof(uint32_t);
+	desplazamiento += sizeof(int);
 	memcpy(&(pid), buffer + desplazamiento, sizeof(uint32_t));
 
+	free (buffer);
 	return pid; 
 
 }
@@ -52,17 +53,19 @@ t_peticion* recibirPeticionCreacionDeSegmento(int socketCliente) {
 
 	void* buffer = recibirBuffer(socketCliente, &size); 
 
-	desplazamiento+=sizeof(uint32_t); 
+	desplazamiento += sizeof(int); 
 
 	memcpy(&peticion->pid, buffer + desplazamiento, sizeof(uint32_t));
 
-	desplazamiento+=(2*sizeof(uint32_t)); 
+	desplazamiento += sizeof(uint32_t) + sizeof (int); 
 
 	memcpy(&peticion->segmento->id,buffer+desplazamiento,sizeof(uint32_t)); 
 
-	desplazamiento +=(3*sizeof(uint32_t)); 
+	desplazamiento += sizeof(uint32_t) + sizeof (int); 
 
 	memcpy(&peticion->segmento->direccionBase, buffer+desplazamiento,sizeof(uint32_t)); 
+
+	free (buffer);
 
 	return peticion; 
 
@@ -78,13 +81,15 @@ void recibirYProcesarPeticionEliminacionSegmento(int socketCliente) {
 
 	void* buffer = recibirBuffer(socketCliente, &size); 
 
-	desplazamiento+=sizeof(uint32_t); 
+	desplazamiento += sizeof(int); 
 
 	memcpy(&pid, buffer + desplazamiento, sizeof(uint32_t));
 
-	desplazamiento+=(2*sizeof(uint32_t)); 
+	desplazamiento += sizeof(uint32_t) + sizeof (int); 
 
 	memcpy(&segmentId,buffer+desplazamiento,sizeof(uint32_t)); 
+
+	free (buffer);
 
 	deleteSegment(pid, segmentId); 
 }

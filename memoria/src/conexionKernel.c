@@ -71,6 +71,7 @@ t_list* crearTablaDeSegmentosInicial() {
 
 		t_segmento* segmentoVacio = malloc(sizeof(t_segmento)); 
 		segmentoVacio->id = i; 
+		segmentoVacio->direccionBase = UINT32_MAX;
 		segmentoVacio->tamanio=0; 
 
 		list_add(tablaDeSegmentos,(void*)segmentoVacio); 

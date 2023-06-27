@@ -87,11 +87,11 @@ void reducirHuecosLibres(t_segmento* segmento, int indiceHueco) {
 //Implementacion Best
 op_code ubicarSegmentosPorBest(t_peticion* peticion){
     uint32_t tamanioSegmento = peticion->segmento->tamanio; 
-    t_hueco_libre* huecoLibre; 
+    t_hueco_libre* huecoLibre = NULL; 
     t_hueco_libre* huecoAAsignar = NULL;
     int indiceHueco;
-    bool encontrado; 
-    int32_t tamanioHuecoMenor = -1000;
+    bool encontrado = false; 
+    int32_t tamanioHuecoMenor = -(__INT32_MAX__);
 
     for (int i=0;i<list_size(huecosLibres);i++) {
         huecoLibre = ((t_hueco_libre*)list_get(huecosLibres,i));
@@ -101,9 +101,10 @@ op_code ubicarSegmentosPorBest(t_peticion* peticion){
             tamanioHuecoMenor = huecoAAsignar->tamanioHueco;
             indiceHueco = i;
             encontrado=true; 
+            break;
         }
     }
-    if(encontrado) {
+    if (encontrado) {
 
         peticion->segmento->direccionBase = huecoAAsignar->direccionBase;
         log_debug(logger, "Se ha encontrado un espacio para el segmento");

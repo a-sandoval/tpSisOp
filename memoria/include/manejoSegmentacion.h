@@ -43,6 +43,7 @@ void liberarSegmentoCompartido ();
 
 void creacionEspacio(); 
 void creacionListaHuecosLibres(); 
+void liberarListaDeHuecos ();
 
 t_segmento* crearSegmentoCompartido(); 
 op_code ubicarSegmentosEnEspaciosLibres(t_peticion* peticion); 

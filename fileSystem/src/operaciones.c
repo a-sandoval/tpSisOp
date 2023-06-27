@@ -31,8 +31,15 @@ fcb_t * abrirArchivo (char * nombre) {
     archivoFCB->tamanio = config_get_int_value (archivo, "TAMANIO_ARCHIVO");
     archivoFCB->ptrDirecto = config_get_int_value (archivo, "PUNTERO_DIRECTO");
     archivoFCB->ptrIndirecto = config_get_int_value (archivo, "PUNTERO_INDIRECTO");
-
+    
+    config_destroy (archivo), free (pathArchivo);
     return archivoFCB;
+}
+
+void cerrarArchivo (fcb_t * archivo) {
+    free (archivo->nombre);
+    free (archivo);
+    return;
 }
 
 int truncarArchivo (fcb_t * archivo, uint32_t tamanio) {

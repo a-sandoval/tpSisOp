@@ -17,6 +17,7 @@ void creacionEspacio(){
 void creacionListaHuecosLibres() {
 
     huecosLibres = list_create(); 
+	atexit (liberarListaDeHuecos);
     
     t_hueco_libre* primerHuecoLibre = malloc(sizeof(t_hueco_libre)); 
 
@@ -29,6 +30,7 @@ void creacionListaHuecosLibres() {
 t_segmento* crearSegmentoCompartido(){
 
 	segmento0 = malloc(sizeof(t_segmento)); 
+	if (segmento0 == NULL) error ("No se pudo alocar memoria al segmento 0.");
     segmento0->id=0; 
     segmento0->direccionBase=0; 
     segmento0->tamanio = config_get_int_value(config,"TAM_SEGMENTO_0"); 
@@ -42,4 +44,8 @@ void liberarEspacioDeUsuario() {
 
 void liberarSegmentoCompartido() {
 	free (segmento0);
+}
+
+void liberarListaDeHuecos () {
+	list_destroy_and_destroy_elements (huecosLibres, free);
 }

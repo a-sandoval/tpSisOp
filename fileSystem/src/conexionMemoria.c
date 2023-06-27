@@ -11,6 +11,7 @@ void conexionMemoria() {
     conexionAMemoria = conexion("MEMORIA");
     logger = cambiarNombre(logger, nombreAnterior);
     loggerError = cambiarNombre(loggerError, nombreAnteriorErrores);
+    free (nombreAnterior), free (nombreAnteriorErrores);
     return;
 }
 
