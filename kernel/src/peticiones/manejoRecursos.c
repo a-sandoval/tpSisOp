@@ -67,11 +67,7 @@ void destruirRecursos(){
 
 //Calcula el tamanio de un array char doble que vienen de los config y termina en NULL
 int tamanioArrayCharDoble (char **arreglo){
-	    /*
-		int tamano = 0;
-	    while (arreglo[tamano] != NULL) 
-	        tamano++;
-	    */
+	  
 	    return string_array_size(arreglo);
 
 }
@@ -80,10 +76,32 @@ void liberarRecursosAsignados(t_pcb* proceso){
 
     int cantRecursos = list_size(proceso->recursosAsignados);
 
+    log_debug(logger,"Tengo %d recursos", cantRecursos); 
+
     int i;
-    for(i=0; i<cantRecursos;i++){
-        char * parametros[3] = {(char *)list_get(proceso->recursosAsignados, i), "", "EXIT"};
-        signal_s(proceso, parametros);
-        list_remove(proceso->recursosAsignados,i);
+    if(cantRecursos!=0){
+        for(i=0; i<cantRecursos;i++){
+            char * parametros[3] = {(char *)list_get(proceso->recursosAsignados, i), "", "EXIT"};
+            log_debug(logger,"Mi contenido es %s", (char*)list_get(proceso->recursosAsignados,0)); 
+            signal_s(proceso, parametros);
+            list_remove(proceso->recursosAsignados,i);
+    }
+
+    }
+}
+
+void eliminarRecursoLista(t_list* recursos, char* recurso){
+    int cantRecursos = list_size(recursos);
+    log_debug(logger,"el recurso es %s",(recurso));
+    int i;
+    
+    for(i=0;i<cantRecursos;i++){
+        
+        log_debug(logger,"Mi lista tiene %s",(char*)list_get(recursos, i));
+        
+        if(!strcmp((char*)list_get(recursos,i), recurso)){
+            list_remove(recursos,i); 
+            
+        }
     }
 }

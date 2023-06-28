@@ -16,7 +16,6 @@ void enviarContextoActualizado(int socket){
     agregarRegistrosAPaquete(paquete, contextoEjecucion->registrosCPU);
     
     agregarTablaDeSegmentosAPaquete(paquete);
-    agregarRecursosAsignadosAPaquete(paquete); 
     agregarMotivoAPaquete(paquete, contextoEjecucion->motivoDesalojo);
     agregarAPaquete(paquete, (void *)&contextoEjecucion->rafagaCPUEjecutada, sizeof(contextoEjecucion->rafagaCPUEjecutada));
 
@@ -24,18 +23,6 @@ void enviarContextoActualizado(int socket){
 	eliminarPaquete(paquete);
 }
 
-void agregarRecursosAsignadosAPaquete(t_paquete* paquete){
-    
-    agregarAPaquete(paquete, &contextoEjecucion->recursosAsignadosSize, sizeof(uint32_t));
-
-    uint32_t i;
-    for(i=0;i<contextoEjecucion->recursosAsignadosSize;i++){
-        char* recurso = list_get(contextoEjecucion->recursosAsignados, i);
-        agregarAPaquete (paquete, recurso, sizeof(char) * (strlen(recurso) + 1 ));
-        free(recurso);
-    }
-       
-}
 
 void agregarTablaDeSegmentosAPaquete(t_paquete* paquete){
     
@@ -121,9 +108,7 @@ void recibirContextoActualizado (int socket) {
     deserializarInstrucciones (buffer, &desplazamiento);
     deserializarRegistros (buffer, &desplazamiento);
 
-    
     deserializarTablaDeSegmentos(buffer, &desplazamiento);
-    deserializarRecursos(buffer, &desplazamiento);
     
     deserializarMotivoDesalojo (buffer, &desplazamiento);
 
@@ -206,34 +191,6 @@ void deserializarTablaDeSegmentos (void * buffer, int * desplazamiento) {
 
 }
 
-void deserializarRecursos (void * buffer, int * desplazamiento) {
-
-    int tamanio;
-    list_clean_and_destroy_elements (contextoEjecucion->recursosAsignados, free);
-    // Desplazamiento: tamaño de la lista de los recursos.
-    memcpy(&(contextoEjecucion->recursosAsignadosSize), buffer + (* desplazamiento), sizeof(uint32_t));
-    (* desplazamiento) += sizeof(uint32_t);
-    
-    //log_debug (logger, "Cantidad de recursos = %d", contextoEjecucion->recursosAsignadosSize);
-
-    for (uint32_t i = 0; i < contextoEjecucion->recursosAsignadosSize; i++) {
-
-        // Desplazamiento: Tamaño del recurso.
-        memcpy (&tamanio, buffer + (* desplazamiento), sizeof (int));
-        (* desplazamiento) += sizeof (int);
-        char * valor = malloc (tamanio);
-
-        //Desplazamiento: recurso.
-        memcpy(valor, buffer + (* desplazamiento), tamanio);
-        (* desplazamiento) += tamanio;
-        list_add (contextoEjecucion->recursosAsignados, string_duplicate (valor));
-        free (valor);
-
-    }
-
-    (* desplazamiento) += sizeof(int);
-
-}
 
 t_segmento* deserializarSegmento(void* buffer, int* desplazamiento){
     t_segmento* segmento = malloc(sizeof(t_segmento));
@@ -298,8 +255,6 @@ void iniciarContexto(){
 	contextoEjecucion->registrosCPU = dictionary_create();
 	contextoEjecucion->tablaDeSegmentos = list_create();
 	contextoEjecucion->tablaDeSegmentosSize = 0;
-    contextoEjecucion->recursosAsignados = list_create();
-	contextoEjecucion->recursosAsignadosSize = 0;
     contextoEjecucion->rafagaCPUEjecutada = 0;
     contextoEjecucion->motivoDesalojo = (t_motivoDeDesalojo *)malloc(sizeof(t_motivoDeDesalojo));
     contextoEjecucion->motivoDesalojo->parametros[0] = "";
@@ -314,7 +269,6 @@ void destroyContexto() {
     list_destroy_and_destroy_elements(contextoEjecucion->instrucciones, free);
     dictionary_destroy_and_destroy_elements(contextoEjecucion->registrosCPU, free);
     list_destroy_and_destroy_elements(contextoEjecucion->tablaDeSegmentos, free);
-    list_destroy_and_destroy_elements(contextoEjecucion->recursosAsignados, free);
     for (int i = 0; i < contextoEjecucion->motivoDesalojo->parametrosLength; i++) 
         if (strcmp(contextoEjecucion->motivoDesalojo->parametros[i], "")) free(contextoEjecucion->motivoDesalojo->parametros[i]);
     free(contextoEjecucion->motivoDesalojo);
@@ -328,7 +282,6 @@ void destroyContextoUnico () {
     list_destroy(contextoEjecucion->tablaDeSegmentos);
     for (int i = 0; i < contextoEjecucion->motivoDesalojo->parametrosLength; i++) 
         if (strcmp(contextoEjecucion->motivoDesalojo->parametros[i], "")) free(contextoEjecucion->motivoDesalojo->parametros[i]);
-    list_destroy (contextoEjecucion->recursosAsignados);
     free(contextoEjecucion->motivoDesalojo);
     free(contextoEjecucion);
     contextoEjecucion = NULL;

@@ -31,8 +31,6 @@ typedef struct {
     t_dictionary* registrosCPU;  
     uint32_t tablaDeSegmentosSize;
     t_list* tablaDeSegmentos; 
-    uint32_t recursosAsignadosSize;
-    t_list* recursosAsignados; 
     t_motivoDeDesalojo* motivoDesalojo;
     int64_t rafagaCPUEjecutada;
 
@@ -45,7 +43,6 @@ extern int socketCliente;
 void agregarMotivoAPaquete(t_paquete* paquete, t_motivoDeDesalojo* motivoDesalojo);
 void agregarRegistrosAPaquete(t_paquete* paquete, t_dictionary* registrosCPU);
 void agregarInstruccionesAPaquete(t_paquete* paquete, t_list* instrucciones);
-void agregarRecursosAsignadosAPaquete(t_paquete* paquete);
 void agregarTablaDeSegmentosAPaquete(t_paquete* paquete);
 void agregarSegmentoAPaquete(t_paquete* paquete, t_segmento* segmento);
 
@@ -57,7 +54,6 @@ void recibirContextoActualizado(int socket);
 void deserializarInstrucciones (void * buffer, int * desplazamiento);
 void deserializarRegistros (void * buffer, int * desplazamiento);
 void deserializarMotivoDesalojo (void * buffer, int * desplazamiento);
-void deserializarRecursos (void * buffer, int * desplazamiento);
 t_segmento*  deserializarSegmento(void* buffer, int* desplazamiento);
 void deserializarTablaDeSegmentos (void * buffer, int * desplazamiento); 
 

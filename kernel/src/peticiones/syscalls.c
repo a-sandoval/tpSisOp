@@ -23,14 +23,12 @@ void retornoContexto(t_pcb *proceso, t_contexto *contextoEjecucion){
         case EXIT:
             exit_s(proceso, contextoEjecucion->motivoDesalojo->parametros);
             break;
-    
         case F_OPEN:
             fopen_s(proceso, contextoEjecucion->motivoDesalojo->parametros);
             break;
         case F_CLOSE:
             fclose_s(proceso, contextoEjecucion->motivoDesalojo->parametros);
             break;
-    
         case F_SEEK:
             fseek_s(proceso, contextoEjecucion->motivoDesalojo->parametros);
             break;
@@ -80,7 +78,7 @@ void wait_s(t_pcb *proceso, char **parametros){
     int instancRecurso = instanciasRecursos[indexRecurso];
     instancRecurso--;
     instanciasRecursos[indexRecurso]=instancRecurso;
-    list_add(proceso->recursosAsignados, recurso);
+    
 
     log_info(logger,"PID: <%d> - Wait: <%s> - Instancias: <%d>",proceso->pid,recurso,instancRecurso); 
 
@@ -99,9 +97,13 @@ void wait_s(t_pcb *proceso, char **parametros){
         
     } 
     else {
+        list_add(proceso->recursosAsignados, (void*)recurso);
+        log_debug(logger,"Agregue un senior recurso que se llama %s", recurso); 
+        log_debug(logger,"Mi lista tiene %s", (char*)list_get(proceso->recursosAsignados,0)); 
         volverACPU(proceso);
     }
 }
+
 
 void signal_s(t_pcb *proceso, char **parametros){
 
@@ -114,9 +116,15 @@ void signal_s(t_pcb *proceso, char **parametros){
         return;
     }
 
+    log_debug(logger, "Tengo esto que es %s",(char*)list_get(proceso->recursosAsignados,0)); 
+
     int instancRecurso = instanciasRecursos[indexRecurso];
     instancRecurso++;
-    list_remove_element(proceso->recursosAsignados,(void*)recurso);
+    
+    eliminarRecursoLista(proceso->recursosAsignados,recurso); 
+
+    int cantRecursos = list_size(proceso->recursosAsignados);
+    log_debug(logger,"Mi lista deberia estar vacia pero esta en %d",cantRecursos); 
 
     log_info(logger,"PID: <%d> - Signal: <%s> - Instancias: <%d>",proceso->pid,recurso,instancRecurso); 
 
@@ -194,9 +202,13 @@ void exit_s(t_pcb* proceso, char **parametros){
     
     enviarMensaje("Terminado", proceso->socketPCB);
 
-    liberarRecursosAsignados(proceso);
+    if(!list_is_empty(proceso->recursosAsignados)) {
+        
+        liberarRecursosAsignados(proceso);
+    }
+   
     //liberarArchivosAsignados(proceso);
-    //liberarSegmentos(proceso);
+    //eliminarTablaDeSegmentos(proceso);
     liberarMemoriaPCB(proceso); 
 
     destruirPCB(proceso); 
