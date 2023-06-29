@@ -38,6 +38,8 @@ t_segmento* crearSegmentoCompartido(){
 	return segmento0; 
 }
 
+
+
 void liberarEspacioDeUsuario() {
 	free (espacioDeUsuario);
 }

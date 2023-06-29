@@ -37,8 +37,14 @@ void deleteSegment(uint32_t pid, uint32_t segmentId);
 
 void convertirSegmentoEnHuecoLibre(void* segmentoAEliminar);
 
+void listarHuecosLibres ();
+
 void liberarTodosLosSegmentos(uint32_t pid);
 
 t_proceso * buscarProcesoSegun (uint32_t pid);
+
+bool contieneDireccionBaseEnSuTamanio(void* huecoLibre); 
+
+uint32_t maximoEntre(uint32_t unTamanio, uint32_t otroTamanio); 
 
 #endif

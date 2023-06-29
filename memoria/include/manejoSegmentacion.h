@@ -3,6 +3,7 @@
 
 #include<stdio.h>
 #include<stdlib.h>
+#include <stdint.h>
 
 #include<commons/log.h>
 #include<commons/config.h>
@@ -13,6 +14,7 @@
 #include "shared/include/utilsCliente.h"
 #include "shared/include/configuraciones.h"
 #include "memoria/include/algoritmosAsignacion.h"
+
 
 typedef struct {
     uint32_t id;
@@ -59,6 +61,8 @@ void agregarSegmentoATablaDeSegmentosPCB(t_peticion* peticion);
 void reducirHuecosLibres(t_segmento* segmento, int indiceHueco); 
 
 void corroborarPosibilidadDeCompactacion(); 
+
+
 
 
 

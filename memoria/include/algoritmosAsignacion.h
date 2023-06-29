@@ -14,5 +14,4 @@
 #include "shared/include/configuraciones.h"
 #include "memoria/include/manejoSegmentacion.h"
 
-
 #endif 

@@ -207,7 +207,6 @@ void exit_s(t_pcb* proceso, char **parametros){
     }
    
     //liberarArchivosAsignados(proceso);
-    //eliminarTablaDeSegmentos(proceso);
     liberarMemoriaPCB(proceso); 
 
     destruirPCB(proceso); 

@@ -67,7 +67,7 @@ void loggearCreacionDeSegmento(t_peticion* peticion) {
 void agregarSegmentoATablaDeSegmentosPCB(t_peticion* peticion){
 	int pidProceso = peticion -> pid;
 	t_segmento* segmentoAAgregar = peticion->segmento;
-	t_proceso* proceso = (t_proceso*) list_get(tablaDeTablasDeSegmentos,pidProceso);
+	t_proceso* proceso = buscarProcesoSegun (pidProceso);
 	
 	list_replace_and_destroy_element(proceso->tablaDeSegmentosAsociada,peticion->segmento->id,(void*)segmentoAAgregar,free); 
 
@@ -80,7 +80,7 @@ void reducirHuecosLibres(t_segmento* segmento, int indiceHueco) {
     	list_remove_and_destroy_element(huecosLibres,indiceHueco,free); 
     }
     else {
-        aModificar->direccionBase = segmento->tamanio; 
+        aModificar->direccionBase = segmento->direccionBase + segmento->tamanio; 
     }
 }
 
@@ -154,7 +154,7 @@ op_code ubicarSegmentosPorWorst(t_peticion* peticion){
     else
     {
         corroborarPosibilidadDeCompactacion(); 
-        log_error(logger, "No se ha encontrado lugar para el segmento");
+        log_error(loggerError, "No se ha encontrado lugar para el segmento");
         return OUTOFMEMORY; 
         //proximamente será una petición de compactación
     }
