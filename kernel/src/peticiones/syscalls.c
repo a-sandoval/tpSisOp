@@ -97,7 +97,7 @@ void wait_s(t_pcb *proceso, char **parametros){
         
     } 
     else {
-        list_add(proceso->recursosAsignados, (void*)recurso);
+        list_add(proceso->recursosAsignados, (void*)string_duplicate (recurso));
         log_debug(logger,"Agregue un senior recurso que se llama %s", recurso); 
         log_debug(logger,"Mi lista tiene %s", (char*)list_get(proceso->recursosAsignados,0)); 
         volverACPU(proceso);
@@ -161,7 +161,7 @@ void io_s(t_pcb *proceso, char **parametros){
     int tiempo = atoi(parametros[0]);
     log_info(logger,"PID: <%d> - Ejecuta IO: <%d>",proceso->pid,tiempo); 
   
-     pthread_t pcb_bloqueado;
+    pthread_t pcb_bloqueado;
 
     if (!pthread_create(&pcb_bloqueado, NULL, (void *)bloquearIO, (void *)&tiempo)){
         pthread_join(pcb_bloqueado,NULL);
@@ -171,8 +171,7 @@ void io_s(t_pcb *proceso, char **parametros){
         loggearCambioDeEstado(proceso->pid, estadoAnterior, proceso->estado);
         ingresarAReady(proceso);
     } else {
-        log_error(loggerError, "Error en la creacion de hilo para realizar I/O, Abort");
-        abort();
+        error("Error en la creacion de hilo para realizar I/O, Abort");
     } 
      
 }

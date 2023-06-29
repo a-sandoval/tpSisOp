@@ -51,6 +51,11 @@ t_contexto* procesarPCB(t_pcb* procesoEnEjecucion) {
 
     actualizarPCB(procesoEnEjecucion);
 
+    uint32_t lista = list_size (procesoEnEjecucion->recursosAsignados);
+    log_debug (logger, "Tengo %d recursos.", lista);
+    for (uint32_t i = 0; i < lista; i++) 
+        log_debug (logger, "Listando recursos, recurso %d: %s", i, (char *) list_get (procesoEnEjecucion->recursosAsignados, i));
+
     free(bufferContexto);
     return contextoEjecucion;
  

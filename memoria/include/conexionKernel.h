@@ -39,4 +39,6 @@ void convertirSegmentoEnHuecoLibre(void* segmentoAEliminar);
 
 void liberarTodosLosSegmentos(uint32_t pid);
 
+t_proceso * buscarProcesoSegun (uint32_t pid);
+
 #endif

@@ -93,8 +93,6 @@ t_proceso* crearProcesoEnMemoria(uint32_t pid) {
 	return procesoNuevo;
 }
 
-
-
 void eliminarProcesoDeMemoria(t_proceso* proceso) {
 	list_remove_element(proceso->tablaDeSegmentosAsociada, (void*)segmento0); 
 	list_destroy_and_destroy_elements(proceso->tablaDeSegmentosAsociada, free);
@@ -103,7 +101,7 @@ void eliminarProcesoDeMemoria(t_proceso* proceso) {
 
 void deleteSegment(uint32_t pid, uint32_t segmentId) {
 
-	t_proceso* procesoBuscado = (t_proceso*)list_get(tablaDeTablasDeSegmentos,pid); 
+	t_proceso* procesoBuscado = buscarProcesoSegun(pid); 
 
 	t_segmento* segmentoAEliminar = (t_segmento*)list_get(procesoBuscado->tablaDeSegmentosAsociada,segmentId);
 
@@ -125,18 +123,27 @@ void deleteSegment(uint32_t pid, uint32_t segmentId) {
 void convertirSegmentoEnHuecoLibre(void* segmento) {
 
 	t_segmento* aConvertir = (t_segmento*) segmento; 
+	if (aConvertir->direccionBase != UINT32_MAX && aConvertir->tamanio != 0) {
+		t_hueco_libre* nuevoHuecoLibre = malloc(sizeof(t_hueco_libre)); 
 
-	t_hueco_libre* nuevoHuecoLibre = malloc(sizeof(t_hueco_libre)); 
-	
-	nuevoHuecoLibre->direccionBase = aConvertir->direccionBase; 
-	nuevoHuecoLibre->tamanioHueco = aConvertir->tamanio; 
+		nuevoHuecoLibre->direccionBase = aConvertir->direccionBase; 
+		nuevoHuecoLibre->tamanioHueco = aConvertir->tamanio; 
 
-	list_add(huecosLibres, (void*)nuevoHuecoLibre);
+		list_add(huecosLibres, (void*)nuevoHuecoLibre);
+	}
+	else return;
 }
 
 void liberarTodosLosSegmentos(uint32_t pid) {
 	
-	t_list* tablaDeSegmentos = (t_list*)list_get(tablaDeTablasDeSegmentos,pid); 
+	t_list* tablaDeSegmentos = (buscarProcesoSegun(pid))->tablaDeSegmentosAsociada;
+	if (tablaDeSegmentos != NULL)
+		list_iterate(tablaDeSegmentos,convertirSegmentoEnHuecoLibre); 
+}
 
-	list_iterate(tablaDeSegmentos,convertirSegmentoEnHuecoLibre); 
+t_proceso * buscarProcesoSegun (uint32_t pid) {
+	for (int i = 0; i < list_size (tablaDeTablasDeSegmentos); i++) 
+		if (((t_proceso *)list_get (tablaDeTablasDeSegmentos, i))->pid == pid)
+			return (t_proceso *) list_get (tablaDeTablasDeSegmentos, i);
+	return NULL;
 }
