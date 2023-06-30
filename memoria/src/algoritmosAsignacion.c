@@ -52,7 +52,8 @@ op_code ubicarSegmentosPorFirst(t_peticion* peticion){
             return SUCCESS; 
         }
     }
-    corroborarPosibilidadDeCompactacion();
+    if (corroborarPosibilidadDeCompactacion(peticion))
+        return COMPACTACION;
 
     return OUTOFMEMORY; 
 }
@@ -128,7 +129,8 @@ op_code ubicarSegmentosPorBest(t_peticion* peticion){
     }
    
     else {
-        corroborarPosibilidadDeCompactacion(); 
+        if (corroborarPosibilidadDeCompactacion(peticion))
+            return COMPACTACION; 
         return OUTOFMEMORY;
     }
     
@@ -164,8 +166,8 @@ op_code ubicarSegmentosPorWorst(t_peticion* peticion){
     }
     else
     {
-        corroborarPosibilidadDeCompactacion(); 
-        log_error(loggerError, "No se ha encontrado lugar para el segmento");
+        if(corroborarPosibilidadDeCompactacion(peticion))
+            return COMPACTACION;  
         return OUTOFMEMORY; 
         //proximamente será una petición de compactación
     }
@@ -173,4 +175,24 @@ op_code ubicarSegmentosPorWorst(t_peticion* peticion){
 
 
 // Cositas mockeadas que linda palabra mockear
-void corroborarPosibilidadDeCompactacion() {}
+bool corroborarPosibilidadDeCompactacion(t_peticion* peticion) {
+
+    uint32_t sumaTamanios = sumaTamaniosHuecosLibres(); 
+
+    return (sumaTamanios >= peticion->segmento->tamanio);  
+
+}
+
+uint32_t sumaTamaniosHuecosLibres() {
+
+    int i; 
+    t_hueco_libre* temp; 
+    uint32_t suma = 0; 
+    for (i=0;i<list_size(huecosLibres);i++) {
+        temp=(t_hueco_libre*)list_get(huecosLibres,i); 
+        suma+=temp->tamanioHueco; 
+
+    }
+
+    return suma; 
+}

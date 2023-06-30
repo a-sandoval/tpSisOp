@@ -62,6 +62,7 @@ void procesarResultado(int resultado, int socketKernel)
 		break;
 
 	case COMPACTACION:
+		enviarCodOp(COMPACTACION,socketKernel); 
 		break;
 	}
 }

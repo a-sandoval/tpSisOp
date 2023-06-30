@@ -40,7 +40,9 @@ void asignacionAlEspacioDeMemoria(t_segmento* segmento);
 void agregarSegmentoATablaDeSegmentosPCB(t_peticion* peticion); 
 void reducirHuecosLibres(t_segmento* segmento, int indiceHueco); 
 
-void corroborarPosibilidadDeCompactacion(); 
+bool corroborarPosibilidadDeCompactacion(t_peticion* peticion); 
+
+uint32_t sumaTamaniosHuecosLibres(); 
 
 
 
