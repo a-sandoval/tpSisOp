@@ -10,32 +10,12 @@
 #include <pthread.h>
 
 #include "shared/include/global.h"
+#include "memoria/include/auxiliaresMemoria.h"
 #include "shared/include/utilsServidor.h"
 #include "shared/include/utilsCliente.h"
 #include "shared/include/configuraciones.h"
 #include "memoria/include/algoritmosAsignacion.h"
 
-
-typedef struct {
-    uint32_t id;
-    uint32_t direccionBase; 
-    uint32_t tamanio; 
-} t_segmento;
-
-typedef struct {
-    uint32_t direccionBase; 
-    uint32_t tamanioHueco; 
-} t_hueco_libre;
-
-typedef struct {
-    uint32_t pid; 
-    t_list* tablaDeSegmentosAsociada;
-} t_proceso; 
-
-typedef struct {
-    uint32_t pid; 
-    t_segmento* segmento; 
-} t_peticion; 
 
 extern t_segmento* segmento0; 
 extern void* espacioDeUsuario; 

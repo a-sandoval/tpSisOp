@@ -100,7 +100,6 @@ t_proceso *crearProcesoEnMemoria(uint32_t pid)
 
 void eliminarProcesoDeMemoria(t_proceso *proceso)
 {
-	list_remove_element(proceso->tablaDeSegmentosAsociada, (void *)segmento0);
 	list_destroy_and_destroy_elements(proceso->tablaDeSegmentosAsociada, free);
 	free(proceso);
 }
@@ -185,10 +184,3 @@ void liberarTodosLosSegmentos(uint32_t pid)
 	}
 }
 
-t_proceso *buscarProcesoSegun(uint32_t pid)
-{
-	for (int i = 0; i < list_size(tablaDeTablasDeSegmentos); i++)
-		if (((t_proceso *)list_get(tablaDeTablasDeSegmentos, i))->pid == pid)
-			return (t_proceso *)list_get(tablaDeTablasDeSegmentos, i);
-	return NULL;
-}

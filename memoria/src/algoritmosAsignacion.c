@@ -44,7 +44,7 @@ op_code ubicarSegmentosPorFirst(t_peticion* peticion){
         if(huecoLibre->tamanioHueco >= tamanioSegmento) {
 			
             peticion->segmento->direccionBase = huecoLibre->direccionBase;
-            
+
             log_debug(logger, "Se ha encontrado un espacio para el segmento");
             loggearCreacionDeSegmento(peticion); 
             agregarSegmentoATablaDeSegmentosPCB(peticion); 
@@ -65,9 +65,10 @@ void loggearCreacionDeSegmento(t_peticion* peticion) {
 
 
 void agregarSegmentoATablaDeSegmentosPCB(t_peticion* peticion){
-	int pidProceso = peticion -> pid;
+	
+    uint32_t pidProceso = peticion -> pid;
 	t_segmento* segmentoAAgregar = peticion->segmento;
-	t_proceso* proceso = buscarProcesoSegun (pidProceso);
+	t_proceso* proceso = buscarProcesoSegun(pidProceso);
 	
 	list_replace_and_destroy_element(proceso->tablaDeSegmentosAsociada,peticion->segmento->id,(void*)segmentoAAgregar,free); 
 
@@ -76,12 +77,22 @@ void agregarSegmentoATablaDeSegmentosPCB(t_peticion* peticion){
 void reducirHuecosLibres(t_segmento* segmento, int indiceHueco) {
     t_hueco_libre* aModificar = list_get(huecosLibres,indiceHueco); 
     aModificar->tamanioHueco -= segmento->tamanio; 
+
     if(aModificar->tamanioHueco == 0) {
     	list_remove_and_destroy_element(huecosLibres,indiceHueco,free); 
     }
     else {
         aModificar->direccionBase = segmento->direccionBase + segmento->tamanio; 
     }
+    listarHuecosLibres(); 
+}
+
+t_proceso *buscarProcesoSegun(uint32_t pid)
+{
+	for (int i = 0; i < list_size(tablaDeTablasDeSegmentos); i++)
+		if (((t_proceso *)list_get(tablaDeTablasDeSegmentos, i))->pid == pid)
+			return (t_proceso *)list_get(tablaDeTablasDeSegmentos, i);
+	return NULL;
 }
 
 //Implementacion Best

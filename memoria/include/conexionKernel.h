@@ -4,12 +4,14 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include <stdint.h>
+#include "memoria/include/auxiliaresMemoria.h"
 #include  <commons/log.h>
 #include<commons/config.h>
 #include <commons/collections/list.h>
 #include "shared/include/utilsCliente.h"
 #include "shared/include/utilsServidor.h"
 #include "manejoSegmentacion.h"
+
 
 extern t_config* config;
 extern t_log* logger;
@@ -41,7 +43,6 @@ void listarHuecosLibres ();
 
 void liberarTodosLosSegmentos(uint32_t pid);
 
-t_proceso * buscarProcesoSegun (uint32_t pid);
 
 bool contieneDireccionBaseEnSuTamanio(void* huecoLibre); 
 
