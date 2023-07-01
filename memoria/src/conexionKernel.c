@@ -101,6 +101,7 @@ t_proceso *crearProcesoEnMemoria(uint32_t pid)
 
 void eliminarProcesoDeMemoria(t_proceso *proceso)
 {
+	list_remove_element (tablaDeTablasDeSegmentos, (void *) proceso);
 	list_destroy_and_destroy_elements(proceso->tablaDeSegmentosAsociada, free);
 	free(proceso);
 }

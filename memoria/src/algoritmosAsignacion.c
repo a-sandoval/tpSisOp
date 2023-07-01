@@ -69,10 +69,16 @@ void agregarSegmentoATablaDeSegmentosPCB(t_peticion* peticion){
 	
     uint32_t pidProceso = peticion -> pid;
 	t_segmento* segmentoAAgregar = peticion->segmento;
+    log_debug (logger, "Buscando tabla de segmentos de %d", pidProceso);
+    log_debug (logger, "Segmento: %d, %d, %d", segmentoAAgregar->id, segmentoAAgregar->direccionBase, segmentoAAgregar->tamanio);
 	t_proceso* proceso = buscarProcesoSegun(pidProceso);
-	
-	list_replace_and_destroy_element(proceso->tablaDeSegmentosAsociada,peticion->segmento->id,(void*)segmentoAAgregar,free); 
-
+    log_debug (logger, "Tamaño de la lista: %d", list_size (proceso->tablaDeSegmentosAsociada));
+    t_segmento* segmentoViejo = list_get (proceso->tablaDeSegmentosAsociada, segmentoAAgregar->id);
+	if (proceso != NULL && segmentoViejo != NULL) 
+	    list_replace (proceso->tablaDeSegmentosAsociada, segmentoAAgregar->id, (void *) segmentoAAgregar);
+        //list_replace_and_destroy_element(proceso->tablaDeSegmentosAsociada,peticion->segmento->id,(void*)segmentoAAgregar,free); 
+    else
+        error ("No se encontro el proceso que acabas de mandar polu.");
 }
 
 void reducirHuecosLibres(t_segmento* segmento, int indiceHueco) {
@@ -90,6 +96,7 @@ void reducirHuecosLibres(t_segmento* segmento, int indiceHueco) {
 
 t_proceso *buscarProcesoSegun(uint32_t pid)
 {
+    log_debug (logger, "Tamaño de lista: %d", list_size (tablaDeTablasDeSegmentos));
 	for (int i = 0; i < list_size(tablaDeTablasDeSegmentos); i++)
 		if (((t_proceso *)list_get(tablaDeTablasDeSegmentos, i))->pid == pid)
 			return (t_proceso *)list_get(tablaDeTablasDeSegmentos, i);
