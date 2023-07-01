@@ -1,29 +1,13 @@
 #include "kernel/include/peticiones/manejoArchivos.h"
 
 t_list* tablaGlobalArchivos;
+extern pthread_mutex_t mutexFS;
+extern sem_t huboPeticion;
 
 void iniciarTablaGlobalDeArchivos(){
     tablaGlobalArchivos = list_create();
 }
-/*
-void desbloquearProcesoPorArchivo(){
-    t_archivo* archivo = malloc(sizeof(t_archivo));
-    t_pcb* procesoADesbloquear = malloc(sizeof(t_pcb));
 
-    recibirOperacion(conexionAFS);
-    archivo->fcb = deserializarFCB();
-
-    archivo = obtenerArchivoDeTG(fcb->nombre);
-
-    //supuestamente el que quedo primero es el que se bloqueo por esta peticion y los demas llegaron dsps
-    procesoADesbloquear = list_get(archivo->colaBloqueados, 0);
-    
-    procesoADesbloquear->estado = READY;
-
-    log_info(logger, "PID: <%d> - Estado Anterior: <%s> - Estado Actual: <%s>", procesoADesbloquear->pid, BLOCK, READY);
-    ingresarAReady(procesoADesbloquear);
-
-}*/
 
 t_archivo* solicitarArchivoFS(char* nombreArchivo){
 
@@ -36,8 +20,11 @@ t_archivo* solicitarArchivoFS(char* nombreArchivo){
 
     peticion->codigo_operacion = FOPEN;
     agregarAPaquete(peticion, nombreArchivo, sizeof(char)*strlen(nombreArchivo) + 1);
-    enviarPaquete(peticion, conexionAFS);
 
+    pthread_mutex_lock(&mutexFS);
+
+    enviarPaquete(peticion, conexionAFS);
+    
     int respuesta = recibirOperacion(conexionAFS);
 
     switch (respuesta){
@@ -57,6 +44,7 @@ t_archivo* solicitarArchivoFS(char* nombreArchivo){
                     agregarArchivoATG(nuevoArchivo);
                     break;
     }
+    pthread_mutex_unlock(&mutexFS);
 
     return nuevoArchivo;
 }
@@ -110,6 +98,21 @@ bool estaEnLaTablaGlobal(char* nombreArchivo){
 
     for(int i=0; i<cantArchivos; i++){
         archivoAux=list_get(tablaGlobalArchivos, i);
+
+        if(!strcmp(nombreArchivo, archivoAux->fcb->nombre)){
+            return true;
+        }
+    }
+    return false;
+}
+
+bool estaAsignadoAlProceso(char* nombreArchivo, t_pcb* proceso){
+
+    int cantArchivos = list_size(proceso->tablaDeArchivos);
+    t_archivoProceso* archivoAux = malloc(sizeof(t_archivoProceso));
+
+    for(int i=0; i<cantArchivos; i++){
+        archivoAux = list_get(proceso->tablaDeArchivos, i);
 
         if(!strcmp(nombreArchivo, archivoAux->fcb->nombre)){
             return true;
@@ -189,7 +192,10 @@ void solicitarTruncadoDeArchivo(fcb_t* fcb, int tamanio){
     agregarAPaquete(peticion, &(fcb->ptrIndirecto), sizeof(uint32_t));
     agregarAPaquete(peticion, &(tamanio_u), sizeof(uint32_t));
 
+    pthread_mutex_lock(&mutexFS);
     enviarPaquete(peticion, conexionAFS);
+    sem_post(&huboPeticion);
+    pthread_mutex_unlock(&mutexFS);
 
 }
 
@@ -206,7 +212,10 @@ void solicitarLecturaDeArchivo(t_archivoProceso* archivo, uint32_t dirFisica, ui
     agregarAPaquete(peticion, (void*)&(dirFisica), sizeof(uint32_t));
     agregarAPaquete(peticion, (void*)&(bytes), sizeof(uint32_t));
 
+    pthread_mutex_lock(&mutexFS);
     enviarPaquete(peticion, conexionAFS);
+    sem_post(&huboPeticion);
+    pthread_mutex_unlock(&mutexFS);
 
 }
 
@@ -223,7 +232,10 @@ void solicitarEscrituraDeArchivo(t_archivoProceso* archivo, uint32_t dirFisica, 
     agregarAPaquete(peticion, (void*)&(dirFisica), sizeof(uint32_t));
     agregarAPaquete(peticion, (void*)&(bytes), sizeof(uint32_t));
 
+    pthread_mutex_lock(&mutexFS);
     enviarPaquete(peticion, conexionAFS);
+    sem_post(&huboPeticion);
+    pthread_mutex_unlock(&mutexFS);
 
 }
 
@@ -250,4 +262,18 @@ void eliminarArchivo(t_archivo* archivo){
     free(archivo->fcb);
     destruirListaPCB(archivo->colaBloqueados);
     free(archivo);
+}
+
+void respuestaPeticionFS(){
+    
+    sem_wait(&huboPeticion);
+    
+    int respuesta = recibirOperacion(conexionAFS);
+
+    switch (respuesta){
+        case PAQUETE: // tengo que desbloquear al proceso que bloquee por la peticion al FS
+                   
+                    break;
+    }
+
 }

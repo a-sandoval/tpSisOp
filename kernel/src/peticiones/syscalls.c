@@ -6,6 +6,8 @@ char* segFault = "SEG_FAULT";
 char* outOfMemory = "OUT_OF_MEMORY";
 estadoProceso estadoAnterior; 
 
+
+
 void retornoContexto(t_pcb *proceso, t_contexto *contextoEjecucion){
     switch (contextoEjecucion->motivoDesalojo->comando){
         case IO:
@@ -261,12 +263,12 @@ void fclose_s(t_pcb *proceso, char **parametros){
         eliminarArchivo (archivo);
     }
     else{
-        // si hay procesos esperando, desbloqueo
+        // si hay procesos esperando, desbloqueo uno y le asigno el archivo
         t_pcb* procesoADesbloquear = (t_pcb*)list_get(archivo->colaBloqueados, 0);
         list_remove(archivo->colaBloqueados, 0);
 
         estadoAnterior = procesoADesbloquear->estado;
-        procesoADesbloquear ->estado = READY;
+        procesoADesbloquear->estado = READY;
         list_add(procesoADesbloquear->tablaDeArchivos, archivo->fcb);
         loggearCambioDeEstado(proceso->pid, estadoAnterior,procesoADesbloquear->estado);
         loggearBloqueoDeProcesos(proceso,nombreArchivo);
@@ -279,27 +281,25 @@ void fclose_s(t_pcb *proceso, char **parametros){
 void ftruncate_s(t_pcb *proceso, char **parametros){
     char* nombreArchivo = parametros[0];
     int tamanio = atoi(parametros[1]);
-    //pthread_t respuestaFS_h;
     t_archivo* archivo = obtenerArchivoDeTG(nombreArchivo);
 
     log_info(logger, "PID: %d - Archivo: %s - Tamaño: %d",proceso->pid, nombreArchivo, tamanio);
 
+    if(estaAsignadoAlProceso(nombreArchivo, proceso)){
 
-    //bloqueo al proceso
-    estadoAnterior = proceso->estado;
-    proceso->estado = BLOCK;
+        //bloqueo al proceso
+        estadoAnterior = proceso->estado;
+        proceso->estado = BLOCK;
 
-    list_add(archivo->colaBloqueados, proceso);
-    loggearCambioDeEstado(proceso->pid, estadoAnterior, proceso->estado);
-    loggearBloqueoDeProcesos(proceso, nombreArchivo);
+        loggearCambioDeEstado(proceso->pid, estadoAnterior, proceso->estado);
+        loggearBloqueoDeProcesos(proceso, nombreArchivo);
     
-    solicitarTruncadoDeArchivo(archivo->fcb, tamanio);
-    /*
-    if (!pthread_create(&respuestaFS_h, NULL,(void *)desbloquearProcesoPorArchivo)) 
-           pthread_detach(respuestaFS_h);
-    else
-		error ("Error al generar hilo para recibir devolucion del FS, terminando el programa.");
-        */
+        solicitarTruncadoDeArchivo(archivo->fcb, tamanio);
+    }
+
+    else{
+        log_error(logger, "El proceso no puede realizar esta peticion ya que no tiene permiso sobre el archivo");
+    }
     
 }
 

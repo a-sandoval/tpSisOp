@@ -1,6 +1,8 @@
-#ifndef MANEJO_ARCHIVOS_PLAZO_H
-#define MANEJO_ARCHIVOS_PLAZO_H
+#ifndef MANEJO_ARCHIVOS_H
+#define MANEJO_ARCHIVOS_H
 
+#include <pthread.h>
+#include <semaphore.h>
 #include <commons/collections/list.h>
 #include <commons/log.h>
 #include <stdlib.h> 
@@ -9,6 +11,7 @@
 #include "shared/include/global.h"
 #include "shared/include/contextoEjecucion.h"
 #include "kernel/include/peticiones/pcb.h"
+
 
 typedef struct {
     char * nombre;
@@ -34,6 +37,7 @@ extern t_log* logger;
 extern int conexionAFS;
 extern t_contexto* contextoEjecucion;
 extern t_list* tablaGlobalArchivos;
+extern pthread_mutex_t mutexFS;
 
 t_archivo* solicitarArchivoFS(char* );
 void recibirFCB(t_archivo**);
@@ -41,6 +45,7 @@ void agregarArchivoATG(t_archivo*);
 void iniciarTablaGlobalDeArchivos();
 fcb_t* deserializarFCB();
 bool estaEnLaTablaGlobal(char* nombreArchivo);
+bool estaAsignadoAlProceso(char* nombreArchivo, t_pcb* proceso);
 t_archivo* obtenerArchivoDeTG(char* nombreArchivo);
 void eliminarArchivo(t_archivo* archivo);
 void solicitarTruncadoDeArchivo(fcb_t* fcb, int tamanio);
@@ -52,5 +57,6 @@ void desbloquearProcesoPorArchivo();
 void quitarArchivo(t_pcb* proceso, char* nombreArchivo);
 fcb_t * crearFCB ();
 void eliminarArchivoProceso(void* archivo);
+void respuestaPeticionFS();
 
 #endif

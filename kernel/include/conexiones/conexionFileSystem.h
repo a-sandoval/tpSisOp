@@ -4,6 +4,7 @@
 #include <commons/config.h>
 #include <commons/log.h>
 #include "shared/include/utilsCliente.h"
+#include "kernel/include/peticiones/manejoArchivos.h"
 
 
 void conexionFileSystem();
