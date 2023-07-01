@@ -1,7 +1,7 @@
 #ifndef SYSCALLS_H_
 #define SYSCALLS_H_
 
-#include "semaphore.h"
+#include <pthread.h>
 #include "shared/include/contextoEjecucion.h"
 #include "shared/include/utilsServidor.h"
 #include "kernel/include/conexiones/conexionMemoria.h"
