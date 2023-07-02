@@ -285,11 +285,15 @@ void fseek_s(t_pcb *proceso, char **parametros){
     char* nombreArchivo = parametros[0];
     int puntero = atoi(parametros[1]);
 
-    log_info(logger, "PID: %d - Actualizar puntero Archivo: %s - Puntero %d",proceso->pid,nombreArchivo, puntero);
+    log_info(logger, "PID: %d - Actualizar puntero Archivo: %s - Puntero %d",proceso->pid, nombreArchivo, puntero);
 
     t_archivoProceso* archivo = obtenerArchivoDeProceso(proceso, nombreArchivo);
 
-    archivo->punteroArch = (uint32_t)puntero;
+    if(archivo == NULL){
+            log_debug(logger, "Este proceso no puede realizar operaciones sobre este archivo");
+            exit_s(proceso, "INVALID_RESOURCE");
+    }
+    else archivo->punteroArch = (uint32_t)puntero;
 
     volverACPU(proceso);
 
@@ -334,20 +338,27 @@ void fread_s(t_pcb *proceso, char **parametros){
     t_archivo* archivo = obtenerArchivoDeTG(nombreArchivo); //este lo necesito por la cola de bloqueo
     t_archivoProceso* archivoProceso = obtenerArchivoDeProceso(proceso, nombreArchivo);
 
-    log_info(logger, "PID: %d - Leer Archivo: %s - Puntero %d - Dirección Memoria %d - Tamanio %d",proceso->pid, nombreArchivo, archivoProceso->punteroArch, dirFisica, archivo->fcb->tamanio);
+    if(archivoProceso == NULL){
+            log_debug(logger, "Este proceso no puede realizar operaciones sobre este archivo");
+            exit_s(proceso, "INVALID_RESOURCE");
+    }
+    else{
 
-    peticion = crearPeticionDeLecturaDeArchivo(archivoProceso, dirFisica, bytes);
+        log_info(logger, "PID: %d - Leer Archivo: %s - Puntero %d - Dirección Memoria %d - Tamanio %d",proceso->pid, nombreArchivo, archivoProceso->punteroArch, dirFisica, archivo->fcb->tamanio);
 
-    //bloqueo al proceso, agregandolo a la lista de bloqueados correspondiente a ese archivo
-    estadoAnterior = proceso->estado;
-    proceso->estado = BLOCK;
+        peticion = crearPeticionDeLecturaDeArchivo(archivoProceso, dirFisica, bytes);
 
-    list_add(archivo->colaBloqueados, proceso);
-    loggearCambioDeEstado(proceso->pid, estadoAnterior, proceso->estado);
-    loggearBloqueoDeProcesos(proceso, nombreArchivo);
+        //bloqueo al proceso, agregandolo a la lista de bloqueados correspondiente a ese archivo
+        estadoAnterior = proceso->estado;
+        proceso->estado = BLOCK;
 
-    peticionConBloqueoAFS(peticion, proceso);
+        list_add(archivo->colaBloqueados, proceso);
+        loggearCambioDeEstado(proceso->pid, estadoAnterior, proceso->estado);
+        loggearBloqueoDeProcesos(proceso, nombreArchivo);
 
+        peticionConBloqueoAFS(peticion, proceso);
+
+    }
 }
 
 void fwrite_s(t_pcb *proceso, char **parametros){
@@ -358,21 +369,27 @@ void fwrite_s(t_pcb *proceso, char **parametros){
     t_archivo* archivo = obtenerArchivoDeTG(nombreArchivo);
     t_archivoProceso* archivoProceso = obtenerArchivoDeProceso(proceso, nombreArchivo);
 
-    log_info(logger, "PID: %d - Escribir Archivo: %s - Puntero %d - Dirección Memoria %d - Tamanio %d",proceso->pid, nombreArchivo, archivoProceso->punteroArch, dirFisica, archivo->fcb->tamanio);
+    if(archivoProceso == NULL){
+            log_debug(logger, "Este proceso no puede realizar operaciones sobre este archivo");
+            exit_s(proceso, "INVALID_RESOURCE");
+    }
+    else{
 
-    peticion = crearPeticionDeEscrituraDeArchivo(archivoProceso, dirFisica, bytes);
+        log_info(logger, "PID: %d - Escribir Archivo: %s - Puntero %d - Dirección Memoria %d - Tamanio %d",proceso->pid, nombreArchivo, archivoProceso->punteroArch, dirFisica, archivo->fcb->tamanio);
 
-    //bloqueo al proceso, agregandolo a la lista de bloqueados correspondiente a ese archivo
-    estadoAnterior = proceso->estado;
-    proceso->estado = BLOCK;
+        peticion = crearPeticionDeEscrituraDeArchivo(archivoProceso, dirFisica, bytes);
 
-    list_add(archivo->colaBloqueados, proceso);
-    loggearCambioDeEstado(proceso->pid, estadoAnterior, proceso->estado);
-    loggearBloqueoDeProcesos(proceso, nombreArchivo);
+        //bloqueo al proceso, agregandolo a la lista de bloqueados correspondiente a ese archivo
+        estadoAnterior = proceso->estado;
+        proceso->estado = BLOCK;
+
+        list_add(archivo->colaBloqueados, proceso);
+        loggearCambioDeEstado(proceso->pid, estadoAnterior, proceso->estado);
+        loggearBloqueoDeProcesos(proceso, nombreArchivo);
     
-    peticionConBloqueoAFS(peticion, proceso);
+        peticionConBloqueoAFS(peticion, proceso);
 
-
+    }
 }
 
 

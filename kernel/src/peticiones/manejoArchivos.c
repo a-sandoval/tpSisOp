@@ -56,7 +56,7 @@ bool estaEnLaTablaGlobal(char* nombreArchivo){
     t_archivo* archivoAux = malloc(sizeof(t_archivo));
 
     for(int i=0; i<cantArchivos; i++){
-        archivoAux=list_get(tablaGlobalArchivos, i);
+        archivoAux = list_get(tablaGlobalArchivos, i);
 
         if(!strcmp(nombreArchivo, archivoAux->fcb->nombre)){
             return true;
@@ -85,7 +85,6 @@ t_archivo* obtenerArchivoDeTG(char* nombreArchivo){
     int cantArchivos = list_size(tablaGlobalArchivos);
     t_archivo* archivoAux = malloc(sizeof(t_archivo));
 
-
     for(int i=0; i<cantArchivos; i++){
         archivoAux=list_get(tablaGlobalArchivos, i);
 
@@ -111,7 +110,6 @@ t_archivoProceso* obtenerArchivoDeProceso(t_pcb* proceso, char* nombreArchivo){
         if(!strcmp(nombreArchivo, archivoAux->fcb->nombre)){
             return archivoAux; 
         }
-        //aunque el archivo deberia estar si o si porque ya lo comprobe antes
     }
 
     return NULL;
