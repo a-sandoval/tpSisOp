@@ -11,6 +11,7 @@
 #include "shared/include/global.h"
 #include "shared/include/contextoEjecucion.h"
 #include "kernel/include/peticiones/pcb.h"
+#include "kernel/include/planificacion/algoritmosCortoPlazo.h"
 
 
 typedef struct {
@@ -38,6 +39,7 @@ extern int conexionAFS;
 extern t_contexto* contextoEjecucion;
 extern t_list* tablaGlobalArchivos;
 extern pthread_mutex_t mutexFS;
+extern estadoProceso estadoAnterior; 
 
 t_archivo* solicitarArchivoFS(char* );
 void recibirFCB(t_archivo**);
@@ -48,15 +50,16 @@ bool estaEnLaTablaGlobal(char* nombreArchivo);
 bool estaAsignadoAlProceso(char* nombreArchivo, t_pcb* proceso);
 t_archivo* obtenerArchivoDeTG(char* nombreArchivo);
 void eliminarArchivo(t_archivo* archivo);
-void solicitarTruncadoDeArchivo(fcb_t* fcb, int tamanio);
-void solicitarLecturaDeArchivo(t_archivoProceso* archivo, uint32_t dirFisica, uint32_t bytes);
-void solicitarEscrituraDeArchivo(t_archivoProceso* archivo, uint32_t dirFisica, uint32_t bytes);
+t_paquete* crearPeticionDeTruncadoDeArchivo(fcb_t* fcb, int tamanio);
+t_paquete* crearPeticionDeLecturaDeArchivo(t_archivoProceso* archivo, uint32_t dirFisica, uint32_t bytes);
+t_paquete* crearPeticionDeEscrituraDeArchivo(t_archivoProceso* archivo, uint32_t dirFisica, uint32_t bytes);
 t_archivoProceso* obtenerArchivoDeProceso(t_pcb* proceso, char* nombreArchivo);
 t_archivoProceso * crearArchivoProceso ();
 void desbloquearProcesoPorArchivo();
 void quitarArchivo(t_pcb* proceso, char* nombreArchivo);
 fcb_t * crearFCB ();
 void eliminarArchivoProceso(void* archivo);
+void peticionConBloqueoAFS(t_paquete* peticion, t_pcb* proceso);
 void respuestaPeticionFS();
 
 #endif

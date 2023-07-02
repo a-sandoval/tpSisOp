@@ -70,7 +70,7 @@ t_peticion* recibirPeticionCreacionDeSegmento(int socketCliente) {
 
 	free (buffer);
 
-	log_debug (logger, "Recibida peticion de PID %d, para la id %d y de tamaño %d", peticion->pid, peticion->segmento->id, peticion->segmento->tamanio);
+	//log_debug (logger, "Recibida peticion de PID %d, para la id %d y de tamaño %d", peticion->pid, peticion->segmento->id, peticion->segmento->tamanio);
 
 	return peticion; 
 

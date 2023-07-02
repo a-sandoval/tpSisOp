@@ -5,7 +5,7 @@ char* valorDirFisica;
 
 int ejecutarServidorCPU(int * socketCliente){
 
-	log_debug(logger, "Conectado el CPU.");
+	//log_debug(logger, "Conectado el CPU.");
 	tiempo = config_get_int_value(config,"RETARDO_MEMORIA");
 
 	while (1) {
@@ -76,7 +76,7 @@ void recibirPeticionDeEscritura(int socketCPU) {
 	memcpy(valorAEscribir,buffer+desplazamiento,sizeof(char)*tamanio);
 	
 
-	log_debug (logger, "Escribiendo \"%s\" en direccion física %d", valorAEscribir, direccionFisica);
+	//log_debug (logger, "Escribiendo \"%s\" en direccion física %d", valorAEscribir, direccionFisica);
 	escribir(valorAEscribir,direccionFisica);  
 
 

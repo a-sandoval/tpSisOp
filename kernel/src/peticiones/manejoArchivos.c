@@ -2,51 +2,10 @@
 
 t_list* tablaGlobalArchivos;
 extern pthread_mutex_t mutexFS;
-extern sem_t huboPeticion;
+extern estadoProceso estadoAnterior; 
 
 void iniciarTablaGlobalDeArchivos(){
     tablaGlobalArchivos = list_create();
-}
-
-
-t_archivo* solicitarArchivoFS(char* nombreArchivo){
-
-    t_paquete* peticion = crearPaquete();
-    t_archivo* nuevoArchivo = malloc(sizeof(t_archivo));
-    nuevoArchivo->fcb = malloc (sizeof (fcb_t));
-    nuevoArchivo->fcb->nombre = nombreArchivo;
-
-    log_info(logger, "PID: %d - Abrir Archivo: %s",contextoEjecucion->pid,nombreArchivo);
-
-    peticion->codigo_operacion = FOPEN;
-    agregarAPaquete(peticion, nombreArchivo, sizeof(char)*strlen(nombreArchivo) + 1);
-
-    pthread_mutex_lock(&mutexFS);
-
-    enviarPaquete(peticion, conexionAFS);
-    
-    int respuesta = recibirOperacion(conexionAFS);
-
-    switch (respuesta){
-        case MENSAJE: // en este caso el archivo no existe y tiene que crearlo
-                    peticion->codigo_operacion = FCREATE; // se sobreentiende que es con tamanio 0
-                    agregarAPaquete(peticion, nombreArchivo, sizeof(char)*strlen(nombreArchivo) + 1);
-                    enviarPaquete(peticion, conexionAFS);
-                    recibirOperacion (conexionAFS);
-                    nuevoArchivo->fcb = deserializarFCB();
-                    nuevoArchivo->colaBloqueados = list_create();
-                    agregarArchivoATG(nuevoArchivo);
-                    break;
-        case PAQUETE: // el archivo ya existe y solo me lo manda
-                    nuevoArchivo->fcb = deserializarFCB();
-                    nuevoArchivo->colaBloqueados = list_create();
-                    //log_debug (logger, "Recibido FCB: %s %d %d %d", nuevoArchivo->fcb->nombre, nuevoArchivo->fcb->tamanio, nuevoArchivo->fcb->ptrDirecto, nuevoArchivo->fcb->ptrIndirecto);
-                    agregarArchivoATG(nuevoArchivo);
-                    break;
-    }
-    pthread_mutex_unlock(&mutexFS);
-
-    return nuevoArchivo;
 }
 
 
@@ -78,7 +37,8 @@ fcb_t* deserializarFCB(){
     desplazamiento += sizeof(int);
     memcpy(&(fcb->ptrIndirecto), buffer + desplazamiento, tamanio);
     desplazamiento += sizeof(uint32_t);
-
+    
+    free (buffer);
     return fcb;
 
 }
@@ -88,7 +48,6 @@ void agregarArchivoATG(t_archivo* nuevoArchivo){
 
     list_add(tablaGlobalArchivos, nuevoArchivo);
 }
-
 
 
 bool estaEnLaTablaGlobal(char* nombreArchivo){
@@ -181,7 +140,53 @@ void quitarArchivo(t_pcb* proceso, char* nombreArchivo){
 
 }
 
-void solicitarTruncadoDeArchivo(fcb_t* fcb, int tamanio){
+//   Manejo de solicitudes al FS
+
+t_archivo* solicitarArchivoFS(char* nombreArchivo){
+
+    t_paquete* peticion = crearPaquete();
+    t_archivo* nuevoArchivo = malloc(sizeof(t_archivo));
+    nuevoArchivo->fcb = malloc (sizeof (fcb_t));
+    nuevoArchivo->fcb->nombre = nombreArchivo;
+
+    log_info(logger, "PID: %d - Abrir Archivo: %s",contextoEjecucion->pid,nombreArchivo);
+
+    peticion->codigo_operacion = FOPEN;
+    agregarAPaquete(peticion, nombreArchivo, sizeof(char)*strlen(nombreArchivo) + 1);
+
+    pthread_mutex_lock(&mutexFS);
+
+    enviarPaquete(peticion, conexionAFS);
+    
+    eliminarPaquete (peticion);
+
+    int respuesta = recibirOperacion(conexionAFS);
+
+    switch (respuesta){
+        case MENSAJE: // en este caso el archivo no existe y tiene que crearlo
+                    peticion = crearPaquete ();
+                    peticion->codigo_operacion = FCREATE; // se sobreentiende que es con tamanio 0
+                    agregarAPaquete(peticion, nombreArchivo, sizeof(char)*strlen(nombreArchivo) + 1);
+                    enviarPaquete(peticion, conexionAFS);
+                    eliminarPaquete (peticion);
+                    recibirOperacion (conexionAFS);
+                    nuevoArchivo->fcb = deserializarFCB();
+                    nuevoArchivo->colaBloqueados = list_create();
+                    agregarArchivoATG(nuevoArchivo);
+                    break;
+        case PAQUETE: // el archivo ya existe y solo me lo manda
+                    nuevoArchivo->fcb = deserializarFCB();
+                    nuevoArchivo->colaBloqueados = list_create();
+                    //log_debug (logger, "Recibido FCB: %s %d %d %d", nuevoArchivo->fcb->nombre, nuevoArchivo->fcb->tamanio, nuevoArchivo->fcb->ptrDirecto, nuevoArchivo->fcb->ptrIndirecto);
+                    agregarArchivoATG(nuevoArchivo);
+                    break;
+    }
+    pthread_mutex_unlock(&mutexFS);
+
+    return nuevoArchivo;
+}
+
+t_paquete* crearPeticionDeTruncadoDeArchivo(fcb_t* fcb, int tamanio){
     t_paquete* peticion = crearPaquete();
     peticion->codigo_operacion = FTRUNCATE;
     uint32_t tamanio_u = (uint32_t) tamanio;
@@ -192,14 +197,10 @@ void solicitarTruncadoDeArchivo(fcb_t* fcb, int tamanio){
     agregarAPaquete(peticion, &(fcb->ptrIndirecto), sizeof(uint32_t));
     agregarAPaquete(peticion, &(tamanio_u), sizeof(uint32_t));
 
-    pthread_mutex_lock(&mutexFS);
-    enviarPaquete(peticion, conexionAFS);
-    sem_post(&huboPeticion);
-    pthread_mutex_unlock(&mutexFS);
-
+    return peticion;
 }
 
-void solicitarLecturaDeArchivo(t_archivoProceso* archivo, uint32_t dirFisica, uint32_t bytes){
+t_paquete* crearPeticionDeLecturaDeArchivo(t_archivoProceso* archivo, uint32_t dirFisica, uint32_t bytes){
     fcb_t* fcb = archivo->fcb;
     t_paquete* peticion = crearPaquete();
     peticion->codigo_operacion = FREAD;
@@ -208,18 +209,15 @@ void solicitarLecturaDeArchivo(t_archivoProceso* archivo, uint32_t dirFisica, ui
     agregarAPaquete(peticion, &(fcb->tamanio), sizeof(uint32_t));
     agregarAPaquete(peticion, &(fcb->ptrDirecto), sizeof(uint32_t));
     agregarAPaquete(peticion, &(fcb->ptrIndirecto), sizeof(uint32_t));
-     agregarAPaquete(peticion, &(archivo->punteroArch), sizeof(uint32_t));
+    agregarAPaquete(peticion, &(archivo->punteroArch), sizeof(uint32_t));
     agregarAPaquete(peticion, (void*)&(dirFisica), sizeof(uint32_t));
     agregarAPaquete(peticion, (void*)&(bytes), sizeof(uint32_t));
 
-    pthread_mutex_lock(&mutexFS);
-    enviarPaquete(peticion, conexionAFS);
-    sem_post(&huboPeticion);
-    pthread_mutex_unlock(&mutexFS);
+    return peticion;
 
 }
 
-void solicitarEscrituraDeArchivo(t_archivoProceso* archivo, uint32_t dirFisica, uint32_t bytes){
+t_paquete* crearPeticionDeEscrituraDeArchivo(t_archivoProceso* archivo, uint32_t dirFisica, uint32_t bytes){
     fcb_t* fcb = archivo->fcb;
     t_paquete* peticion = crearPaquete();
     peticion->codigo_operacion = FWRITE;
@@ -232,11 +230,7 @@ void solicitarEscrituraDeArchivo(t_archivoProceso* archivo, uint32_t dirFisica, 
     agregarAPaquete(peticion, (void*)&(dirFisica), sizeof(uint32_t));
     agregarAPaquete(peticion, (void*)&(bytes), sizeof(uint32_t));
 
-    pthread_mutex_lock(&mutexFS);
-    enviarPaquete(peticion, conexionAFS);
-    sem_post(&huboPeticion);
-    pthread_mutex_unlock(&mutexFS);
-
+    return peticion;
 }
 
 fcb_t * crearFCB () {
@@ -264,16 +258,39 @@ void eliminarArchivo(t_archivo* archivo){
     free(archivo);
 }
 
+void peticionConBloqueoAFS(t_paquete* peticion, t_pcb* proceso){
+
+    pthread_mutex_lock(&mutexFS);
+    enviarPaquete(peticion, conexionAFS);
+    eliminarPaquete (peticion);
+    pthread_t respuestaFS_h;
+
+    if (!pthread_create(&respuestaFS_h, NULL, (void *)respuestaPeticionFS, NULL)){
+        pthread_join(respuestaFS_h,NULL);
+        estimacionNuevaRafaga(proceso); 
+        estadoAnterior = proceso->estado;
+        proceso->estado = READY;
+        loggearCambioDeEstado(proceso->pid, estadoAnterior, proceso->estado);
+        ingresarAReady(proceso);
+    } else {
+        error("Error en la creacion de hilo para esperar respuesta del FS, Abort");
+    }
+
+    pthread_mutex_unlock(&mutexFS);
+
+}
+
 void respuestaPeticionFS(){
-    
-    sem_wait(&huboPeticion);
     
     int respuesta = recibirOperacion(conexionAFS);
 
     switch (respuesta){
-        case PAQUETE: // tengo que desbloquear al proceso que bloquee por la peticion al FS
-                   
-                    break;
+        case MENSAJE:
+            log_debug(logger,"FS termino padre ya te podes desbloquear");
+            break;
+        default:
+            log_debug(logger,"recibi algo que no era un mensaje volve a probar");
+            break;
     }
 
 }

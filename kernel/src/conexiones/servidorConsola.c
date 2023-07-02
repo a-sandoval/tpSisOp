@@ -50,6 +50,7 @@ void ejecutarServidorKernel(){
 					break;
 				}
 			case TERMINAR_KERNEL:
+				destruirPCB (PCB);
 				exit (0);
 			default:
 				break;

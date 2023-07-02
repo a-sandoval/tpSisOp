@@ -12,8 +12,6 @@
 #include "kernel/include/planificacion/planificacion.h"
 #include "kernel/include/planificacion/algoritmosCortoPlazo.h"
 
-
-
 extern t_list *recursos;
 extern char **nombresRecursos;
 extern t_contexto* contextoEjecucion;

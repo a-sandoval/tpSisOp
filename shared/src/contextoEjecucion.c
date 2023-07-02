@@ -174,7 +174,6 @@ void deserializarRegistros (void * buffer, int * desplazamiento) {
 }
 
 void deserializarTablaDeSegmentos (void * buffer, int * desplazamiento) {
-
     list_clean_and_destroy_elements (contextoEjecucion->tablaDeSegmentos, free);
     // Desplazamiento: tamaño de la lista de segmentos.
     memcpy(&(contextoEjecucion->tablaDeSegmentosSize), buffer + (* desplazamiento), sizeof(uint32_t));

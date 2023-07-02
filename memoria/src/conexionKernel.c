@@ -7,7 +7,7 @@ uint32_t direccionBaseSegmento;
 int ejecutarServidorKernel(int *socketCliente)
 {
 
-	log_debug(logger, "Conectado el Kernel");
+	//log_debug(logger, "Conectado el Kernel");
 
 	while (1)
 	{
@@ -15,7 +15,7 @@ int ejecutarServidorKernel(int *socketCliente)
 		cantidadMaximaSegmentos = config_get_int_value(config, "CANT_SEGMENTOS");
 
 		//log_debug(logger, "Se recibio peticion %d del Kernel", peticionRealizada);
-		listarHuecosLibres ();
+		//listarHuecosLibres ();
 		switch (peticionRealizada)
 		{
 		case NEWPCB:
@@ -32,6 +32,7 @@ int ejecutarServidorKernel(int *socketCliente)
 			peticion = recibirPeticionCreacionDeSegmento(*socketCliente);
 			op_code resultado = ubicarSegmentosEnEspaciosLibres(peticion);
 			procesarResultado((int)resultado, *socketCliente);
+			free (peticion);
 			break;
 		case DELETE_SEGMENT_OP:
 			recibirYProcesarPeticionEliminacionSegmento(*socketCliente);
@@ -83,7 +84,6 @@ t_list *crearTablaDeSegmentosInicial()
 
 		list_add(tablaDeSegmentos, (void *)segmentoVacio);
 	}
-
 	return tablaDeSegmentos;
 }
 
@@ -128,6 +128,12 @@ void deleteSegment(uint32_t pid, uint32_t segmentId)
 	// Revisar una vez implementemos compactación para incluir ese nuevo segm libre
 }
 
+bool direccionMasBaja (void * huecoLibreUno, void * huecoLibreDos) {
+	t_hueco_libre * huecoUno = (t_hueco_libre * ) huecoLibreUno;
+	t_hueco_libre * huecoDos = (t_hueco_libre * ) huecoLibreDos;
+	return (huecoUno->direccionBase < huecoDos->direccionBase); 
+}
+
 void convertirSegmentoEnHuecoLibre(void *segmento)
 {
 
@@ -147,7 +153,7 @@ void convertirSegmentoEnHuecoLibre(void *segmento)
 			nuevoHuecoLibre->direccionBase = aConvertir->direccionBase;
 			nuevoHuecoLibre->tamanioHueco = aConvertir->tamanio;
 
-			list_add(huecosLibres, (void *)nuevoHuecoLibre);
+			list_add_sorted(huecosLibres, (void *)nuevoHuecoLibre, direccionMasBaja);
 		}
 	}
 	else

@@ -51,10 +51,10 @@ t_contexto* procesarPCB(t_pcb* procesoEnEjecucion) {
 
     actualizarPCB(procesoEnEjecucion);
 
-    uint32_t lista = list_size (procesoEnEjecucion->recursosAsignados);
-    log_debug (logger, "Tengo %d recursos.", lista);
-    for (uint32_t i = 0; i < lista; i++) 
-        log_debug (logger, "Listando recursos, recurso %d: %s", i, (char *) list_get (procesoEnEjecucion->recursosAsignados, i));
+    //uint32_t lista = list_size (procesoEnEjecucion->recursosAsignados);
+    //log_debug (logger, "Tengo %d recursos.", lista);
+    //for (uint32_t i = 0; i < lista; i++) 
+    //    log_debug (logger, "Listando recursos, recurso %d: %s", i, (char *) list_get (procesoEnEjecucion->recursosAsignados, i));
 
     free(bufferContexto);
     return contextoEjecucion;
@@ -70,6 +70,7 @@ void actualizarPCB(t_pcb* proceso){
     proceso->registrosCPU = registrosDelCPU(contextoEjecucion->registrosCPU);
 	//list_destroy(proceso->tablaDeArchivos);
     //proceso->tablaDeArchivos = list_duplicate(contextoEjecucion->tablaDeArchivos);
+    list_destroy_and_destroy_elements (proceso->tablaDeSegmentos, free);
     proceso->tablaDeSegmentos = list_duplicate(contextoEjecucion->tablaDeSegmentos);
 
 }
@@ -81,9 +82,10 @@ void asignarPCBAContexto(t_pcb* proceso){
     contextoEjecucion->instruccionesLength = list_size(contextoEjecucion->instrucciones);
     contextoEjecucion->pid = proceso->pid;
     contextoEjecucion->programCounter = proceso->programCounter;
-    dictionary_destroy(contextoEjecucion->registrosCPU);
+    dictionary_destroy_and_destroy_elements(contextoEjecucion->registrosCPU, free);
     contextoEjecucion->registrosCPU = registrosDelCPU(proceso->registrosCPU);
-    contextoEjecucion->tablaDeSegmentos = proceso->tablaDeSegmentos;
+    list_destroy_and_destroy_elements (contextoEjecucion->tablaDeSegmentos, free);
+    contextoEjecucion->tablaDeSegmentos = list_duplicate(proceso->tablaDeSegmentos);
     contextoEjecucion->tablaDeSegmentosSize = list_size(contextoEjecucion->tablaDeSegmentos);
 
 }

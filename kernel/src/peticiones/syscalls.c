@@ -100,8 +100,8 @@ void wait_s(t_pcb *proceso, char **parametros){
     } 
     else {
         list_add(proceso->recursosAsignados, (void*)string_duplicate (recurso));
-        log_debug(logger,"Agregue un senior recurso que se llama %s", recurso); 
-        log_debug(logger,"Mi lista tiene %s", (char*)list_get(proceso->recursosAsignados,0)); 
+        //log_debug(logger,"Agregue un senior recurso que se llama %s", recurso); 
+        //log_debug(logger,"Mi lista tiene %s", (char*)list_get(proceso->recursosAsignados,0)); 
         volverACPU(proceso);
     }
 }
@@ -118,15 +118,15 @@ void signal_s(t_pcb *proceso, char **parametros){
         return;
     }
 
-    log_debug(logger, "Tengo esto que es %s",(char*)list_get(proceso->recursosAsignados,0)); 
+    //log_debug(logger, "Tengo esto que es %s",(char*)list_get(proceso->recursosAsignados,0)); 
 
     int instancRecurso = instanciasRecursos[indexRecurso];
     instancRecurso++;
     
     eliminarRecursoLista(proceso->recursosAsignados,recurso); 
 
-    int cantRecursos = list_size(proceso->recursosAsignados);
-    log_debug(logger,"Mi lista deberia estar vacia pero esta en %d",cantRecursos); 
+    //int cantRecursos = list_size(proceso->recursosAsignados);
+    //log_debug(logger,"Mi lista deberia estar vacia pero esta en %d",cantRecursos); 
 
     log_info(logger,"PID: <%d> - Signal: <%s> - Instancias: <%d>",proceso->pid,recurso,instancRecurso); 
 
@@ -137,6 +137,8 @@ void signal_s(t_pcb *proceso, char **parametros){
         t_list *colaBloqueadosRecurso = (t_list *)list_get(recursos, indexRecurso);
 
         t_pcb* pcbDesbloqueado = desencolar(colaBloqueadosRecurso);
+
+        list_add(pcbDesbloqueado->recursosAsignados, (void*)string_duplicate (recurso));
 
         estimacionNuevaRafaga(pcbDesbloqueado); 
 
@@ -212,6 +214,7 @@ void exit_s(t_pcb* proceso, char **parametros){
     liberarMemoriaPCB(proceso); 
 
     destruirPCB(proceso); 
+    destroyContextoUnico ();
     sem_post(&semGradoMultiprogramacion); 
 }
 
@@ -225,7 +228,7 @@ void fopen_s(t_pcb *proceso, char **parametros){
     if(estaEnLaTablaGlobal(nombreArchivo)){
             // si esta en la tabla alguien ya lo esta usando y tengo que ponerlo en block
             archivo = obtenerArchivoDeTG(nombreArchivo);
-            
+            log_debug (logger, "Lo encontre!");
             estadoAnterior = proceso->estado;
             proceso->estado = BLOCK;
 
@@ -278,33 +281,6 @@ void fclose_s(t_pcb *proceso, char **parametros){
     volverACPU(proceso);
 }
 
-void ftruncate_s(t_pcb *proceso, char **parametros){
-    char* nombreArchivo = parametros[0];
-    int tamanio = atoi(parametros[1]);
-    t_archivo* archivo = obtenerArchivoDeTG(nombreArchivo);
-
-    log_info(logger, "PID: %d - Archivo: %s - Tamaño: %d",proceso->pid, nombreArchivo, tamanio);
-
-    if(estaAsignadoAlProceso(nombreArchivo, proceso)){
-
-        //bloqueo al proceso
-        estadoAnterior = proceso->estado;
-        proceso->estado = BLOCK;
-
-        loggearCambioDeEstado(proceso->pid, estadoAnterior, proceso->estado);
-        loggearBloqueoDeProcesos(proceso, nombreArchivo);
-    
-        solicitarTruncadoDeArchivo(archivo->fcb, tamanio);
-    }
-
-    else{
-        log_error(logger, "El proceso no puede realizar esta peticion ya que no tiene permiso sobre el archivo");
-    }
-    
-}
-
-
-
 void fseek_s(t_pcb *proceso, char **parametros){
     char* nombreArchivo = parametros[0];
     int puntero = atoi(parametros[1]);
@@ -319,17 +295,48 @@ void fseek_s(t_pcb *proceso, char **parametros){
 
 }
 
-/*
+void ftruncate_s(t_pcb *proceso, char **parametros){
+    char* nombreArchivo = parametros[0];
+    int tamanio = atoi(parametros[1]);
+    t_paquete* peticion = crearPaquete();
+    t_archivo* archivo = obtenerArchivoDeTG(nombreArchivo);
+
+    log_info(logger, "PID: %d - Archivo: %s - Tamaño: %d",proceso->pid, nombreArchivo, tamanio);
+
+    if(estaAsignadoAlProceso(nombreArchivo, proceso)){
+
+        peticion = crearPeticionDeTruncadoDeArchivo(archivo->fcb, tamanio);
+
+        //bloqueo al proceso
+        estadoAnterior = proceso->estado;
+        proceso->estado = BLOCK;
+
+        loggearCambioDeEstado(proceso->pid, estadoAnterior, proceso->estado);
+        loggearBloqueoDeProcesos(proceso, nombreArchivo);
+
+        peticionConBloqueoAFS(peticion, proceso);
+    
+    }
+
+    else{
+        log_error(logger, "El proceso no puede realizar esta peticion ya que no tiene permiso sobre el archivo");
+    }
+    
+}
+
+
 void fread_s(t_pcb *proceso, char **parametros){
 
     char* nombreArchivo = parametros[0];
-    uint32_t dirFisica = (uint32_t*)atoi(parametros[1]);
-    uint32_t bytes = (uint32_t*)atoi(parametros[2]);
-    pthread_t respuestaFS_h;
+    uint32_t dirFisica = (uint32_t)atoi(parametros[1]);
+    uint32_t bytes = (uint32_t)atoi(parametros[2]);
+    t_paquete* peticion = crearPaquete();
     t_archivo* archivo = obtenerArchivoDeTG(nombreArchivo); //este lo necesito por la cola de bloqueo
     t_archivoProceso* archivoProceso = obtenerArchivoDeProceso(proceso, nombreArchivo);
 
-    log_info(logger, "PID: <PID> - Leer Archivo: %s - Puntero %d - Dirección Memoria %d - Tamanio %d",proceso->pid, nombreArchivo, archivoProceso->punteroArch, dirFisica, archivo->fcb->tamanio);
+    log_info(logger, "PID: %d - Leer Archivo: %s - Puntero %d - Dirección Memoria %d - Tamanio %d",proceso->pid, nombreArchivo, archivoProceso->punteroArch, dirFisica, archivo->fcb->tamanio);
+
+    peticion = crearPeticionDeLecturaDeArchivo(archivoProceso, dirFisica, bytes);
 
     //bloqueo al proceso, agregandolo a la lista de bloqueados correspondiente a ese archivo
     estadoAnterior = proceso->estado;
@@ -338,22 +345,22 @@ void fread_s(t_pcb *proceso, char **parametros){
     list_add(archivo->colaBloqueados, proceso);
     loggearCambioDeEstado(proceso->pid, estadoAnterior, proceso->estado);
     loggearBloqueoDeProcesos(proceso, nombreArchivo);
-    
-    solicitarLecturaDeArchivo(archivoProceso, dirFisica, bytes);
-    
 
-    
+    peticionConBloqueoAFS(peticion, proceso);
+
 }
 
 void fwrite_s(t_pcb *proceso, char **parametros){
     char* nombreArchivo = parametros[0];
-    uint32_t dirFisica = (uint32_t*)atoi(parametros[1]);
-    uint32_t bytes = (uint32_t*)atoi(parametros[2]);
-    pthread_t respuestaFS_h;
+    uint32_t dirFisica = (uint32_t)atoi(parametros[1]);
+    uint32_t bytes = (uint32_t)atoi(parametros[2]);
+    t_paquete* peticion = crearPaquete();
     t_archivo* archivo = obtenerArchivoDeTG(nombreArchivo);
     t_archivoProceso* archivoProceso = obtenerArchivoDeProceso(proceso, nombreArchivo);
 
-    log_info(logger, "PID: <PID> - Escribir Archivo: %s - Puntero %d - Dirección Memoria %d - Tamanio %d",proceso->pid, nombreArchivo, archivoProceso->punteroArch, dirFisica, archivo->fcb->tamanio);
+    log_info(logger, "PID: %d - Escribir Archivo: %s - Puntero %d - Dirección Memoria %d - Tamanio %d",proceso->pid, nombreArchivo, archivoProceso->punteroArch, dirFisica, archivo->fcb->tamanio);
+
+    peticion = crearPeticionDeEscrituraDeArchivo(archivoProceso, dirFisica, bytes);
 
     //bloqueo al proceso, agregandolo a la lista de bloqueados correspondiente a ese archivo
     estadoAnterior = proceso->estado;
@@ -363,17 +370,18 @@ void fwrite_s(t_pcb *proceso, char **parametros){
     loggearCambioDeEstado(proceso->pid, estadoAnterior, proceso->estado);
     loggearBloqueoDeProcesos(proceso, nombreArchivo);
     
-    solicitarEscrituraDeArchivo(archivoProceso, dirFisica, bytes);
+    peticionConBloqueoAFS(peticion, proceso);
+
 
 }
 
-*/
+
 void createSegment_s(t_pcb *proceso, char **parametros){
 
     int idSegmento = atoi(parametros[0]);
     int tamanio = atoi(parametros[1]);
     
-    log_debug (logger, "Enviando petición para crear el segmento %d con tamaño %d.", idSegmento, tamanio);
+    //log_debug (logger, "Enviando petición para crear el segmento %d con tamaño %d.", idSegmento, tamanio);
 
     t_paquete* peticion = crearPaquete();
     peticion->codigo_operacion = CREATE_SEGMENT_OP;
@@ -383,6 +391,8 @@ void createSegment_s(t_pcb *proceso, char **parametros){
     agregarAPaquete(peticion, &(tamanio), sizeof(uint32_t));
 
     enviarPaquete(peticion, conexionAMemoria);
+
+    eliminarPaquete (peticion);
     
     int rdoPeticion = recibirOperacion(conexionAMemoria);
 
@@ -409,8 +419,6 @@ void createSegment_s(t_pcb *proceso, char **parametros){
                
                 break;
     }
-
-    free(peticion);
 }
 
 
@@ -426,6 +434,8 @@ void deleteSegment_s(t_pcb *proceso, char **parametros){
     agregarAPaquete(peticion, (void*)&contextoEjecucion->pid, sizeof(uint32_t));
     agregarAPaquete(peticion, (void*)&idSegmento, sizeof(uint32_t));
     enviarPaquete(peticion, conexionAMemoria);
+    
+    eliminarPaquete (peticion);
 
     recibirOperacion(conexionAMemoria);
     recibirTablaDeSegmentosActualizada(proceso);

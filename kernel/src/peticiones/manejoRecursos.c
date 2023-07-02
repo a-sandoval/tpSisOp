@@ -76,13 +76,13 @@ void liberarRecursosAsignados(t_pcb* proceso){
 
     int cantRecursos = list_size(proceso->recursosAsignados);
 
-    log_debug(logger,"Tengo %d recursos", cantRecursos); 
+    //log_debug(logger,"Tengo %d recursos", cantRecursos); 
 
     int i;
     if(cantRecursos!=0){
         for(i=0; i<cantRecursos;i++){
             char * parametros[3] = {(char *)list_get(proceso->recursosAsignados, i), "", "EXIT"};
-            log_debug(logger,"Mi contenido es %s", (char*)list_get(proceso->recursosAsignados,0)); 
+            //log_debug(logger,"Mi contenido es %s", (char*)list_get(proceso->recursosAsignados,0)); 
             signal_s(proceso, parametros);
             list_remove(proceso->recursosAsignados,i);
     }
@@ -92,12 +92,12 @@ void liberarRecursosAsignados(t_pcb* proceso){
 
 void eliminarRecursoLista(t_list* recursos, char* recurso){
     int cantRecursos = list_size(recursos);
-    log_debug(logger,"el recurso es %s",(recurso));
+    //log_debug(logger,"el recurso es %s",(recurso));
     int i;
     
     for(i=0;i<cantRecursos;i++){
         
-        log_debug(logger,"Mi lista tiene %s",(char*)list_get(recursos, i));
+        //log_debug(logger,"Mi lista tiene %s",(char*)list_get(recursos, i));
         
         if(!strcmp((char*)list_get(recursos,i), recurso)){
             list_remove(recursos,i); 

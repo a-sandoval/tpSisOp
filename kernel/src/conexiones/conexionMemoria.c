@@ -48,5 +48,6 @@ void liberarMemoriaPCB(t_pcb* proceso){
     peticion->codigo_operacion = ENDPCB; 
     agregarAPaquete(peticion,(void*)&proceso->pid, sizeof(uint32_t));
     enviarPaquete(peticion, conexionAMemoria); 
+    eliminarPaquete (peticion);
 }
 

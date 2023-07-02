@@ -26,35 +26,33 @@ int main() {
 
 	sockets[0] = esperarCliente(server_fd);
 	
-    if (!pthread_create (&threadCPU, NULL, (void*) ejecutarServidorCPU, (void*) &sockets[0])){
-		pthread_detach (threadCPU);
-	}	
-    else {
-        error ("Error en iniciar el servidor a CPU");
-    }
-	
 	usleep (1000 * 500);
 	log_info (logger, "Esperando File System...");
 	sockets[1] = esperarCliente (server_fd);
 
-    if(!pthread_create (&threadFS, NULL, (void*)ejecutarServidorFS, (void*) &sockets[1])){
-		pthread_detach (threadFS);
-	}	
-    else {
-        error ("Error en iniciar el servidor a FS");
-    }
-	
 	usleep (1000 * 500);
 	log_info (logger, "Esperando Kernel...");
-
 	sockets[2] = esperarCliente (server_fd);
 
-    if(!pthread_create (&threadKernel, NULL, (void*) ejecutarServidorKernel, (void*) &sockets[2])){
-		pthread_join (threadKernel, NULL);
-	}	
-    else {
+	int opCodes[3] = {
+		pthread_create (&threadCPU, NULL, (void*) ejecutarServidorCPU, (void*) &sockets[0]),
+		pthread_create (&threadFS, NULL, (void*)ejecutarServidorFS, (void*) &sockets[1]),
+		pthread_create (&threadKernel, NULL, (void*) ejecutarServidorKernel, (void*) &sockets[2])
+	};
+
+    if (opCodes [0]) {
+        error ("Error en iniciar el servidor a CPU");
+	}
+    if (opCodes [1]) {
+        error ("Error en iniciar el servidor a FS");
+	}
+    if (opCodes [2]) {
         error ("Error en iniciar el servidor a Kernel");
-    }
+	}
+
+	pthread_join (threadCPU, NULL);
+	pthread_join (threadFS, NULL);
+	pthread_join (threadKernel, NULL);
 
 	exit (0);
 }

@@ -37,6 +37,8 @@ void procesarResultado(int resultado, int socketKernel);
 void eliminarProcesoDeMemoria(t_proceso* proceso); 
 void deleteSegment(uint32_t pid, uint32_t segmentId);
 
+bool direccionMasBaja (void * huecoLibreUno, void * huecoLibreDos);
+
 void convertirSegmentoEnHuecoLibre(void* segmentoAEliminar);
 
 void listarHuecosLibres ();

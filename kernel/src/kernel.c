@@ -28,26 +28,26 @@ int main () {
 	conexionMemoria(); 
 
     //Inicializar Hilos
-	//Hilo Planificador Largo Plazo -> Mueve procesos de NEW a READY
-    if (!pthread_create(&planificadorLargoPlazo_h, NULL, (void *) planificarALargoPlazo, NULL)) 
-        pthread_detach(planificadorLargoPlazo_h);
-    else 
-        {error ("Error al generar hilo para el planificador de largo plazo, terminando el programa.");}
-	
+	int opCodes [3] = {
+		pthread_create(&planificadorLargoPlazo_h, NULL, (void *) planificarALargoPlazo, NULL),
+		pthread_create(&planificadorCortoPlazo_h, NULL, (void*) planificarACortoPlazoSegunAlgoritmo, NULL),
+		pthread_create(&recibirConsolas_h, NULL,(void *) recibirConsolas, puertoDeEscucha)
+	};
 
-	//Hilo Planificador Corto Plazo --> Mueve procesos de READY a EXEC
-	if (!pthread_create(&planificadorCortoPlazo_h, NULL, (void*) planificarACortoPlazoSegunAlgoritmo, NULL)) 
-		pthread_detach(planificadorCortoPlazo_h);
-	
-    else 
+    if (opCodes [0]) {
+        error ("Error al generar hilo para el planificador de largo plazo, terminando el programa.");	
+	}
+	if (opCodes [1]) {
         error ("Error al generar hilo para el planificador de corto plazo, terminando el programa.");
-	
-	
-	// Hilo Principal -> Recibe consolas y crea PCBs 
-    if (!pthread_create(&recibirConsolas_h, NULL,(void *) recibirConsolas, puertoDeEscucha)) 
-           pthread_join(recibirConsolas_h, NULL);
-    else
+	}	
+  	if (opCodes [2]) {
 		error ("Error al generar hilo para recibir consolas, terminando el programa.");
-
+	}
+	//Hilo Planificador Largo Plazo -> Mueve procesos de NEW a READY
+	pthread_join(planificadorLargoPlazo_h, NULL);
+	//Hilo Planificador Corto Plazo --> Mueve procesos de READY a EXEC
+	pthread_join(planificadorCortoPlazo_h, NULL);
+	// Hilo Principal -> Recibe consolas y crea PCBs 
+	pthread_join(recibirConsolas_h, NULL);
     exit (0);
 }

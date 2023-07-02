@@ -27,6 +27,7 @@ void recibirTablaDeSegmentosActualizada(t_pcb* pcb){
         segmento = deserializarSegmento(buffer, &desplazamiento);
         list_add (pcb->tablaDeSegmentos, segmento);
     }
+    free (buffer);
     //log_debug (logger, "Me llegaron %d segmentos, deberian llegar %d.", list_size (pcb->tablaDeSegmentos), tablaDeSegmentosSize);
     desplazamiento += sizeof(int);
 

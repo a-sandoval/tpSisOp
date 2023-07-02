@@ -191,6 +191,7 @@ void f_read(char* nombre, char* direccionLogica, char* cantBytes){
     char* direccionFisica = string_itoa(dirFisica);
     modificarMotivoDesalojo (F_READ, 3, nombre, direccionFisica, cantBytes);
     enviarContextoActualizado(socketCliente);
+    free (direccionFisica);
 };
 
 void f_write(char* nombre, char* direccionLogica, char* cantBytes){
@@ -199,6 +200,7 @@ void f_write(char* nombre, char* direccionLogica, char* cantBytes){
     char* direccionFisica = string_itoa(dirFisica);
     modificarMotivoDesalojo (F_WRITE, 3, nombre, direccionFisica, cantBytes);
     enviarContextoActualizado(socketCliente);
+    free (direccionFisica);
 };
 
 void f_truncate(char* nombre, char* tamanio){
