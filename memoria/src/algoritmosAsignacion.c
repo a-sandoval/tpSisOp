@@ -83,7 +83,7 @@ void reducirHuecosLibres(t_segmento* segmento, int indiceHueco) {
     else {
         aModificar->direccionBase = segmento->direccionBase + segmento->tamanio; 
     }
-    //listarHuecosLibres(); 
+     
 }
 
 t_proceso *buscarProcesoSegun(uint32_t pid)
@@ -156,7 +156,6 @@ op_code ubicarSegmentosPorWorst(t_peticion* peticion){
 
     if(huecoAAsignar->tamanioHueco >= tamanioSegmento) {
         peticion->segmento->direccionBase = huecoAAsignar->direccionBase;
-        //log_debug(logger, "Se ha encontrado un espacio para el segmento");
         loggearCreacionDeSegmento(peticion); 
 
         agregarSegmentoATablaDeSegmentosPCB(peticion); 
@@ -168,7 +167,6 @@ op_code ubicarSegmentosPorWorst(t_peticion* peticion){
         if(corroborarPosibilidadDeCompactacion(peticion))
             return COMPACTACION;  
         return OUTOFMEMORY; 
-        //proximamente será una petición de compactación
     }
 }
 

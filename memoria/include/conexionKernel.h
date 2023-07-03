@@ -11,6 +11,7 @@
 #include "shared/include/utilsCliente.h"
 #include "shared/include/utilsServidor.h"
 #include "manejoSegmentacion.h"
+#include "compactacion.h"
 
 
 extern t_config* config;

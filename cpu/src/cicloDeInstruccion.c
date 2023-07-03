@@ -241,13 +241,14 @@ void liberarMemoria() {
 void mov_in(char* registro, char* direccionLogica){
 
     char* valorAInsertar;
-    int tamRegistro = obtenerTamanioReg(registro);
+    uint32_t tamRegistro = (uint32_t)obtenerTamanioReg(registro);
     uint32_t dirFisica = mmu(direccionLogica, tamRegistro);
 
     t_paquete* peticion = crearPaquete();
     peticion->codigo_operacion = READ;
     agregarAPaquete(peticion,&contextoEjecucion->pid, sizeof(uint32_t));
     agregarAPaquete(peticion,&dirFisica, sizeof(uint32_t));
+    agregarAPaquete(peticion,&tamRegistro,sizeof(uint32_t));
     enviarPaquete(peticion, conexionAMemoria);    
     eliminarPaquete (peticion);
 

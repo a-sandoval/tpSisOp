@@ -53,7 +53,6 @@ void retornoContexto(t_pcb *proceso, t_contexto *contextoEjecucion){
     default:
         log_error(loggerError, "Comando incorrecto, ejecutando Yield para continuar");
         yield_s(proceso);
-        //exit(1);
         break;
     }
 }
@@ -73,7 +72,7 @@ void wait_s(t_pcb *proceso, char **parametros){
 
     if (indexRecurso == -1)
     {
-        exit_s(proceso, &segFault); 
+        exit_s(proceso, "INVALID_RESOURCE"); 
         return;
     }
 
@@ -100,8 +99,7 @@ void wait_s(t_pcb *proceso, char **parametros){
     } 
     else {
         list_add(proceso->recursosAsignados, (void*)string_duplicate (recurso));
-        //log_debug(logger,"Agregue un senior recurso que se llama %s", recurso); 
-        //log_debug(logger,"Mi lista tiene %s", (char*)list_get(proceso->recursosAsignados,0)); 
+       
         volverACPU(proceso);
     }
 }
@@ -114,19 +112,17 @@ void signal_s(t_pcb *proceso, char **parametros){
     int indexRecurso = indiceRecurso(recurso);
 
     if (indexRecurso == -1){
-        exit_s(proceso, &segFault); 
+        exit_s(proceso, "INVALID_RESOURCE"); 
         return;
     }
 
-    //log_debug(logger, "Tengo esto que es %s",(char*)list_get(proceso->recursosAsignados,0)); 
 
     int instancRecurso = instanciasRecursos[indexRecurso];
     instancRecurso++;
     
     eliminarRecursoLista(proceso->recursosAsignados,recurso); 
 
-    //int cantRecursos = list_size(proceso->recursosAsignados);
-    //log_debug(logger,"Mi lista deberia estar vacia pero esta en %d",cantRecursos); 
+
 
     log_info(logger,"PID: <%d> - Signal: <%s> - Instancias: <%d>",proceso->pid,recurso,instancRecurso); 
 
@@ -210,7 +206,6 @@ void exit_s(t_pcb* proceso, char **parametros){
         liberarRecursosAsignados(proceso);
     }
    
-    //liberarArchivosAsignados(proceso);
     liberarMemoriaPCB(proceso); 
 
     destruirPCB(proceso); 
@@ -398,7 +393,6 @@ void createSegment_s(t_pcb *proceso, char **parametros){
     int idSegmento = atoi(parametros[0]);
     int tamanio = atoi(parametros[1]);
     
-    //log_debug (logger, "Enviando petición para crear el segmento %d con tamaño %d.", idSegmento, tamanio);
 
     t_paquete* peticion = crearPaquete();
     peticion->codigo_operacion = CREATE_SEGMENT_OP;
@@ -409,31 +403,42 @@ void createSegment_s(t_pcb *proceso, char **parametros){
 
     enviarPaquete(peticion, conexionAMemoria);
 
-    eliminarPaquete (peticion);
-    
     int rdoPeticion = recibirOperacion(conexionAMemoria);
 
     switch(rdoPeticion){
         case SUCCESS:
-                log_info(logger, "PID: %d - Crear Segmento - Id: %d - Tamanio: %d", proceso->pid, idSegmento, tamanio);
-                // me mandan la tabla con el nuevo segmento incorporado
-                
+                log_info(logger, "PID: %d - Crear Segmento - Id: %d - Tamanio: %d", proceso->pid, idSegmento, tamanio);                
                 recibirOperacion (conexionAMemoria);
                 recibirTablaDeSegmentosActualizada(proceso);
+                eliminarPaquete (peticion);
                 volverACPU(proceso);
                 break;
 
         case OUTOFMEMORY:
                 exit_s(proceso, &outOfMemory);
+                eliminarPaquete (peticion);
                 break;
         
         case COMPACTACION:
+            // Aca entraria validar que no se este ejecutando FREAD O FWRITE
+
                 log_info(logger, "Compactacion: Se solicito compactacion ");
                 log_info(logger,  "Compactacion: Esperando Fin de Operaciones de FS");
-                log_info(logger,  "Se finalizo el proceso de compactacion");
+                enviarMensaje("Compactacion OK", conexionAMemoria); 
+                int cantidadDeProcesosAActualizar = recibirOperacion(conexionAMemoria); 
 
-                //dsps de la compactacion
-               
+                for(int i=0;i<cantidadDeProcesosAActualizar; i++) {
+
+                    //Recibir tabla de segmentos actualizada recibe pcb, deberia recibir nomas pid cosa de que pueda hacerlo en forma masiva en este for
+                }
+                log_info(logger,  "Se finalizo el proceso de compactacion");
+                
+
+                //Como hubo que compactar vuelve a enviar la misma peticion. Alcanza con esto o hay q llamar a create segment?? es re dudoso porque es recursivo 
+                enviarPaquete(peticion,conexionAMemoria); 
+                eliminarPaquete (peticion);
+
+
                 break;
     }
 }

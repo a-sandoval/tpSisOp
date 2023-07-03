@@ -4,18 +4,13 @@ t_peticion *peticion;
 int cantidadMaximaSegmentos;
 uint32_t direccionBaseSegmento;
 
-int ejecutarServidorKernel(int *socketCliente)
-{
-
-	//log_debug(logger, "Conectado el Kernel");
+int ejecutarServidorKernel(int *socketCliente){
 
 	while (1)
 	{
 		int peticionRealizada = recibirOperacion(*socketCliente);
 		cantidadMaximaSegmentos = config_get_int_value(config, "CANT_SEGMENTOS");
 
-		//log_debug(logger, "Se recibio peticion %d del Kernel", peticionRealizada);
-		//listarHuecosLibres ();
 		switch (peticionRealizada)
 		{
 		case NEWPCB:
@@ -48,11 +43,9 @@ int ejecutarServidorKernel(int *socketCliente)
 	}
 }
 
-void procesarResultado(int resultado, int socketKernel)
-{
+void procesarResultado(int resultado, int socketKernel){
 
-	switch (resultado)
-	{
+	switch (resultado){
 	case SUCCESS:
 		enviarCodOp(SUCCESS, socketKernel);
 		enviarTablaSegmentos(buscarProcesoSegun(peticion->pid));
@@ -64,12 +57,13 @@ void procesarResultado(int resultado, int socketKernel)
 
 	case COMPACTACION:
 		enviarCodOp(COMPACTACION,socketKernel); 
+		recibirMensaje(socketKernel); 
+		compactar();
 		break;
 	}
 }
 
-t_list *crearTablaDeSegmentosInicial()
-{
+t_list *crearTablaDeSegmentosInicial(){
 
 	t_list *tablaDeSegmentos = list_create();
 	list_add(tablaDeSegmentos, (void *)segmento0);
@@ -87,8 +81,7 @@ t_list *crearTablaDeSegmentosInicial()
 	return tablaDeSegmentos;
 }
 
-t_proceso *crearProcesoEnMemoria(uint32_t pid)
-{
+t_proceso *crearProcesoEnMemoria(uint32_t pid){
 
 	t_proceso *procesoNuevo = malloc(sizeof(t_proceso));
 	procesoNuevo->pid = pid;
@@ -99,15 +92,13 @@ t_proceso *crearProcesoEnMemoria(uint32_t pid)
 	return procesoNuevo;
 }
 
-void eliminarProcesoDeMemoria(t_proceso *proceso)
-{
+void eliminarProcesoDeMemoria(t_proceso *proceso){
 	list_remove_element (tablaDeTablasDeSegmentos, (void *) proceso);
 	list_destroy_and_destroy_elements(proceso->tablaDeSegmentosAsociada, free);
 	free(proceso);
 }
 
-void deleteSegment(uint32_t pid, uint32_t segmentId)
-{
+void deleteSegment(uint32_t pid, uint32_t segmentId){
 
 	t_proceso *procesoBuscado = buscarProcesoSegun(pid);
 
@@ -134,8 +125,7 @@ bool direccionMasBaja (void * huecoLibreUno, void * huecoLibreDos) {
 	return (huecoUno->direccionBase < huecoDos->direccionBase); 
 }
 
-void convertirSegmentoEnHuecoLibre(void *segmento)
-{
+void convertirSegmentoEnHuecoLibre(void *segmento){
 
 	t_segmento *aConvertir = (t_segmento *)segmento;
 	if (aConvertir->direccionBase != UINT32_MAX && aConvertir->tamanio != 0)
@@ -168,21 +158,18 @@ void listarHuecosLibres () {
 	}
 }
 
-bool contieneDireccionBaseEnSuTamanio(void *huecoLibre)
-{	
+bool contieneDireccionBaseEnSuTamanio(void *huecoLibre){	
 	t_hueco_libre* unHuecoLibre = (t_hueco_libre*) huecoLibre; 
 	
 	return unHuecoLibre->direccionBase <= direccionBaseSegmento && (unHuecoLibre->direccionBase + unHuecoLibre->tamanioHueco) >= direccionBaseSegmento;
 }
 
-uint32_t maximoEntre(uint32_t unTamanio, uint32_t otroTamanio)
-{
+uint32_t maximoEntre(uint32_t unTamanio, uint32_t otroTamanio){
 
 	return unTamanio >= otroTamanio ? unTamanio : otroTamanio;
 }
 
-void liberarTodosLosSegmentos(uint32_t pid)
-{
+void liberarTodosLosSegmentos(uint32_t pid){
 
 	t_list *tablaDeSegmentos = (buscarProcesoSegun(pid))->tablaDeSegmentosAsociada;
 	if (tablaDeSegmentos != NULL)

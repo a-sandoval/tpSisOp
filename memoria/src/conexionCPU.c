@@ -5,7 +5,6 @@ char* valorDirFisica;
 
 int ejecutarServidorCPU(int * socketCliente){
 
-	//log_debug(logger, "Conectado el CPU.");
 	tiempo = config_get_int_value(config,"RETARDO_MEMORIA");
 
 	while (1) {
@@ -45,7 +44,7 @@ char* leer(int32_t direccionFisica){
 
 void recibirPeticionDeLectura(int socketCPU) {
 
-	int size, desplazamiento=0, pid;
+	int size, desplazamiento=0, pid, tamanio;
 	int32_t direccionFisica;
 
 	void* buffer = recibirBuffer(socketCPU, &size);
@@ -53,8 +52,13 @@ void recibirPeticionDeLectura(int socketCPU) {
 	memcpy(&(pid), buffer + desplazamiento, sizeof(int));
 	desplazamiento += sizeof(uint32_t) + sizeof (int);
 	memcpy(&(direccionFisica), buffer + desplazamiento, sizeof(int32_t));
+	desplazamiento += sizeof(uint32_t) + sizeof(int); 
+	memcpy(&(tamanio),buffer+desplazamiento,sizeof(int)); 
 
 	leer(direccionFisica); 
+
+	log_info(logger, "PID: %d - Acción: %s - Dirección física: %d - Tamaño: %d - Origen: %s", pid, "READ", direccionFisica, tamanio, "CPU");
+
 
 	free (buffer);
 }
@@ -76,27 +80,14 @@ void recibirPeticionDeEscritura(int socketCPU) {
 	memcpy(valorAEscribir,buffer+desplazamiento,sizeof(char)*tamanio);
 	
 
-	//log_debug (logger, "Escribiendo \"%s\" en direccion física %d", valorAEscribir, direccionFisica);
 	escribir(valorAEscribir,direccionFisica);  
 
 
 	log_info(logger, "PID: %d - Acción: %s - Dirección física: %d - Tamaño: %d - Origen: %s", pid, "WRITE", direccionFisica, tamanio, "CPU");
-	//“PID: <PID> - Acción: <LEER / ESCRIBIR> - Dirección física: <DIRECCIÓN_FÍSICA> - Tamaño: <TAMAÑO> - Origen: <CPU / FS>”
 	free (valorAEscribir), free (buffer);
 }
 
 void enviarValorObtenido(int socketCPU){
-	/*
-	t_paquete* paquete = crearPaquete(); 
-	paquete->codigo_operacion=PAQUETE; 
-
-	int32_t valorLength = strlen(valorDirFisica) + 1; 
-
-	//agregarAPaquete(paquete,&valorLength, sizeof(int32_t));
-	agregarAPaquete(paquete,valorDirFisica, sizeof(char)*valorLength); 
-
-	enviarPaquete(paquete,socketCPU); 
-	*/
 	enviarMensaje(valorDirFisica, socketCPU);
 }
 
@@ -105,5 +96,4 @@ void escribir(char* valor, int32_t direccionFisica){
 	usleep(tiempo *1000); 
 	char* punteroADirFisica = espacioDeUsuario + direccionFisica; 
 	strcpy (punteroADirFisica, valor);
-	//log_debug(logger, "%s", (char *)(espacioDeUsuario + direccionFisica));
 }
