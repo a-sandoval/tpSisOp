@@ -2,7 +2,7 @@
 
 t_list *recursos;
 char **nombresRecursos;
-char* segFault = "SEG_FAULT"; 
+char* invalidResource = "INVALID_RESOURCE";
 char* outOfMemory = "OUT_OF_MEMORY";
 estadoProceso estadoAnterior; 
 
@@ -72,7 +72,7 @@ void wait_s(t_pcb *proceso, char **parametros){
 
     if (indexRecurso == -1)
     {
-        exit_s(proceso, "INVALID_RESOURCE"); 
+        exit_s(proceso, &invalidResource); 
         return;
     }
 
@@ -112,7 +112,7 @@ void signal_s(t_pcb *proceso, char **parametros){
     int indexRecurso = indiceRecurso(recurso);
 
     if (indexRecurso == -1){
-        exit_s(proceso, "INVALID_RESOURCE"); 
+        exit_s(proceso, &invalidResource); 
         return;
     }
 
@@ -255,6 +255,8 @@ void fclose_s(t_pcb *proceso, char **parametros){
 
     archivo = obtenerArchivoDeTG(nombreArchivo);
 
+    
+
     if(list_is_empty(archivo->colaBloqueados)){
         //si no hay procesos esperando por el archivo, lo elimino
         list_remove_element(tablaGlobalArchivos, archivo);
@@ -262,13 +264,17 @@ void fclose_s(t_pcb *proceso, char **parametros){
     }
     else{
         // si hay procesos esperando, desbloqueo uno y le asigno el archivo
+        t_archivoProceso* archivoAAsignar = malloc(sizeof(t_archivoProceso));
+        archivoAAsignar->fcb = archivo->fcb;
+        archivoAAsignar->punteroArch = 0;
+
         t_pcb* procesoADesbloquear = (t_pcb*)list_get(archivo->colaBloqueados, 0);
         list_remove(archivo->colaBloqueados, 0);
 
         estadoAnterior = procesoADesbloquear->estado;
         procesoADesbloquear->estado = READY;
-        list_add(procesoADesbloquear->tablaDeArchivos, archivo->fcb);
-        loggearCambioDeEstado(proceso->pid, estadoAnterior,procesoADesbloquear->estado);
+        list_add(procesoADesbloquear->tablaDeArchivos, archivoAAsignar);
+        loggearCambioDeEstado(procesoADesbloquear->pid, estadoAnterior,procesoADesbloquear->estado);
         loggearBloqueoDeProcesos(proceso,nombreArchivo);
         ingresarAReady(procesoADesbloquear);
     }
@@ -286,7 +292,7 @@ void fseek_s(t_pcb *proceso, char **parametros){
 
     if(archivo == NULL){
             log_debug(logger, "Este proceso no puede realizar operaciones sobre este archivo");
-            exit_s(proceso, "INVALID_RESOURCE");
+            exit_s(proceso, &invalidResource);
     }
     else archivo->punteroArch = (uint32_t)puntero;
 
@@ -335,7 +341,7 @@ void fread_s(t_pcb *proceso, char **parametros){
 
     if(archivoProceso == NULL){
             log_debug(logger, "Este proceso no puede realizar operaciones sobre este archivo");
-            exit_s(proceso, "INVALID_RESOURCE");
+            exit_s(proceso, &invalidResource);
     }
     else{
 
@@ -366,7 +372,7 @@ void fwrite_s(t_pcb *proceso, char **parametros){
 
     if(archivoProceso == NULL){
             log_debug(logger, "Este proceso no puede realizar operaciones sobre este archivo");
-            exit_s(proceso, "INVALID_RESOURCE");
+            exit_s(proceso, &invalidResource);
     }
     else{
 
