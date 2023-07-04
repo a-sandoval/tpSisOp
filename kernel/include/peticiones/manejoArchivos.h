@@ -39,6 +39,7 @@ extern int conexionAFS;
 extern t_contexto* contextoEjecucion;
 extern t_list* tablaGlobalArchivos;
 extern pthread_mutex_t mutexFS;
+extern pthread_mutex_t mutexFS;
 extern estadoProceso estadoAnterior; 
 
 t_archivo* solicitarArchivoFS(char* );
@@ -61,5 +62,6 @@ fcb_t * crearFCB ();
 void eliminarArchivoProceso(void* archivo);
 void peticionConBloqueoAFS(t_paquete* peticion, t_pcb* proceso);
 void respuestaPeticionFS();
+void liberarArchivosAsignados(t_pcb* proceso);
 
 #endif

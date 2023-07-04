@@ -12,14 +12,18 @@
 #include "kernel/include/planificacion/planificacion.h"
 #include "kernel/include/planificacion/algoritmosCortoPlazo.h"
 
-extern t_list *recursos;
+
 extern char **nombresRecursos;
-extern t_contexto* contextoEjecucion;
 extern sem_t hayProcesosReady;
 extern int *instanciasRecursos;
 extern int conexionAMemoria; 
 extern int conexionAFS; 
+extern int tiempoIO; 
+extern t_list *recursos;
 extern t_list* tablaGlobalArchivos;
+extern t_list* pcbsEnMemoria;
+extern t_contexto* contextoEjecucion;
+extern pthread_mutex_t mutexCompactacion;
 
 void retornoContexto(t_pcb*, t_contexto*);
 void volverACPU(t_pcb*); 
@@ -32,6 +36,7 @@ void fclose_s(t_pcb*,char **parametros);
 void fseek_s(t_pcb*,char **parametros);
 void fread_s(t_pcb*,char **parametros);
 void fwrite_s(t_pcb*,char **parametros);
+void ftruncate_s(t_pcb *proceso, char **parametros);
 void createSegment_s(t_pcb*,char **parametros);
 void deleteSegment_s(t_pcb*,char **parametros);
 void yield_s(t_pcb*);
@@ -39,7 +44,7 @@ void exit_s(t_pcb*,char **parametros);
 
 
 
-void bloquearIO(int *tiempo);
+void bloquearIO(t_pcb * proceso);
 
 
 void loggearBloqueoDeProcesos(t_pcb*,char* motivo); 

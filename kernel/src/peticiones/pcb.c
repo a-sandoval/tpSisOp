@@ -55,11 +55,13 @@ t_dictionary *crearDiccionarioDeRegistros(){
 void inicializarListasPCBs(){
     pcbsNEW = list_create();
     pcbsREADY = list_create();
+    pcbsEnMemoria = list_create();
 }
 
 void destruirListasPCBs () {
     destruirListaPCB(pcbsNEW);
     destruirListaPCB(pcbsREADY);
+    destruirListaPCB(pcbsEnMemoria);
 }
 
 void destruirListaPCB(t_list *pcbs){
@@ -84,6 +86,20 @@ void agregarPID(void *value){
 void listarPIDS(t_list *pcbs) {
     list_iterate(pcbs, agregarPID);
 }
+
+t_pcb* buscarPID(t_list* listaPCBs, uint32_t pid){
+    int cantProcesos = list_size(listaPCBs); 
+
+    t_pcb* pcb = malloc(sizeof(t_pcb));
+    for(int i=0;i<cantProcesos;i++){
+        
+        pcb = list_get(listaPCBs, i);
+        if(pcb->pid == pid) return pcb;
+    }
+
+    return NULL;
+}
+
 
 
 

@@ -9,5 +9,6 @@
 extern int conexionAMemoria;
 
 void recibirTablaDeSegmentosActualizada(t_pcb* pcb);
+uint32_t recibirPID(int socketCliente) ;
 
 #endif /* MANEJO_SEGMENTOS_H_ */

@@ -3,12 +3,14 @@
 
 #include <stdlib.h>
 #include <string.h> 
+#include <stdint.h> 
 #include <commons/collections/dictionary.h>
 #include <commons/collections/list.h>
 #include <commons/string.h>
 #include <commons/temporal.h>
 #include "shared/include/global.h"
 #include "kernel/include/configuraciones.h"
+
 
 typedef enum estadoProceso{
     NEW, 
@@ -44,6 +46,7 @@ typedef struct {
 
 extern t_list *pcbsNEW;
 extern t_list *pcbsREADY;
+extern t_list *pcbsEnMemoria;
 extern t_log* logger;
 extern int32_t procesosCreados;
 extern char* pidsInvolucrados; 
@@ -97,6 +100,7 @@ t_pcb* desencolar(t_list* pcbs);
 
 void agregarPID(void *value); 
 void listarPIDS(t_list *pcbs); 
+t_pcb* buscarPID(t_list* listaPCBs, uint32_t pid);
 
 
 

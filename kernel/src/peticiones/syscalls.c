@@ -5,8 +5,7 @@ char **nombresRecursos;
 char* invalidResource = "INVALID_RESOURCE";
 char* outOfMemory = "OUT_OF_MEMORY";
 estadoProceso estadoAnterior; 
-
-
+int tiempoIO;
 
 void retornoContexto(t_pcb *proceso, t_contexto *contextoEjecucion){
     switch (contextoEjecucion->motivoDesalojo->comando){
@@ -34,7 +33,7 @@ void retornoContexto(t_pcb *proceso, t_contexto *contextoEjecucion){
         case F_SEEK:
             fseek_s(proceso, contextoEjecucion->motivoDesalojo->parametros);
             break;
-    /*    case F_READ:
+        case F_READ:
             fread_s(proceso, contextoEjecucion->motivoDesalojo->parametros);
             break;
         case F_WRITE:
@@ -43,7 +42,7 @@ void retornoContexto(t_pcb *proceso, t_contexto *contextoEjecucion){
         case F_TRUNCATE:
             ftruncate_s(proceso, contextoEjecucion->motivoDesalojo->parametros);
             break;
-    */
+    
         case CREATE_SEGMENT:
             createSegment_s(proceso, contextoEjecucion->motivoDesalojo->parametros);
             break;
@@ -158,28 +157,29 @@ void io_s(t_pcb *proceso, char **parametros){
     loggearBloqueoDeProcesos(proceso, "IO"); 
     loggearCambioDeEstado(proceso->pid, estadoAnterior, proceso->estado);
     
-    int tiempo = atoi(parametros[0]);
-    log_info(logger,"PID: <%d> - Ejecuta IO: <%d>",proceso->pid,tiempo); 
+    tiempoIO = atoi(parametros[0]);
+    log_info(logger,"PID: <%d> - Ejecuta IO: <%d>",proceso->pid,tiempoIO); 
   
     pthread_t pcb_bloqueado;
 
-    if (!pthread_create(&pcb_bloqueado, NULL, (void *)bloquearIO, (void *)&tiempo)){
-        pthread_join(pcb_bloqueado,NULL);
-        estimacionNuevaRafaga(proceso); 
-        estadoAnterior = proceso->estado;
-        proceso->estado = READY;
-        loggearCambioDeEstado(proceso->pid, estadoAnterior, proceso->estado);
-        ingresarAReady(proceso);
+    if (!pthread_create(&pcb_bloqueado, NULL, (void *)bloquearIO, (void *)proceso)){
+        pthread_detach(pcb_bloqueado);
     } else {
         error("Error en la creacion de hilo para realizar I/O, Abort");
     } 
      
 }
 
-void bloquearIO(int *tiempo){  
+void bloquearIO(t_pcb * proceso){  
        
-    sleep(*tiempo);
-        
+    sleep(tiempoIO);
+    estimacionNuevaRafaga(proceso); 
+    estadoAnterior = proceso->estado;
+    proceso->estado = READY;
+    loggearCambioDeEstado(proceso->pid, estadoAnterior, proceso->estado);
+    ingresarAReady(proceso);
+    
+
 }
 
 void yield_s(t_pcb *proceso){  
@@ -205,11 +205,13 @@ void exit_s(t_pcb* proceso, char **parametros){
         
         liberarRecursosAsignados(proceso);
     }
-   
+    
+    liberarArchivosAsignados(proceso);
     liberarMemoriaPCB(proceso); 
 
+    list_remove_element(pcbsEnMemoria, proceso);
     destruirPCB(proceso); 
-    destroyContextoUnico ();
+    destroyContextoUnico();
     sem_post(&semGradoMultiprogramacion); 
 }
 
@@ -256,7 +258,6 @@ void fclose_s(t_pcb *proceso, char **parametros){
     archivo = obtenerArchivoDeTG(nombreArchivo);
 
     
-
     if(list_is_empty(archivo->colaBloqueados)){
         //si no hay procesos esperando por el archivo, lo elimino
         list_remove_element(tablaGlobalArchivos, archivo);
@@ -357,6 +358,7 @@ void fread_s(t_pcb *proceso, char **parametros){
         loggearCambioDeEstado(proceso->pid, estadoAnterior, proceso->estado);
         loggearBloqueoDeProcesos(proceso, nombreArchivo);
 
+        pthread_mutex_lock(&mutexCompactacion);
         peticionConBloqueoAFS(peticion, proceso);
 
     }
@@ -387,7 +389,8 @@ void fwrite_s(t_pcb *proceso, char **parametros){
         list_add(archivo->colaBloqueados, proceso);
         loggearCambioDeEstado(proceso->pid, estadoAnterior, proceso->estado);
         loggearBloqueoDeProcesos(proceso, nombreArchivo);
-    
+
+        pthread_mutex_lock(&mutexCompactacion);
         peticionConBloqueoAFS(peticion, proceso);
 
     }
@@ -399,7 +402,6 @@ void createSegment_s(t_pcb *proceso, char **parametros){
     int idSegmento = atoi(parametros[0]);
     int tamanio = atoi(parametros[1]);
     
-
     t_paquete* peticion = crearPaquete();
     peticion->codigo_operacion = CREATE_SEGMENT_OP;
 
@@ -426,24 +428,31 @@ void createSegment_s(t_pcb *proceso, char **parametros){
                 break;
         
         case COMPACTACION:
-            // Aca entraria validar que no se este ejecutando FREAD O FWRITE
-
+            
                 log_info(logger, "Compactacion: Se solicito compactacion ");
                 log_info(logger,  "Compactacion: Esperando Fin de Operaciones de FS");
+
+                pthread_mutex_lock(&mutexCompactacion);
+
                 enviarMensaje("Compactacion OK", conexionAMemoria); 
                 int cantidadDeProcesosAActualizar = recibirOperacion(conexionAMemoria); 
 
+                t_pcb* procesoAActualizar = malloc (sizeof(t_pcb));
+                uint32_t pid;
                 for(int i=0;i<cantidadDeProcesosAActualizar; i++) {
-
-                    //Recibir tabla de segmentos actualizada recibe pcb, deberia recibir nomas pid cosa de que pueda hacerlo en forma masiva en este for
+                    
+                    pid = recibirPID(conexionAMemoria);
+                    procesoAActualizar = buscarPID(pcbsEnMemoria, pid);
+                    recibirTablaDeSegmentosActualizada(procesoAActualizar);
                 }
+
+                pthread_mutex_unlock(&mutexCompactacion);
+
                 log_info(logger,  "Se finalizo el proceso de compactacion");
                 
-
-                //Como hubo que compactar vuelve a enviar la misma peticion. Alcanza con esto o hay q llamar a create segment?? es re dudoso porque es recursivo 
+                //Reenvio la peticion para la creacion del segmento
                 enviarPaquete(peticion,conexionAMemoria); 
                 eliminarPaquete (peticion);
-
 
                 break;
     }

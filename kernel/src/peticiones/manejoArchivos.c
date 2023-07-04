@@ -1,8 +1,9 @@
 #include "kernel/include/peticiones/manejoArchivos.h"
 
 t_list* tablaGlobalArchivos;
-extern pthread_mutex_t mutexFS;
 extern estadoProceso estadoAnterior; 
+extern pthread_mutex_t mutexFS;
+extern pthread_mutex_t mutexCompactacion;
 
 void iniciarTablaGlobalDeArchivos(){
     tablaGlobalArchivos = list_create();
@@ -54,9 +55,10 @@ bool estaEnLaTablaGlobal(char* nombreArchivo){
 
     int cantArchivos = list_size(tablaGlobalArchivos);
     t_archivo* archivoAux = malloc(sizeof(t_archivo));
-
+    log_debug (logger, "La tabla global tiene %d archivos!", cantArchivos);
     for(int i=0; i<cantArchivos; i++){
         archivoAux = list_get(tablaGlobalArchivos, i);
+        log_debug (logger, "Encontre este archivo: %s", archivoAux->fcb->nombre);
 
         if(!strcmp(nombreArchivo, archivoAux->fcb->nombre)){
             return true;
@@ -87,6 +89,7 @@ t_archivo* obtenerArchivoDeTG(char* nombreArchivo){
 
     for(int i=0; i<cantArchivos; i++){
         archivoAux=list_get(tablaGlobalArchivos, i);
+        log_debug (logger, "Se encontro el archivo %s.", archivoAux->fcb->nombre);
 
         if(!strcmp(nombreArchivo, archivoAux->fcb->nombre)){
             return archivoAux; 
@@ -263,13 +266,8 @@ void peticionConBloqueoAFS(t_paquete* peticion, t_pcb* proceso){
     eliminarPaquete (peticion);
     pthread_t respuestaFS_h;
 
-    if (!pthread_create(&respuestaFS_h, NULL, (void *)respuestaPeticionFS, NULL)){
-        pthread_join(respuestaFS_h,NULL);
-        estimacionNuevaRafaga(proceso); 
-        estadoAnterior = proceso->estado;
-        proceso->estado = READY;
-        loggearCambioDeEstado(proceso->pid, estadoAnterior, proceso->estado);
-        ingresarAReady(proceso);
+    if (!pthread_create(&respuestaFS_h, NULL, (void *)respuestaPeticionFS, (void*)proceso)){
+        pthread_detach(respuestaFS_h);
     } else {
         error("Error en la creacion de hilo para esperar respuesta del FS, Abort");
     }
@@ -278,17 +276,46 @@ void peticionConBloqueoAFS(t_paquete* peticion, t_pcb* proceso){
 
 }
 
-void respuestaPeticionFS(){
+void respuestaPeticionFS(t_pcb * proceso){
     
     int respuesta = recibirOperacion(conexionAFS);
 
     switch (respuesta){
         case MENSAJE:
             log_debug(logger,"FS termino padre ya te podes desbloquear");
+            pthread_mutex_unlock(&mutexCompactacion);
+            estimacionNuevaRafaga(proceso); 
+            estadoAnterior = proceso->estado;
+            proceso->estado = READY;
+            loggearCambioDeEstado(proceso->pid, estadoAnterior, proceso->estado);
+            ingresarAReady(proceso);
             break;
+        case PAQUETE:
+            fcb_t * archivoActualizado = deserializarFCB();
+            t_archivoProceso* archivo;
+            archivo =  obtenerArchivoDeProceso(proceso, archivoActualizado->nombre);
+            free (archivo->fcb->nombre), free (archivo->fcb);
+            archivo->fcb = archivoActualizado;
+            estimacionNuevaRafaga(proceso); 
+            estadoAnterior = proceso->estado;
+            proceso->estado = READY;
+            loggearCambioDeEstado(proceso->pid, estadoAnterior, proceso->estado);
+            ingresarAReady(proceso);
+            break;
+
         default:
             log_debug(logger,"recibi algo que no era un mensaje volve a probar");
             break;
     }
 
+}
+
+void liberarArchivosAsignados(t_pcb* proceso){
+        int cantArchivos = list_size(proceso->tablaDeArchivos);
+        t_archivoProceso* archivoALiberar = malloc(sizeof(t_archivoProceso));
+
+        for(int i =0;i<cantArchivos; i++){
+            archivoALiberar = list_get(proceso->tablaDeArchivos,i);
+            fclose_s(proceso, &(archivoALiberar->fcb->nombre));
+        }
 }
