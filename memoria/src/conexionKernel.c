@@ -63,7 +63,7 @@ void procesarResultado(int resultado, int socketKernel){
 	}
 }
 
-t_list *crearTablaDeSegmentosInicial(){
+t_list *crearTablaDeSegmentosInicial(uint32_t pid){
 
 	t_list *tablaDeSegmentos = list_create();
 	list_add(tablaDeSegmentos, (void *)segmento0);
@@ -72,6 +72,8 @@ t_list *crearTablaDeSegmentosInicial(){
 	{
 
 		t_segmento *segmentoVacio = malloc(sizeof(t_segmento));
+		
+		segmentoVacio->pid = pid; 
 		segmentoVacio->id = i;
 		segmentoVacio->direccionBase = UINT32_MAX;
 		segmentoVacio->tamanio = 0;
@@ -85,7 +87,7 @@ t_proceso *crearProcesoEnMemoria(uint32_t pid){
 
 	t_proceso *procesoNuevo = malloc(sizeof(t_proceso));
 	procesoNuevo->pid = pid;
-	procesoNuevo->tablaDeSegmentosAsociada = crearTablaDeSegmentosInicial();
+	procesoNuevo->tablaDeSegmentosAsociada = crearTablaDeSegmentosInicial(pid);
 	list_add(tablaDeTablasDeSegmentos, (void *)procesoNuevo);
 	log_info(logger, "Creacion de Proceso PID: %d", procesoNuevo->pid);
 
@@ -112,18 +114,10 @@ void deleteSegment(uint32_t pid, uint32_t segmentId){
 
 	segmentoAEliminar->tamanio = 0;
 
-	//list_replace(procesoBuscado->tablaDeSegmentosAsociada, segmentId, segmentoAEliminar);
-
 	enviarTablaSegmentos(procesoBuscado);
 
-	// Revisar una vez implementemos compactación para incluir ese nuevo segm libre
 }
 
-bool direccionMasBaja (void * huecoLibreUno, void * huecoLibreDos) {
-	t_hueco_libre * huecoUno = (t_hueco_libre * ) huecoLibreUno;
-	t_hueco_libre * huecoDos = (t_hueco_libre * ) huecoLibreDos;
-	return (huecoUno->direccionBase < huecoDos->direccionBase); 
-}
 
 void convertirSegmentoEnHuecoLibre(void *segmento){
 

@@ -35,7 +35,7 @@ ARCHIVOS_KERNEL  := kernel/src/kernel.c \
 					$(KERNEL_PLANIFIACION)/*.c \
                     $(CONFIG) $(UTILS_CLIENTE) $(UTILS_SERVIDOR) $(CONTEXTO_EJECUCION)
 
-ARCHIVOS_MEMORIA := memoria/src/memoria.c memoria/src/conexionCPU.c memoria/src/conexionFS.c memoria/src/conexionKernel.c memoria/src/manejoSegmentacion.c memoria/src/algoritmosAsignacion.c memoria/src/peticiones.c\
+ARCHIVOS_MEMORIA := memoria/src/memoria.c memoria/src/conexionCPU.c memoria/src/conexionFS.c memoria/src/conexionKernel.c memoria/src/manejoSegmentacion.c memoria/src/algoritmosAsignacion.c memoria/src/peticiones.c memoria/src/compactacion.c\
                     $(CONFIG) $(UTILS_CLIENTE)  $(UTILS_SERVIDOR) 
 
 CC := gcc

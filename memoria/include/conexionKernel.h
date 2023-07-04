@@ -23,7 +23,7 @@ extern t_list* tablaDeTablasDeSegmentos;
 extern int sockets[3];
 
 int ejecutarServidorKernel(int*);
-t_list* crearTablaDeSegmentosInicial(); 
+t_list* crearTablaDeSegmentosInicial(uint32_t); 
 void enviarTablaSegmentos(t_proceso* procesoEnMemoria);
 void agregarSegmentoAPaquete(t_paquete* paquete, t_segmento* segmento);
 
@@ -37,8 +37,6 @@ void procesarResultado(int resultado, int socketKernel);
 
 void eliminarProcesoDeMemoria(t_proceso* proceso); 
 void deleteSegment(uint32_t pid, uint32_t segmentId);
-
-bool direccionMasBaja (void * huecoLibreUno, void * huecoLibreDos);
 
 void convertirSegmentoEnHuecoLibre(void* segmentoAEliminar);
 

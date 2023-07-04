@@ -8,6 +8,7 @@ typedef struct {
     uint32_t id;
     uint32_t direccionBase; 
     uint32_t tamanio; 
+    uint32_t pid;
 } t_segmento;
 
 typedef struct {
