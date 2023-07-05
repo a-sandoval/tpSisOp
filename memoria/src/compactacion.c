@@ -8,7 +8,6 @@ void compactar(){
     usleep(config_get_int_value(config,"RETARDO_COMPACTACION") * 1000); 
 
     reubicacionDeSegmentos(); 
-    enviarTablasActualizadas(); 
 }
 
 void reubicacionDeSegmentos() {
@@ -36,6 +35,8 @@ void reubicacionDeSegmentos() {
     list_clean_and_destroy_elements(huecosLibres,free); 
 
     crearUnicoHuecoLibre(nuevaBase); 
+
+    list_destroy_and_destroy_elements(todosLosSegmentos,free); 
 }
 
 void crearUnicoHuecoLibre(uint32_t direccionFinal) {

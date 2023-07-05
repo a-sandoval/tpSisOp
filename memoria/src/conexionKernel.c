@@ -59,6 +59,8 @@ void procesarResultado(int resultado, int socketKernel){
 		enviarCodOp(COMPACTACION,socketKernel); 
 		recibirMensaje(socketKernel); 
 		compactar();
+		enviarCodOp(list_size(tablaDeTablasDeSegmentos),socketKernel); 
+		enviarTablasActualizadas(); 
 		break;
 	}
 }
