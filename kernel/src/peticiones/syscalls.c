@@ -218,7 +218,7 @@ void exit_s(t_pcb* proceso, char **parametros){
 
 void fopen_s(t_pcb *proceso, char **parametros){
 
-    t_archivo* archivo = malloc(sizeof(t_archivo));
+    t_archivo* archivo;
     char* nombreArchivo = parametros[0];
 
     //primero veo si esta en la tabla global
@@ -307,7 +307,7 @@ void ftruncate_s(t_pcb *proceso, char **parametros){
     t_paquete* peticion = crearPaquete();
     t_archivo* archivo = obtenerArchivoDeTG(nombreArchivo);
 
-    log_info(logger, "PID: %d - Archivo: %s - Tamaño: %d",proceso->pid, nombreArchivo, tamanio);
+    log_info(logger, "PID: %d - Archivo: %s - Tamaño: %d",proceso->pid, archivo->fcb->nombre, tamanio);
 
     if(estaAsignadoAlProceso(nombreArchivo, proceso)){
 
@@ -440,9 +440,9 @@ void createSegment_s(t_pcb *proceso, char **parametros){
                 t_pcb* procesoAActualizar = malloc (sizeof(t_pcb));
                 uint32_t pid;
                 for(int i=0;i<cantidadDeProcesosAActualizar; i++) {
-                    
-                    pid = recibirPID(conexionAMemoria);
-                    procesoAActualizar = buscarPID(pcbsEnMemoria, pid);
+                    recibirOperacion (conexionAMemoria);
+                    //pid = recibirPID(conexionAMemoria);
+                    procesoAActualizar = buscarPID(pcbsEnMemoria, proceso->pid);
                     recibirTablaDeSegmentosActualizada(procesoAActualizar);
                 }
 
@@ -451,9 +451,9 @@ void createSegment_s(t_pcb *proceso, char **parametros){
                 log_info(logger,  "Se finalizo el proceso de compactacion");
                 
                 //Reenvio la peticion para la creacion del segmento
-                enviarPaquete(peticion,conexionAMemoria); 
+                //enviarPaquete(peticion,conexionAMemoria); 
                 eliminarPaquete (peticion);
-
+                createSegment_s (proceso, parametros);
                 break;
     }
 }

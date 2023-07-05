@@ -46,7 +46,7 @@ fcb_t* deserializarFCB(){
 
 
 void agregarArchivoATG(t_archivo* nuevoArchivo){
-
+    log_debug (logger, "Se agrega el archivo %s a la tabla global.", nuevoArchivo->fcb->nombre);
     list_add(tablaGlobalArchivos, nuevoArchivo);
 }
 
@@ -291,11 +291,12 @@ void respuestaPeticionFS(t_pcb * proceso){
             ingresarAReady(proceso);
             break;
         case PAQUETE:
-            fcb_t * archivoActualizado = deserializarFCB();
-            t_archivoProceso* archivo;
-            archivo =  obtenerArchivoDeProceso(proceso, archivoActualizado->nombre);
+            fcb_t * fcbActualizado = deserializarFCB();
+            t_archivo * archivoTG = obtenerArchivoDeTG (fcbActualizado->nombre);
+            t_archivoProceso* archivo =  obtenerArchivoDeProceso(proceso, fcbActualizado->nombre);
             free (archivo->fcb->nombre), free (archivo->fcb);
-            archivo->fcb = archivoActualizado;
+            archivoTG->fcb = fcbActualizado;
+            archivo->fcb = fcbActualizado;
             estimacionNuevaRafaga(proceso); 
             estadoAnterior = proceso->estado;
             proceso->estado = READY;

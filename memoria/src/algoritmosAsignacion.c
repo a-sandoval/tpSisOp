@@ -107,8 +107,6 @@ op_code ubicarSegmentosPorBest(t_peticion* peticion){
     for (int i=0;i<list_size(huecosLibres);i++) {
         huecoLibre = ((t_hueco_libre*)list_get(huecosLibres,i));
 
-        //log_debug (logger, "Encontrado el hueco libre en la dirección %d y el tamaño %d.", huecoLibre->direccionBase, huecoLibre->tamanioHueco);
-
         if((huecoLibre->tamanioHueco >= tamanioSegmento) && ((int32_t)huecoLibre->tamanioHueco < tamanioHuecoMenor)){
             huecoAAsignar = huecoLibre;
             tamanioHuecoMenor = huecoAAsignar->tamanioHueco;
@@ -140,12 +138,14 @@ op_code ubicarSegmentosPorWorst(t_peticion* peticion){
 
     uint32_t tamanioSegmento = peticion->segmento->tamanio; 
     t_hueco_libre* huecoLibre; 
-    t_hueco_libre* huecoAAsignar;
+    t_hueco_libre* huecoAAsignar = NULL;
     int indiceHueco;
     uint32_t tamanioHuecoMayor = 0;
 
     for (int i=0;i<list_size(huecosLibres);i++) {
         huecoLibre = ((t_hueco_libre*)list_get(huecosLibres,i));
+
+        log_debug (logger, "Encontrado el hueco libre en la dirección %d y el tamaño %d.", huecoLibre->direccionBase, huecoLibre->tamanioHueco);
 
         if(huecoLibre->tamanioHueco > tamanioHuecoMayor){
             huecoAAsignar = huecoLibre;
@@ -154,7 +154,7 @@ op_code ubicarSegmentosPorWorst(t_peticion* peticion){
         }
     }
 
-    if(huecoAAsignar->tamanioHueco >= tamanioSegmento) {
+    if(huecoAAsignar != NULL && huecoAAsignar->tamanioHueco >= tamanioSegmento) {
         peticion->segmento->direccionBase = huecoAAsignar->direccionBase;
         loggearCreacionDeSegmento(peticion); 
 

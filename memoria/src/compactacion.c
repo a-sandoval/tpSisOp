@@ -23,20 +23,22 @@ void reubicacionDeSegmentos() {
     for (int i = 0; i < list_size(todosLosSegmentos); i++) {
         //Aca iria tambien la parte de escribir donde corresponda las cosas.
         segmento = list_get(todosLosSegmentos, i);
-        actualizarDirecciones(nuevaBase, segmento->direccionBase, segmento->tamanio);
-        segmento->direccionBase = nuevaBase; 
-        nuevaBase += segmento->tamanio;
+        //if (segmento->tamanio) {
+            actualizarDirecciones(nuevaBase, segmento->direccionBase, segmento->tamanio);
+            segmento->direccionBase = nuevaBase; 
+            nuevaBase += segmento->tamanio;
 
-	    log_info(logger, "PID: %d - Segmento: %d - Base: %d - TAMAÑO: %d", segmento->pid, segmento->id, segmento->direccionBase, segmento->tamanio);
+	        log_info(logger, "PID: %d - Segmento: %d - Base: %d - TAMAÑO: %d", segmento->pid, segmento->id, segmento->direccionBase, segmento->tamanio);
 
-        actualizarSegmento(segmento->pid,segmento->id, segmento); 
+            actualizarSegmento(segmento->pid,segmento->id, segmento); 
+        
     }
 
     list_clean_and_destroy_elements(huecosLibres,free); 
 
     crearUnicoHuecoLibre(nuevaBase); 
 
-    list_destroy_and_destroy_elements(todosLosSegmentos,free); 
+    list_destroy(todosLosSegmentos); 
 }
 
 void crearUnicoHuecoLibre(uint32_t direccionFinal) {
@@ -63,7 +65,7 @@ void unificarSegmentos() {
 
         temp1 = (t_proceso*)list_get(tablaDeTablasDeSegmentos,i); 
 
-        for(int j=0; i<list_size(temp1->tablaDeSegmentosAsociada);j++) {
+        for(int j=0; j<list_size(temp1->tablaDeSegmentosAsociada);j++) {
             
             temp2 = (t_segmento*)list_get(temp1->tablaDeSegmentosAsociada,j); 
             list_add_sorted(todosLosSegmentos, (void*)temp2,direccionBaseMenor); 
