@@ -17,7 +17,7 @@ void ejecutarServidor() {
 		int size, longDeNombre, desplazamiento = 0;
 		char * nombreArchivo;
 		fcb_t * nuevoArchivo, * fcbRecibido;
-		uint32_t puntero, tamanio, segmento;
+		uint32_t puntero, tamanio, direccionFisica;
 				usleep (tiempoDeEspera * 1000);
 		void * data = recibirBuffer (socketCliente, &size);
 		switch (cod_op) {
@@ -66,10 +66,10 @@ void ejecutarServidor() {
 				desplazamiento += sizeof (int) + sizeof puntero;
 				memcpy (& (tamanio), data + desplazamiento, sizeof tamanio);
 				desplazamiento += sizeof (int) + sizeof tamanio;
-				memcpy (& (segmento), data + desplazamiento, sizeof segmento);
-				log_info (logger, "Leer Archivo: <%s> - Puntero: <%d> - Memoria: <%d> - Tamaño: <%d>", fcbRecibido->nombre, puntero, segmento, tamanio);
+				memcpy (& (direccionFisica), data + desplazamiento, sizeof direccionFisica);
+				log_info (logger, "Leer Archivo: <%s> - Puntero: <%d> - Memoria: <%d> - Tamaño: <%d>", fcbRecibido->nombre, puntero, direccionFisica, tamanio);
 				char * leido = leerArchivo (fcbRecibido, puntero, tamanio);
-				enviarAMemoria (leido, segmento, tamanio, conexionAMemoria);
+				enviarAMemoria (leido, direccionFisica, tamanio, conexionAMemoria);
 				recibirOperacion (conexionAMemoria);
 				char * mensaje = recibirMensaje (conexionAMemoria);
 				if (!strcmp (mensaje, "Ejecucion correcta :)"))
@@ -83,9 +83,9 @@ void ejecutarServidor() {
 				desplazamiento += sizeof (int) + sizeof puntero;
 				memcpy (& (tamanio), data + desplazamiento, sizeof tamanio);
 				desplazamiento += sizeof (int) + sizeof tamanio;
-				memcpy (& (segmento), data + desplazamiento, sizeof segmento);
-				log_info (logger, "Escribir Archivo: <%s> - Puntero: <%d> - Memoria: <%d> - Tamaño: <%d>", fcbRecibido->nombre, puntero, segmento, tamanio);
-				char * aEscribir = solicitarAMemoria (segmento, tamanio, conexionAMemoria);
+				memcpy (& (direccionFisica), data + desplazamiento, sizeof direccionFisica);
+				log_info (logger, "Escribir Archivo: <%s> - Puntero: <%d> - Memoria: <%d> - Tamaño: <%d>", fcbRecibido->nombre, puntero, direccionFisica, tamanio);
+				char * aEscribir = solicitarAMemoria (direccionFisica, tamanio, conexionAMemoria);
 				if (escribirArchivo (fcbRecibido, aEscribir, tamanio, puntero) < 0)
 					enviarMensaje ("Fallo :(", socketCliente);
 				else enviarMensaje ("Yayayay!", socketCliente);

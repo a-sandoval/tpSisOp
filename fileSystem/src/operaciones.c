@@ -61,7 +61,8 @@ int truncarArchivo (fcb_t * archivo, uint32_t tamanio) {
     if (tamanio > archivo->tamanio) {
         // Si no hay bloques asignados, se le asigna un bloque directo y uno de punteros (indirecto).
         if (!archivo->tamanio) {
-            archivo->ptrDirecto = proximoBloqueLibre (), cantBloquesAsignados++;
+            archivo->ptrDirecto = proximoBloqueLibre (),
+            cantBloquesAsignados++;
             archivo->ptrIndirecto = proximoBloqueLibre ();
             // Si no hay bloques disponibles para asignar, se termina con error.
             if (archivo->ptrDirecto == UINT32_MAX || archivo->ptrIndirecto == UINT32_MAX) return -5;
@@ -121,7 +122,7 @@ char * leerArchivo (fcb_t * archivo, uint32_t puntero, uint32_t tamanio) {
     // Puntero en bloque: Si el puntero es mayor a 64 bytes, se tiene que sacar el resto de la division para saber
     // donde estaria en el bloque inicial.
     uint32_t punteroEnBloque = puntero % tamanioBloques;
-    
+                                                                        
     // Tamaño del primer bloque: Si nada mas se accede a un solo bloque entonces el tamaño va a ser el tamaño del
     // primer bloque, sino va a ser 64 bytes menos el puntero en bloque.
     uint32_t tamanioDelPrimerBloque = 

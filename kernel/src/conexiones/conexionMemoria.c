@@ -40,7 +40,7 @@ void liberarMemoriaPCB(t_pcb* proceso){
     char * nombreAnterior = duplicarNombre(logger);
     logger = cambiarNombre(logger,"Kernel-Memoria");
 
-    log_info(logger, "PID <%d>: Se envia señal para eliminar estructuras en memoria.", proceso->pid);
+    log_debug(logger, "PID <%d>: Se envia señal para eliminar estructuras en memoria.", proceso->pid);
     logger = cambiarNombre(logger, nombreAnterior);
     free (nombreAnterior);
 

@@ -7,6 +7,3 @@ base deadlock error:
 memoria fs:
 	cp ./tuki-pruebas/MEMORIA.config ./cpu.config; ./cpu.out
 
-
-ejemplo:
-	cp ./tuki-pruebas/EJEMPLO.config ./kernel.config; ./kernel.out
