@@ -6,11 +6,10 @@ uint32_t direccionBaseSegmento;
 
 int ejecutarServidorKernel(int *socketCliente){
 
+	cantidadMaximaSegmentos = config_get_int_value(config, "CANT_SEGMENTOS");
 	while (1)
 	{
 		int peticionRealizada = recibirOperacion(*socketCliente);
-		cantidadMaximaSegmentos = config_get_int_value(config, "CANT_SEGMENTOS");
-
 		switch (peticionRealizada)
 		{
 		case NEWPCB:
@@ -57,6 +56,7 @@ void procesarResultado(int resultado, int socketKernel){
 
 	case COMPACTACION:
 		enviarCodOp(COMPACTACION,socketKernel); 
+		recibirOperacion (socketKernel);
 		recibirMensaje(socketKernel); 
 		compactar();
 		enviarCodOp(list_size(tablaDeTablasDeSegmentos),socketKernel); 
@@ -68,7 +68,7 @@ void procesarResultado(int resultado, int socketKernel){
 t_list *crearTablaDeSegmentosInicial(uint32_t pid){
 
 	t_list *tablaDeSegmentos = list_create();
-	list_add(tablaDeSegmentos, (void *)segmento0);
+	list_add_sorted(tablaDeSegmentos, (void *)segmento0, ordenadoPorID);
 
 	for (int i = 1; i < cantidadMaximaSegmentos; i++)
 	{
@@ -80,8 +80,9 @@ t_list *crearTablaDeSegmentosInicial(uint32_t pid){
 		segmentoVacio->direccionBase = UINT32_MAX;
 		segmentoVacio->tamanio = 0;
 
-		list_add(tablaDeSegmentos, (void *)segmentoVacio);
+		list_add_sorted(tablaDeSegmentos, (void *)segmentoVacio, ordenadoPorID);
 	}
+	
 	return tablaDeSegmentos;
 }
 
@@ -150,7 +151,7 @@ void listarHuecosLibres () {
 	t_hueco_libre * temp;
 	for (int i = 0; i < list_size (huecosLibres); i++) {
 		temp = list_get (huecosLibres, i);
-		log_debug (logger, "Encontrado un hueco libre con direccion %d y tamaño %d", temp->direccionBase, temp->tamanioHueco);
+		debug ("Encontrado un hueco libre con direccion %d y tamaño %d", temp->direccionBase, temp->tamanioHueco);
 	}
 }
 

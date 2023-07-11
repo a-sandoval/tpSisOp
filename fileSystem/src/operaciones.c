@@ -55,7 +55,7 @@ int truncarArchivo (fcb_t * archivo, uint32_t tamanio) {
     // Si la cantidad requerida es mayor a la que permite acceder el puntero indirecto y el puntero directo terminar con error.
     if (cantBloquesAAsignar > tamanioBloques / TAMANIO_PUNTERO + 1) return -7;
 
-    //log_debug (logger, "Variables: %d %d %d %d", cantBloquesAsignados, cantBloquesAAsignar, tamanio, archivo->tamanio);
+    //debug ("Variables: %d %d %d %d", cantBloquesAsignados, cantBloquesAAsignar, tamanio, archivo->tamanio);
     
     // Caso 1: Hay que asignar bloques.
     if (tamanio > archivo->tamanio) {
@@ -89,9 +89,9 @@ int truncarArchivo (fcb_t * archivo, uint32_t tamanio) {
         // Eliminar bloques si hay en el puntero indirecto y hasta el anteultimo.
         uint32_t ultBloque = ultimoBloqueDeArchivo (archivo);
         while (cantBloquesAsignados > cantBloquesAAsignar && ultBloque != archivo->ptrDirecto) {
-            //log_debug (logger, "Variables: %d %d %d %d", cantBloquesAsignados, cantBloquesAAsignar, ultBloque, archivo->tamanio);
+            //debug ("Variables: %d %d %d %d", cantBloquesAsignados, cantBloquesAAsignar, ultBloque, archivo->tamanio);
             eliminarBloque (ultBloque);
-            //log_debug (logger, "Bloque %d eliminado.", ultimoBloqueDeArchivo (archivo));
+            //debug ("Bloque %d eliminado.", ultimoBloqueDeArchivo (archivo));
             eliminarPtr (archivo, cantBloquesAsignados - 2);
             cantBloquesAsignados--, archivo->tamanio -= tamanioBloques;
             ultBloque = ultimoBloqueDeArchivo (archivo);
@@ -131,7 +131,7 @@ char * leerArchivo (fcb_t * archivo, uint32_t puntero, uint32_t tamanio) {
     // Por lo tanto el resto de esto por 64 bytes nos va a dar el mismo valor pero dentro del ultimo bloque,
     // que es igual al tamaño del ultimo bloque empezando desde 0.
     uint32_t tamanioDelBloqueFinal = (punteroEnBloque + tamanio) % tamanioBloques + (!punteroEnBloque && !(tamanio % tamanioBloques)) * tamanioBloques;
-    //log_debug (logger, "Variables: %d %d %d %d %d %d", bloqueInicial, bloqueFinal, punteroEnBloque, tamanioDelPrimerBloque, tamanioDelBloqueFinal, tamanio);
+    //debug ("Variables: %d %d %d %d %d %d", bloqueInicial, bloqueFinal, punteroEnBloque, tamanioDelPrimerBloque, tamanioDelBloqueFinal, tamanio);
     char *data = malloc (sizeof (char) * (tamanio + 1));
     data[tamanio] = '\0';
 
@@ -162,7 +162,7 @@ char * leerArchivo (fcb_t * archivo, uint32_t puntero, uint32_t tamanio) {
         for (uint32_t i = 0; i < tamanioDelBloqueFinal; i++) 
             data[i + desplazamiento] = bloques[ptrFinal][i];
     }
-    //log_debug (logger, "Tamaño de data: %ld, data: %s", strlen (data), data);
+    //debug ("Tamaño de data: %ld, data: %s", strlen (data), data);
     return data;
 }
 // Casos de ejemplo:
@@ -197,7 +197,7 @@ int escribirArchivo (fcb_t * archivo, char * data, uint32_t tamanio, uint32_t pu
         for (uint32_t i = 0; i < tamanioDelBloqueFinal; i++) 
             bloques[ptrFinal][i] = data[i + desplazamiento];
     }
-    //log_debug (logger, "Tamaño de data: %ld, data: %s", strlen (data), data);
+    //debug ("Tamaño de data: %ld, data: %s", strlen (data), data);
     return 0;
 }
 
@@ -207,7 +207,7 @@ int asignarBloqueAArchivo (fcb_t * archivo, uint32_t ptr) {
     uint8_t ptrDeconstruido [4] = {
         ptr >> 24, (ptr >> 16) & 255, (ptr >> 8) & 255, ptr & 255
     };
-    //log_debug (logger, "Puntero Deconstruido: %d %d %d %d", ptrDeconstruido[0], ptrDeconstruido[1], ptrDeconstruido[2], ptrDeconstruido[3]);
+    //debug ("Puntero Deconstruido: %d %d %d %d", ptrDeconstruido[0], ptrDeconstruido[1], ptrDeconstruido[2], ptrDeconstruido[3]);
     for (int j = 0; j < 4; j++)
         bloques[archivo->ptrIndirecto][ptrAasignar + j] = (char) ptrDeconstruido[j];
     return 0;
@@ -215,7 +215,7 @@ int asignarBloqueAArchivo (fcb_t * archivo, uint32_t ptr) {
 
 uint32_t ultimoBloqueDeArchivo (fcb_t * archivo) {
     uint32_t ptrEnBloque = espacioParaGuardarPuntero (archivo);
-    //log_debug (logger, "Ultimo puntero utilizado del archivo: %d", ptrEnBloque - TAMANIO_PUNTERO);
+    //debug ("Ultimo puntero utilizado del archivo: %d", ptrEnBloque - TAMANIO_PUNTERO);
     if (ptrEnBloque >= UINT32_MAX - 1) return UINT32_MAX;
     if (ptrEnBloque == 0) return archivo->ptrDirecto;
     return direccionIndirectaAReal (archivo->ptrIndirecto, ptrEnBloque / TAMANIO_PUNTERO - 1);
@@ -223,7 +223,7 @@ uint32_t ultimoBloqueDeArchivo (fcb_t * archivo) {
 
 uint32_t espacioParaGuardarPuntero (fcb_t * archivo) {
     uint32_t bloquesAsignados = CANT_BLOQUES(archivo->tamanio);
-    //log_debug (logger, "Bloques asignados: %d", bloquesAsignados);
+    //debug ("Bloques asignados: %d", bloquesAsignados);
     // Se puede asignar el puntero directo.
     if (bloquesAsignados == 0) return UINT32_MAX - 1;
     // No se puede asignar nada.

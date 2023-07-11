@@ -47,31 +47,23 @@ t_peticion* recibirPeticionCreacionDeSegmento(int socketCliente) {
 	int size, desplazamiento = 0; 
 
 	t_peticion* peticion = malloc(sizeof(t_peticion)); 
-
 	t_segmento* segmentoPedido = malloc(sizeof(t_segmento)); 
 
 	peticion->segmento = segmentoPedido; 
-
 	peticion->segmento->direccionBase = UINT32_MAX; 
 
 	void* buffer = recibirBuffer(socketCliente, &size); 
-
 	desplazamiento += sizeof(int); 
-
 	memcpy(&(peticion->pid), buffer + desplazamiento, sizeof(uint32_t));
-
+	peticion->segmento->pid = peticion->pid;
 	desplazamiento += sizeof(uint32_t) + sizeof (int); 
 
 	memcpy(&(peticion->segmento->id),buffer+desplazamiento,sizeof(uint32_t)); 
-
 	desplazamiento += sizeof(uint32_t) + sizeof (int); 
-
 	memcpy(&(peticion->segmento->tamanio), buffer+desplazamiento,sizeof(uint32_t)); 
 
 	free (buffer);
-
-	//log_debug (logger, "Recibida peticion de PID %d, para la id %d y de tamaño %d", peticion->pid, peticion->segmento->id, peticion->segmento->tamanio);
-
+	debug ("Recibida peticion de PID %d, para la id %d y de tamaño %d", peticion->pid, peticion->segmento->id, peticion->segmento->tamanio);
 	return peticion; 
 
 }
@@ -79,22 +71,17 @@ t_peticion* recibirPeticionCreacionDeSegmento(int socketCliente) {
 void recibirYProcesarPeticionEliminacionSegmento(int socketCliente) {
 
 	int size, desplazamiento = 0; 
-
 	uint32_t pid; 
-
 	uint32_t segmentId; 
 
 	void* buffer = recibirBuffer(socketCliente, &size); 
 
 	desplazamiento += sizeof(int); 
-
 	memcpy(&pid, buffer + desplazamiento, sizeof(uint32_t));
 
 	desplazamiento += sizeof(uint32_t) + sizeof (int); 
-
 	memcpy(&segmentId,buffer+desplazamiento,sizeof(uint32_t)); 
 
 	free (buffer);
-
 	deleteSegment(pid, segmentId); 
 }

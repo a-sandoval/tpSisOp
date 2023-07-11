@@ -28,6 +28,8 @@ void actualizarSegmento(uint32_t,uint32_t, t_segmento*);
 
 bool direccionBaseMenor (void * unSegmento, void * otroSegmento); 
 
+bool ordenadoPorID (void * unSegmento, void * otroSegmento); 
+
 bool direccionMasBaja (void * huecoLibreUno, void * huecoLibreDos); 
 
 void crearUnicoHuecoLibre(uint32_t direccionFinal); 

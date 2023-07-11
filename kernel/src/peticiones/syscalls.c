@@ -225,7 +225,7 @@ void fopen_s(t_pcb *proceso, char **parametros){
     if(estaEnLaTablaGlobal(nombreArchivo)){
             // si esta en la tabla alguien ya lo esta usando y tengo que ponerlo en block
             archivo = obtenerArchivoDeTG(nombreArchivo);
-            log_debug (logger, "Lo encontre!");
+            debug ("Lo encontre!");
             estadoAnterior = proceso->estado;
             proceso->estado = BLOCK;
 
@@ -292,7 +292,7 @@ void fseek_s(t_pcb *proceso, char **parametros){
     t_archivoProceso* archivo = obtenerArchivoDeProceso(proceso, nombreArchivo);
 
     if(archivo == NULL){
-            log_debug(logger, "Este proceso no puede realizar operaciones sobre este archivo");
+            debug ("Este proceso no puede realizar operaciones sobre este archivo");
             exit_s(proceso, &invalidResource);
     }
     else archivo->punteroArch = (uint32_t)puntero;
@@ -341,7 +341,7 @@ void fread_s(t_pcb *proceso, char **parametros){
     t_archivoProceso* archivoProceso = obtenerArchivoDeProceso(proceso, nombreArchivo);
 
     if(archivoProceso == NULL){
-            log_debug(logger, "Este proceso no puede realizar operaciones sobre este archivo");
+            debug ("Este proceso no puede realizar operaciones sobre este archivo");
             exit_s(proceso, &invalidResource);
     }
     else{
@@ -373,7 +373,7 @@ void fwrite_s(t_pcb *proceso, char **parametros){
     t_archivoProceso* archivoProceso = obtenerArchivoDeProceso(proceso, nombreArchivo);
 
     if(archivoProceso == NULL){
-            log_debug(logger, "Este proceso no puede realizar operaciones sobre este archivo");
+            debug ("Este proceso no puede realizar operaciones sobre este archivo");
             exit_s(proceso, &invalidResource);
     }
     else{
@@ -411,6 +411,8 @@ void createSegment_s(t_pcb *proceso, char **parametros){
 
     enviarPaquete(peticion, conexionAMemoria);
 
+    debug ("Test");
+
     int rdoPeticion = recibirOperacion(conexionAMemoria);
 
     switch(rdoPeticion){
@@ -430,7 +432,7 @@ void createSegment_s(t_pcb *proceso, char **parametros){
         case COMPACTACION:
             
                 log_info(logger, "Compactacion: Se solicito compactacion ");
-                log_info(logger,  "Compactacion: Esperando Fin de Operaciones de FS");
+                log_info(logger, "Compactacion: Esperando Fin de Operaciones de FS");
 
                 pthread_mutex_lock(&mutexCompactacion);
 
@@ -440,9 +442,10 @@ void createSegment_s(t_pcb *proceso, char **parametros){
                 t_pcb* procesoAActualizar = malloc (sizeof(t_pcb));
                 uint32_t pid;
                 for(int i=0;i<cantidadDeProcesosAActualizar; i++) {
+                    pid = recibirOperacion(conexionAMemoria);
+                    debug ("%d", pid);
                     recibirOperacion (conexionAMemoria);
-                    //pid = recibirPID(conexionAMemoria);
-                    procesoAActualizar = buscarPID(pcbsEnMemoria, proceso->pid);
+                    procesoAActualizar = buscarPID(pcbsEnMemoria, pid);
                     recibirTablaDeSegmentosActualizada(procesoAActualizar);
                 }
 

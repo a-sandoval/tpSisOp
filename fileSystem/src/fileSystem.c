@@ -90,8 +90,8 @@ int main () {
     //if (retCode < 0) error ("Se creo archivo incorrectamente, codigo de error: %d, error: %s", retCode, strerror(errno));
     fcb_t * pruebaFCB = abrirArchivo ("prueba");
     if (pruebaFCB == NULL) error ("No se pudo abrir el archivo %s.", "prueba");
-    //log_debug (logger, "Test: %d %d %d", bloques[pruebaFCB->ptrIndirecto][3], bloques[pruebaFCB->ptrIndirecto][7], bloques[pruebaFCB->ptrIndirecto][11]);
-    //log_debug (logger, "Test: %d %d %d", direccionIndirectaAReal (pruebaFCB->ptrIndirecto, 0), direccionIndirectaAReal (pruebaFCB->ptrIndirecto, 1), direccionIndirectaAReal (pruebaFCB->ptrIndirecto, 2));
+    //debug ("Test: %d %d %d", bloques[pruebaFCB->ptrIndirecto][3], bloques[pruebaFCB->ptrIndirecto][7], bloques[pruebaFCB->ptrIndirecto][11]);
+    //debug ("Test: %d %d %d", direccionIndirectaAReal (pruebaFCB->ptrIndirecto, 0), direccionIndirectaAReal (pruebaFCB->ptrIndirecto, 1), direccionIndirectaAReal (pruebaFCB->ptrIndirecto, 2));
     
     //retCode = copiarABloque (0, string_repeat ('t', 64), 64);
     //retCode = copiarABloque (2, string_repeat ('e', 64), 64);

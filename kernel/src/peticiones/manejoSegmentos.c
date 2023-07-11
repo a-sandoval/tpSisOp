@@ -28,7 +28,7 @@ void recibirTablaDeSegmentosActualizada(t_pcb* pcb){
         list_add (pcb->tablaDeSegmentos, segmento);
     }
     free (buffer);
-    //log_debug (logger, "Me llegaron %d segmentos, deberian llegar %d.", list_size (pcb->tablaDeSegmentos), tablaDeSegmentosSize);
+    //debug ("Me llegaron %d segmentos, deberian llegar %d.", list_size (pcb->tablaDeSegmentos), tablaDeSegmentosSize);
     desplazamiento += sizeof(int);
 
 }
@@ -39,7 +39,6 @@ uint32_t recibirPID(int socketCliente) {
 	uint32_t pid; 
 
 	void* buffer = recibirBuffer(socketCliente, &size);
-	desplazamiento += sizeof(int);
 	memcpy(&(pid), buffer + desplazamiento, sizeof(uint32_t));
 
 	free (buffer);

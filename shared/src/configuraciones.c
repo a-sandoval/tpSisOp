@@ -54,6 +54,18 @@ FILE * abrir(char *archivo, char *tipoDeArchivo) {
     return codigo;
 }
 
+void debug (char *mensajeFormato, ...) {
+    va_list argumentos;
+    va_start (argumentos, mensajeFormato);
+
+    char *mensajeCompleto = string_from_vformat (mensajeFormato, argumentos);
+
+    log_debug (logger, "%s", mensajeCompleto);
+
+    free (mensajeCompleto);
+
+    va_end (argumentos);
+}
 
 void error (char *mensajeFormato, ...) {
     va_list argumentos;

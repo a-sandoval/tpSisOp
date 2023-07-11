@@ -10,7 +10,7 @@ void enviarContextoActualizado(int socket){
     agregarAPaquete (paquete,(void *)&contextoEjecucion->pid, sizeof(contextoEjecucion->pid));
     agregarAPaquete (paquete,(void *)&contextoEjecucion->programCounter, sizeof(contextoEjecucion->programCounter));
     
-    //log_debug (logger, "%d %d", contextoEjecucion->pid, contextoEjecucion->programCounter);
+    //debug ("%d %d", contextoEjecucion->pid, contextoEjecucion->programCounter);
 
     agregarInstruccionesAPaquete (paquete, contextoEjecucion->instrucciones);
     agregarRegistrosAPaquete(paquete, contextoEjecucion->registrosCPU);
@@ -30,7 +30,7 @@ void agregarTablaDeSegmentosAPaquete(t_paquete* paquete){
     
     //t_segmento * test = (t_segmento *) list_get (contextoEjecucion->tablaDeSegmentos, 0);
 
-    //log_debug (logger, "Test 2: %d %d %d", test->direccionBase, test->id, test->tamanio);
+    //debug ("Test 2: %d %d %d", test->direccionBase, test->id, test->tamanio);
 
     uint32_t i;
     for(i=0;i<contextoEjecucion->tablaDeSegmentosSize;i++){
@@ -74,7 +74,7 @@ void agregarRegistrosAPaquete(t_paquete* paquete, t_dictionary* registrosCPU){
             char* registroConCaracterTerminador = (char*) dictionary_get(registrosCPU, (i) ? longName : name); 
             //string_append(&registroConCaracterTerminador,"\0"); 
             
-            //log_debug (logger, "Agregando a paquete: %s", registroConCaracterTerminador);
+            //debug ("Agregando a paquete: %s", registroConCaracterTerminador);
             agregarAPaquete(paquete, (void*) registroConCaracterTerminador, tamanioActual);
             name[0]++, longName[1]++;
         }
@@ -103,7 +103,7 @@ void recibirContextoActualizado (int socket) {
     memcpy(&(contextoEjecucion->programCounter), buffer+desplazamiento, sizeof(uint32_t));
     desplazamiento += sizeof(contextoEjecucion->programCounter) + sizeof(int);
 
-    //log_debug (logger, "%d %d", contextoEjecucion->pid, contextoEjecucion->programCounter);
+    //debug ("%d %d", contextoEjecucion->pid, contextoEjecucion->programCounter);
 
     deserializarInstrucciones (buffer, &desplazamiento);
     deserializarRegistros (buffer, &desplazamiento);
@@ -137,7 +137,7 @@ void deserializarInstrucciones (void * buffer, int * desplazamiento) {
 
         //Desplazamiento: Linea de instruccion.
         memcpy(valor, buffer + (* desplazamiento), tamanio);
-        //log_debug (logger, "%s", valor);
+        //debug ("%s", valor);
         (* desplazamiento) += tamanio;
         list_add (contextoEjecucion->instrucciones, string_duplicate (valor));
         free (valor);
@@ -161,7 +161,7 @@ void deserializarRegistros (void * buffer, int * desplazamiento) {
             // (Para el ultimo registro pasa a ser el tamaño del comando de desalojo)
             memcpy (temp, buffer + (* desplazamiento), tamanioActual);
             (* desplazamiento) += tamanioActual + sizeof (int);
-            //log_debug (logger, "%s", temp);
+            //debug ("%s", temp);
 
             //char * auxiliar = 
                 //string_substring(temp, 0, tamanioActual - 1); 
@@ -185,7 +185,7 @@ void deserializarTablaDeSegmentos (void * buffer, int * desplazamiento) {
         list_add (contextoEjecucion->tablaDeSegmentos, segmento);
     }
 
-    //log_debug (logger, "Me llegaron %d segmentos.", contextoEjecucion->tablaDeSegmentosSize);
+    //debug ("Me llegaron %d segmentos.", contextoEjecucion->tablaDeSegmentosSize);
     (* desplazamiento) += sizeof(int);
 
 }
@@ -210,7 +210,7 @@ t_segmento* deserializarSegmento(void* buffer, int* desplazamiento){
     memcpy (&(segmento->tamanio), buffer + (* desplazamiento), tamanio);
     (* desplazamiento) += sizeof (uint32_t);
 
-    //log_debug (logger, "Segmento: %d, %d, %d", segmento->id, segmento->direccionBase, segmento->tamanio);
+    //debug ("Segmento: %d, %d, %d", segmento->id, segmento->direccionBase, segmento->tamanio);
 
     return segmento;
 }
@@ -226,7 +226,7 @@ void deserializarMotivoDesalojo (void * buffer, int * desplazamiento) {
     memcpy (&(contextoEjecucion->motivoDesalojo->parametrosLength), buffer + (* desplazamiento), sizeof (uint32_t));
     (* desplazamiento) += sizeof (contextoEjecucion->motivoDesalojo->parametrosLength);
 
-    //log_debug (logger, "Comando: %d, parametros: %d", contextoEjecucion->motivoDesalojo->comando, contextoEjecucion->motivoDesalojo->parametrosLength);
+    //debug ("Comando: %d, parametros: %d", contextoEjecucion->motivoDesalojo->comando, contextoEjecucion->motivoDesalojo->parametrosLength);
 
     for (int i = 0; i < contextoEjecucion->motivoDesalojo->parametrosLength; i++) {
         int tamanioParametro;

@@ -56,7 +56,7 @@ int buscar(char *elemento, char **lista) {
         if (i < string_array_size (lista))
             if (!strcmp (elemento, lista[i]))
                 return i;
-    //    log_debug(logger, "%s", lista[i]);
+    //    debug ("%s", lista[i]);
         i++;
     }
     return (i > string_array_size(lista)) ? -1 : i;
@@ -255,7 +255,7 @@ void mov_in(char* registro, char* direccionLogica){
     recibirOperacion(conexionAMemoria);
     valorAInsertar = recibirMensaje(conexionAMemoria);
     //recibirValor(conexionAMemoria);
-    //log_debug (logger, "%d %s", opCode, valorAInsertar);
+    //debug ("%d %s", opCode, valorAInsertar);
 
     dictionary_remove_and_destroy(contextoEjecucion->registrosCPU, registro, free); 
     dictionary_put(contextoEjecucion->registrosCPU, registro, string_duplicate(valorAInsertar));
@@ -283,7 +283,7 @@ void mov_out(char* direccionLogica, char* registro){
 
     recibirOperacion(conexionAMemoria);
     char * respuesta = recibirMensaje(conexionAMemoria);
-    //log_debug (logger, "%s", respuesta);
+    //debug ("%s", respuesta);
     free (respuesta);
 
     log_info(logger, "PID: %d - Accion: %s - Segmento: %d - Direccion Fisica: %d - Valor: %s", contextoEjecucion->pid, "WRITE", nroSegmento, dirFisica, (char *)valor);

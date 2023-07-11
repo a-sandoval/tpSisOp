@@ -27,7 +27,7 @@ void recibirEstructurasInicialesMemoria(t_pcb* pcb) {
     agregarAPaquete(peticion,(void*)&pcb->pid, sizeof(uint32_t));
     enviarPaquete(peticion, conexionAMemoria); 
     eliminarPaquete (peticion);
-    log_debug(logger, "PID <%d>: Se esta solicitando estructuras iniciales de memoria.", pcb->pid);
+    debug ("PID <%d>: Se esta solicitando estructuras iniciales de memoria.", pcb->pid);
     recibirOperacion (conexionAMemoria);
     recibirTablaDeSegmentosActualizada (pcb);
     logger = cambiarNombre(logger, nombreAnterior);

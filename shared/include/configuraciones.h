@@ -65,6 +65,8 @@
      */
     FILE *abrir (char *archivo, char *tipoDeArchivo);
 
+    void debug (char * mensajeFormato, ...);
+
     /**
      * @fn void error (char *mensajeFormato, ...)
      * Funcion de error para terminar el programa en caso de fallo.

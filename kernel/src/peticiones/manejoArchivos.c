@@ -46,7 +46,7 @@ fcb_t* deserializarFCB(){
 
 
 void agregarArchivoATG(t_archivo* nuevoArchivo){
-    log_debug (logger, "Se agrega el archivo %s a la tabla global.", nuevoArchivo->fcb->nombre);
+    debug ("Se agrega el archivo %s a la tabla global.", nuevoArchivo->fcb->nombre);
     list_add(tablaGlobalArchivos, nuevoArchivo);
 }
 
@@ -55,10 +55,10 @@ bool estaEnLaTablaGlobal(char* nombreArchivo){
 
     int cantArchivos = list_size(tablaGlobalArchivos);
     t_archivo* archivoAux = malloc(sizeof(t_archivo));
-    log_debug (logger, "La tabla global tiene %d archivos!", cantArchivos);
+    debug ("La tabla global tiene %d archivos!", cantArchivos);
     for(int i=0; i<cantArchivos; i++){
         archivoAux = list_get(tablaGlobalArchivos, i);
-        log_debug (logger, "Encontre este archivo: %s", archivoAux->fcb->nombre);
+        debug ("Encontre este archivo: %s", archivoAux->fcb->nombre);
 
         if(!strcmp(nombreArchivo, archivoAux->fcb->nombre)){
             return true;
@@ -89,7 +89,7 @@ t_archivo* obtenerArchivoDeTG(char* nombreArchivo){
 
     for(int i=0; i<cantArchivos; i++){
         archivoAux=list_get(tablaGlobalArchivos, i);
-        log_debug (logger, "Se encontro el archivo %s.", archivoAux->fcb->nombre);
+        debug ("Se encontro el archivo %s.", archivoAux->fcb->nombre);
 
         if(!strcmp(nombreArchivo, archivoAux->fcb->nombre)){
             return archivoAux; 
@@ -105,11 +105,11 @@ t_archivoProceso* obtenerArchivoDeProceso(t_pcb* proceso, char* nombreArchivo){
     int cantArchivos = list_size(proceso->tablaDeArchivos);
     t_archivoProceso* archivoAux = crearArchivoProceso();
 
-    //log_debug (logger, "Se busca en proceso %d el archivo abierto \"%s\", con una cantidad de archivos en lista %d", proceso->pid, nombreArchivo, cantArchivos);
+    //debug ("Se busca en proceso %d el archivo abierto \"%s\", con una cantidad de archivos en lista %d", proceso->pid, nombreArchivo, cantArchivos);
 
     for(int i=0; i<cantArchivos; i++){
         archivoAux = list_get(proceso->tablaDeArchivos, i);
-        //log_debug (logger, "Archivo encontrado: %s", archivoAux->fcb->nombre);
+        //debug ("Archivo encontrado: %s", archivoAux->fcb->nombre);
         if(!strcmp(nombreArchivo, archivoAux->fcb->nombre)){
             return archivoAux; 
         }
@@ -178,7 +178,7 @@ t_archivo* solicitarArchivoFS(char* nombreArchivo){
         case PAQUETE: // el archivo ya existe y solo me lo manda
                     nuevoArchivo->fcb = deserializarFCB();
                     nuevoArchivo->colaBloqueados = list_create();
-                    //log_debug (logger, "Recibido FCB: %s %d %d %d", nuevoArchivo->fcb->nombre, nuevoArchivo->fcb->tamanio, nuevoArchivo->fcb->ptrDirecto, nuevoArchivo->fcb->ptrIndirecto);
+                    //debug ("Recibido FCB: %s %d %d %d", nuevoArchivo->fcb->nombre, nuevoArchivo->fcb->tamanio, nuevoArchivo->fcb->ptrDirecto, nuevoArchivo->fcb->ptrIndirecto);
                     agregarArchivoATG(nuevoArchivo);
                     break;
     }

@@ -33,12 +33,12 @@ int copiarABloque (uint32_t numBloque, char * texto, uint32_t longDeTexto) {
 
 uint32_t direccionIndirectaAReal (uint32_t ptrIndirecto, uint32_t bloqueABuscar) {
     uint8_t direccionDeconstruida[TAMANIO_PUNTERO];
-    //log_debug (logger, "Variables: %d %d %d %d %d", bloqueABuscar * TAMANIO_PUNTERO, bloques[ptrIndirecto][bloqueABuscar * TAMANIO_PUNTERO], bloques[ptrIndirecto][bloqueABuscar * TAMANIO_PUNTERO + 1], bloques[ptrIndirecto][bloqueABuscar * TAMANIO_PUNTERO + 2], bloques[ptrIndirecto][bloqueABuscar * TAMANIO_PUNTERO + 3]);
+    //debug ("Variables: %d %d %d %d %d", bloqueABuscar * TAMANIO_PUNTERO, bloques[ptrIndirecto][bloqueABuscar * TAMANIO_PUNTERO], bloques[ptrIndirecto][bloqueABuscar * TAMANIO_PUNTERO + 1], bloques[ptrIndirecto][bloqueABuscar * TAMANIO_PUNTERO + 2], bloques[ptrIndirecto][bloqueABuscar * TAMANIO_PUNTERO + 3]);
     for (int i = bloqueABuscar * TAMANIO_PUNTERO; i < (int) (bloqueABuscar + 1) * TAMANIO_PUNTERO; i++)
         direccionDeconstruida[i - (bloqueABuscar * TAMANIO_PUNTERO)] = bloques[ptrIndirecto][i];
     uint32_t direccion = 0;
-    //log_debug (logger, "Puntero indirecto: %d | Bloque del puntero %d", ptrIndirecto, bloqueABuscar);
-    //log_debug (logger, "Direccion deconstruida: %d %d %d %d", direccionDeconstruida[0], direccionDeconstruida[1], direccionDeconstruida[2], direccionDeconstruida[3]);
+    //debug ("Puntero indirecto: %d | Bloque del puntero %d", ptrIndirecto, bloqueABuscar);
+    //debug ("Direccion deconstruida: %d %d %d %d", direccionDeconstruida[0], direccionDeconstruida[1], direccionDeconstruida[2], direccionDeconstruida[3]);
     for (int i = 1; i <= TAMANIO_PUNTERO; i++)
         direccion += (direccionDeconstruida[i - 1] << ((TAMANIO_PUNTERO - i) * 8));
     return direccion;
