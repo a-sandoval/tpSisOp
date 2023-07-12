@@ -235,11 +235,13 @@ void fopen_s(t_pcb *proceso, char **parametros){
     }
 
     else{ // si no esta en la tabla, se lo tengo que solicitar al FS y lo asigno porque nadie lo esta usando
+        debug ("tengo que pedirselo al fs");
         archivo = solicitarArchivoFS(nombreArchivo);
         t_archivoProceso* nuevoArchivo = malloc(sizeof(t_archivoProceso));
         nuevoArchivo->fcb = archivo->fcb;
         nuevoArchivo->punteroArch = 0;
         list_add(proceso->tablaDeArchivos,(void*)nuevoArchivo);
+        debug ("asignado");
         volverACPU(proceso);
     }
     
@@ -251,17 +253,15 @@ void fclose_s(t_pcb *proceso, char **parametros){
 
     log_info(logger, "PID: <%d> - Cerrar Archivo: <%s>",proceso->pid, nombreArchivo);
 
-    t_archivo* archivo = malloc(sizeof(t_archivo));
-
     quitarArchivo(proceso, nombreArchivo);
 
-    archivo = obtenerArchivoDeTG(nombreArchivo);
+    t_archivo* archivo = obtenerArchivoDeTG(nombreArchivo);
 
     
-    if(list_is_empty(archivo->colaBloqueados)){
+    if(!list_is_empty(archivo->colaBloqueados)){
         //si no hay procesos esperando por el archivo, lo elimino
-        list_remove_element(tablaGlobalArchivos, archivo);
-        eliminarArchivo (archivo);
+        debug("saco archivo de tg");
+        quitarArchivoTG(nombreArchivo);
     }
     else{
         // si hay procesos esperando, desbloqueo uno y le asigno el archivo
@@ -285,7 +285,6 @@ void fclose_s(t_pcb *proceso, char **parametros){
 void fseek_s(t_pcb *proceso, char **parametros){
     char* nombreArchivo = parametros[0];
     int puntero = atoi(parametros[1]);
-
     
 
     t_archivoProceso* archivo = obtenerArchivoDeProceso(proceso, nombreArchivo);
@@ -306,7 +305,10 @@ void ftruncate_s(t_pcb *proceso, char **parametros){
     char* nombreArchivo = parametros[0];
     int tamanio = atoi(parametros[1]);
     t_paquete* peticion;
+    debug("accesso a tg");
     t_archivo* archivo = obtenerArchivoDeTG(nombreArchivo);
+
+    debug("%s", archivo->fcb->nombre);
 
     log_info(logger, "PID: <%d> - Archivo: <%s> - Tamaño: <%d>",proceso->pid, archivo->fcb->nombre, tamanio);
 

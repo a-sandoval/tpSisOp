@@ -126,7 +126,7 @@ fcb_t * recibirArchivo (void * data, int *desplazamiento) {
 
 int enviarArchivo (fcb_t * archivo, int socket) {
 	t_paquete * paquete = crearPaquete ();
-	agregarAPaquete (paquete, archivo->nombre, (strlen (archivo->nombre) + 1) * sizeof (char));
+	agregarAPaquete (paquete, archivo->nombre, (string_length(archivo->nombre)+1) * sizeof (char));
 	agregarAPaquete (paquete, &(archivo->tamanio), sizeof archivo->tamanio);
 	agregarAPaquete (paquete, &(archivo->ptrDirecto), sizeof archivo->ptrDirecto);
 	agregarAPaquete (paquete, &(archivo->ptrIndirecto), sizeof archivo->ptrIndirecto);

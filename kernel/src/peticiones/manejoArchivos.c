@@ -86,7 +86,8 @@ t_archivo* obtenerArchivoDeTG(char* nombreArchivo){
 
     int cantArchivos = list_size(tablaGlobalArchivos);
     t_archivo* archivoAux = malloc(sizeof(t_archivo));
-
+    debug("%d", cantArchivos);
+    debug("voy a buscar el archivo");
     for(int i=0; i<cantArchivos; i++){
         archivoAux=list_get(tablaGlobalArchivos, i);
         debug ("Se encontro el archivo %s.", archivoAux->fcb->nombre);
@@ -125,7 +126,7 @@ t_archivoProceso * crearArchivoProceso () {
 }
 
 void quitarArchivo(t_pcb* proceso, char* nombreArchivo){
-    int cantArchivos = list_size(tablaGlobalArchivos);
+    int cantArchivos = list_size(proceso->tablaDeArchivos);
     t_archivoProceso* archivoAux = malloc(sizeof(t_archivoProceso));
 
     for(int i=0; i<cantArchivos; i++){
@@ -133,11 +134,28 @@ void quitarArchivo(t_pcb* proceso, char* nombreArchivo){
 
         if(!strcmp(nombreArchivo, archivoAux->fcb->nombre)){
             list_remove(proceso->tablaDeArchivos,i);
-            archivoAux->fcb = NULL;
             free (archivoAux);
             return;
         }
     }
+
+}
+
+void quitarArchivoTG(char* nombreArchivo){
+    int cantArchivos = list_size(tablaGlobalArchivos);
+    t_archivo* archivoAux = malloc(sizeof(t_archivo));
+
+    for(int i=0; i<cantArchivos; i++){
+        archivoAux=list_get(tablaGlobalArchivos, i);
+
+        if(!strcmp(nombreArchivo, archivoAux->fcb->nombre)){
+            list_remove(tablaGlobalArchivos,i);
+            eliminarArchivo (archivoAux);
+            return;
+        }
+    }
+
+
 
 }
 
@@ -152,6 +170,7 @@ t_archivo* solicitarArchivoFS(char* nombreArchivo){
 
 
     peticion->codigo_operacion = FOPEN;
+
     agregarAPaquete(peticion, nombreArchivo, sizeof(char)*strlen(nombreArchivo) + 1);
 
     pthread_mutex_lock(&mutexFS);
@@ -161,20 +180,26 @@ t_archivo* solicitarArchivoFS(char* nombreArchivo){
     eliminarPaquete (peticion);
 
     int respuesta = recibirOperacion(conexionAFS);
-
+    debug("%d", respuesta);
     switch (respuesta){
         case MENSAJE: // en este caso el archivo no existe y tiene que crearlo
+        debug("creo archivo %s", nombreArchivo);
+                    recibirMensaje(conexionAFS);
                     peticion = crearPaquete ();
                     peticion->codigo_operacion = FCREATE; // se sobreentiende que es con tamanio 0
                     agregarAPaquete(peticion, nombreArchivo, sizeof(char)*strlen(nombreArchivo) + 1);
                     enviarPaquete(peticion, conexionAFS);
                     eliminarPaquete (peticion);
-                    recibirOperacion (conexionAFS);
+
+                    int operacion;
+                    operacion = recibirOperacion (conexionAFS);
+                    debug("%d", operacion);
                     nuevoArchivo->fcb = deserializarFCB();
                     nuevoArchivo->colaBloqueados = list_create();
                     agregarArchivoATG(nuevoArchivo);
                     break;
         case PAQUETE: // el archivo ya existe y solo me lo manda
+        debug("ya esxiste el archivo %s", nombreArchivo);
                     nuevoArchivo->fcb = deserializarFCB();
                     nuevoArchivo->colaBloqueados = list_create();
                     //debug ("Recibido FCB: %s %d %d %d", nuevoArchivo->fcb->nombre, nuevoArchivo->fcb->tamanio, nuevoArchivo->fcb->ptrDirecto, nuevoArchivo->fcb->ptrIndirecto);
@@ -222,7 +247,7 @@ t_paquete* crearPeticionDeEscrituraDeArchivo(t_archivoProceso* archivo, uint32_t
     t_paquete* peticion = crearPaquete();
     peticion->codigo_operacion = FWRITE;
 
-    agregarAPaquete(peticion, (void*)fcb->nombre, sizeof(char) * string_length(fcb->nombre));
+    agregarAPaquete(peticion, (void*)fcb->nombre, sizeof(char) * (string_length(fcb->nombre)+1));
     agregarAPaquete(peticion, &(fcb->tamanio), sizeof(uint32_t));
     agregarAPaquete(peticion, &(fcb->ptrDirecto), sizeof(uint32_t));
     agregarAPaquete(peticion, &(fcb->ptrIndirecto), sizeof(uint32_t));
@@ -254,7 +279,7 @@ void eliminarArchivo(t_archivo* archivo){
     //espero que esto este bien
     free(archivo->fcb->nombre);
     free(archivo->fcb);
-    destruirListaPCB(archivo->colaBloqueados);
+    list_destroy(archivo->colaBloqueados); //se supone que no hay pcbs asi que la destruyo de una
     free(archivo);
 }
 
@@ -281,6 +306,7 @@ void respuestaPeticionFS(t_pcb * proceso){
 
     switch (respuesta){
         case MENSAJE:
+            recibirMensaje(conexionAFS);
             log_debug(logger,"FS termino padre ya te podes desbloquear");
             pthread_mutex_unlock(&mutexCompactacion);
             estimacionNuevaRafaga(proceso); 

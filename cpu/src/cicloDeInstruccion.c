@@ -326,7 +326,7 @@ uint32_t mmu(char* direccionLogica, int tamValor){
     }
     
     else{
-        log_info(logger, "PID: <%d> - Error SEG_FAULT - Segmento: <%d> - Offset: <%d> - Tamaño: <%s>", contextoEjecucion->pid, nroSegmento, desplazamiento, tamValor);
+        log_info(logger, "PID: <%d> - Error SEG_FAULT - Segmento: <%d> - Offset: <%d> - Tamaño: <%d>", contextoEjecucion->pid, nroSegmento, desplazamiento, tamValor);
         char * terminado = string_duplicate ("SEG_FAULT");
         destruirTemporizador(rafagaCPU);
         modificarMotivoDesalojo (EXIT, 1, terminado, "", "");
