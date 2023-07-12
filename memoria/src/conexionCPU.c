@@ -1,7 +1,7 @@
 #include "memoria/include/conexionCPU.h"
 
 int tiempo;
-char* valorDirFisica; 
+char* valorLeido; 
 
 int ejecutarServidorCPU(int * socketCliente){
 
@@ -15,7 +15,6 @@ int ejecutarServidorCPU(int * socketCliente){
 			case READ:
 				recibirPeticionDeLectura(*socketCliente);
 				enviarValorObtenido(*socketCliente); 
-				log_info(logger, "Solicitud de lectura");
 				break;
 			case WRITE:
 				recibirPeticionDeEscritura(*socketCliente);
@@ -32,14 +31,18 @@ int ejecutarServidorCPU(int * socketCliente){
 	}
 } 
 
-char* leer(int32_t direccionFisica){
-	
-	usleep(tiempo *1000); 
+char* leer(int32_t direccionFisica,int tamanio) {
 
-	valorDirFisica = espacioDeUsuario + direccionFisica; 
+	usleep(tiempo*1000); 
 
-	return valorDirFisica; 
+	char* punteroDireccionFisica = espacioDeUsuario + direccionFisica; 
+
+	char* valor = malloc(sizeof(char)*tamanio); 
 	
+	memcpy(valor, punteroDireccionFisica, tamanio);
+
+	return valor; 
+
 }
 
 void recibirPeticionDeLectura(int socketCPU) {
@@ -55,12 +58,11 @@ void recibirPeticionDeLectura(int socketCPU) {
 	desplazamiento += sizeof(uint32_t) + sizeof(int); 
 	memcpy(&(tamanio),buffer+desplazamiento,sizeof(int)); 
 
-	tamanio--; 
-
-	leer(direccionFisica); 
+	valorLeido = leer(direccionFisica, tamanio); 
+	valorLeido = realloc (valorLeido, tamanio + 1);
+	valorLeido[tamanio] = '\0';
 
 	log_info(logger, "PID: %d - Acción: %s - Dirección física: %d - Tamaño: %d - Origen: %s", pid, "READ", direccionFisica, tamanio, "CPU");
-
 
 	free (buffer);
 }
@@ -82,20 +84,25 @@ void recibirPeticionDeEscritura(int socketCPU) {
 	memcpy(valorAEscribir,buffer+desplazamiento,sizeof(char)*tamanio);
 	
 
-	escribir(valorAEscribir,direccionFisica);  
+	escribir(valorAEscribir,direccionFisica, tamanio);  
 
 
 	log_info(logger, "PID: %d - Acción: %s - Dirección física: %d - Tamaño: %d - Origen: %s", pid, "WRITE", direccionFisica, tamanio, "CPU");
-	free (valorAEscribir), free (buffer);
+	free (buffer);
 }
 
 void enviarValorObtenido(int socketCPU){
-	enviarMensaje(valorDirFisica, socketCPU);
+	
+	enviarMensaje(valorLeido, socketCPU);
 }
 
-void escribir(char* valor, int32_t direccionFisica){
+void escribir(char* valor, int32_t direccionFisica, int tamanio){
 	
-	usleep(tiempo *1000); 
+	usleep(tiempo*1000); 
+
 	char* punteroADirFisica = espacioDeUsuario + direccionFisica; 
-	strcpy (punteroADirFisica, valor);
+
+	memcpy(punteroADirFisica, valor, tamanio);
+
+	free(valor); 
 }

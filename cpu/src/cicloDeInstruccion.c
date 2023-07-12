@@ -252,8 +252,10 @@ void mov_in(char* registro, char* direccionLogica){
 
     char* valorAInsertar;
     uint32_t tamRegistro = (uint32_t)obtenerTamanioReg(registro);
-    uint32_t dirFisica = mmu(direccionLogica, tamRegistro);
+    uint32_t dirFisica = UINT32_MAX;
+    dirFisica = mmu(direccionLogica, tamRegistro);
 
+    if(dirFisica!=UINT32_MAX){
     t_paquete* peticion = crearPaquete();
     peticion->codigo_operacion = READ;
     agregarAPaquete(peticion,&contextoEjecucion->pid, sizeof(uint32_t));
@@ -272,6 +274,7 @@ void mov_in(char* registro, char* direccionLogica){
     
     log_info(logger, "PID: %d - Accion: %s - Segmento: %d - Direccion Fisica: %d - Valor: %s", contextoEjecucion->pid, "LEER", nroSegmento, dirFisica, valorAInsertar);
     free (valorAInsertar);
+    }
 };
 
 void mov_out(char* direccionLogica, char* registro){
@@ -279,8 +282,10 @@ void mov_out(char* direccionLogica, char* registro){
     void * valor = dictionary_get(contextoEjecucion->registrosCPU, registro);
     int tamRegistro = obtenerTamanioReg(registro);
 
-    uint32_t dirFisica = mmu(direccionLogica, tamRegistro);
+    uint32_t dirFisica = UINT32_MAX;
+    dirFisica = mmu(direccionLogica, tamRegistro);
 
+    if(dirFisica != UINT32_MAX){    
     t_paquete* peticion = crearPaquete();
     peticion->codigo_operacion = WRITE;
 
@@ -297,6 +302,7 @@ void mov_out(char* direccionLogica, char* registro){
     free (respuesta);
 
     log_info(logger, "PID: %d - Accion: %s - Segmento: %d - Direccion Fisica: %d - Valor: %s", contextoEjecucion->pid, "WRITE", nroSegmento, dirFisica, (char *)valor);
+    }
 };  
 
 
@@ -308,19 +314,29 @@ uint32_t mmu(char* direccionLogica, int tamValor){
     nroSegmento = floor(dirLogica/tamMaxSegmento);
     uint32_t desplazamiento = dirLogica % tamMaxSegmento;
 
-    t_segmento* segmento = list_get(contextoEjecucion->tablaDeSegmentos, nroSegmento);
+    log_debug(logger, "nrosegmento: %d", nroSegmento);
+    log_debug(logger, "desplazamiento: %d", desplazamiento);
+    log_debug(logger, "tamvalor: %d", tamValor);
+
+    t_segmento* segmento = (t_segmento*)list_get(contextoEjecucion->tablaDeSegmentos, nroSegmento);
     
     uint32_t base = segmento->direccionBase;
     
-    if(desplazamiento + tamValor > segmento->tamanio){
-        char * terminado = string_duplicate ("SEG_FAULT");
-        modificarMotivoDesalojo (EXIT, 1, terminado, "", "");
-        enviarContextoActualizado(socketCliente);
-        free (terminado);
+    if((desplazamiento + tamValor) < (segmento->tamanio)){
+        dirFisica = base + desplazamiento;
+        return dirFisica;
     }
     
-    dirFisica = base + desplazamiento;
-    return dirFisica;
+    else{
+        debug ("Abrazo Virtual");
+        char * terminado = string_duplicate ("SEG_FAULT");
+        destruirTemporizador(rafagaCPU);
+        modificarMotivoDesalojo (EXIT, 1, terminado, "", "");
+        enviarContextoActualizado(socketCliente);
+        contextoEjecucion->programCounter = contextoEjecucion->instruccionesLength;
+        free (terminado);
+        return UINT32_MAX; 
+    }
 
 }
 

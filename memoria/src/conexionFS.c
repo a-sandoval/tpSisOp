@@ -1,5 +1,6 @@
 #include "memoria/include/conexionFS.h"
 
+char* valor;
 
 int ejecutarServidorFS(int *socketCliente){
 
@@ -14,10 +15,12 @@ int ejecutarServidorFS(int *socketCliente){
 			case READ:
 				log_debug (logger, "Solicitud de lectura");
 				recibirPeticionDeLecturaFS(*socketCliente); 
+				enviarMensaje(valor,*socketCliente); 
 				break;
 			case WRITE:
                 log_debug (logger, "Solicitud de escritura");
 				recibirPeticionDeEscrituraFS(*socketCliente); 
+				enviarMensaje("Ejecucion correcta :)", *socketCliente); 
 				break;
 			case -1:
 				log_warning (logger, "El File System se desconecto");
@@ -31,7 +34,6 @@ int ejecutarServidorFS(int *socketCliente){
 }
 
 //FREAD
-
 void recibirPeticionDeLecturaFS(int socketFS) {
 
 	int size, desplazamiento=0, pid, tamanio;
@@ -45,25 +47,16 @@ void recibirPeticionDeLecturaFS(int socketFS) {
 	desplazamiento += sizeof(uint32_t) + sizeof(int); 
 	memcpy(&(tamanio),buffer+desplazamiento,sizeof(int)); 
 
-	tamanio--; 
-
-	leer_fs(direccionFisica); 
+	valor = leer_fs(direccionFisica, tamanio); 
+	valor = realloc (valor, tamanio + 1);
+	valor[tamanio] = '\0';
 
 	log_info(logger, "PID: %d - Acción: %s - Dirección física: %d - Tamaño: %d - Origen: %s", pid, "READ", direccionFisica, tamanio, "FS");
 
 	free (buffer);
 }
 
-
-char* leer_fs(int32_t direccionFisica) {
-	usleep(tiempo *1000); 
-	char* valorDirFisica = espacioDeUsuario + direccionFisica; 
-	return valorDirFisica; 
-}
-
-/* VERSION POSTA DE LEER Y ESCRIBIR TANTO PARA CPU COMO FS 
-
-char* leer(int32_t direccionFisica,int tamanio) {
+char* leer_fs(int32_t direccionFisica,int tamanio) {
 
 	usleep(tiempo*1000); 
 
@@ -87,7 +80,6 @@ void escribir_fs(char* valor, int32_t direccionFisica, int tamanio){
 }
 
 
-*/
 //FWRITE
 
 void recibirPeticionDeEscrituraFS(int socketFS){
@@ -104,22 +96,14 @@ void recibirPeticionDeEscrituraFS(int socketFS){
 	memcpy (&(tamanio), buffer + desplazamiento, sizeof tamanio);
 	desplazamiento += sizeof tamanio;
 	char* valorAEscribir = malloc (sizeof (char) * tamanio);
-	memcpy(valorAEscribir,buffer+desplazamiento,sizeof(char)*tamanio);
-	
-	tamanio--; 
+	memcpy(valorAEscribir,buffer+desplazamiento,sizeof(char)*tamanio); 
 
-	escribir_fs(valorAEscribir, direccionFisica); 
+	escribir_fs(valorAEscribir, direccionFisica, tamanio); 
 
 	log_info(logger, "PID: %d - Acción: %s - Dirección física: %d - Tamaño: %d - Origen: %s", pid, "WRITE", direccionFisica, tamanio, "FS");
 
 	free (buffer);
-}
 
-void escribir_fs(char* valor, int32_t direccionFisica) {
-
-	usleep(tiempo *1000); 
-	char* punteroADirFisica = espacioDeUsuario + direccionFisica; 
-	strcpy (punteroADirFisica, valor); 
-
+	free(valorAEscribir); 
 }
 

@@ -334,7 +334,7 @@ void fread_s(t_pcb *proceso, char **parametros){
     char* nombreArchivo = parametros[0];
     uint32_t dirFisica = (uint32_t)atoi(parametros[1]);
     uint32_t bytes = (uint32_t)atoi(parametros[2]);
-    t_paquete* peticion = crearPaquete();
+    t_paquete* peticion;
     t_archivo* archivo = obtenerArchivoDeTG(nombreArchivo); //este lo necesito por la cola de bloqueo
     t_archivoProceso* archivoProceso = obtenerArchivoDeProceso(proceso, nombreArchivo);
 
@@ -347,7 +347,8 @@ void fread_s(t_pcb *proceso, char **parametros){
         log_info(logger, "PID: %d - Leer Archivo: %s - Puntero %d - Dirección Memoria %d - Tamanio %d",proceso->pid, nombreArchivo, archivoProceso->punteroArch, dirFisica, archivo->fcb->tamanio);
 
         peticion = crearPeticionDeLecturaDeArchivo(archivoProceso, dirFisica, bytes);
-
+        agregarAPaquete(peticion, &(proceso->pid), sizeof(uint32_t));
+        
         //bloqueo al proceso, agregandolo a la lista de bloqueados correspondiente a ese archivo
         estadoAnterior = proceso->estado;
         proceso->estado = BLOCK;
@@ -366,7 +367,7 @@ void fwrite_s(t_pcb *proceso, char **parametros){
     char* nombreArchivo = parametros[0];
     uint32_t dirFisica = (uint32_t)atoi(parametros[1]);
     uint32_t bytes = (uint32_t)atoi(parametros[2]);
-    t_paquete* peticion = crearPaquete();
+    t_paquete* peticion;
     t_archivo* archivo = obtenerArchivoDeTG(nombreArchivo);
     t_archivoProceso* archivoProceso = obtenerArchivoDeProceso(proceso, nombreArchivo);
 
@@ -379,6 +380,7 @@ void fwrite_s(t_pcb *proceso, char **parametros){
         log_info(logger, "PID: %d - Escribir Archivo: %s - Puntero %d - Dirección Memoria %d - Tamanio %d",proceso->pid, nombreArchivo, archivoProceso->punteroArch, dirFisica, archivo->fcb->tamanio);
 
         peticion = crearPeticionDeEscrituraDeArchivo(archivoProceso, dirFisica, bytes);
+        agregarAPaquete(peticion, &(proceso->pid), sizeof(uint32_t));
 
         //bloqueo al proceso, agregandolo a la lista de bloqueados correspondiente a ese archivo
         estadoAnterior = proceso->estado;
@@ -408,8 +410,6 @@ void createSegment_s(t_pcb *proceso, char **parametros){
     agregarAPaquete(peticion, &(tamanio), sizeof(uint32_t));
 
     enviarPaquete(peticion, conexionAMemoria);
-
-    debug ("Test");
 
     int rdoPeticion = recibirOperacion(conexionAMemoria);
 

@@ -17,7 +17,7 @@ void ejecutarServidor() {
 		int size, longDeNombre, desplazamiento = 0;
 		char * nombreArchivo;
 		fcb_t * nuevoArchivo, * fcbRecibido;
-		uint32_t puntero, tamanio, direccionFisica;
+		uint32_t puntero, tamanio, direccionFisica, pid;
 				usleep (tiempoDeEspera * 1000);
 		void * data = recibirBuffer (socketCliente, &size);
 		switch (cod_op) {
@@ -67,9 +67,11 @@ void ejecutarServidor() {
 				memcpy (& (tamanio), data + desplazamiento, sizeof tamanio);
 				desplazamiento += sizeof (int) + sizeof tamanio;
 				memcpy (& (direccionFisica), data + desplazamiento, sizeof direccionFisica);
+				desplazamiento += sizeof (int) + sizeof direccionFisica;
+				memcpy (& (pid), data + desplazamiento, sizeof pid);
 				log_info (logger, "Leer Archivo: <%s> - Puntero: <%d> - Memoria: <%d> - Tamaño: <%d>", fcbRecibido->nombre, puntero, direccionFisica, tamanio);
 				char * leido = leerArchivo (fcbRecibido, puntero, tamanio);
-				enviarAMemoria (leido, direccionFisica, tamanio, conexionAMemoria);
+				enviarAMemoria (leido, direccionFisica, tamanio, conexionAMemoria, pid);
 				recibirOperacion (conexionAMemoria);
 				char * mensaje = recibirMensaje (conexionAMemoria);
 				if (!strcmp (mensaje, "Ejecucion correcta :)"))
@@ -84,8 +86,10 @@ void ejecutarServidor() {
 				memcpy (& (tamanio), data + desplazamiento, sizeof tamanio);
 				desplazamiento += sizeof (int) + sizeof tamanio;
 				memcpy (& (direccionFisica), data + desplazamiento, sizeof direccionFisica);
+				desplazamiento += sizeof (int) + sizeof direccionFisica;
+				memcpy (& (pid), data + desplazamiento, sizeof pid);
 				log_info (logger, "Escribir Archivo: <%s> - Puntero: <%d> - Memoria: <%d> - Tamaño: <%d>", fcbRecibido->nombre, puntero, direccionFisica, tamanio);
-				char * aEscribir = solicitarAMemoria (direccionFisica, tamanio, conexionAMemoria);
+				char * aEscribir = solicitarAMemoria (direccionFisica, tamanio, conexionAMemoria, pid);
 				if (escribirArchivo (fcbRecibido, aEscribir, tamanio, puntero) < 0)
 					enviarMensaje ("Fallo :(", socketCliente);
 				else enviarMensaje ("Yayayay!", socketCliente);

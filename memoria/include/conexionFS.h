@@ -14,12 +14,10 @@ extern t_log* logger;
 extern void* espacioDeUsuario; 
 
 void recibirPeticionDeLecturaFS(int socketFS);
-char* leer_fs(int32_t direccionFisica);
+char* leer_fs(int32_t direccionFisica, int tamanio);
 void recibirPeticionDeEscrituraFS(int socketFS);
-void escribir_fs(char* valor, int32_t direccionFisica);
+void escribir_fs(char* valor, int32_t direccionFisica, int tamanio);
 
-// char* leer_fs(int32_t direccionFisica, int tamanio);
-// void escribir_fs(char* valor, int32_t direccionFisica, int tamanio);
 
 extern int tiempo; 
 

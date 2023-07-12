@@ -20,7 +20,7 @@ extern t_log* logger;
 extern t_log* loggerError; 
 
 
-char* leer(int32_t direccionFisica); 
+char* leer(int32_t direccionFisica, int tamanio); 
 
 void recibirPeticionDeLectura(int socketCPU);
 
@@ -28,7 +28,7 @@ void recibirPeticionDeEscritura(int socketCPU);
 
 void enviarValorObtenido(int socketCPU); 
 
-void escribir(char* valor, int32_t direccionFisica);
+void escribir(char* valor, int32_t direccionFisica, int tamanio);
 
 #endif 
 
