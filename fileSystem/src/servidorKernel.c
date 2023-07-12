@@ -81,6 +81,7 @@ void ejecutarServidor() {
 
 			case FWRITE:
 				fcbRecibido = recibirArchivo (data, &(desplazamiento));
+				desplazamiento += sizeof (int);
 				memcpy (& (puntero), data + desplazamiento, sizeof puntero);
 				desplazamiento += sizeof (int) + sizeof puntero;
 				memcpy (& (tamanio), data + desplazamiento, sizeof tamanio);

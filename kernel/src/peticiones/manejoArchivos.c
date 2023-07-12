@@ -1,9 +1,11 @@
 #include "kernel/include/peticiones/manejoArchivos.h"
 
 t_list* tablaGlobalArchivos;
+t_list* listaParaHilo; 
 extern estadoProceso estadoAnterior; 
 extern pthread_mutex_t mutexFS;
 extern pthread_mutex_t mutexCompactacion;
+
 
 void iniciarTablaGlobalDeArchivos(){
     tablaGlobalArchivos = list_create();
@@ -168,7 +170,6 @@ t_archivo* solicitarArchivoFS(char* nombreArchivo){
     nuevoArchivo->fcb = malloc (sizeof (fcb_t));
     nuevoArchivo->fcb->nombre = nombreArchivo;
 
-
     peticion->codigo_operacion = FOPEN;
 
     agregarAPaquete(peticion, nombreArchivo, sizeof(char)*strlen(nombreArchivo) + 1);
@@ -202,6 +203,7 @@ t_archivo* solicitarArchivoFS(char* nombreArchivo){
         debug("ya esxiste el archivo %s", nombreArchivo);
                     nuevoArchivo->fcb = deserializarFCB();
                     nuevoArchivo->colaBloqueados = list_create();
+                    debug("Tengo esta cantidad de elementos bloqueados %d",list_size(nuevoArchivo->colaBloqueados)); 
                     //debug ("Recibido FCB: %s %d %d %d", nuevoArchivo->fcb->nombre, nuevoArchivo->fcb->tamanio, nuevoArchivo->fcb->ptrDirecto, nuevoArchivo->fcb->ptrIndirecto);
                     agregarArchivoATG(nuevoArchivo);
                     break;
@@ -283,11 +285,14 @@ void eliminarArchivo(t_archivo* archivo){
     free(archivo);
 }
 
-void peticionConBloqueoAFS(t_paquete* peticion, t_pcb* proceso){
+void peticionConBloqueoAFS(t_paquete* peticion, t_pcb* proceso, t_list* colaBloqueados){
 
     pthread_mutex_lock(&mutexFS);
     enviarPaquete(peticion, conexionAFS);
     eliminarPaquete (peticion);
+
+    listaParaHilo = colaBloqueados; 
+
     pthread_t respuestaFS_h;
 
     if (!pthread_create(&respuestaFS_h, NULL, (void *)respuestaPeticionFS, (void*)proceso)){
@@ -309,6 +314,7 @@ void respuestaPeticionFS(t_pcb * proceso){
             recibirMensaje(conexionAFS);
             log_debug(logger,"FS termino padre ya te podes desbloquear");
             pthread_mutex_unlock(&mutexCompactacion);
+            list_remove_element(listaParaHilo,(void*)proceso); 
             estimacionNuevaRafaga(proceso); 
             estadoAnterior = proceso->estado;
             proceso->estado = READY;
