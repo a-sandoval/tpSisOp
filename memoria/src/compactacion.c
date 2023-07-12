@@ -28,7 +28,7 @@ void reubicacionDeSegmentos() {
             segmento->direccionBase = nuevaBase; 
             nuevaBase += segmento->tamanio;
 
-	        log_info(logger, "PID: %d - Segmento: %d - Base: %d - TAMAÑO: %d", segmento->pid, segmento->id, segmento->direccionBase, segmento->tamanio);
+	        log_info(logger, "PID: <%d> - Segmento: <%d> - Base: <%d> - Tamaño: <%d>", segmento->pid, segmento->id, segmento->direccionBase, segmento->tamanio);
 
             //actualizarSegmento(segmento->pid,segmento->id, segmento); 
         }

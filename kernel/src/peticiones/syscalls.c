@@ -347,7 +347,7 @@ void fread_s(t_pcb *proceso, char **parametros){
     }
     else{
 
-        log_info(logger, "PID: <%d> - Leer Archivo: <%s> - Puntero <%d> - Dirección Memoria <%d> - Tamanio <%d>",proceso->pid, nombreArchivo, archivoProceso->punteroArch, dirFisica, archivo->fcb->tamanio);
+        log_info(logger, "PID: <%d> - Leer Archivo: <%s> - Puntero <%d> - Dirección Memoria <%d> - Tamaño <%d>",proceso->pid, nombreArchivo, archivoProceso->punteroArch, dirFisica, archivo->fcb->tamanio);
 
         peticion = crearPeticionDeLecturaDeArchivo(archivoProceso, dirFisica, bytes);
         agregarAPaquete(peticion, &(proceso->pid), sizeof(uint32_t));
@@ -380,7 +380,7 @@ void fwrite_s(t_pcb *proceso, char **parametros){
     }
     else{
 
-        log_info(logger, "PID: <%d> - Escribir Archivo: <%s> - Puntero <%d> - Dirección Memoria <%d> - Tamanio <%d>",proceso->pid, nombreArchivo, archivoProceso->punteroArch, dirFisica, archivo->fcb->tamanio);
+        log_info(logger, "PID: <%d> - Escribir Archivo: <%s> - Puntero <%d> - Dirección Memoria <%d> - Tamaño <%d>",proceso->pid, nombreArchivo, archivoProceso->punteroArch, dirFisica, archivo->fcb->tamanio);
 
         peticion = crearPeticionDeEscrituraDeArchivo(archivoProceso, dirFisica, bytes);
         agregarAPaquete(peticion, &(proceso->pid), sizeof(uint32_t));
@@ -418,7 +418,7 @@ void createSegment_s(t_pcb *proceso, char **parametros){
 
     switch(rdoPeticion){
         case SUCCESS:
-                log_info(logger, "PID: <%d> - Crear Segmento - Id: <%d> - Tamanio: <%d>", proceso->pid, idSegmento, tamanio);                
+                log_info(logger, "PID: <%d> - Crear Segmento - Id: <%d> - Tamaño: <%d>", proceso->pid, idSegmento, tamanio);                
                 recibirOperacion (conexionAMemoria);
                 recibirTablaDeSegmentosActualizada(proceso);
                 eliminarPaquete (peticion);

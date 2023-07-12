@@ -109,7 +109,7 @@ void deleteSegment(uint32_t pid, uint32_t segmentId){
 
 	t_segmento *segmentoAEliminar = (t_segmento *)list_get(procesoBuscado->tablaDeSegmentosAsociada, segmentId);
 
-	log_info(logger, "PID: <%d> - Eliminar Segmento: <%d> - Base: <%d> - TAMAÑO: <%d>", pid, segmentId, segmentoAEliminar->direccionBase, segmentoAEliminar->tamanio);
+	log_info(logger, "PID: <%d> - Eliminar Segmento: <%d> - Base: <%d> - Tamaño: <%d>", pid, segmentId, segmentoAEliminar->direccionBase, segmentoAEliminar->tamanio);
 
 	convertirSegmentoEnHuecoLibre((void *)segmentoAEliminar);
 

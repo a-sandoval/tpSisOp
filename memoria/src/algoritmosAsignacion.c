@@ -66,7 +66,7 @@ op_code ubicarSegmentosPorFirst(t_peticion* peticion){
 
 
 void loggearCreacionDeSegmento(t_peticion* peticion) {
-    log_info(logger,"PID: <%d> - Crear Segmento: <%d> - Base: <%d> - Tamanio: <%d>",peticion->pid,peticion->segmento->id,peticion->segmento->direccionBase,peticion->segmento->tamanio); 
+    log_info(logger,"PID: <%d> - Crear Segmento: <%d> - Base: <%d> - Tamaño: <%d>",peticion->pid,peticion->segmento->id,peticion->segmento->direccionBase,peticion->segmento->tamanio); 
 }
 
 
