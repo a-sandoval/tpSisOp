@@ -113,8 +113,8 @@ void recibirContextoActualizado (int socket) {
     deserializarMotivoDesalojo (buffer, &desplazamiento);
 
     // Desplazamiento: Tamaño de la rafaga de CPU Ejecutada.
-    //desplazamiento += sizeof (int);
-    //memcpy(&(contextoEjecucion->rafagaCPUEjecutada), buffer + desplazamiento, sizeof (uint64_t));
+    desplazamiento += sizeof (int);
+    memcpy(&(contextoEjecucion->rafagaCPUEjecutada), buffer + desplazamiento, sizeof (uint64_t));
 		
 	free(buffer);
 

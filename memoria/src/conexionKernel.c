@@ -3,6 +3,7 @@
 t_peticion *peticion;
 int cantidadMaximaSegmentos;
 uint32_t direccionBaseSegmento;
+uint32_t tamanioSegmento;
 
 int ejecutarServidorKernel(int *socketCliente){
 
@@ -70,8 +71,7 @@ t_list *crearTablaDeSegmentosInicial(uint32_t pid){
 	t_list *tablaDeSegmentos = list_create();
 	list_add_sorted(tablaDeSegmentos, (void *)segmento0, ordenadoPorID);
 
-	for (int i = 1; i < cantidadMaximaSegmentos; i++)
-	{
+	for (int i = 1; i < cantidadMaximaSegmentos; i++){
 
 		t_segmento *segmentoVacio = malloc(sizeof(t_segmento));
 		
@@ -125,18 +125,33 @@ void deleteSegment(uint32_t pid, uint32_t segmentId){
 void convertirSegmentoEnHuecoLibre(void *segmento){
 
 	t_segmento *aConvertir = (t_segmento *)segmento;
-	if (aConvertir->direccionBase != UINT32_MAX && aConvertir->tamanio != 0)
-	{
+	if (aConvertir->direccionBase != UINT32_MAX && aConvertir->tamanio != 0){
+		
 		direccionBaseSegmento = aConvertir->direccionBase;
+		tamanioSegmento = aConvertir->tamanio;
 
-		t_hueco_libre *nuevoHuecoLibre = (t_hueco_libre*)list_find(huecosLibres, contieneDireccionBaseEnSuTamanio);
+		t_hueco_libre *nuevoHuecoLibreArriba = (t_hueco_libre*)list_find(huecosLibres, hayHuecoLibreArriba);
+		
+		if (nuevoHuecoLibreArriba != NULL)
+			nuevoHuecoLibreArriba->tamanioHueco = nuevoHuecoLibreArriba->tamanioHueco + aConvertir->tamanio;
 
-		if (nuevoHuecoLibre != NULL)
-			nuevoHuecoLibre->tamanioHueco = maximoEntre(aConvertir->tamanio, nuevoHuecoLibre->tamanioHueco);
+		t_hueco_libre *nuevoHuecoLibreAbajo = (t_hueco_libre*)list_find(huecosLibres, hayHuecoLibreAbajo);
 
-		else
+		if (nuevoHuecoLibreAbajo != NULL){
+			if (nuevoHuecoLibreArriba != NULL) {
+				nuevoHuecoLibreArriba->tamanioHueco = nuevoHuecoLibreAbajo->tamanioHueco + nuevoHuecoLibreArriba->tamanioHueco;
+				list_remove_element (huecosLibres, nuevoHuecoLibreAbajo);
+				free (nuevoHuecoLibreAbajo);
+			}
+			else {
+				nuevoHuecoLibreAbajo->tamanioHueco = nuevoHuecoLibreAbajo->tamanioHueco + aConvertir->tamanio;
+				nuevoHuecoLibreAbajo->direccionBase = aConvertir->direccionBase;
+			}
+		}
+		
+		if (nuevoHuecoLibreAbajo == NULL && nuevoHuecoLibreArriba == NULL)
 		{
-			nuevoHuecoLibre = malloc(sizeof(t_hueco_libre));
+			t_hueco_libre * nuevoHuecoLibre = malloc(sizeof(t_hueco_libre));
 			nuevoHuecoLibre->direccionBase = aConvertir->direccionBase;
 			nuevoHuecoLibre->tamanioHueco = aConvertir->tamanio;
 
@@ -155,16 +170,20 @@ void listarHuecosLibres () {
 	}
 }
 
-bool contieneDireccionBaseEnSuTamanio(void *huecoLibre){	
-	t_hueco_libre* unHuecoLibre = (t_hueco_libre*) huecoLibre; 
-	
-	return unHuecoLibre->direccionBase <= direccionBaseSegmento && (unHuecoLibre->direccionBase + unHuecoLibre->tamanioHueco) >= direccionBaseSegmento;
+
+bool hayHuecoLibreArriba(void* huecoLibre){
+		t_hueco_libre* unHuecoLibre = (t_hueco_libre*) huecoLibre; 
+
+		return unHuecoLibre->direccionBase+unHuecoLibre->tamanioHueco == direccionBaseSegmento;
+		
 }
 
-uint32_t maximoEntre(uint32_t unTamanio, uint32_t otroTamanio){
+bool hayHuecoLibreAbajo(void* huecoLibre){
+	t_hueco_libre* unHuecoLibre = (t_hueco_libre*) huecoLibre;
 
-	return unTamanio >= otroTamanio ? unTamanio : otroTamanio;
+	return (unHuecoLibre->direccionBase == direccionBaseSegmento+tamanioSegmento);
 }
+
 
 void liberarTodosLosSegmentos(uint32_t pid){
 

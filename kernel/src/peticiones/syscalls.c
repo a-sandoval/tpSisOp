@@ -42,7 +42,6 @@ void retornoContexto(t_pcb *proceso, t_contexto *contextoEjecucion){
         case F_TRUNCATE:
             ftruncate_s(proceso, contextoEjecucion->motivoDesalojo->parametros);
             break;
-    
         case CREATE_SEGMENT:
             createSegment_s(proceso, contextoEjecucion->motivoDesalojo->parametros);
             break;
@@ -120,7 +119,6 @@ void signal_s(t_pcb *proceso, char **parametros){
     instancRecurso++;
     
     eliminarRecursoLista(proceso->recursosAsignados,recurso); 
-
 
 
     log_info(logger,"PID: <%d> - Signal: <%s> - Instancias: <%d>",proceso->pid,recurso,instancRecurso); 

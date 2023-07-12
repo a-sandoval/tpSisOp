@@ -44,9 +44,9 @@ void listarHuecosLibres ();
 
 void liberarTodosLosSegmentos(uint32_t pid);
 
+bool hayHuecoLibreArriba(void* huecoLibre);
 
-bool contieneDireccionBaseEnSuTamanio(void* huecoLibre); 
+bool hayHuecoLibreAbajo(void* huecoLibre);
 
-uint32_t maximoEntre(uint32_t unTamanio, uint32_t otroTamanio); 
 
 #endif

@@ -14,7 +14,7 @@ extern t_log* loggerError;
 extern t_config* config;
 
 void conexionMemoria();
-int enviarAMemoria (char * mensaje, uint32_t segmento, uint32_t tamanio, int socket);
-char * solicitarAMemoria (uint32_t segmento, uint32_t tamanio, int socket);
+int enviarAMemoria (char * mensaje, uint32_t direccionFisica, uint32_t tamanio, int socket);
+char * solicitarAMemoria (uint32_t direccionFisica, uint32_t tamanio, int socket);
 
 #endif 

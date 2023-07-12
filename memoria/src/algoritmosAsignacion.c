@@ -6,6 +6,12 @@ t_list* tablaDeTablasDeSegmentos;
 
 op_code ubicarSegmentosEnEspaciosLibres(t_peticion* peticion){
 	
+    void foo (void * data) { 
+        t_hueco_libre * temp = (t_hueco_libre *)data;
+        debug ("Hueco libre en direccion %d y de tamaño %d", temp->direccionBase, temp->tamanioHueco);
+    }
+    list_iterate (huecosLibres, foo);
+
     char* algoritmoAUtilizar = config_get_string_value(config, "ALGORITMO_ASIGNACION");
     op_code resultado; 
 	if (!strcmp(algoritmoAUtilizar, "FIRST"))

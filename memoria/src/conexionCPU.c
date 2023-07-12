@@ -55,6 +55,8 @@ void recibirPeticionDeLectura(int socketCPU) {
 	desplazamiento += sizeof(uint32_t) + sizeof(int); 
 	memcpy(&(tamanio),buffer+desplazamiento,sizeof(int)); 
 
+	tamanio--; 
+
 	leer(direccionFisica); 
 
 	log_info(logger, "PID: %d - Acción: %s - Dirección física: %d - Tamaño: %d - Origen: %s", pid, "READ", direccionFisica, tamanio, "CPU");

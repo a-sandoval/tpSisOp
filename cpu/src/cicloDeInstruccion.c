@@ -147,11 +147,13 @@ void io(char* tiempo){
 }
 
 void wait_c(char* recurso){
+    destruirTemporizador(rafagaCPU);
     modificarMotivoDesalojo (WAIT, 1, recurso, "", "");
     enviarContextoActualizado(socketCliente);
 }
 
 void signal_c(char* recurso){
+    destruirTemporizador(rafagaCPU);
     modificarMotivoDesalojo (SIGNAL, 1, recurso, "", "");
     enviarContextoActualizado(socketCliente);
 }
@@ -171,16 +173,19 @@ void exit_c () {
 }
 
 void f_open(char* nombre){
+    destruirTemporizador(rafagaCPU);
     modificarMotivoDesalojo (F_OPEN, 1, nombre, "", "");
     enviarContextoActualizado(socketCliente);
 };
 
 void f_close(char* nombre){
+    destruirTemporizador(rafagaCPU);
     modificarMotivoDesalojo (F_CLOSE, 1, nombre, "", "");
     enviarContextoActualizado(socketCliente);
 };
 
 void f_seek(char* nombre, char* puntero){
+    destruirTemporizador(rafagaCPU);
     modificarMotivoDesalojo (F_SEEK, 2, nombre, puntero, "");
     enviarContextoActualizado(socketCliente);
 };
@@ -189,6 +194,7 @@ void f_read(char* nombre, char* direccionLogica, char* cantBytes){
     int tamanioLeer = atoi(cantBytes);
     int dirFisica = mmu (direccionLogica, tamanioLeer);
     char* direccionFisica = string_itoa(dirFisica);
+    destruirTemporizador(rafagaCPU);
     modificarMotivoDesalojo (F_READ, 3, nombre, direccionFisica, cantBytes);
     enviarContextoActualizado(socketCliente);
     free (direccionFisica);
@@ -198,22 +204,26 @@ void f_write(char* nombre, char* direccionLogica, char* cantBytes){
     int tamanioEscribir = atoi(cantBytes);
     int dirFisica = mmu (direccionLogica, tamanioEscribir);
     char* direccionFisica = string_itoa(dirFisica);
+    destruirTemporizador(rafagaCPU);
     modificarMotivoDesalojo (F_WRITE, 3, nombre, direccionFisica, cantBytes);
     enviarContextoActualizado(socketCliente);
     free (direccionFisica);
 };
 
 void f_truncate(char* nombre, char* tamanio){
+    destruirTemporizador(rafagaCPU);
     modificarMotivoDesalojo (F_TRUNCATE, 2, nombre, tamanio, "");
     enviarContextoActualizado(socketCliente);
 };
 
 void create_segment(char* idSegmento, char* tamanio){
+    destruirTemporizador(rafagaCPU);
     modificarMotivoDesalojo (CREATE_SEGMENT, 2, idSegmento, tamanio, "");
     enviarContextoActualizado(socketCliente);
 };
 
 void delete_segment(char* idSegmento){
+    destruirTemporizador(rafagaCPU);
     modificarMotivoDesalojo (DELETE_SEGMENT, 1, idSegmento, "", "");
     enviarContextoActualizado(socketCliente);
 };

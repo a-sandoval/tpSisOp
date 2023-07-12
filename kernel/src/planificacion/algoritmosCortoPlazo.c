@@ -58,7 +58,9 @@ double calcularRR(void *elem){
     temporal_resume(pcb->tiempoEnReady);
 
     double estimatedServiceTime = pcb->estimadoProximaRafaga;
-    
+
+    //debug ("%lf %lf", (waitTime + estimatedServiceTime) / estimatedServiceTime, estimatedServiceTime);
+
     return (waitTime + estimatedServiceTime) / estimatedServiceTime;
 }
 
