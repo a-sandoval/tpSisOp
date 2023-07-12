@@ -219,6 +219,8 @@ void fopen_s(t_pcb *proceso, char **parametros){
     t_archivo* archivo;
     char* nombreArchivo = parametros[0];
 
+    log_info(logger, "PID: <%d> - Abrir Archivo: <%s>",contextoEjecucion->pid,nombreArchivo);
+
     //primero veo si esta en la tabla global
     if(estaEnLaTablaGlobal(nombreArchivo)){
             // si esta en la tabla alguien ya lo esta usando y tengo que ponerlo en block
@@ -247,7 +249,7 @@ void fclose_s(t_pcb *proceso, char **parametros){
 
     char* nombreArchivo = parametros[0];
 
-    log_info(logger, "PID: %d - Cerrar Archivo: %s",proceso->pid, nombreArchivo);
+    log_info(logger, "PID: <%d> - Cerrar Archivo: <%s>",proceso->pid, nombreArchivo);
 
     t_archivo* archivo = malloc(sizeof(t_archivo));
 
@@ -274,7 +276,6 @@ void fclose_s(t_pcb *proceso, char **parametros){
         procesoADesbloquear->estado = READY;
         list_add(procesoADesbloquear->tablaDeArchivos, archivoAAsignar);
         loggearCambioDeEstado(procesoADesbloquear->pid, estadoAnterior,procesoADesbloquear->estado);
-        loggearBloqueoDeProcesos(proceso,nombreArchivo);
         ingresarAReady(procesoADesbloquear);
     }
 
@@ -285,7 +286,7 @@ void fseek_s(t_pcb *proceso, char **parametros){
     char* nombreArchivo = parametros[0];
     int puntero = atoi(parametros[1]);
 
-    log_info(logger, "PID: %d - Actualizar puntero Archivo: %s - Puntero %d",proceso->pid, nombreArchivo, puntero);
+    
 
     t_archivoProceso* archivo = obtenerArchivoDeProceso(proceso, nombreArchivo);
 
@@ -295,6 +296,8 @@ void fseek_s(t_pcb *proceso, char **parametros){
     }
     else archivo->punteroArch = (uint32_t)puntero;
 
+    log_info(logger, "PID: <%d> - Actualizar puntero Archivo: <%s> - Puntero <%d>",proceso->pid, nombreArchivo, archivo->punteroArch);
+
     volverACPU(proceso);
 
 }
@@ -302,10 +305,10 @@ void fseek_s(t_pcb *proceso, char **parametros){
 void ftruncate_s(t_pcb *proceso, char **parametros){
     char* nombreArchivo = parametros[0];
     int tamanio = atoi(parametros[1]);
-    t_paquete* peticion = crearPaquete();
+    t_paquete* peticion;
     t_archivo* archivo = obtenerArchivoDeTG(nombreArchivo);
 
-    log_info(logger, "PID: %d - Archivo: %s - Tamaño: %d",proceso->pid, archivo->fcb->nombre, tamanio);
+    log_info(logger, "PID: <%d> - Archivo: <%s> - Tamaño: <%d>",proceso->pid, archivo->fcb->nombre, tamanio);
 
     if(estaAsignadoAlProceso(nombreArchivo, proceso)){
 
@@ -344,7 +347,7 @@ void fread_s(t_pcb *proceso, char **parametros){
     }
     else{
 
-        log_info(logger, "PID: %d - Leer Archivo: %s - Puntero %d - Dirección Memoria %d - Tamanio %d",proceso->pid, nombreArchivo, archivoProceso->punteroArch, dirFisica, archivo->fcb->tamanio);
+        log_info(logger, "PID: <%d> - Leer Archivo: <%s> - Puntero <%d> - Dirección Memoria <%d> - Tamanio <%d>",proceso->pid, nombreArchivo, archivoProceso->punteroArch, dirFisica, archivo->fcb->tamanio);
 
         peticion = crearPeticionDeLecturaDeArchivo(archivoProceso, dirFisica, bytes);
         agregarAPaquete(peticion, &(proceso->pid), sizeof(uint32_t));
@@ -377,7 +380,7 @@ void fwrite_s(t_pcb *proceso, char **parametros){
     }
     else{
 
-        log_info(logger, "PID: %d - Escribir Archivo: %s - Puntero %d - Dirección Memoria %d - Tamanio %d",proceso->pid, nombreArchivo, archivoProceso->punteroArch, dirFisica, archivo->fcb->tamanio);
+        log_info(logger, "PID: <%d> - Escribir Archivo: <%s> - Puntero <%d> - Dirección Memoria <%d> - Tamanio <%d>",proceso->pid, nombreArchivo, archivoProceso->punteroArch, dirFisica, archivo->fcb->tamanio);
 
         peticion = crearPeticionDeEscrituraDeArchivo(archivoProceso, dirFisica, bytes);
         agregarAPaquete(peticion, &(proceso->pid), sizeof(uint32_t));
@@ -415,7 +418,7 @@ void createSegment_s(t_pcb *proceso, char **parametros){
 
     switch(rdoPeticion){
         case SUCCESS:
-                log_info(logger, "PID: %d - Crear Segmento - Id: %d - Tamanio: %d", proceso->pid, idSegmento, tamanio);                
+                log_info(logger, "PID: <%d> - Crear Segmento - Id: <%d> - Tamanio: <%d>", proceso->pid, idSegmento, tamanio);                
                 recibirOperacion (conexionAMemoria);
                 recibirTablaDeSegmentosActualizada(proceso);
                 eliminarPaquete (peticion);
@@ -451,8 +454,6 @@ void createSegment_s(t_pcb *proceso, char **parametros){
 
                 log_info(logger,  "Se finalizo el proceso de compactacion");
                 
-                //Reenvio la peticion para la creacion del segmento
-                //enviarPaquete(peticion,conexionAMemoria); 
                 eliminarPaquete (peticion);
                 createSegment_s (proceso, parametros);
                 break;
@@ -464,7 +465,7 @@ void deleteSegment_s(t_pcb *proceso, char **parametros){
     
     uint32_t idSegmento = (uint32_t) atoi(parametros[0]);
 
-    log_info(logger, "PID: %d - Eliminar Segmento - Id: %d", proceso->pid, idSegmento);
+    log_info(logger, "PID: <%d> - Eliminar Segmento - Id: <%d>", proceso->pid, idSegmento);
 
     t_paquete* peticion = crearPaquete();
     peticion->codigo_operacion = DELETE_SEGMENT_OP;

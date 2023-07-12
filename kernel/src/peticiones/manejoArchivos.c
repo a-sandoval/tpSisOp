@@ -150,7 +150,6 @@ t_archivo* solicitarArchivoFS(char* nombreArchivo){
     nuevoArchivo->fcb = malloc (sizeof (fcb_t));
     nuevoArchivo->fcb->nombre = nombreArchivo;
 
-    log_info(logger, "PID: %d - Abrir Archivo: %s",contextoEjecucion->pid,nombreArchivo);
 
     peticion->codigo_operacion = FOPEN;
     agregarAPaquete(peticion, nombreArchivo, sizeof(char)*strlen(nombreArchivo) + 1);
