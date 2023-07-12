@@ -61,7 +61,7 @@ void quitarArchivo(t_pcb* proceso, char* nombreArchivo);
 void quitarArchivoTG( char* nombreArchivo);
 fcb_t * crearFCB ();
 void eliminarArchivoProceso(void* archivo);
-void peticionConBloqueoAFS(t_paquete*, t_pcb*, t_list*);
+void peticionConBloqueoAFS(t_paquete*, t_pcb*);
 void respuestaPeticionFS();
 void liberarArchivosAsignados(t_pcb* proceso);
 

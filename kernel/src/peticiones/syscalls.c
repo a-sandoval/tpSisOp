@@ -203,7 +203,7 @@ void exit_s(t_pcb* proceso, char **parametros){
         
         liberarRecursosAsignados(proceso);
     }
-    
+
     liberarArchivosAsignados(proceso);
     liberarMemoriaPCB(proceso); 
 
@@ -229,8 +229,8 @@ void fopen_s(t_pcb *proceso, char **parametros){
             estadoAnterior = proceso->estado;
             proceso->estado = BLOCK;
 
-            list_add(archivo->colaBloqueados, (void*)proceso);
             debug("Ahora la lista de bloqueados tiene %d",list_size(archivo->colaBloqueados)); 
+            list_add (archivo->colaBloqueados, proceso);
             loggearCambioDeEstado(proceso->pid, estadoAnterior, proceso->estado);
             loggearBloqueoDeProcesos(proceso, nombreArchivo);
     }
@@ -258,7 +258,7 @@ void fclose_s(t_pcb *proceso, char **parametros){
 
     t_archivo* archivo = obtenerArchivoDeTG(nombreArchivo);
 
-    
+    debug ("Tamaño de la lista del archivo: %d", list_size (archivo->colaBloqueados));
     if(list_is_empty(archivo->colaBloqueados)){
         //si no hay procesos esperando por el archivo, lo elimino
         debug("saco archivo de tg");
@@ -282,8 +282,8 @@ void fclose_s(t_pcb *proceso, char **parametros){
         loggearCambioDeEstado(procesoADesbloquear->pid, estadoAnterior,procesoADesbloquear->estado);
         ingresarAReady(procesoADesbloquear);
     }
-
-    volverACPU(proceso);
+    if (proceso->estado != SALIDA)
+        volverACPU(proceso);
 }
 
 void fseek_s(t_pcb *proceso, char **parametros){
@@ -324,12 +324,10 @@ void ftruncate_s(t_pcb *proceso, char **parametros){
         estadoAnterior = proceso->estado;
         proceso->estado = BLOCK;
 
-        list_add(archivo->colaBloqueados,(void*)proceso); 
-
         loggearCambioDeEstado(proceso->pid, estadoAnterior, proceso->estado);
         loggearBloqueoDeProcesos(proceso, nombreArchivo);
 
-        peticionConBloqueoAFS(peticion, proceso, archivo->colaBloqueados);
+        peticionConBloqueoAFS(peticion, proceso);
     
     }
 
@@ -364,12 +362,11 @@ void fread_s(t_pcb *proceso, char **parametros){
         estadoAnterior = proceso->estado;
         proceso->estado = BLOCK;
 
-        list_add(archivo->colaBloqueados, proceso);
         loggearCambioDeEstado(proceso->pid, estadoAnterior, proceso->estado);
         loggearBloqueoDeProcesos(proceso, nombreArchivo);
 
         pthread_mutex_lock(&mutexCompactacion);
-        peticionConBloqueoAFS(peticion, proceso, archivo->colaBloqueados);
+        peticionConBloqueoAFS(peticion, proceso);
 
     }
 }
@@ -379,7 +376,6 @@ void fwrite_s(t_pcb *proceso, char **parametros){
     uint32_t dirFisica = (uint32_t)atoi(parametros[1]);
     uint32_t bytes = (uint32_t)atoi(parametros[2]);
     t_paquete* peticion;
-    t_archivo* archivo = obtenerArchivoDeTG(nombreArchivo);
     t_archivoProceso* archivoProceso = obtenerArchivoDeProceso(proceso, nombreArchivo);
 
     if(archivoProceso == NULL){
@@ -397,12 +393,11 @@ void fwrite_s(t_pcb *proceso, char **parametros){
         estadoAnterior = proceso->estado;
         proceso->estado = BLOCK;
 
-        list_add(archivo->colaBloqueados, proceso);
         loggearCambioDeEstado(proceso->pid, estadoAnterior, proceso->estado);
         loggearBloqueoDeProcesos(proceso, nombreArchivo);
 
         pthread_mutex_lock(&mutexCompactacion);
-        peticionConBloqueoAFS(peticion, proceso, archivo->colaBloqueados);
+        peticionConBloqueoAFS(peticion, proceso);
 
     }
 }

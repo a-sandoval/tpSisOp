@@ -64,10 +64,10 @@ void ejecutarServidor() {
 				desplazamiento += sizeof (int);
 				memcpy (& (puntero), data + desplazamiento, sizeof puntero);
 				desplazamiento += sizeof (int) + sizeof puntero;
-				memcpy (& (tamanio), data + desplazamiento, sizeof tamanio);
-				desplazamiento += sizeof (int) + sizeof tamanio;
 				memcpy (& (direccionFisica), data + desplazamiento, sizeof direccionFisica);
 				desplazamiento += sizeof (int) + sizeof direccionFisica;
+				memcpy (& (tamanio), data + desplazamiento, sizeof tamanio);
+				desplazamiento += sizeof (int) + sizeof tamanio;
 				memcpy (& (pid), data + desplazamiento, sizeof pid);
 				log_info (logger, "Leer Archivo: <%s> - Puntero: <%d> - Memoria: <%d> - Tamaño: <%d>", fcbRecibido->nombre, puntero, direccionFisica, tamanio);
 				char * leido = leerArchivo (fcbRecibido, puntero, tamanio);
@@ -84,10 +84,10 @@ void ejecutarServidor() {
 				desplazamiento += sizeof (int);
 				memcpy (& (puntero), data + desplazamiento, sizeof puntero);
 				desplazamiento += sizeof (int) + sizeof puntero;
-				memcpy (& (tamanio), data + desplazamiento, sizeof tamanio);
-				desplazamiento += sizeof (int) + sizeof tamanio;
 				memcpy (& (direccionFisica), data + desplazamiento, sizeof direccionFisica);
 				desplazamiento += sizeof (int) + sizeof direccionFisica;
+				memcpy (& (tamanio), data + desplazamiento, sizeof tamanio);
+				desplazamiento += sizeof (int) + sizeof tamanio;
 				memcpy (& (pid), data + desplazamiento, sizeof pid);
 				log_info (logger, "Escribir Archivo: <%s> - Puntero: <%d> - Memoria: <%d> - Tamaño: <%d>", fcbRecibido->nombre, puntero, direccionFisica, tamanio);
 				char * aEscribir = solicitarAMemoria (direccionFisica, tamanio, conexionAMemoria, pid);

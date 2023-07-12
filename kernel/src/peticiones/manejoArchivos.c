@@ -156,9 +156,6 @@ void quitarArchivoTG(char* nombreArchivo){
             return;
         }
     }
-
-
-
 }
 
 //   Manejo de solicitudes al FS
@@ -285,13 +282,11 @@ void eliminarArchivo(t_archivo* archivo){
     free(archivo);
 }
 
-void peticionConBloqueoAFS(t_paquete* peticion, t_pcb* proceso, t_list* colaBloqueados){
+void peticionConBloqueoAFS(t_paquete* peticion, t_pcb* proceso){
 
     pthread_mutex_lock(&mutexFS);
     enviarPaquete(peticion, conexionAFS);
     eliminarPaquete (peticion);
-
-    listaParaHilo = colaBloqueados; 
 
     pthread_t respuestaFS_h;
 
@@ -314,7 +309,6 @@ void respuestaPeticionFS(t_pcb * proceso){
             recibirMensaje(conexionAFS);
             log_debug(logger,"FS termino padre ya te podes desbloquear");
             pthread_mutex_unlock(&mutexCompactacion);
-            list_remove_element(listaParaHilo,(void*)proceso); 
             estimacionNuevaRafaga(proceso); 
             estadoAnterior = proceso->estado;
             proceso->estado = READY;
