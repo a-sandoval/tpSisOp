@@ -66,16 +66,16 @@ void execute() {
 
     switch(cantParametros) {
         case 0:
-            log_info(logger, "PID: %d - Ejecutando: %s ", contextoEjecucion->pid, listaComandos[instruccionActual]);
+            log_info(logger, "PID: <%d> - Ejecutando: <%s> ", contextoEjecucion->pid, listaComandos[instruccionActual]);
             break;
         case 1:
-            log_info(logger, "PID: %d - Ejecutando: %s -  %s", contextoEjecucion->pid, listaComandos[instruccionActual], elementosInstruccion[1]);
+            log_info(logger, "PID: <%d> - Ejecutando: <%s> -  <%s>", contextoEjecucion->pid, listaComandos[instruccionActual], elementosInstruccion[1]);
             break;
         case 2:   
-            log_info(logger, "PID: %d - Ejecutando: %s -  %s, %s", contextoEjecucion->pid, listaComandos[instruccionActual], elementosInstruccion[1], elementosInstruccion[2]);
+            log_info(logger, "PID: <%d> - Ejecutando: <%s> - <%s>, <%s>", contextoEjecucion->pid, listaComandos[instruccionActual], elementosInstruccion[1], elementosInstruccion[2]);
             break;
         case 3:
-            log_info(logger, "PID: %d - Ejecutando: %s -  %s, %s, %s", contextoEjecucion->pid, listaComandos[instruccionActual], elementosInstruccion[1], elementosInstruccion[2], elementosInstruccion[3]);
+            log_info(logger, "PID: <%d> - Ejecutando: <%s> - <%s>, <%s>, <%s>", contextoEjecucion->pid, listaComandos[instruccionActual], elementosInstruccion[1], elementosInstruccion[2], elementosInstruccion[3]);
             break; 
     }
     switch(instruccionActual){
@@ -266,13 +266,11 @@ void mov_in(char* registro, char* direccionLogica){
 
     recibirOperacion(conexionAMemoria);
     valorAInsertar = recibirMensaje(conexionAMemoria);
-    //recibirValor(conexionAMemoria);
-    //debug ("%d %s", opCode, valorAInsertar);
 
     dictionary_remove_and_destroy(contextoEjecucion->registrosCPU, registro, free); 
     dictionary_put(contextoEjecucion->registrosCPU, registro, string_duplicate(valorAInsertar));
     
-    log_info(logger, "PID: %d - Accion: %s - Segmento: %d - Direccion Fisica: %d - Valor: %s", contextoEjecucion->pid, "LEER", nroSegmento, dirFisica, valorAInsertar);
+    log_info(logger, "PID: <%d> - Accion: <%s> - Segmento: <%d> - Direccion Fisica: <%d> - Valor: <%s>", contextoEjecucion->pid, "LEER", nroSegmento, dirFisica, valorAInsertar);
     free (valorAInsertar);
     }
 };
@@ -301,7 +299,7 @@ void mov_out(char* direccionLogica, char* registro){
     //debug ("%s", respuesta);
     free (respuesta);
 
-    log_info(logger, "PID: %d - Accion: %s - Segmento: %d - Direccion Fisica: %d - Valor: %s", contextoEjecucion->pid, "WRITE", nroSegmento, dirFisica, (char *)valor);
+    log_info(logger, "PID: <%d> - Accion: <%s> - Segmento: <%d> - Direccion Fisica: <%d> - Valor: <%s>", contextoEjecucion->pid, "WRITE", nroSegmento, dirFisica, (char *)valor);
     }
 };  
 
@@ -328,7 +326,7 @@ uint32_t mmu(char* direccionLogica, int tamValor){
     }
     
     else{
-        debug ("Abrazo Virtual");
+        log_info(logger, "PID: <%d> - Error SEG_FAULT - Segmento: <%d> - Offset: <%d> - Tamanio: <%s>", contextoEjecucion->pid, nroSegmento, desplazamiento, tamValor);
         char * terminado = string_duplicate ("SEG_FAULT");
         destruirTemporizador(rafagaCPU);
         modificarMotivoDesalojo (EXIT, 1, terminado, "", "");

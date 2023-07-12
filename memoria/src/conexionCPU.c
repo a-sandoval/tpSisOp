@@ -62,7 +62,7 @@ void recibirPeticionDeLectura(int socketCPU) {
 	valorLeido = realloc (valorLeido, tamanio + 1);
 	valorLeido[tamanio] = '\0';
 
-	log_info(logger, "PID: %d - Acción: %s - Dirección física: %d - Tamaño: %d - Origen: %s", pid, "READ", direccionFisica, tamanio, "CPU");
+	log_info(logger, "PID: <%d> - Acción: <%s> - Dirección física: <%d> - Tamaño: <%d> - Origen: <%s>", pid, "LEER", direccionFisica, tamanio, "CPU");
 
 	free (buffer);
 }
@@ -87,7 +87,7 @@ void recibirPeticionDeEscritura(int socketCPU) {
 	escribir(valorAEscribir,direccionFisica, tamanio);  
 
 
-	log_info(logger, "PID: %d - Acción: %s - Dirección física: %d - Tamaño: %d - Origen: %s", pid, "WRITE", direccionFisica, tamanio, "CPU");
+	log_info(logger, "PID: <%d> - Acción: <%s> - Dirección física: <%d> - Tamaño: <%d> - Origen: <%s>", pid, "ESCRIBIR", direccionFisica, tamanio, "CPU");
 	free (buffer);
 }
 

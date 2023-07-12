@@ -6,7 +6,7 @@ t_list* tablaDeTablasDeSegmentos;
 
 op_code ubicarSegmentosEnEspaciosLibres(t_peticion* peticion){
 	
-    void foo (void * data) { 
+    void foo (void * data){ 
         t_hueco_libre * temp = (t_hueco_libre *)data;
         debug ("Hueco libre en direccion %d y de tamaño %d", temp->direccionBase, temp->tamanioHueco);
     }
@@ -66,7 +66,7 @@ op_code ubicarSegmentosPorFirst(t_peticion* peticion){
 
 
 void loggearCreacionDeSegmento(t_peticion* peticion) {
-    log_info(logger,"PID: %d - Crear Segmento: %d - Base: %d - TAMAÑO: %d",peticion->pid,peticion->segmento->id,peticion->segmento->direccionBase,peticion->segmento->tamanio); 
+    log_info(logger,"PID: <%d> - Crear Segmento: <%d> - Base: <%d> - Tamanio: <%d>",peticion->pid,peticion->segmento->id,peticion->segmento->direccionBase,peticion->segmento->tamanio); 
 }
 
 

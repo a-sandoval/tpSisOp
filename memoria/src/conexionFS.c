@@ -51,7 +51,7 @@ void recibirPeticionDeLecturaFS(int socketFS) {
 	valor = realloc (valor, tamanio + 1);
 	valor[tamanio] = '\0';
 
-	log_info(logger, "PID: %d - Acción: %s - Dirección física: %d - Tamaño: %d - Origen: %s", pid, "READ", direccionFisica, tamanio, "FS");
+	log_info(logger, "PID: <%d> - Acción: <%s> - Dirección física: <%d> - Tamaño: <%d> - Origen: <%s>", pid, "LEER", direccionFisica, tamanio, "FS");
 
 	free (buffer);
 }
@@ -100,7 +100,7 @@ void recibirPeticionDeEscrituraFS(int socketFS){
 
 	escribir_fs(valorAEscribir, direccionFisica, tamanio); 
 
-	log_info(logger, "PID: %d - Acción: %s - Dirección física: %d - Tamaño: %d - Origen: %s", pid, "WRITE", direccionFisica, tamanio, "FS");
+	log_info(logger, "PID: <%d> - Acción: <%s> - Dirección física: <%d> - Tamaño: <%d> - Origen: <%s>", pid, "ESCRIBIR", direccionFisica, tamanio, "FS");
 
 	free (buffer);
 

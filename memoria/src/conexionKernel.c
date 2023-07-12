@@ -21,7 +21,7 @@ int ejecutarServidorKernel(int *socketCliente){
 			uint32_t pid = recibirPID(*socketCliente);
 			liberarTodosLosSegmentos(pid);
 			eliminarProcesoDeMemoria (buscarProcesoSegun (pid));
-			log_info(logger, "Eliminación de Proceso PID: %d", pid);
+			log_info(logger, "Eliminación de Proceso PID: <%d>", pid);
 			break;
 		case CREATE_SEGMENT_OP:
 			peticion = recibirPeticionCreacionDeSegmento(*socketCliente);
@@ -92,7 +92,7 @@ t_proceso *crearProcesoEnMemoria(uint32_t pid){
 	procesoNuevo->pid = pid;
 	procesoNuevo->tablaDeSegmentosAsociada = crearTablaDeSegmentosInicial(pid);
 	list_add(tablaDeTablasDeSegmentos, (void *)procesoNuevo);
-	log_info(logger, "Creacion de Proceso PID: %d", procesoNuevo->pid);
+	log_info(logger, "Creacion de Proceso PID: <%d>", procesoNuevo->pid);
 
 	return procesoNuevo;
 }
@@ -109,7 +109,7 @@ void deleteSegment(uint32_t pid, uint32_t segmentId){
 
 	t_segmento *segmentoAEliminar = (t_segmento *)list_get(procesoBuscado->tablaDeSegmentosAsociada, segmentId);
 
-	log_info(logger, "PID: %d - Eliminar Segmento: %d - Base: %d - TAMAÑO: %d", pid, segmentId, segmentoAEliminar->direccionBase, segmentoAEliminar->tamanio);
+	log_info(logger, "PID: <%d> - Eliminar Segmento: <%d> - Base: <%d> - TAMAÑO: <%d>", pid, segmentId, segmentoAEliminar->direccionBase, segmentoAEliminar->tamanio);
 
 	convertirSegmentoEnHuecoLibre((void *)segmentoAEliminar);
 
