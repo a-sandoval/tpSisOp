@@ -7,8 +7,14 @@ base deadlock:
 error:
 	cp ./tuki-pruebas/ERROR.config ./memoria.config; ./memoria.out
 
-memoria:
-	cp ./tuki-pruebas/MEMORIA.config ./memoria.config; ./memoria.out
+best:
+	cp ./tuki-pruebas/BEST.config ./memoria.config; ./memoria.out
+
+first:
+	cp ./tuki-pruebas/FIRST.config ./memoria.config; ./memoria.out
+
+worst:
+	cp ./tuki-pruebas/WORST.config ./memoria.config; ./memoria.out
 
 fs:
 	cp ./tuki-pruebas/FILESYSTEM.config ./memoria.config; ./memoria.out

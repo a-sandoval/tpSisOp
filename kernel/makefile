@@ -1,8 +1,11 @@
 all:
 	cd ..; make Kernel
 
-base:
-	cp ./tuki-pruebas/BASE.config ./kernel.config; ./kernel.out
+fifo:
+	cp ./tuki-pruebas/FIFO.config ./kernel.config; ./kernel.out
+
+hrrn:
+	cp ./tuki-pruebas/HRRN.config ./kernel.config; ./kernel.out
 
 deadlock:
 	cp ./tuki-pruebas/DEADLOCK.config ./kernel.config; ./kernel.out
