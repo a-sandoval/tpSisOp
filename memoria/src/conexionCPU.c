@@ -94,6 +94,7 @@ void recibirPeticionDeEscritura(int socketCPU) {
 void enviarValorObtenido(int socketCPU){
 	
 	enviarMensaje(valorLeido, socketCPU);
+	free(valorLeido);
 }
 
 void escribir(char* valor, int32_t direccionFisica, int tamanio){

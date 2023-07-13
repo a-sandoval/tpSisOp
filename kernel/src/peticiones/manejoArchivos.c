@@ -56,7 +56,8 @@ void agregarArchivoATG(t_archivo* nuevoArchivo){
 bool estaEnLaTablaGlobal(char* nombreArchivo){
 
     int cantArchivos = list_size(tablaGlobalArchivos);
-    t_archivo* archivoAux = malloc(sizeof(t_archivo));
+    t_archivo* archivoAux;
+    
     debug ("La tabla global tiene %d archivos!", cantArchivos);
     for(int i=0; i<cantArchivos; i++){
         archivoAux = list_get(tablaGlobalArchivos, i);
@@ -72,7 +73,7 @@ bool estaEnLaTablaGlobal(char* nombreArchivo){
 bool estaAsignadoAlProceso(char* nombreArchivo, t_pcb* proceso){
 
     int cantArchivos = list_size(proceso->tablaDeArchivos);
-    t_archivoProceso* archivoAux = malloc(sizeof(t_archivoProceso));
+    t_archivoProceso* archivoAux;
 
     for(int i=0; i<cantArchivos; i++){
         archivoAux = list_get(proceso->tablaDeArchivos, i);
@@ -87,7 +88,7 @@ bool estaAsignadoAlProceso(char* nombreArchivo, t_pcb* proceso){
 t_archivo* obtenerArchivoDeTG(char* nombreArchivo){
 
     int cantArchivos = list_size(tablaGlobalArchivos);
-    t_archivo* archivoAux = malloc(sizeof(t_archivo));
+    t_archivo* archivoAux;
     debug("%d", cantArchivos);
     debug("voy a buscar el archivo");
     for(int i=0; i<cantArchivos; i++){
@@ -338,7 +339,7 @@ void respuestaPeticionFS(t_pcb * proceso){
 
 void liberarArchivosAsignados(t_pcb* proceso){
         int cantArchivos = list_size(proceso->tablaDeArchivos);
-        t_archivoProceso* archivoALiberar = malloc(sizeof(t_archivoProceso));
+        t_archivoProceso* archivoALiberar;
 
         for(int i =0;i<cantArchivos; i++){
             archivoALiberar = list_get(proceso->tablaDeArchivos,i);

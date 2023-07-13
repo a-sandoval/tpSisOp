@@ -53,6 +53,7 @@ extern t_list* huecosLibres;
 extern t_list* tablaDeTablasDeSegmentos; 
 
 void liberarTabladeTablasDeSegmentos ();
+void eliminarTabla(t_proceso* proceso);
 
 /**
  * Fin.

@@ -58,5 +58,13 @@ int main() {
 }
 
 void liberarTabladeTablasDeSegmentos () {
-	list_destroy(tablaDeTablasDeSegmentos);
+
+	list_destroy_and_destroy_elements(tablaDeTablasDeSegmentos, (void*)eliminarTabla);
+}
+
+void eliminarTabla(t_proceso* proceso){
+
+	list_remove(proceso->tablaDeSegmentosAsociada,0);
+	list_destroy_and_destroy_elements(proceso->tablaDeSegmentosAsociada, free);
+	free(proceso);
 }

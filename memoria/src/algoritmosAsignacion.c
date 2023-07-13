@@ -55,6 +55,7 @@ op_code ubicarSegmentosPorFirst(t_peticion* peticion){
     if (corroborarPosibilidadDeCompactacion(peticion))
         return COMPACTACION;
 
+    free(peticion->segmento);
     return OUTOFMEMORY; 
 }
 
@@ -129,6 +130,8 @@ op_code ubicarSegmentosPorBest(t_peticion* peticion){
     else {
         if (corroborarPosibilidadDeCompactacion(peticion))
             return COMPACTACION; 
+
+        free(peticion->segmento);    
         return OUTOFMEMORY;
     }
     
@@ -167,6 +170,8 @@ op_code ubicarSegmentosPorWorst(t_peticion* peticion){
     {
         if(corroborarPosibilidadDeCompactacion(peticion))
             return COMPACTACION;  
+
+        free(peticion->segmento);    
         return OUTOFMEMORY; 
     }
 }

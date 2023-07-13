@@ -26,7 +26,7 @@ t_pcb *crearPCB(){
 void destruirPCB(t_pcb *pcb){
     list_destroy_and_destroy_elements(pcb->instrucciones, free);
     list_destroy_and_destroy_elements(pcb->tablaDeSegmentos, free);
-    //list_destroy_and_destroy_elements(pcb->tablaDeArchivos, (void *)quitarArchivo);
+    list_destroy_and_destroy_elements(pcb->tablaDeArchivos, free);
     list_destroy_and_destroy_elements(pcb->recursosAsignados, free);
     dictionary_destroy_and_destroy_elements(pcb->registrosCPU, free);
     free(pcb);

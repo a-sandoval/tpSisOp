@@ -98,6 +98,7 @@ void wait_s(t_pcb *proceso, char **parametros){
     else {
         list_add(proceso->recursosAsignados, (void*)string_duplicate (recurso));
        
+    
         volverACPU(proceso);
     }
 }
@@ -143,6 +144,7 @@ void signal_s(t_pcb *proceso, char **parametros){
     
     }
     
+
     if (strncmp (parametros[2], "EXIT", 4)) volverACPU(proceso);    
 }
 
