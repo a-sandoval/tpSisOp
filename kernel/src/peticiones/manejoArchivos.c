@@ -107,7 +107,7 @@ t_archivo* obtenerArchivoDeTG(char* nombreArchivo){
 t_archivoProceso* obtenerArchivoDeProceso(t_pcb* proceso, char* nombreArchivo){
 
     int cantArchivos = list_size(proceso->tablaDeArchivos);
-    t_archivoProceso* archivoAux = crearArchivoProceso();
+    t_archivoProceso* archivoAux;
 
     //debug ("Se busca en proceso %d el archivo abierto \"%s\", con una cantidad de archivos en lista %d", proceso->pid, nombreArchivo, cantArchivos);
 
@@ -122,6 +122,7 @@ t_archivoProceso* obtenerArchivoDeProceso(t_pcb* proceso, char* nombreArchivo){
     return NULL;
 }
 
+
 t_archivoProceso * crearArchivoProceso () {
     t_archivoProceso * nuevo = malloc (sizeof (t_archivoProceso));
     nuevo->fcb = crearFCB ();
@@ -130,7 +131,7 @@ t_archivoProceso * crearArchivoProceso () {
 
 void quitarArchivo(t_pcb* proceso, char* nombreArchivo){
     int cantArchivos = list_size(proceso->tablaDeArchivos);
-    t_archivoProceso* archivoAux = malloc(sizeof(t_archivoProceso));
+    t_archivoProceso* archivoAux;
 
     for(int i=0; i<cantArchivos; i++){
         archivoAux=list_get(proceso->tablaDeArchivos, i);
@@ -146,7 +147,7 @@ void quitarArchivo(t_pcb* proceso, char* nombreArchivo){
 
 void quitarArchivoTG(char* nombreArchivo){
     int cantArchivos = list_size(tablaGlobalArchivos);
-    t_archivo* archivoAux = malloc(sizeof(t_archivo));
+    t_archivo* archivoAux;
 
     for(int i=0; i<cantArchivos; i++){
         archivoAux=list_get(tablaGlobalArchivos, i);
@@ -165,8 +166,6 @@ t_archivo* solicitarArchivoFS(char* nombreArchivo){
 
     t_paquete* peticion = crearPaquete();
     t_archivo* nuevoArchivo = malloc(sizeof(t_archivo));
-    nuevoArchivo->fcb = malloc (sizeof (fcb_t));
-    nuevoArchivo->fcb->nombre = nombreArchivo;
 
     peticion->codigo_operacion = FOPEN;
 
@@ -307,7 +306,7 @@ void respuestaPeticionFS(t_pcb * proceso){
 
     switch (respuesta){
         case MENSAJE:
-            recibirMensaje(conexionAFS);
+            free(recibirMensaje(conexionAFS));
             log_debug(logger,"FS termino padre ya te podes desbloquear");
             pthread_mutex_unlock(&mutexCompactacion);
             estimacionNuevaRafaga(proceso); 

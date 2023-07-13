@@ -18,3 +18,8 @@ worst:
 
 fs:
 	cp ./tuki-pruebas/FILESYSTEM.config ./memoria.config; ./memoria.out
+
+ejemplo:
+
+	cp ./tuki-pruebas/EJEMPLO.config ./memoria.config; ./memoria.out
+

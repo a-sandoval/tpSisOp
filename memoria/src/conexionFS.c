@@ -16,6 +16,7 @@ int ejecutarServidorFS(int *socketCliente){
 				log_debug (logger, "Solicitud de lectura");
 				recibirPeticionDeLecturaFS(*socketCliente); 
 				enviarMensaje(valor,*socketCliente); 
+				free(valor);
 				break;
 			case WRITE:
                 log_debug (logger, "Solicitud de escritura");

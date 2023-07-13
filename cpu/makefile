@@ -1,7 +1,7 @@
 all:
 	cd ..; make Cpu
 
-base deadlock error:
+base deadlock error ejemplo:
 	cp ./tuki-pruebas/BASE.config ./cpu.config; ./cpu.out
 
 memoria fs:
