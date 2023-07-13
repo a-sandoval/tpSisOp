@@ -101,7 +101,7 @@ void eliminarRecursoLista(t_list* recursos, char* recurso){
         log_debug(logger,"Mi lista tiene %s",(char*)list_get(recursos, i));
         
         if(!strcmp((char*)list_get(recursos,i), recurso)){
-            list_remove_and_destroy_element(recursos,i,free);
+            list_remove(recursos,i);
             return;
             
         }

@@ -79,7 +79,7 @@ void wait_s(t_pcb *proceso, char **parametros){
     instanciasRecursos[indexRecurso]=instancRecurso;
     
 
-    log_info(logger,"PID: <%d> - Wait: <%s> - Instancias: <%d>",proceso->pid,recurso,instancRecurso); 
+    log_info(logger,"PID: <%d> - Wait: <%s> - Instancias: <%d>",proceso->pid, recurso, instancRecurso); 
 
 
     if(instancRecurso < 0){
@@ -122,7 +122,7 @@ void signal_s(t_pcb *proceso, char **parametros){
     eliminarRecursoLista(proceso->recursosAsignados,recurso); 
 
 
-    log_info(logger,"PID: <%d> - Signal: <%s> - Instancias: <%d>",proceso->pid,recurso,instancRecurso); 
+    log_info(logger,"PID: <%d> - Signal: <%s> - Instancias: <%d>",proceso->pid, recurso, instancRecurso); 
 
     instanciasRecursos[indexRecurso]=instancRecurso;
 
@@ -445,7 +445,7 @@ void createSegment_s(t_pcb *proceso, char **parametros){
                 enviarMensaje("Compactacion OK", conexionAMemoria); 
                 int cantidadDeProcesosAActualizar = recibirOperacion(conexionAMemoria); 
 
-                t_pcb* procesoAActualizar = malloc (sizeof(t_pcb));
+                t_pcb* procesoAActualizar;
                 uint32_t pid;
                 for(int i=0;i<cantidadDeProcesosAActualizar; i++) {
                     pid = recibirOperacion(conexionAMemoria);

@@ -90,7 +90,7 @@ void listarPIDS(t_list *pcbs) {
 t_pcb* buscarPID(t_list* listaPCBs, uint32_t pid){
     int cantProcesos = list_size(listaPCBs); 
 
-    t_pcb* pcb = malloc(sizeof(t_pcb));
+    t_pcb* pcb;
     for(int i=0;i<cantProcesos;i++){
         
         pcb = list_get(listaPCBs, i);

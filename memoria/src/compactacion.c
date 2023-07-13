@@ -16,7 +16,7 @@ void reubicacionDeSegmentos() {
 
     unificarSegmentos(); 
 
-    t_segmento* segmento = malloc (sizeof (t_segmento)); 
+    t_segmento* segmento; 
 
     uint32_t nuevaBase = segmento0->tamanio; 
     for (int i = 0; i < list_size(todosLosSegmentos); i++) {

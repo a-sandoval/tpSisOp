@@ -27,6 +27,7 @@ int ejecutarServidorKernel(int *socketCliente){
 			peticion = recibirPeticionCreacionDeSegmento(*socketCliente);
 			op_code resultado = ubicarSegmentosEnEspaciosLibres(peticion);
 			procesarResultado((int)resultado, *socketCliente);
+			
 			free (peticion);
 			break;
 		case DELETE_SEGMENT_OP:
@@ -58,7 +59,7 @@ void procesarResultado(int resultado, int socketKernel){
 	case COMPACTACION:
 		enviarCodOp(COMPACTACION,socketKernel); 
 		recibirOperacion (socketKernel);
-		recibirMensaje(socketKernel); 
+		free(recibirMensaje(socketKernel)); 
 		compactar();
 		enviarCodOp(list_size(tablaDeTablasDeSegmentos),socketKernel); 
 		enviarTablasActualizadas(); 
