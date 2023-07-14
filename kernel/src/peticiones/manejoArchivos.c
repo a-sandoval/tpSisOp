@@ -5,7 +5,7 @@ t_list* listaParaHilo;
 extern estadoProceso estadoAnterior; 
 extern pthread_mutex_t mutexFS;
 extern pthread_mutex_t mutexCompactacion;
-
+extern bool hayOpFS;
 
 void iniciarTablaGlobalDeArchivos(){
     tablaGlobalArchivos = list_create();
@@ -296,6 +296,7 @@ void peticionConBloqueoAFS(t_paquete* peticion, t_pcb* proceso){
         error("Error en la creacion de hilo para esperar respuesta del FS, Abort");
     }
 
+    
     pthread_mutex_unlock(&mutexFS);
 
 }
@@ -308,6 +309,7 @@ void respuestaPeticionFS(t_pcb * proceso){
         case MENSAJE:
             free(recibirMensaje(conexionAFS));
             log_debug(logger,"FS termino padre ya te podes desbloquear");
+            hayOpFS = false;
             pthread_mutex_unlock(&mutexCompactacion);
             estimacionNuevaRafaga(proceso); 
             estadoAnterior = proceso->estado;

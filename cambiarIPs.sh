@@ -2,7 +2,7 @@
 
 archivos=($(find ./ -name '*.config'))
 
-modulos=(MEMORIA CPU FILESYSTEM KERNEL CONSOLA)
+modulos=(MEMORIA CPU FILESYSTEM KERNEL)
 
 echo "IP de la Memoria: "
 read IP[0]
@@ -15,9 +15,6 @@ read IP[2]
 
 echo "IP del Kernel: "
 read IP[3]
-
-echo "IP del Consola: "
-read IP[4]
 
 for i in ${archivos[@]};
     do for j in {0..4};

@@ -186,7 +186,6 @@ op_code ubicarSegmentosPorWorst(t_peticion* peticion){
 }
 
 
-// Cositas mockeadas que linda palabra mockear
 bool corroborarPosibilidadDeCompactacion(t_peticion* peticion) {
 
     uint32_t sumaTamanios = sumaTamaniosHuecosLibres(); 

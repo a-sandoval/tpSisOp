@@ -92,8 +92,6 @@ int alistarServidor(char *puerto){
 
 	int serverFD = iniciarServidor(puerto);
 
-	log_info(logger, "Servidor listo para recibir al cliente");
-
 	return esperarCliente(serverFD);
 }
 

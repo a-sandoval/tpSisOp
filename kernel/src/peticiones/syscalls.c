@@ -6,6 +6,7 @@ char* invalidResource = "INVALID_RESOURCE";
 char* outOfMemory = "OUT_OF_MEMORY";
 estadoProceso estadoAnterior; 
 int tiempoIO;
+bool hayOpFS;
 
 void retornoContexto(t_pcb *proceso, t_contexto *contextoEjecucion){
     switch (contextoEjecucion->motivoDesalojo->comando){
@@ -367,6 +368,7 @@ void fread_s(t_pcb *proceso, char **parametros){
         loggearBloqueoDeProcesos(proceso, nombreArchivo);
 
         pthread_mutex_lock(&mutexCompactacion);
+        hayOpFS = true;
         peticionConBloqueoAFS(peticion, proceso);
 
     }
@@ -398,6 +400,7 @@ void fwrite_s(t_pcb *proceso, char **parametros){
         loggearBloqueoDeProcesos(proceso, nombreArchivo);
 
         pthread_mutex_lock(&mutexCompactacion);
+         hayOpFS = true;
         peticionConBloqueoAFS(peticion, proceso);
 
     }
@@ -437,7 +440,8 @@ void createSegment_s(t_pcb *proceso, char **parametros){
         case COMPACTACION:
             
                 log_info(logger, "Compactacion: Se solicito compactacion ");
-                log_info(logger, "Compactacion: Esperando Fin de Operaciones de FS");
+
+                if(hayOpFS) log_info(logger, "Compactacion: Esperando Fin de Operaciones de FS");
 
                 pthread_mutex_lock(&mutexCompactacion);
 

@@ -21,7 +21,7 @@ int main() {
 	
 	int server_fd = iniciarServidor (confGet("PUERTO_ESCUCHA"));
 
-	log_info (logger, "Servidor listo para recibir clientes");
+	log_info (logger, "Memoria lista para recibir conexiones.");
 	log_info (logger, "Esperando CPU...");
 
 	sockets[0] = esperarCliente(server_fd);
