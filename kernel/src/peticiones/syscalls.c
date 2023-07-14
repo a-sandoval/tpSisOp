@@ -118,11 +118,10 @@ void signal_s(t_pcb *proceso, char **parametros){
 
     int instancRecurso = instanciasRecursos[indexRecurso];
     instancRecurso++;
-    
-    eliminarRecursoLista(proceso->recursosAsignados,recurso); 
-
 
     log_info(logger,"PID: <%d> - Signal: <%s> - Instancias: <%d>",proceso->pid, recurso, instancRecurso); 
+
+    eliminarRecursoLista(proceso->recursosAsignados,recurso); 
 
     instanciasRecursos[indexRecurso]=instancRecurso;
 

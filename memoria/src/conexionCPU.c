@@ -9,7 +9,7 @@ int ejecutarServidorCPU(int * socketCliente){
 
 	while (1) {
 		int peticion = recibirOperacion(*socketCliente);
-		log_info(logger,"Se recibio peticion %d del CPU", peticion); 
+		debug("Se recibio peticion %d del CPU", peticion); 
 
 		switch (peticion) {
 			case READ:
@@ -83,6 +83,7 @@ void recibirPeticionDeEscritura(int socketCPU) {
 	char* valorAEscribir = malloc (sizeof (char) * tamanio);
 	memcpy(valorAEscribir,buffer+desplazamiento,sizeof(char)*tamanio);
 	
+	tamanio--; 
 
 	escribir(valorAEscribir,direccionFisica, tamanio);  
 

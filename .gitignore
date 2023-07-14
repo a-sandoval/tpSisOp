@@ -43,7 +43,7 @@
 *.pdb
 *.log
 *.gdb_history
-*.vlog
+
 
 
 # Kernel Module Compile Results

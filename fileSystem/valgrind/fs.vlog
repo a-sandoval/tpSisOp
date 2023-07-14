@@ -1,0 +1,27 @@
+==82311== Memcheck, a memory error detector
+==82311== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==82311== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==82311== Command: ./filesys.out
+==82311== Parent PID: 79024
+==82311== 
+==82311== 
+==82311== HEAP SUMMARY:
+==82311==     in use at exit: 48 bytes in 2 blocks
+==82311==   total heap usage: 691 allocs, 689 frees, 63,591 bytes allocated
+==82311== 
+==82311== 48 bytes in 2 blocks are definitely lost in loss record 1 of 1
+==82311==    at 0x484DCD3: realloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==82311==    by 0x10D0C8: agregarAPaquete (utilsCliente.c:84)
+==82311==    by 0x10B93A: solicitarAMemoria (conexionMemoria.c:34)
+==82311==    by 0x10B46A: ejecutarServidor (servidorKernel.c:93)
+==82311==    by 0x10AEC2: escucharAlKernel (servidorKernel.c:9)
+==82311==    by 0x10AD73: main (fileSystem.c:131)
+==82311== 
+==82311== LEAK SUMMARY:
+==82311==    definitely lost: 48 bytes in 2 blocks
+==82311==    indirectly lost: 0 bytes in 0 blocks
+==82311==      possibly lost: 0 bytes in 0 blocks
+==82311==    still reachable: 0 bytes in 0 blocks
+==82311==         suppressed: 0 bytes in 0 blocks
+==82311== 
+==82311== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 0 from 0)

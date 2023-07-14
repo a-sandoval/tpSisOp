@@ -215,7 +215,7 @@ t_paquete* crearPeticionDeTruncadoDeArchivo(fcb_t* fcb, int tamanio){
     peticion->codigo_operacion = FTRUNCATE;
     uint32_t tamanio_u = (uint32_t) tamanio;
 
-    agregarAPaquete(peticion, (void*)fcb->nombre, sizeof(char) * string_length(fcb->nombre));
+    agregarAPaquete(peticion, (void*)fcb->nombre, sizeof(char) * string_length(fcb->nombre)+1);
     agregarAPaquete(peticion, &(fcb->tamanio), sizeof(uint32_t));
     agregarAPaquete(peticion, &(fcb->ptrDirecto), sizeof(uint32_t));
     agregarAPaquete(peticion, &(fcb->ptrIndirecto), sizeof(uint32_t));
@@ -229,7 +229,7 @@ t_paquete* crearPeticionDeLecturaDeArchivo(t_archivoProceso* archivo, uint32_t d
     t_paquete* peticion = crearPaquete();
     peticion->codigo_operacion = FREAD;
 
-    agregarAPaquete(peticion, (void*)fcb->nombre, sizeof(char) * string_length(fcb->nombre));
+    agregarAPaquete(peticion, (void*)fcb->nombre, sizeof(char) * string_length(fcb->nombre)+1);
     agregarAPaquete(peticion, &(fcb->tamanio), sizeof(uint32_t));
     agregarAPaquete(peticion, &(fcb->ptrDirecto), sizeof(uint32_t));
     agregarAPaquete(peticion, &(fcb->ptrIndirecto), sizeof(uint32_t));

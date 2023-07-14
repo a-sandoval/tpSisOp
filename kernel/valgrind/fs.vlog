@@ -1,0 +1,48 @@
+==82353== Memcheck, a memory error detector
+==82353== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==82353== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==82353== Command: ./kernel.out
+==82353== Parent PID: 78958
+==82353== 
+==82353== 
+==82353== HEAP SUMMARY:
+==82353==     in use at exit: 950 bytes in 13 blocks
+==82353==   total heap usage: 12,938 allocs, 12,925 frees, 1,562,240 bytes allocated
+==82353== 
+==82353== 272 bytes in 1 blocks are possibly lost in loss record 8 of 10
+==82353==    at 0x484DA83: calloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==82353==    by 0x40147D9: calloc (rtld-malloc.h:44)
+==82353==    by 0x40147D9: allocate_dtv (dl-tls.c:375)
+==82353==    by 0x40147D9: _dl_allocate_tls (dl-tls.c:634)
+==82353==    by 0x49F2834: allocate_stack (allocatestack.c:430)
+==82353==    by 0x49F2834: pthread_create@@GLIBC_2.34 (pthread_create.c:647)
+==82353==    by 0x10AD12: main (kernel.c:32)
+==82353== 
+==82353== 272 bytes in 1 blocks are possibly lost in loss record 9 of 10
+==82353==    at 0x484DA83: calloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==82353==    by 0x40147D9: calloc (rtld-malloc.h:44)
+==82353==    by 0x40147D9: allocate_dtv (dl-tls.c:375)
+==82353==    by 0x40147D9: _dl_allocate_tls (dl-tls.c:634)
+==82353==    by 0x49F2834: allocate_stack (allocatestack.c:430)
+==82353==    by 0x49F2834: pthread_create@@GLIBC_2.34 (pthread_create.c:647)
+==82353==    by 0x10AD38: main (kernel.c:33)
+==82353== 
+==82353== 272 bytes in 1 blocks are possibly lost in loss record 10 of 10
+==82353==    at 0x484DA83: calloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==82353==    by 0x40147D9: calloc (rtld-malloc.h:44)
+==82353==    by 0x40147D9: allocate_dtv (dl-tls.c:375)
+==82353==    by 0x40147D9: _dl_allocate_tls (dl-tls.c:634)
+==82353==    by 0x49F2834: allocate_stack (allocatestack.c:430)
+==82353==    by 0x49F2834: pthread_create@@GLIBC_2.34 (pthread_create.c:647)
+==82353==    by 0x10AD60: main (kernel.c:34)
+==82353== 
+==82353== LEAK SUMMARY:
+==82353==    definitely lost: 0 bytes in 0 blocks
+==82353==    indirectly lost: 0 bytes in 0 blocks
+==82353==      possibly lost: 816 bytes in 3 blocks
+==82353==    still reachable: 134 bytes in 10 blocks
+==82353==         suppressed: 0 bytes in 0 blocks
+==82353== Reachable blocks (those to which a pointer was found) are not shown.
+==82353== To see them, rerun with: --leak-check=full --show-leak-kinds=all
+==82353== 
+==82353== ERROR SUMMARY: 3 errors from 3 contexts (suppressed: 0 from 0)

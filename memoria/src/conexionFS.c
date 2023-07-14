@@ -10,7 +10,7 @@ int ejecutarServidorFS(int *socketCliente){
 	
 	while (1) {
 		int peticion = recibirOperacion(*socketCliente);
-		log_info(logger,"Se recibio peticion %d de File System", peticion); 
+		debug("Se recibio peticion %d de File System", peticion); 
 		switch (peticion) {	
 			case READ:
 				log_debug (logger, "Solicitud de lectura");
