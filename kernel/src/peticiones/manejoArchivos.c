@@ -182,7 +182,7 @@ t_archivo* solicitarArchivoFS(char* nombreArchivo){
     switch (respuesta){
         case MENSAJE: // en este caso el archivo no existe y tiene que crearlo
         debug("creo archivo %s", nombreArchivo);
-                    recibirMensaje(conexionAFS);
+                    free(recibirMensaje(conexionAFS));
                     peticion = crearPaquete ();
                     peticion->codigo_operacion = FCREATE; // se sobreentiende que es con tamanio 0
                     agregarAPaquete(peticion, nombreArchivo, sizeof(char)*strlen(nombreArchivo) + 1);

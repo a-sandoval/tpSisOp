@@ -1,7 +1,7 @@
 #include "shared/include/configuraciones.h"
 
 bool imprimirLogs = true;
-t_log_level nivelDeLog = LOG_LEVEL_DEBUG;
+t_log_level nivelDeLog = LOG_LEVEL_INFO;
 
 // CONFIG
 

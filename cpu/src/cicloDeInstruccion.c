@@ -366,5 +366,4 @@ uint32_t mmu(char* direccionLogica, int tamValor){
         free (terminado);
         return UINT32_MAX; 
     }
-
 }

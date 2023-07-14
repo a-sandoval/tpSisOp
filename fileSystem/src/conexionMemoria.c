@@ -22,7 +22,7 @@ int enviarAMemoria (char * mensaje, uint32_t direccionFisica, uint32_t tamanio, 
     agregarAPaquete (paquete, &(direccionFisica), sizeof direccionFisica);
 	agregarAPaquete (paquete, (void *) mensaje, tamanio);
 	enviarPaquete (paquete, socket);
-	free (paquete->buffer), free (paquete);
+	eliminarPaquete (paquete);
 	return 0;
 }
 
@@ -33,7 +33,7 @@ char * solicitarAMemoria (uint32_t direccionFisica, uint32_t tamanio, int socket
 	agregarAPaquete (paquete, &(direccionFisica), sizeof direccionFisica);
 	agregarAPaquete (paquete, &(tamanio), sizeof tamanio);
 	enviarPaquete (paquete, socket);
-	free (paquete->buffer), free (paquete);
+	eliminarPaquete (paquete);
     recibirOperacion (socket);
     char * data = recibirMensaje (socket);
     return data;

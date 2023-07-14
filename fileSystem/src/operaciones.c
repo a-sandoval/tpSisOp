@@ -22,10 +22,16 @@ int crearArchivo (char * nombre) {
 
 fcb_t * abrirArchivo (char * nombre) {
     char * pathArchivo = string_from_format ("%s/%s.fcb", pathFCBs, nombre);
-    if (access (pathArchivo, F_OK)) return NULL;
+    if (access (pathArchivo, F_OK)) {
+        free (pathArchivo); 
+        return NULL;
+    }
     
     t_config * archivo = config_create (pathArchivo);
-    if (!archivo) return NULL;
+    if (!archivo) {
+        free (pathArchivo);
+        return NULL;
+    }
     fcb_t * archivoFCB = malloc (sizeof (fcb_t)); 
     archivoFCB->nombre = string_duplicate (config_get_string_value (archivo, "NOMBRE_ARCHIVO"));
     archivoFCB->tamanio = config_get_int_value (archivo, "TAMANIO_ARCHIVO");

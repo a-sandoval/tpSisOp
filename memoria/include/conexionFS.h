@@ -13,7 +13,7 @@ extern t_config* config;
 extern t_log* logger; 
 extern void* espacioDeUsuario; 
 
-void recibirPeticionDeLecturaFS(int socketFS);
+char * recibirPeticionDeLecturaFS(int socketFS);
 char* leer_fs(int32_t direccionFisica, int tamanio);
 void recibirPeticionDeEscrituraFS(int socketFS);
 void escribir_fs(char* valor, int32_t direccionFisica, int tamanio);

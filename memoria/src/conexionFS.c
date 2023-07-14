@@ -1,7 +1,5 @@
 #include "memoria/include/conexionFS.h"
 
-char* valor;
-
 int ejecutarServidorFS(int *socketCliente){
 
 	tiempo = config_get_int_value(config,"RETARDO_MEMORIA"); 
@@ -14,9 +12,10 @@ int ejecutarServidorFS(int *socketCliente){
 		switch (peticion) {	
 			case READ:
 				log_debug (logger, "Solicitud de lectura");
-				recibirPeticionDeLecturaFS(*socketCliente); 
-				enviarMensaje(valor,*socketCliente); 
-				free(valor);
+				char * temp = recibirPeticionDeLecturaFS(*socketCliente); 
+				debug (temp);
+				enviarMensaje(temp,*socketCliente); 
+				free(temp);
 				break;
 			case WRITE:
                 log_debug (logger, "Solicitud de escritura");
@@ -35,7 +34,7 @@ int ejecutarServidorFS(int *socketCliente){
 }
 
 //FREAD
-void recibirPeticionDeLecturaFS(int socketFS) {
+char * recibirPeticionDeLecturaFS(int socketFS) {
 
 	int size, desplazamiento=0, pid, tamanio;
 	int32_t direccionFisica;
@@ -48,13 +47,15 @@ void recibirPeticionDeLecturaFS(int socketFS) {
 	desplazamiento += sizeof(uint32_t) + sizeof(int); 
 	memcpy(&(tamanio),buffer+desplazamiento,sizeof(int)); 
 
-	valor = leer_fs(direccionFisica, tamanio); 
-	valor = realloc (valor, tamanio + 1);
-	valor[tamanio] = '\0';
-
+	char * temp = leer_fs(direccionFisica, tamanio); 
+	char * valorLeido = malloc (tamanio + 1);
+	memcpy (valorLeido, temp, tamanio);
+	valorLeido[tamanio] = '\0';	
+	
 	log_info(logger, "PID: <%d> - Acción: <%s> - Dirección física: <%d> - Tamaño: <%d> - Origen: <%s>", pid, "LEER", direccionFisica, tamanio, "FS");
 
-	free (buffer);
+	free (buffer), free (temp);
+	return valorLeido;
 }
 
 char* leer_fs(int32_t direccionFisica,int tamanio) {
