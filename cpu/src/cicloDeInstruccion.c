@@ -133,6 +133,8 @@ void execute() {
     }
 }
 
+// Instrucciones
+
 void set_c(char* registro, char* valor){ 
     tiempoEspera = obtenerTiempoEspera();
     usleep(tiempoEspera * 1000); 
@@ -228,26 +230,6 @@ void delete_segment(char* idSegmento){
     enviarContextoActualizado(socketCliente);
 };
 
-void destruirTemporizador (t_temporal * temporizador) {
-    temporal_stop(temporizador);
-    contextoEjecucion->rafagaCPUEjecutada = temporal_gettime(temporizador);  
-    //temporal_destroy(temporizador); 
-}
-
-void modificarMotivoDesalojo (t_comando comando, int numParametros, char * parm1, char * parm2, char * parm3) {
-    char * (parametros[3]) = { parm1, parm2, parm3 };
-    contextoEjecucion->motivoDesalojo->comando = comando;
-    for (int i = 0; i < numParametros; i++)
-        contextoEjecucion->motivoDesalojo->parametros[i] = string_duplicate(parametros[i]);
-    contextoEjecucion->motivoDesalojo->parametrosLength = numParametros;
-}
-
-void liberarMemoria() {
-    for (int i = 0; i <= cantParametros; i++) free(elementosInstruccion[i]);
-    free(elementosInstruccion);
-}
-
-
 void mov_in(char* registro, char* direccionLogica){
 
     char* valorAInsertar;
@@ -301,8 +283,57 @@ void mov_out(char* direccionLogica, char* registro){
 
     log_info(logger, "PID: <%d> - Accion: <%s> - Segmento: <%d> - Direccion Fisica: <%d> - Valor: <%s>", contextoEjecucion->pid, "WRITE", nroSegmento, dirFisica, (char *)valor);
     }
-};  
+};
 
+// Funciones grales
+
+void destruirTemporizador (t_temporal * temporizador) {
+    temporal_stop(temporizador);
+    contextoEjecucion->rafagaCPUEjecutada = temporal_gettime(temporizador);  
+    //temporal_destroy(temporizador); 
+}
+
+void modificarMotivoDesalojo (t_comando comando, int numParametros, char * parm1, char * parm2, char * parm3) {
+    char * (parametros[3]) = { parm1, parm2, parm3 };
+    contextoEjecucion->motivoDesalojo->comando = comando;
+    for (int i = 0; i < numParametros; i++)
+        contextoEjecucion->motivoDesalojo->parametros[i] = string_duplicate(parametros[i]);
+    contextoEjecucion->motivoDesalojo->parametrosLength = numParametros;
+}
+
+void liberarMemoria() {
+    for (int i = 0; i <= cantParametros; i++) free(elementosInstruccion[i]);
+    free(elementosInstruccion);
+}
+
+char* recibirValor(int socket) {
+    char* valor;
+    int tamanio; 
+	int size, desplazamiento = 0;
+	void * buffer;
+
+	buffer = recibirBuffer(socket, &size);
+
+    memcpy(&(tamanio), buffer, sizeof(int32_t));
+    desplazamiento += sizeof(int32_t);
+
+    memcpy(&(valor),buffer+desplazamiento,sizeof(char)*tamanio); 
+    desplazamiento+=sizeof(char)*tamanio; 
+
+	free(buffer);
+
+    return valor;
+}
+
+int obtenerTamanioReg(char* registro){
+
+    if(string_starts_with(registro, "E")) return 8;
+    else if(string_starts_with(registro, "R")) return 16;
+    else return 4;
+
+}
+
+//mmu
 
 uint32_t mmu(char* direccionLogica, int tamValor){
     int dirFisica;
@@ -335,32 +366,5 @@ uint32_t mmu(char* direccionLogica, int tamValor){
         free (terminado);
         return UINT32_MAX; 
     }
-
-}
-
-char* recibirValor(int socket) {
-    char* valor;
-    int tamanio; 
-	int size, desplazamiento = 0;
-	void * buffer;
-
-	buffer = recibirBuffer(socket, &size);
-
-    memcpy(&(tamanio), buffer, sizeof(int32_t));
-    desplazamiento += sizeof(int32_t);
-
-    memcpy(&(valor),buffer+desplazamiento,sizeof(char)*tamanio); 
-    desplazamiento+=sizeof(char)*tamanio; 
-
-	free(buffer);
-
-    return valor;
-}
-
-int obtenerTamanioReg(char* registro){
-
-    if(string_starts_with(registro, "E")) return 8;
-    else if(string_starts_with(registro, "R")) return 16;
-    else return 4;
 
 }
