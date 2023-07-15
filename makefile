@@ -45,7 +45,7 @@ trap:
 	@echo "Si estas aca te confundiste de ondis, pone \'make Modulo\' con el modulo que queres compilar o pone make en tu carpeta."
 
 all: Consola Cpu Filesys Kernel Memoria
-	@echo "Estan locas cocain*manas."
+	@echo "Estan locas cocain*manas, exitos."
 
 Consola:
 	@echo "Compilando consola... "
